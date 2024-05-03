@@ -1,6 +1,6 @@
-black==24.4.2
 check-manifest==0.49
-flake8==7.0.0
+isort==5.13.2
 pip==24.0
 pre-commit==3.7.0
 pytest==8.2.0
+ruff==0.4.2

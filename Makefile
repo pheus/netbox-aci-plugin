@@ -1,14 +1,14 @@
-sources = NetBox ACI Plugin
+sources = netbox_aci_plugin
 
 .PHONY: test format lint unittest pre-commit clean
 test: format lint unittest
 
 format:
 	isort $(sources) tests
-	black $(sources) tests
+	ruff format $(sources) tests
 
 lint:
-	flake8 $(sources) tests
+	ruff check $(sources) tests
 
 pre-commit:
 	pre-commit run --all-files
