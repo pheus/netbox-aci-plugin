@@ -3,7 +3,7 @@ site_name: NetBox ACI Plugin
 site_url: https://pheus.github.io/netbox-aci-plugin
 repo_url: https://github.com/pheus/netbox-aci-plugin
 repo_name: pheus/netbox-aci-plugin
-#strict: true
+# strict: true
 nav:
   - Home: index.md
   - Contributing: contributing.md
@@ -11,7 +11,7 @@ nav:
 theme:
   name: material
   language: en
-  #logo: assets/logo.png
+  # logo: assets/logo.png
   palette:
     scheme: preference
     primary: indigo

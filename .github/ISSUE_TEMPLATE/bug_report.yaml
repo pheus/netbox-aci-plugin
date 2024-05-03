@@ -1,12 +1,14 @@
 ---
 name: 🐛 Bug Report
-description: Report a reproducible bug in the current release of NetBox ACI Plugin
+description: >
+  Report a reproducible bug in the current release of NetBox ACI Plugin
 labels: ["type: bug"]
 body:
   - type: markdown
     attributes:
       value: >
-        **NOTE:** This form is only for reporting _reproducible bugs_ in a current NetBox ACI Plugin release.
+        **NOTE:** This form is only for reporting _reproducible bugs_ in a
+        current NetBox ACI Plugin release.
   - type: input
     attributes:
       label: NetBox ACI Plugin version
@@ -36,10 +38,10 @@ body:
     attributes:
       label: Steps to Reproduce
       description: >
-        Please provide a minimal working example to demonstrate the bug. Begin with the
-        initialization of any necessary database objects and clearly enumerate each
-        operation carried out. Ensure that your example is as concise as possible
-        while adequately illustrating the issue.
+        Please provide a minimal working example to demonstrate the bug. Begin
+        with the initialization of any necessary database objects and clearly
+        enumerate each operation carried out. Ensure that your example is as
+        concise as possible while adequately illustrating the issue.
 
         _Please refrain from including any confidential or sensitive
         information in your example._
@@ -49,7 +51,8 @@ body:
     attributes:
       label: Expected Behavior
       description: What did you expect to happen?
-      placeholder: The script should execute without raising any errors or exceptions
+      placeholder: >
+        The script should execute without raising any errors or exceptions
     validations:
       required: true
   - type: textarea
@@ -59,3 +62,4 @@ body:
       placeholder: A TypeError exception was raised
     validations:
       required: true
+...
