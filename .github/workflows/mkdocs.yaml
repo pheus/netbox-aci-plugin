@@ -1,0 +1,28 @@
+---
+name: ci
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - name: Install pypa/build
+        run: >-
+          pip install
+          mkdocs-material
+          mkdocs-autorefs
+          mkdocs-material-extensions
+          mkdocstrings
+          mkdocstrings-python-legacy
+          mkdocs-include-markdown-plugin
+      - name: Deploy docs to GitHub pages
+        run: mkdocs gh-deploy --force
+...
