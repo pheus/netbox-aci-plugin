@@ -53,23 +53,7 @@ plugins:
         - netbox-aci-plugin
 extra:
   social:
-    - icon: fontawesome/brands/twitter
-      # replace with your own tweet link below
-      link: https://github.com/netbox-community/cookiecutter-netbox-plugin
-      name: Tweet
-    - icon: fontawesome/brands/facebook
-      # replace with your own facebook link below
-      link: https://github.com/netbox-community/cookiecutter-netbox-plugin
-      name: Facebook
     - icon: fontawesome/brands/github
       link: https://github.com/pheus/netbox-aci-plugin
       name: Github
-    - icon: material/email
-      link: "mailto:git@pheus.dev"
-  # to enable disqus, uncomment the following and put your disqus id below
-  # disqus: disqus_id
-# uncomment the following and put your google tracking id below to enable GA
-#google_analytics:
-  #- UA-xxx
-  #- auto
 ...
