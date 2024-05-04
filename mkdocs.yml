@@ -51,7 +51,11 @@ markdown_extensions:
       generic: true
   - pymdownx.highlight:
       linenums: false
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.inlinehilite
   - pymdownx.details
   - admonition
