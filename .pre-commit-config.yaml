@@ -15,6 +15,9 @@ repos:
         files: \.(yaml|yml)$
         args: [--unsafe]
       - id: check-added-large-files
+      - id: name-tests-test
+        args:
+          - "--django"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
