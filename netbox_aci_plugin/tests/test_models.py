@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from ..models.tenants import ACITenant
@@ -37,3 +38,8 @@ class ACITenantTestCase(TestCase):
         self.assertEqual(
             self.aci_tenant.description, "Tenant for NetBox ACI Plugin testing"
         )
+
+    def test_invalid_aci_tenant_name(self) -> None:
+        """Test validation of ACI Tenant naming, description and aliasing."""
+        tenant = ACITenant(name="ACI Test Tenant 1")
+        self.assertRaises(ValidationError, tenant.full_clean)
