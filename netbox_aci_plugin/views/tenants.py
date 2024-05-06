@@ -4,6 +4,7 @@
 
 from netbox.views import generic
 
+from ..filtersets.tenants import ACITenantFilterSet
 from ..forms.tenants import ACITenantForm
 from ..models.tenants import ACITenant
 from ..tables.tenants import ACITenantTable
@@ -19,6 +20,7 @@ class ACITenantListView(generic.ObjectListView):
     """View for listing all instances of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
+    filterset = ACITenantFilterSet
     table = ACITenantTable
 
 
