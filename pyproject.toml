@@ -20,13 +20,12 @@ classifiers=[
     'Intended Audience :: Developers',
     'Natural Language :: English',
     "Programming Language :: Python :: 3 :: Only",
-    'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
 ]
 
-requires-python = ">=3.9.0"
+requires-python = ">=3.10.0"
 
 [project.optional-dependencies]
 test = [
@@ -43,9 +42,14 @@ Documentation = "https://github.com/pheus/netbox-aci-plugin/blob/main/README.md"
 Source = "https://github.com/pheus/netbox-aci-plugin"
 Tracker = "https://github.com/pheus/netbox-aci-plugin/issues"
 
+[tool.isort]
+line_length = 79
+profile = "black"
+
 [tool.ruff]
 line-length = 79
-target_version = "py39"
+# Always generate Python 3.10-compatible code.
+target_version = "py310"
 
 [tool.setuptools.package-data]
 netbox_aci_plugin = ["templates/**"]

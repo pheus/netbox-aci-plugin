@@ -16,7 +16,7 @@ class ACIConfig(PluginConfig):
     author = __author__
     author_email = __email__
     base_url = "aci"
-    min_version = "4.0.0-beta2"
+    min_version = "4.0.0"
     max_version = "4.0.99"
 
 

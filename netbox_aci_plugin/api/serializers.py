@@ -2,25 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from netbox.api.serializers import (
-    NetBoxModelSerializer,
-    WritableNestedSerializer,
-)
+from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 
 from ..models.tenants import ACITenant
-
-
-class NestedACITenantListSerializer(WritableNestedSerializer):
-    """Nested serializer for ACI Tenant model."""
-
-    url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_aci_plugin-api:acitenant-list"
-    )
-
-    class Meta:
-        model = ACITenant
-        fields: tuple = ("id", "url", "display", "name", "alias")
 
 
 class ACITenantSerializer(NetBoxModelSerializer):
@@ -44,4 +29,12 @@ class ACITenantSerializer(NetBoxModelSerializer):
             "custom_fields",
             "created",
             "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "alias",
+            "description",
         )
