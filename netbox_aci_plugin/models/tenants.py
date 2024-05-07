@@ -5,6 +5,7 @@
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
 
 from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
@@ -19,18 +20,25 @@ class ACITenant(NetBoxModel):
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
+        verbose_name=_("Name"),
     )
     alias = models.CharField(
-        max_length=64, blank=True, validators=[ACIPolicyNameValidator]
+        max_length=64,
+        blank=True,
+        validators=[ACIPolicyNameValidator],
+        verbose_name=_("Alias"),
     )
     description = models.CharField(
-        max_length=128, blank=True, validators=[ACIPolicyDescriptionValidator]
+        max_length=128,
+        blank=True,
+        validators=[ACIPolicyDescriptionValidator],
+        verbose_name=_("Description"),
     )
-    comments = models.TextField(blank=True)
+    comments = models.TextField(blank=True, verbose_name=_("Comments"))
 
     class Meta:
         ordering: tuple = ("name",)
-        verbose_name: str = "ACI Tenant"
+        verbose_name: str = _("ACI Tenant")
 
     def __str__(self) -> str:
         """Return string representation of the instance."""
