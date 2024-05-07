@@ -5,7 +5,7 @@
 from netbox.views import generic
 
 from ..filtersets.tenants import ACITenantFilterSet
-from ..forms.tenants import ACITenantForm
+from ..forms.tenants import ACITenantFilterForm, ACITenantForm
 from ..models.tenants import ACITenant
 from ..tables.tenants import ACITenantTable
 
@@ -21,6 +21,7 @@ class ACITenantListView(generic.ObjectListView):
 
     queryset = ACITenant.objects.all()
     filterset = ACITenantFilterSet
+    filterset_form = ACITenantFilterForm
     table = ACITenantTable
 
 
