@@ -13,13 +13,19 @@ from ..tables.tenants import ACITenantTable
 class ACITenantView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Tenant."""
 
-    queryset = ACITenant.objects.all()
+    queryset = ACITenant.objects.prefetch_related(
+        "tags",
+        "tenant",
+    )
 
 
 class ACITenantListView(generic.ObjectListView):
     """List view for listing all objects of ACI Tenant."""
 
-    queryset = ACITenant.objects.all()
+    queryset = ACITenant.objects.prefetch_related(
+        "tags",
+        "tenant",
+    )
     filterset = ACITenantFilterSet
     filterset_form = ACITenantFilterForm
     table = ACITenantTable
@@ -28,11 +34,17 @@ class ACITenantListView(generic.ObjectListView):
 class ACITenantEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Tenant."""
 
-    queryset = ACITenant.objects.all()
+    queryset = ACITenant.objects.prefetch_related(
+        "tags",
+        "tenant",
+    )
     form = ACITenantForm
 
 
 class ACITenantDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Tenant."""
 
-    queryset = ACITenant.objects.all()
+    queryset = ACITenant.objects.prefetch_related(
+        "tags",
+        "tenant",
+    )

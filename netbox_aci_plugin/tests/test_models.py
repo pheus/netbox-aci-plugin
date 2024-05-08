@@ -4,6 +4,7 @@
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from tenancy.models import Tenant
 
 from ..models.tenants import ACITenant
 
@@ -14,18 +15,20 @@ class ACITenantTestCase(TestCase):
     def setUp(self) -> None:
         """Set up an ACI Tenant for testing."""
 
-        tenant_name = "ACITestTenant1"
-        tenant_alias = "TestingTenant"
-        tenant_description = "Tenant for NetBox ACI Plugin testing"
-        tenant_comments = """
+        acitenant_name = "ACITestTenant1"
+        acitenant_alias = "TestingTenant"
+        acitenant_description = "Tenant for NetBox ACI Plugin testing"
+        acitenant_comments = """
         Tenant for NetBox ACI Plugin testing.
         """
+        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
 
         self.aci_tenant = ACITenant.objects.create(
-            name=tenant_name,
-            alias=tenant_alias,
-            description=tenant_description,
-            comments=tenant_comments,
+            name=acitenant_name,
+            alias=acitenant_alias,
+            description=acitenant_description,
+            comments=acitenant_comments,
+            tenant=nb_tenant,
         )
         super().setUp()
 
@@ -38,6 +41,8 @@ class ACITenantTestCase(TestCase):
         self.assertEqual(
             self.aci_tenant.description, "Tenant for NetBox ACI Plugin testing"
         )
+        self.assertTrue(isinstance(self.aci_tenant.tenant, Tenant))
+        self.assertEqual(self.aci_tenant.tenant.name, "NetBox Tenant")
 
     def test_invalid_aci_tenant_name(self) -> None:
         """Test validation of ACI Tenant naming, description and aliasing."""

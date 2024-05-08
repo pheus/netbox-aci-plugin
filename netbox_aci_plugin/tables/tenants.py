@@ -14,6 +14,7 @@ class ACITenantTable(NetBoxTable):
     name = tables.Column(linkify=True, verbose_name="ACI Tenant")
     alias = tables.Column(linkify=True)
     description = tables.Column()
+    tenant = tables.Column(linkify=True, verbose_name="NetBox Tenant")
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -24,6 +25,7 @@ class ACITenantTable(NetBoxTable):
             "id",
             "name",
             "alias",
+            "tenant",
             "description",
             "tags",
             "comments",
@@ -31,6 +33,7 @@ class ACITenantTable(NetBoxTable):
         default_columns: tuple = (
             "name",
             "alias",
+            "tenant",
             "description",
             "tags",
         )

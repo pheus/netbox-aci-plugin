@@ -1,6 +1,7 @@
 
 {% extends 'generic/object.html' %}
 {% load render_table from django_tables2 %}
+{% load i18n %}
 
 {% block content %}
   <div class="row">
@@ -18,6 +19,15 @@
               <th scope="row">Description</th>
               <td>{{ object.description }}</td>
             </tr>
+            <tr>
+              <th scope="row">{% trans "Tenant" %}</th>
+              <td>
+                  {% if object.tenant.group %}
+                      {{ object.tenant.group|linkify }} /
+                  {% endif %}
+                  {{ object.tenant|linkify|placeholder }}
+              </td>
+          </tr>
           </table>
       </div>
       {% include 'inc/panels/custom_fields.html' %}

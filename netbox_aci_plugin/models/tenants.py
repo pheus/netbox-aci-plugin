@@ -34,6 +34,9 @@ class ACITenant(NetBoxModel):
         validators=[ACIPolicyDescriptionValidator],
         verbose_name=_("Description"),
     )
+    tenant = models.ForeignKey(
+        to="tenancy.Tenant", on_delete=models.PROTECT, blank=True, null=True
+    )
     comments = models.TextField(blank=True, verbose_name=_("Comments"))
 
     class Meta:

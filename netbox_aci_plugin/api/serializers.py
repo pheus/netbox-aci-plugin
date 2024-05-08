@@ -4,6 +4,7 @@
 
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
+from tenancy.api.serializers import TenantSerializer
 
 from ..models.tenants import ACITenant
 
@@ -14,6 +15,7 @@ class ACITenantSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:acitenant-detail"
     )
+    tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
         model = ACITenant
@@ -24,6 +26,7 @@ class ACITenantSerializer(NetBoxModelSerializer):
             "name",
             "alias",
             "description",
+            "tenant",
             "comments",
             "tags",
             "custom_fields",
@@ -37,4 +40,5 @@ class ACITenantSerializer(NetBoxModelSerializer):
             "name",
             "alias",
             "description",
+            "tenant",
         )
