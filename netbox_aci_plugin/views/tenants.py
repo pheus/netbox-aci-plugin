@@ -11,13 +11,13 @@ from ..tables.tenants import ACITenantTable
 
 
 class ACITenantView(generic.ObjectView):
-    """View for a single instance of ACI Tenant."""
+    """Detail view for displaying a single object of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
 
 
 class ACITenantListView(generic.ObjectListView):
-    """View for listing all instances of ACI Tenant."""
+    """List view for listing all objects of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
     filterset = ACITenantFilterSet
@@ -26,13 +26,13 @@ class ACITenantListView(generic.ObjectListView):
 
 
 class ACITenantEditView(generic.ObjectEditView):
-    """View for editing an instance of ACI Tenant."""
+    """Edit view for editing an object of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
     form = ACITenantForm
 
 
 class ACITenantDeleteView(generic.ObjectDeleteView):
-    """View for deleting an instance of ACI Tenant."""
+    """Delete view for deleting an object of ACI Tenant."""
 
     queryset = ACITenant.objects.all()

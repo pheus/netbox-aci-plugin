@@ -9,6 +9,8 @@ from netbox.plugins import PluginConfig
 
 
 class ACIConfig(PluginConfig):
+    """NetBox ACI Plugin specific configuration."""
+
     name = "netbox_aci_plugin"
     verbose_name = "NetBox ACI Plugin"
     description = "NetBox plugin for documenting Cisco ACI specific objects."
