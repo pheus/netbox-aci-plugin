@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import django_tables2 as tables
+from django.utils.translation import gettext_lazy as _
 from netbox.tables import NetBoxTable, columns
 
 from ..models.tenants import ACITenant
@@ -11,10 +12,10 @@ from ..models.tenants import ACITenant
 class ACITenantTable(NetBoxTable):
     """NetBox table for ACI Tenant model."""
 
-    name = tables.Column(linkify=True, verbose_name="ACI Tenant")
+    name = tables.Column(linkify=True, verbose_name=_("ACI Tenant"))
     alias = tables.Column(linkify=True)
     description = tables.Column()
-    tenant = tables.Column(linkify=True, verbose_name="NetBox Tenant")
+    tenant = tables.Column(linkify=True, verbose_name=_("NetBox Tenant"))
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
