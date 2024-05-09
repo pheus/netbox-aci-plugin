@@ -5,6 +5,7 @@
 
 import strawberry_django
 from netbox.graphql.types import NetBoxObjectType
+from tenancy.graphql.types import TenantType
 
 from ..models.tenants import ACITenant
 from .filters import ACITenantFilter
@@ -14,4 +15,4 @@ from .filters import ACITenantFilter
 class ACITenantType(NetBoxObjectType):
     """GraphQL type definition for ACITenant model."""
 
-    pass
+    tenant: TenantType | None
