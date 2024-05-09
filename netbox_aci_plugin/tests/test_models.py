@@ -43,6 +43,18 @@ class ACITenantTestCase(TestCase):
         self.assertEqual(self.aci_tenant.tenant.name, "NetBox Tenant")
 
     def test_invalid_aci_tenant_name(self) -> None:
-        """Test validation of ACI Tenant naming, description and aliasing."""
+        """Test validation of ACI Tenant naming."""
         tenant = ACITenant(name="ACI Test Tenant 1")
+        self.assertRaises(ValidationError, tenant.full_clean)
+
+    def test_invalid_aci_tenant_alias(self) -> None:
+        """Test validation of ACI Tenant aliasing."""
+        tenant = ACITenant(name="ACITestTenant1", alias="Invalid Alias")
+        self.assertRaises(ValidationError, tenant.full_clean)
+
+    def test_invalid_aci_tenant_description(self) -> None:
+        """Test validation of ACI Tenant description."""
+        tenant = ACITenant(
+            name="ACITestTenant1", description="Invalid Description: ö"
+        )
         self.assertRaises(ValidationError, tenant.full_clean)
