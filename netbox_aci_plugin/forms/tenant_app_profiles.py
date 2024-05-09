@@ -2,10 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django import forms
 from django.utils.translation import gettext_lazy as _
-from netbox.forms import NetBoxModelForm
+from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
 from tenancy.models import Tenant, TenantGroup
-from utilities.forms.fields import CommentField, DynamicModelChoiceField
+from utilities.forms.fields import (
+    CommentField,
+    DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
+    TagFilterField,
+)
 from utilities.forms.rendering import FieldSet
 
 from ..models.tenant_app_profiles import ACIAppProfile
@@ -57,3 +63,41 @@ class ACIAppProfileForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+
+class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for ACI Application Profile model."""
+
+    model = ACIAppProfile
+    fieldsets: tuple = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "name", "alias", "aci_tenant_id", "description", name="Attributes"
+        ),
+        FieldSet("nb_tenant_group_id", "nb_tenant_id", name="NetBox Tenancy"),
+    )
+
+    name = forms.CharField(required=False)
+    alias = forms.CharField(required=False)
+    description = forms.CharField(required=False)
+    aci_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"tenant_id": "$nb_tenant_id"},
+        label=_("ACI Tenant"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("NetBox Tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$nb_tenant_group_id"},
+        label=_("NetBox Tenant"),
+    )
+    tag = TagFilterField(ACITenant)
