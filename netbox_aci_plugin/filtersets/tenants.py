@@ -13,15 +13,15 @@ from ..models.tenants import ACITenant
 class ACITenantFilterSet(NetBoxModelFilterSet):
     """Filter set for ACI Tenant model."""
 
-    tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="tenant__name",
+    nb_tenant = django_filters.ModelMultipleChoiceFilter(
         queryset=Tenant.objects.all(),
         to_field_name="name",
-        label=_("Tenant (name)"),
+        label=_("NetBox Tenant (name)"),
     )
-    tenant_id = django_filters.ModelMultipleChoiceFilter(
+    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Tenant.objects.all(),
-        label=_("Tenant (ID)"),
+        to_field_name="id",
+        label=_("NetBox Tenant (ID)"),
     )
 
     class Meta:
@@ -31,7 +31,7 @@ class ACITenantFilterSet(NetBoxModelFilterSet):
             "name",
             "alias",
             "description",
-            "tenant",
+            "nb_tenant",
         )
 
     def search(self, queryset, name, value):

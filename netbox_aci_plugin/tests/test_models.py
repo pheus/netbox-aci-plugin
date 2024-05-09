@@ -27,7 +27,7 @@ class ACITenantTestCase(TestCase):
             alias=acitenant_alias,
             description=acitenant_description,
             comments=acitenant_comments,
-            tenant=nb_tenant,
+            nb_tenant=nb_tenant,
         )
         super().setUp()
 
@@ -39,8 +39,8 @@ class ACITenantTestCase(TestCase):
         self.assertEqual(
             self.aci_tenant.description, "Tenant for NetBox ACI Plugin testing"
         )
-        self.assertTrue(isinstance(self.aci_tenant.tenant, Tenant))
-        self.assertEqual(self.aci_tenant.tenant.name, "NetBox Tenant")
+        self.assertTrue(isinstance(self.aci_tenant.nb_tenant, Tenant))
+        self.assertEqual(self.aci_tenant.nb_tenant.name, "NetBox Tenant")
 
     def test_invalid_aci_tenant_name(self) -> None:
         """Test validation of ACI Tenant naming."""

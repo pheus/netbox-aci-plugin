@@ -20,23 +20,23 @@ from ..models.tenants import ACITenant
 class ACITenantForm(NetBoxModelForm):
     """NetBox form for ACI Tenant model."""
 
-    tenant_group = DynamicModelChoiceField(
+    nb_tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
         required=False,
-        label=_("Tenant group"),
-        initial_params={"tenants": "$tenant"},
+        label=_("NetBox Tenant group"),
+        initial_params={"tenants": "$nb_tenant"},
     )
-    tenant = DynamicModelChoiceField(
+    nb_tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
-        label=_("Tenant"),
-        query_params={"group_id": "$tenant_group"},
+        label=_("NetBox Tenant"),
+        query_params={"group_id": "$nb_tenant_group"},
     )
     comments = CommentField()
 
     fieldsets: tuple = (
         FieldSet("name", "alias", "description", "tags", name=_("ACI Tenant")),
-        FieldSet("tenant_group", "tenant", name=_("Tenancy")),
+        FieldSet("nb_tenant_group", "nb_tenant", name=_("NetBox Tenancy")),
     )
 
     class Meta:
@@ -45,7 +45,7 @@ class ACITenantForm(NetBoxModelForm):
             "name",
             "alias",
             "description",
-            "tenant",
+            "nb_tenant",
             "comments",
             "tags",
         )
@@ -58,23 +58,23 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
     fieldsets: tuple = (
         FieldSet("q", "filter_id", "tag"),
         FieldSet("name", "alias", "description", name="Attributes"),
-        FieldSet("tenant_group_id", "tenant_id", name="Tenancy"),
+        FieldSet("nb_tenant_group_id", "nb_tenant_id", name="NetBox Tenancy"),
     )
 
     name = forms.CharField(required=False)
     alias = forms.CharField(required=False)
     description = forms.CharField(required=False)
-    tenant_group_id = DynamicModelMultipleChoiceField(
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
         queryset=TenantGroup.objects.all(),
         required=False,
         null_option="None",
         label=_("Tenant group"),
     )
-    tenant_id = DynamicModelMultipleChoiceField(
+    nb_tenant_id = DynamicModelMultipleChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
         null_option="None",
-        query_params={"group_id": "$tenant_group_id"},
+        query_params={"group_id": "$nb_tenant_group_id"},
         label=_("Tenant"),
     )
     tag = TagFilterField(ACITenant)

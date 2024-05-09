@@ -32,7 +32,7 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "display",
         "id",
         "name",
-        "tenant",
+        "nb_tenant",
         "url",
     ]
 
@@ -51,21 +51,21 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 alias="TestingTenant1",
                 description="First ACI Test Tenant",
                 comments="# ACI Test Tenant 1",
-                tenant=nb_tenant1,
+                nb_tenant=nb_tenant1,
             ),
             ACITenant(
                 name="ACITestTenantAPI2",
                 alias="TestingTenant2",
                 description="Second ACI Test Tenant",
                 comments="# ACI Test Tenant 2",
-                tenant=nb_tenant1,
+                nb_tenant=nb_tenant1,
             ),
             ACITenant(
                 name="ACITestTenantAPI3",
                 alias="TestingTenant3",
                 description="Third ACI Test Tenant",
                 comments="# ACI Test Tenant 3",
-                tenant=nb_tenant2,
+                nb_tenant=nb_tenant2,
             ),
         )
         ACITenant.objects.bulk_create(aci_tenants)
@@ -76,13 +76,13 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "alias": "TestingTenant4",
                 "description": "Forth ACI Test Tenant",
                 "comments": "# ACI Test Tenant 4",
-                "tenant": nb_tenant1.id,
+                "nb_tenant": nb_tenant1.id,
             },
             {
                 "name": "ACITestTenantAPI5",
                 "alias": "TestingTenant5",
                 "description": "Fifth ACI Test Tenant",
                 "comments": "# ACI Test Tenant 5",
-                "tenant": nb_tenant2.id,
+                "nb_tenant": nb_tenant2.id,
             },
         ]

@@ -15,4 +15,4 @@ from .filters import ACITenantFilter
 class ACITenantType(NetBoxObjectType):
     """GraphQL type definition for ACITenant model."""
 
-    tenant: TenantType | None
+    nb_tenant: TenantType | None

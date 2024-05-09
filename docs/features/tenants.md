@@ -24,6 +24,6 @@ The *ACITenant* model has the following fields:
 
 - **Alias**: an alias in the ACI
 - **Description**: a description of the ACI tenant
-- (NetBox) **Tenant**: an assignment to the NetBox tenant model
+- **NetBox Tenant**: an assignment to the NetBox tenant model
 - **Comments**: a text field for additional notes
 - **Tags**: a list of NetBox tags

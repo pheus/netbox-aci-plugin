@@ -14,8 +14,8 @@ class ACITenantView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Tenant."""
 
     queryset = ACITenant.objects.prefetch_related(
+        "nb_tenant",
         "tags",
-        "tenant",
     )
 
 
@@ -23,8 +23,8 @@ class ACITenantListView(generic.ObjectListView):
     """List view for listing all objects of ACI Tenant."""
 
     queryset = ACITenant.objects.prefetch_related(
+        "nb_tenant",
         "tags",
-        "tenant",
     )
     filterset = ACITenantFilterSet
     filterset_form = ACITenantFilterForm
@@ -35,8 +35,8 @@ class ACITenantEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Tenant."""
 
     queryset = ACITenant.objects.prefetch_related(
+        "nb_tenant",
         "tags",
-        "tenant",
     )
     form = ACITenantForm
 
@@ -45,6 +45,6 @@ class ACITenantDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Tenant."""
 
     queryset = ACITenant.objects.prefetch_related(
+        "nb_tenant",
         "tags",
-        "tenant",
     )

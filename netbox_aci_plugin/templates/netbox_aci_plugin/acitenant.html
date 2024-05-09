@@ -20,12 +20,12 @@
               <td>{{ object.description }}</td>
             </tr>
             <tr>
-              <th scope="row">{% trans "Tenant" %}</th>
+              <th scope="row">{% trans "NetBox Tenant" %}</th>
               <td>
-                  {% if object.tenant.group %}
-                      {{ object.tenant.group|linkify }} /
+                  {% if object.nb_tenant.group %}
+                      {{ object.nb_tenant.group|linkify }} /
                   {% endif %}
-                  {{ object.tenant|linkify|placeholder }}
+                  {{ object.nb_tenant|linkify|placeholder }}
               </td>
           </tr>
           </table>

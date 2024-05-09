@@ -34,10 +34,10 @@ class ACITenant(NetBoxModel):
         validators=[ACIPolicyDescriptionValidator],
         verbose_name=_("Description"),
     )
-    tenant = models.ForeignKey(
+    nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.PROTECT,
-        related_name="aci_tenants",
+        related_name="+",
         blank=True,
         null=True,
         verbose_name=_("NetBox Tenant"),
