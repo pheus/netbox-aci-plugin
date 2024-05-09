@@ -15,10 +15,10 @@ class ACITenantsQuery:
     """GraphQL query definition for ACITenant model."""
 
     @strawberry.field
-    def acitenant(self, id: int) -> ACITenantType:
+    def aci_tenant(self, id: int) -> ACITenantType:
         return ACITenant.objects.get(pk=id)
 
-    acitenant_list: List[ACITenantType] = strawberry_django.field()
+    aci_tenant_list: List[ACITenantType] = strawberry_django.field()
 
 
 schema = [
