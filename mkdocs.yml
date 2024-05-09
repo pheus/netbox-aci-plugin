@@ -6,6 +6,8 @@ repo_name: pheus/netbox-aci-plugin
 # strict: true
 nav:
   - Home: index.md
+  - Features:
+      - Tenants: features/tenants.md
   - Contributing: contributing.md
   - Changelog: changelog.md
 theme:
@@ -60,8 +62,8 @@ markdown_extensions:
   - pymdownx.details
   - admonition
   - toc:
-      baselevel: 2
-      permalink: true
+      baselevel: 1
+      permalink: '#'
       slugify: !!python/object/apply:pymdownx.slugs.slugify {}
   - meta
 plugins:

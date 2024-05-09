@@ -4,6 +4,10 @@ The NetBox plugin for Cisco ACI allows NetBox to document ACI specific objects l
 
 Documentation: https://pheus.github.io/netbox-aci-plugin/
 
+## Features
+
+- Tenants
+
 ## Compatibility
 
 | NetBox Version | Plugin Version |
@@ -41,7 +45,7 @@ PLUGINS_CONFIG = {
 ```
 ## Status
 
-This project has just started.
+This project has just started. Database migrations will be added once the main models have been defined.
 
 ## Release notes
 
