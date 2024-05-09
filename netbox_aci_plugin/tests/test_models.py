@@ -14,7 +14,6 @@ class ACITenantTestCase(TestCase):
 
     def setUp(self) -> None:
         """Set up an ACI Tenant for testing."""
-
         acitenant_name = "ACITestTenant1"
         acitenant_alias = "TestingTenant"
         acitenant_description = "Tenant for NetBox ACI Plugin testing"
@@ -34,7 +33,6 @@ class ACITenantTestCase(TestCase):
 
     def test_create_aci_tenant(self) -> None:
         """Test type and values of created ACI Tenant."""
-
         self.assertTrue(isinstance(self.aci_tenant, ACITenant))
         self.assertEqual(self.aci_tenant.__str__(), self.aci_tenant.name)
         self.assertEqual(self.aci_tenant.alias, "TestingTenant")
