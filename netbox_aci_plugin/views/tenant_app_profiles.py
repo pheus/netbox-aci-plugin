@@ -4,7 +4,7 @@
 
 from netbox.views import generic
 
-# from ..filtersets.tenants import ACIAppProfileFilterSet
+from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
 from ..forms.tenant_app_profiles import ACIAppProfileForm
 from ..models.tenant_app_profiles import ACIAppProfile
 from ..tables.tenant_app_profiles import ACIAppProfileTable
@@ -28,6 +28,7 @@ class ACIAppProfileListView(generic.ObjectListView):
         "nb_tenant",
         "tags",
     )
+    filterset = ACIAppProfileFilterSet
     table = ACIAppProfileTable
 
 
