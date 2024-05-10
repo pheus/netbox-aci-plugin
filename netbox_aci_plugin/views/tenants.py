@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from netbox.views import generic
+from utilities.views import register_model_view
 
 from ..filtersets.tenants import ACITenantFilterSet
 from ..forms.tenants import ACITenantFilterForm, ACITenantForm
@@ -10,6 +11,7 @@ from ..models.tenants import ACITenant
 from ..tables.tenants import ACITenantTable
 
 
+@register_model_view(ACITenant)
 class ACITenantView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Tenant."""
 
@@ -31,6 +33,7 @@ class ACITenantListView(generic.ObjectListView):
     table = ACITenantTable
 
 
+@register_model_view(ACITenant, "edit")
 class ACITenantEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Tenant."""
 
@@ -41,6 +44,7 @@ class ACITenantEditView(generic.ObjectEditView):
     form = ACITenantForm
 
 
+@register_model_view(ACITenant, "delete")
 class ACITenantDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Tenant."""
 
