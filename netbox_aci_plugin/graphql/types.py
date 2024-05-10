@@ -7,12 +7,23 @@ import strawberry_django
 from netbox.graphql.types import NetBoxObjectType
 from tenancy.graphql.types import TenantType
 
+from ..models.tenant_app_profiles import ACIAppProfile
 from ..models.tenants import ACITenant
-from .filters import ACITenantFilter
+from .filters import ACIAppProfileFilter, ACITenantFilter
 
 
 @strawberry_django.type(ACITenant, fields="__all__", filters=ACITenantFilter)
 class ACITenantType(NetBoxObjectType):
     """GraphQL type definition for ACITenant model."""
 
+    nb_tenant: TenantType | None
+
+
+@strawberry_django.type(
+    ACIAppProfile, fields="__all__", filters=ACIAppProfileFilter
+)
+class ACIAppProfileType(NetBoxObjectType):
+    """GraphQL type definition for ACIAppProfile model."""
+
+    aci_tenant: ACITenantType
     nb_tenant: TenantType | None

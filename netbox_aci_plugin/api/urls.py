@@ -8,6 +8,7 @@ from . import views
 
 app_name = "netbox_aci_plugin"
 router = NetBoxRouter()
-router.register("tenant", views.ACITenantListViewSet)
+router.register("tenants", views.ACITenantListViewSet)
+router.register("app-profiles", views.ACIAppProfileListViewSet)
 
 urlpatterns = router.urls

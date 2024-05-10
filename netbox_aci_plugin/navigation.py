@@ -18,9 +18,31 @@ acitenant_item = PluginMenuItem(
     buttons=acitenant_buttons,
 )
 
+# ACI Application Profile
+aciappprofile_buttons = (
+    PluginMenuButton(
+        link="plugins:netbox_aci_plugin:aciappprofile_add",
+        title="Add",
+        icon_class="mdi mdi-plus-thick",
+    ),
+)
+aciappprofile_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:aciappprofile_list",
+    link_text="Application Profiles",
+    buttons=aciappprofile_buttons,
+)
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
-    groups=(("Tenant", (acitenant_item,)),),
+    groups=(
+        (
+            "Tenant",
+            (
+                acitenant_item,
+                aciappprofile_item,
+            ),
+        ),
+    ),
     icon_class="mdi mdi-router",
 )

@@ -7,6 +7,7 @@ Documentation: https://pheus.github.io/netbox-aci-plugin/
 ## Features
 
 - Tenants
+- Application Profiles
 
 ## Compatibility
 
