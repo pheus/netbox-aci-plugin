@@ -15,7 +15,7 @@ class ACITenantTable(NetBoxTable):
     name = tables.Column(linkify=True, verbose_name=_("ACI Tenant"))
     alias = tables.Column(linkify=True)
     description = tables.Column()
-    nb_tenant = tables.Column(linkify=True, verbose_name=_("NetBox Tenant"))
+    nb_tenant = tables.Column(linkify=True)
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
