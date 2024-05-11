@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
-from utilities.views import register_model_view
+from utilities.views import ViewTab, register_model_view
 
 from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
 from ..forms.tenant_app_profiles import (
@@ -59,3 +60,21 @@ class ACIAppProfileDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+class ACIAppProfileChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI Application Profile."""
+
+    child_model = ACIAppProfile
+    filterset = ACIAppProfileFilterSet
+    tab = ViewTab(
+        label=_("Application Profiles"),
+        badge=lambda obj: obj.aci_app_profiles.count(),
+        weight=1000,
+    )
+    table = ACIAppProfileTable
+    template_name = "netbox_aci_plugin/acitenant_appprofile.html"
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIAppProfile."""
+        return ACIAppProfile.objects.all()
