@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from netbox.views import generic
+from utilities.relations import get_related_models
 from utilities.views import register_model_view
 
 from ..filtersets.tenants import ACITenantFilterSet
@@ -20,6 +21,23 @@ class ACITenantView(generic.ObjectView):
         "nb_tenant",
         "tags",
     )
+
+    def get_extra_context(self, request, instance):
+        """Return related models as extra context."""
+
+        related_models = [
+            (
+                model.objects.restrict(request.user, "view").filter(
+                    aci_tenant=instance
+                ),
+                f"{field}_id",
+            )
+            for model, field in get_related_models(ACITenant)
+        ]
+
+        return {
+            "related_models": related_models,
+        }
 
 
 class ACITenantListView(generic.ObjectListView):
