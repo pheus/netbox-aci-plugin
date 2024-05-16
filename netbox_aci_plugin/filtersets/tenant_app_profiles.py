@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2024 Martin Hauser
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 import django_filters
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
