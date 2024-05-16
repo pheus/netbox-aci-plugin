@@ -73,7 +73,6 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
         weight=1000,
     )
     table = ACIAppProfileTable
-    template_name = "netbox_aci_plugin/acitenant_appprofile.html"
 
     def get_children(self, request, parent):
         """Return all objects of ACIAppProfile."""

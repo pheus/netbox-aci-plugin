@@ -78,6 +78,7 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
     """Children view of ACI Application Profile of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
+    template_name = "netbox_aci_plugin/acitenant_appprofiles.html"
 
     def get_children(self, request, parent):
         """Return all ACIAppProfile objects for current ACITenant."""
