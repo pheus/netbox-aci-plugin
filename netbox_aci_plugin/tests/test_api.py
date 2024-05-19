@@ -145,7 +145,7 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         ACIAppProfile.objects.bulk_create(aci_app_profiles)
 
-        cls.create_data = [
+        cls.create_data: list[dict] = [
             {
                 "name": "ACIAppProfileTestAPI4",
                 "alias": "Testing",

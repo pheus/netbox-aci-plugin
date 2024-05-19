@@ -49,14 +49,14 @@ class ACIAppProfile(NetBoxModel):
         null=True,
         verbose_name=_("NetBox Tenant"),
     )
-    comments = models.TextField(blank=True, verbose_name=_("Comments"))
+    comments = models.TextField(
+        blank=True,
+        verbose_name=_("Comments"),
+    )
 
     class Meta:
-        ordering: tuple = (
-            "aci_tenant",
-            "name",
-        )
-        unique_together = ("aci_tenant", "name")
+        ordering: tuple = ("aci_tenant", "name")
+        unique_together: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Application Profile")
 
     def __str__(self) -> str:

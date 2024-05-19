@@ -35,4 +35,7 @@ class ACIAppProfilesQuery:
     )
 
 
-schema = [ACITenantsQuery, ACIAppProfilesQuery]
+schema: list = [
+    ACITenantsQuery,
+    ACIAppProfilesQuery,
+]

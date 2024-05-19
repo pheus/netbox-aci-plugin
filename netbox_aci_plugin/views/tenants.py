@@ -22,10 +22,10 @@ class ACITenantView(generic.ObjectView):
         "tags",
     )
 
-    def get_extra_context(self, request, instance):
+    def get_extra_context(self, request, instance) -> dict:
         """Return related models as extra context."""
 
-        related_models = [
+        related_models: list[tuple] = [
             (
                 model.objects.restrict(request.user, "view").filter(
                     aci_tenant=instance

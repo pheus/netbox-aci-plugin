@@ -11,11 +11,11 @@ from ..forms.tenants import ACITenantForm
 class ACITenantFormTestCase(TestCase):
     """Test case for ACITenant form."""
 
-    name_error_message = (
+    name_error_message: str = (
         "Only alphanumeric characters, hyphens, periods and underscores are\
         allowed."
     )
-    description_error_message = (
+    description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
         allowed."
     )
@@ -57,11 +57,11 @@ class ACITenantFormTestCase(TestCase):
 class ACIAppProfileFormTestCase(TestCase):
     """Test case for ACIAppProfile form."""
 
-    name_error_message = (
+    name_error_message: str = (
         "Only alphanumeric characters, hyphens, periods and underscores are\
         allowed."
     )
-    description_error_message = (
+    description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
         allowed."
     )

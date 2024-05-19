@@ -14,13 +14,13 @@ class ACITenantIndex(SearchIndex):
 
     model = ACITenant
 
-    fields = (
+    fields: tuple = (
         ("name", 100),
         ("alias", 300),
         ("description", 500),
         ("comments", 5000),
     )
-    display_attrs = (
+    display_attrs: tuple = (
         "name",
         "alias",
         "description",
@@ -33,13 +33,13 @@ class ACIAppProfileIndex(SearchIndex):
 
     model = ACIAppProfile
 
-    fields = (
+    fields: tuple = (
         ("name", 100),
         ("alias", 300),
         ("description", 500),
         ("comments", 5000),
     )
-    display_attrs = (
+    display_attrs: tuple = (
         "name",
         "alias",
         "description",

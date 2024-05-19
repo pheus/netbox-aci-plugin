@@ -13,12 +13,19 @@ class ACIAppProfileTable(NetBoxTable):
     """NetBox table for ACI Application Profile model."""
 
     name = tables.Column(
-        linkify=True, verbose_name=_("ACI Application Profile")
+        linkify=True,
+        verbose_name=_("ACI Application Profile"),
     )
-    alias = tables.Column(linkify=True)
+    alias = tables.Column(
+        linkify=True,
+    )
     description = tables.Column()
-    aci_tenant = tables.Column(linkify=True)
-    nb_tenant = tables.Column(linkify=True)
+    aci_tenant = tables.Column(
+        linkify=True,
+    )
+    nb_tenant = tables.Column(
+        linkify=True,
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 

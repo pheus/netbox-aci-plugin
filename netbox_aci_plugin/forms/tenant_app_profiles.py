@@ -49,7 +49,11 @@ class ACIAppProfileForm(NetBoxModelForm):
             "tags",
             name=_("ACI Application Profile"),
         ),
-        FieldSet("nb_tenant_group", "nb_tenant", name=_("NetBox Tenancy")),
+        FieldSet(
+            "nb_tenant_group",
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
     )
 
     class Meta:
@@ -70,11 +74,23 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
 
     model = ACIAppProfile
     fieldsets: tuple = (
-        FieldSet("q", "filter_id", "tag"),
         FieldSet(
-            "name", "alias", "aci_tenant_id", "description", name="Attributes"
+            "q",
+            "filter_id",
+            "tag",
         ),
-        FieldSet("nb_tenant_group_id", "nb_tenant_id", name="NetBox Tenancy"),
+        FieldSet(
+            "name",
+            "alias",
+            "aci_tenant_id",
+            "description",
+            name="Attributes",
+        ),
+        FieldSet(
+            "nb_tenant_group_id",
+            "nb_tenant_id",
+            name="NetBox Tenancy",
+        ),
     )
 
     name = forms.CharField(required=False)

@@ -35,8 +35,18 @@ class ACITenantForm(NetBoxModelForm):
     comments = CommentField()
 
     fieldsets: tuple = (
-        FieldSet("name", "alias", "description", "tags", name=_("ACI Tenant")),
-        FieldSet("nb_tenant_group", "nb_tenant", name=_("NetBox Tenancy")),
+        FieldSet(
+            "name",
+            "alias",
+            "description",
+            "tags",
+            name=_("ACI Tenant"),
+        ),
+        FieldSet(
+            "nb_tenant_group",
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
     )
 
     class Meta:
@@ -56,14 +66,33 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
 
     model = ACITenant
     fieldsets: tuple = (
-        FieldSet("q", "filter_id", "tag"),
-        FieldSet("name", "alias", "description", name="Attributes"),
-        FieldSet("nb_tenant_group_id", "nb_tenant_id", name="NetBox Tenancy"),
+        FieldSet(
+            "q",
+            "filter_id",
+            "tag",
+        ),
+        FieldSet(
+            "name",
+            "alias",
+            "description",
+            name="Attributes",
+        ),
+        FieldSet(
+            "nb_tenant_group_id",
+            "nb_tenant_id",
+            name="NetBox Tenancy",
+        ),
     )
 
-    name = forms.CharField(required=False)
-    alias = forms.CharField(required=False)
-    description = forms.CharField(required=False)
+    name = forms.CharField(
+        required=False,
+    )
+    alias = forms.CharField(
+        required=False,
+    )
+    description = forms.CharField(
+        required=False,
+    )
     nb_tenant_group_id = DynamicModelMultipleChoiceField(
         queryset=TenantGroup.objects.all(),
         required=False,

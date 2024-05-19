@@ -42,7 +42,10 @@ class ACITenant(NetBoxModel):
         null=True,
         verbose_name=_("NetBox Tenant"),
     )
-    comments = models.TextField(blank=True, verbose_name=_("Comments"))
+    comments = models.TextField(
+        blank=True,
+        verbose_name=_("Comments"),
+    )
 
     class Meta:
         ordering: tuple = ("name",)

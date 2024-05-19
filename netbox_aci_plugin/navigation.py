@@ -5,7 +5,7 @@
 from netbox.plugins import PluginMenu, PluginMenuButton, PluginMenuItem
 
 # ACI Tenant
-acitenant_buttons = (
+acitenant_buttons: tuple = (
     PluginMenuButton(
         link="plugins:netbox_aci_plugin:acitenant_add",
         title="Add",
@@ -19,7 +19,7 @@ acitenant_item = PluginMenuItem(
 )
 
 # ACI Application Profile
-aciappprofile_buttons = (
+aciappprofile_buttons: tuple = (
     PluginMenuButton(
         link="plugins:netbox_aci_plugin:aciappprofile_add",
         title="Add",

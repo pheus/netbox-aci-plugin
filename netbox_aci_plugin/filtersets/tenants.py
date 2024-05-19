@@ -39,7 +39,7 @@ class ACITenantFilterSet(NetBoxModelFilterSet):
         """Return a QuerySet filtered by the models description."""
         if not value.strip():
             return queryset
-        queryset_filter = (
+        queryset_filter: Q = (
             Q(name__icontains=value)
             | Q(alias__icontains=value)
             | Q(description__icontains=value)
