@@ -4,9 +4,15 @@
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from ipam.models import VRF
 from tenancy.models import Tenant
 
+from ..choices import (
+    VRFPCEnforcementDirectionChoices,
+    VRFPCEnforcementPreferenceChoices,
+)
 from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_networks import ACIVRF
 from ..models.tenants import ACITenant
 
 
@@ -122,3 +128,89 @@ class ACIAppProfileTestCase(TestCase):
             name="ACIAppProfileTest1", description="Invalid Description: ö"
         )
         self.assertRaises(ValidationError, app_profile.full_clean)
+
+
+class ACIVRFTestCase(TestCase):
+    """Test case for ACIVRF model."""
+
+    def setUp(self) -> None:
+        """Set up an ACI VRF for testing."""
+        acitenant_name = "ACITestTenant1"
+        acivrf_name = "VRFTest1"
+        acivrf_alias = "TestingVRF"
+        acivrf_description = "VRF for NetBox ACI Plugin testing"
+        acivrf_comments = """
+        VRF for NetBox ACI Plugin testing.
+        """
+        acivrf_bd_enforcement_enabled = False
+        acivrf_dns_labels = ["DNS1", "DNS2"]
+        acivrf_ip_dp_learning_enabled = False
+        acivrf_pc_enforcement_direction = (
+            VRFPCEnforcementDirectionChoices.DIR_EGRESS
+        )
+        acivrf_pc_enforcement_preference = (
+            VRFPCEnforcementPreferenceChoices.PREF_UNENFORCED
+        )
+        acivrf_pim_ipv4_enabled = False
+        acivrf_pim_ipv6_enabled = False
+        acivrf_preferred_group_enabled = True
+        aci_tenant = ACITenant.objects.create(name=acitenant_name)
+        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
+        nb_vrf = VRF.objects.create(name="NetBox-VRF", tenant=nb_tenant)
+
+        self.aci_vrf = ACIVRF.objects.create(
+            name=acivrf_name,
+            alias=acivrf_alias,
+            description=acivrf_description,
+            comments=acivrf_comments,
+            aci_tenant=aci_tenant,
+            nb_tenant=nb_tenant,
+            nb_vrf=nb_vrf,
+            bd_enforcement_enabled=acivrf_bd_enforcement_enabled,
+            dns_labels=acivrf_dns_labels,
+            ip_data_plane_learning_enabled=acivrf_ip_dp_learning_enabled,
+            pc_enforcement_direction=acivrf_pc_enforcement_direction,
+            pc_enforcement_preference=acivrf_pc_enforcement_preference,
+            pim_ipv4_enabled=acivrf_pim_ipv4_enabled,
+            pim_ipv6_enabled=acivrf_pim_ipv6_enabled,
+            preferred_group_enabled=acivrf_preferred_group_enabled,
+        )
+        super().setUp()
+
+    def test_create_aci_vrf(self) -> None:
+        """Test type and values of created ACI VRF."""
+        self.assertTrue(isinstance(self.aci_vrf, ACIVRF))
+        self.assertEqual(self.aci_vrf.__str__(), self.aci_vrf.name)
+        self.assertEqual(self.aci_vrf.alias, "TestingVRF")
+        self.assertEqual(
+            self.aci_vrf.description, "VRF for NetBox ACI Plugin testing"
+        )
+        self.assertTrue(isinstance(self.aci_vrf.aci_tenant, ACITenant))
+        self.assertEqual(self.aci_vrf.aci_tenant.name, "ACITestTenant1")
+        self.assertTrue(isinstance(self.aci_vrf.nb_tenant, Tenant))
+        self.assertEqual(self.aci_vrf.nb_tenant.name, "NetBox Tenant")
+        self.assertTrue(isinstance(self.aci_vrf.nb_vrf, VRF))
+        self.assertEqual(self.aci_vrf.nb_vrf.name, "NetBox-VRF")
+        self.assertEqual(self.aci_vrf.bd_enforcement_enabled, False)
+        self.assertEqual(self.aci_vrf.dns_labels, ["DNS1", "DNS2"])
+        self.assertEqual(self.aci_vrf.ip_data_plane_learning_enabled, False)
+        self.assertEqual(self.aci_vrf.pc_enforcement_direction, "egress")
+        self.assertEqual(self.aci_vrf.pc_enforcement_preference, "unenforced")
+        self.assertEqual(self.aci_vrf.pim_ipv4_enabled, False)
+        self.assertEqual(self.aci_vrf.pim_ipv6_enabled, False)
+        self.assertEqual(self.aci_vrf.preferred_group_enabled, True)
+
+    def test_invalid_aci_vrf_name(self) -> None:
+        """Test validation of ACI VRF naming."""
+        vrf = ACIVRF(name="ACI VRF Test 1")
+        self.assertRaises(ValidationError, vrf.full_clean)
+
+    def test_invalid_aci_vrf_alias(self) -> None:
+        """Test validation of ACI VRF aliasing."""
+        vrf = ACIVRF(name="ACIVRFTest1", alias="Invalid Alias")
+        self.assertRaises(ValidationError, vrf.full_clean)
+
+    def test_invalid_aci_vrf_description(self) -> None:
+        """Test validation of ACI VRF description."""
+        vrf = ACIVRF(name="ACIVRFTest1", description="Invalid Description: ö")
+        self.assertRaises(ValidationError, vrf.full_clean)
