@@ -18,7 +18,6 @@ class ACITenantIndex(SearchIndex):
         ("name", 100),
         ("alias", 300),
         ("description", 500),
-        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -37,7 +36,6 @@ class ACIAppProfileIndex(SearchIndex):
         ("name", 100),
         ("alias", 300),
         ("description", 500),
-        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
