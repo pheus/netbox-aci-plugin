@@ -23,6 +23,7 @@ class ACITenantIndex(SearchIndex):
         "name",
         "alias",
         "description",
+        "nb_tenant",
     )
 
 
@@ -41,4 +42,6 @@ class ACIAppProfileIndex(SearchIndex):
         "name",
         "alias",
         "description",
+        "aci_tenant",
+        "nb_tenant",
     )
