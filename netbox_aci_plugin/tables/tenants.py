@@ -19,7 +19,6 @@ class ACITenantTable(NetBoxTable):
     alias = tables.Column(
         linkify=True,
     )
-    description = tables.Column()
     nb_tenant = tables.Column(
         linkify=True,
     )

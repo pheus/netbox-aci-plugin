@@ -19,7 +19,6 @@ class ACIAppProfileTable(NetBoxTable):
     alias = tables.Column(
         linkify=True,
     )
-    description = tables.Column()
     aci_tenant = tables.Column(
         linkify=True,
     )
