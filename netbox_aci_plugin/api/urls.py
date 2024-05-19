@@ -10,5 +10,6 @@ app_name = "netbox_aci_plugin"
 router = NetBoxRouter()
 router.register("tenants", views.ACITenantListViewSet)
 router.register("app-profiles", views.ACIAppProfileListViewSet)
+router.register("vrfs", views.ACIVRFListViewSet)
 
 urlpatterns = router.urls
