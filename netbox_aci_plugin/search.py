@@ -5,6 +5,7 @@
 from netbox.search import SearchIndex, register_search
 
 from .models.tenant_app_profiles import ACIAppProfile
+from .models.tenant_networks import ACIVRF
 from .models.tenants import ACITenant
 
 
@@ -44,4 +45,25 @@ class ACIAppProfileIndex(SearchIndex):
         "description",
         "aci_tenant",
         "nb_tenant",
+    )
+
+
+@register_search
+class ACIVRFIndex(SearchIndex):
+    """NetBox search definition for ACI VRF model."""
+
+    model = ACIVRF
+
+    fields: tuple = (
+        ("name", 100),
+        ("alias", 300),
+        ("description", 500),
+    )
+    display_attrs: tuple = (
+        "name",
+        "alias",
+        "description",
+        "aci_tenant",
+        "nb_tenant",
+        "nb_vrf",
     )

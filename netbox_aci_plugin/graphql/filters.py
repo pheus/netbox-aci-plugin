@@ -2,13 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import Optional
 
 import strawberry_django
 from netbox.graphql.filter_mixins import BaseFilterMixin, autotype_decorator
 
 from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
+from ..filtersets.tenant_networks import ACIVRFFilterSet
 from ..filtersets.tenants import ACITenantFilterSet
 from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_networks import ACIVRF
 from ..models.tenants import ACITenant
 
 
@@ -26,3 +29,11 @@ class ACIAppProfileFilter(BaseFilterMixin):
     """GraphQL filter definition for ACIAppProfile model."""
 
     pass
+
+
+@strawberry_django.filter(ACIVRF, lookups=True)
+@autotype_decorator(ACIVRFFilterSet)
+class ACIVRFFilter(BaseFilterMixin):
+    """GraphQL filter definition for ACIVRF model."""
+
+    dns_labels: Optional[list[str]]

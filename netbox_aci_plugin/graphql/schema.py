@@ -7,8 +7,9 @@ import strawberry
 import strawberry_django
 
 from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_networks import ACIVRF
 from ..models.tenants import ACITenant
-from .types import ACIAppProfileType, ACITenantType
+from .types import ACIAppProfileType, ACITenantType, ACIVRFType
 
 
 @strawberry.type
@@ -35,7 +36,19 @@ class ACIAppProfilesQuery:
     )
 
 
+@strawberry.type
+class ACIVRFQuery:
+    """GraphQL query definition for ACIVRF model."""
+
+    @strawberry.field
+    def aci_vrf(self, id: int) -> ACIVRFType:
+        return ACIVRF.objects.get(pk=id)
+
+    aci_vrf_list: List[ACIVRFType] = strawberry_django.field()
+
+
 schema: list = [
     ACITenantsQuery,
     ACIAppProfilesQuery,
+    ACIVRFQuery,
 ]

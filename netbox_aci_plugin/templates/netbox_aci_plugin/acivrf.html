@@ -1,0 +1,91 @@
+
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acivrf_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h5 class="card-header">{% trans "ACI VRF" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ACI Tenant" %}</th>
+            <td>
+                {{ object.aci_tenant|linkify|placeholder }}
+            </td>
+          <tr>
+            <th scope="row">{% trans "Alias" %}</th>
+            <td>{{ object.alias|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Description" %}</th>
+            <td>{{ object.description|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox Tenant" %}</th>
+            <td>
+                {% if object.nb_tenant.group %}
+                    {{ object.nb_tenant.group|linkify }} /
+                {% endif %}
+                {{ object.nb_tenant|linkify|placeholder }}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox VRF" %}</th>
+            <td>
+                {{ object.nb_vrf|linkify|placeholder }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "ACI VRF Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Bridge Domain Enforcement" %}</th>
+            <td>{% checkmark object.bd_enforcement_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "DNS Labels" %}</th>
+            <td>{{ object.dns_labels|join:", "|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "IP Data Plane Learning" %}</th>
+            <td>{% checkmark object.ip_data_plane_learning_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Policy Control Enforcement Direction" %}</th>
+            <td>{% badge object.get_pc_enforcement_direction_display bg_color=object.get_pc_enforcement_direction_color %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Policy Control Enforcement Preference" %}</th>
+            <td>{% badge object.get_pc_enforcement_preference_display bg_color=object.get_pc_enforcement_preference_color %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "PIM (Multicast) IPv4" %}</th>
+            <td>{% checkmark object.pim_ipv4_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "PIM (Multicast) IPv6" %}</th>
+            <td>{% checkmark object.pim_ipv6_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Preferred Group" %}</th>
+            <td>{% checkmark object.preferred_group_enabled %}</td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}
