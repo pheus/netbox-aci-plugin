@@ -16,7 +16,7 @@ body:
     attributes:
       label: NetBox ACI Plugin version
       description: What version of NetBox ACI Plugin are you currently running?
-      placeholder: v0.0.1
+      placeholder: v0.0.2
     validations:
       required: true
   - type: input
