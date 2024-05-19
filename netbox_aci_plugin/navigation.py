@@ -32,6 +32,20 @@ aciappprofile_item = PluginMenuItem(
     buttons=aciappprofile_buttons,
 )
 
+# ACI VRF
+acivrf_buttons: tuple = (
+    PluginMenuButton(
+        link="plugins:netbox_aci_plugin:acivrf_add",
+        title="Add",
+        icon_class="mdi mdi-plus-thick",
+    ),
+)
+acivrf_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acivrf_list",
+    link_text="VRFs",
+    buttons=acivrf_buttons,
+)
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -41,6 +55,7 @@ menu = PluginMenu(
             (
                 acitenant_item,
                 aciappprofile_item,
+                acivrf_item,
             ),
         ),
     ),
