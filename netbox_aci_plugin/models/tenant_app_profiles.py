@@ -26,13 +26,19 @@ class ACIAppProfile(NetBoxModel):
     alias = models.CharField(
         max_length=64,
         blank=True,
-        validators=[ACIPolicyNameValidator],
+        validators=[
+            MaxLengthValidator(64),
+            ACIPolicyNameValidator,
+        ],
         verbose_name=_("alias"),
     )
     description = models.CharField(
         max_length=128,
         blank=True,
-        validators=[ACIPolicyDescriptionValidator],
+        validators=[
+            MaxLengthValidator(128),
+            ACIPolicyDescriptionValidator,
+        ],
         verbose_name=_("description"),
     )
     aci_tenant = models.ForeignKey(
