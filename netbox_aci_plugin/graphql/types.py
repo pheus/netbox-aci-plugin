@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
+from typing import Optional
+
 import strawberry_django
 from netbox.graphql.types import NetBoxObjectType
 from tenancy.graphql.types import TenantType
@@ -16,7 +18,7 @@ from .filters import ACIAppProfileFilter, ACITenantFilter
 class ACITenantType(NetBoxObjectType):
     """GraphQL type definition for ACITenant model."""
 
-    nb_tenant: TenantType | None
+    nb_tenant: Optional[TenantType]
 
 
 @strawberry_django.type(
@@ -26,4 +28,4 @@ class ACIAppProfileType(NetBoxObjectType):
     """GraphQL type definition for ACIAppProfile model."""
 
     aci_tenant: ACITenantType
-    nb_tenant: TenantType | None
+    nb_tenant: Optional[TenantType]
