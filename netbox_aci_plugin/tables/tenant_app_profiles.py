@@ -14,7 +14,7 @@ class ACIAppProfileTable(NetBoxTable):
 
     name = tables.Column(
         linkify=True,
-        verbose_name=_("ACI Application Profile"),
+        verbose_name=_("Application Profile"),
     )
     alias = tables.Column(
         linkify=True,

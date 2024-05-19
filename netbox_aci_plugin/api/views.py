@@ -14,7 +14,10 @@ from .serializers import ACIAppProfileSerializer, ACITenantSerializer
 class ACITenantListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Tenant instances."""
 
-    queryset = ACITenant.objects.prefetch_related("nb_tenant", "tags")
+    queryset = ACITenant.objects.prefetch_related(
+        "nb_tenant",
+        "tags",
+    )
     serializer_class = ACITenantSerializer
     filterset_class = ACITenantFilterSet
 
@@ -23,7 +26,9 @@ class ACIAppProfileListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Application Profile instances."""
 
     queryset = ACIAppProfile.objects.prefetch_related(
-        "aci_tenant", "nb_tenant", "tags"
+        "aci_tenant",
+        "nb_tenant",
+        "tags",
     )
     serializer_class = ACIAppProfileSerializer
     filterset_class = ACIAppProfileFilterSet

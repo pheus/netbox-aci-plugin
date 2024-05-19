@@ -21,19 +21,19 @@ class ACIAppProfile(NetBoxModel):
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("Name"),
+        verbose_name=_("name"),
     )
     alias = models.CharField(
         max_length=64,
         blank=True,
         validators=[ACIPolicyNameValidator],
-        verbose_name=_("Alias"),
+        verbose_name=_("alias"),
     )
     description = models.CharField(
         max_length=128,
         blank=True,
         validators=[ACIPolicyDescriptionValidator],
-        verbose_name=_("Description"),
+        verbose_name=_("description"),
     )
     aci_tenant = models.ForeignKey(
         to=ACITenant,
@@ -47,11 +47,11 @@ class ACIAppProfile(NetBoxModel):
         related_name="+",
         blank=True,
         null=True,
-        verbose_name=_("NetBox Tenant"),
+        verbose_name=_("NetBox tenant"),
     )
     comments = models.TextField(
         blank=True,
-        verbose_name=_("Comments"),
+        verbose_name=_("comments"),
     )
 
     class Meta:

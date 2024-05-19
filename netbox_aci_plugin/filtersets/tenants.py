@@ -17,12 +17,12 @@ class ACITenantFilterSet(NetBoxModelFilterSet):
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
         queryset=Tenant.objects.all(),
         to_field_name="name",
-        label=_("NetBox Tenant (name)"),
+        label=_("NetBox tenant (name)"),
     )
     nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Tenant.objects.all(),
         to_field_name="id",
-        label=_("NetBox Tenant (ID)"),
+        label=_("NetBox tenant (ID)"),
     )
 
     class Meta:

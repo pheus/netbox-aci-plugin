@@ -23,13 +23,13 @@ class ACITenantForm(NetBoxModelForm):
     nb_tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
         required=False,
-        label=_("NetBox Tenant group"),
+        label=_("NetBox tenant group"),
         initial_params={"tenants": "$nb_tenant"},
     )
     nb_tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
-        label=_("NetBox Tenant"),
+        label=_("NetBox tenant"),
         query_params={"group_id": "$nb_tenant_group"},
     )
     comments = CommentField()
