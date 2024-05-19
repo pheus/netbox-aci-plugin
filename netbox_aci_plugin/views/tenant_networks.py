@@ -5,6 +5,7 @@
 from netbox.views import generic
 from utilities.views import register_model_view
 
+from ..filtersets.tenant_networks import ACIVRFFilterSet
 from ..forms.tenant_networks import ACIVRFForm
 from ..models.tenant_networks import ACIVRF
 from ..tables.tenant_networks import ACIVRFTable
@@ -29,6 +30,7 @@ class ACIVRFListView(generic.ObjectListView):
         "nb_tenant",
         "tags",
     )
+    filterset = ACIVRFFilterSet
     table = ACIVRFTable
 
 
