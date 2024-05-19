@@ -9,6 +9,7 @@ from .views.tenant_app_profiles import (
     ACIAppProfileEditView,
     ACIAppProfileListView,
 )
+from .views.tenant_networks import ACIVRFEditView, ACIVRFListView
 from .views.tenants import ACITenantEditView, ACITenantListView
 
 urlpatterns: tuple = (
@@ -33,5 +34,12 @@ urlpatterns: tuple = (
     path(
         "app-profiles/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciappprofile")),
+    ),
+    # ACI VRF
+    path("vrfs/", ACIVRFListView.as_view(), name="acivrf_list"),
+    path("vrfs/add/", ACIVRFEditView.as_view(), name="acivrf_add"),
+    path(
+        "vrfs/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acivrf")),
     ),
 )
