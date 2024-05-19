@@ -60,6 +60,13 @@ class ACIAppProfile(NetBoxModel):
         verbose_name=_("comments"),
     )
 
+    clone_fields: tuple = (
+        "description",
+        "aci_tenant",
+        "nb_tenant",
+    )
+    prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
+
     class Meta:
         ordering: tuple = ("aci_tenant", "name")
         unique_together: tuple = ("aci_tenant", "name")

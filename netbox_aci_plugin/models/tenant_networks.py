@@ -144,6 +144,22 @@ class ACIVRF(NetBoxModel):
         verbose_name=_("comments"),
     )
 
+    clone_fields: tuple = (
+        "description",
+        "aci_tenant",
+        "nb_tenant",
+        "nb_vrf",
+        "bd_enforcement_enabled",
+        "dns_labels",
+        "ip_data_plane_learning_enabled",
+        "pc_enforcement_direction",
+        "pc_enforcement_preference",
+        "pim_ipv4_enabled",
+        "pim_ipv6_enabled",
+        "preferred_group_enabled",
+    )
+    prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
+
     class Meta:
         ordering: tuple = ("aci_tenant", "name")
         unique_together: tuple = ("aci_tenant", "name")

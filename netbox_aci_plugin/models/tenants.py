@@ -53,6 +53,11 @@ class ACITenant(NetBoxModel):
         verbose_name=_("comments"),
     )
 
+    clone_fields: tuple = (
+        "description",
+        "nb_tenant",
+    )
+
     class Meta:
         ordering: tuple = ("name",)
         verbose_name: str = _("ACI Tenant")
