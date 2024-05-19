@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
-from utilities.views import register_model_view
+from utilities.views import ViewTab, register_model_view
 
 from ..filtersets.tenant_networks import ACIVRFFilterSet
 from ..forms.tenant_networks import ACIVRFFilterForm, ACIVRFForm
@@ -56,3 +57,20 @@ class ACIVRFDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+class ACIVRFChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI VRF."""
+
+    child_model = ACIVRF
+    filterset = ACIVRFFilterSet
+    tab = ViewTab(
+        label=_("VRF"),
+        badge=lambda obj: obj.aci_vrfs.count(),
+        weight=1000,
+    )
+    table = ACIVRFTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIVRF."""
+        return ACIVRF.objects.all()

@@ -11,6 +11,7 @@ from ..forms.tenants import ACITenantFilterForm, ACITenantForm
 from ..models.tenants import ACITenant
 from ..tables.tenants import ACITenantTable
 from .tenant_app_profiles import ACIAppProfileChildrenView
+from .tenant_networks import ACIVRFChildrenView
 
 
 @register_model_view(ACITenant)
@@ -82,6 +83,31 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
 
     def get_children(self, request, parent):
         """Return all ACIAppProfile objects for current ACITenant."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_tenant_id=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return table with ACITenant colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column
+        table.columns.hide("aci_tenant")
+
+        return table
+
+
+@register_model_view(ACITenant, "vrfs", path="vrfs")
+class ACITenantVRFView(ACIVRFChildrenView):
+    """Children view of ACI VRF of ACI Tenant."""
+
+    queryset = ACITenant.objects.all()
+    template_name = "netbox_aci_plugin/acitenant_vrfs.html"
+
+    def get_children(self, request, parent):
+        """Return all ACIVRF objects for current ACITenant."""
         return (
             super()
             .get_children(request, parent)
