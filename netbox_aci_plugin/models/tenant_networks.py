@@ -121,14 +121,14 @@ class ACIVRF(NetBoxModel):
         default=False,
         verbose_name=_("PIM (multicast) IPv4 enabled"),
         help_text=_(
-            "Multicast routing enabled for the VRF. Default is false."
+            "Multicast routing enabled for the VRF. Default is disabled."
         ),
     )
     pim_ipv6_enabled = models.BooleanField(
         default=False,
         verbose_name=_("PIM (multicast) IPv6 enabled"),
         help_text=_(
-            "Multicast routing enabled for the VRF. Default is false."
+            "Multicast routing enabled for the VRF. Default is disabled."
         ),
     )
     preferred_group_enabled = models.BooleanField(
@@ -136,7 +136,7 @@ class ACIVRF(NetBoxModel):
         verbose_name=_("preferred group enabled"),
         help_text=_(
             "Whether preferred group feature is enabled for the VRF. "
-            "Default is false."
+            "Default is disabled."
         ),
     )
     comments = models.TextField(
@@ -174,11 +174,13 @@ class ACIVRF(NetBoxModel):
         return reverse("plugins:netbox_aci_plugin:acivrf", args=[self.pk])
 
     def get_pc_enforcement_direction_color(self):
+        """Return the associated color of choice from the ChoiceSet."""
         return VRFPCEnforcementDirectionChoices.colors.get(
             self.pc_enforcement_direction
         )
 
     def get_pc_enforcement_preference_color(self):
+        """Return the associated color of choice from the ChoiceSet."""
         return VRFPCEnforcementPreferenceChoices.colors.get(
             self.pc_enforcement_preference
         )

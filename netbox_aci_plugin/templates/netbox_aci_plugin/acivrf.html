@@ -45,20 +45,8 @@
         </table>
       </div>
       <div class="card">
-        <h5 class="card-header">{% trans "ACI VRF Settings" %}</h5>
+        <h5 class="card-header">{% trans "Policy Control Settings" %}</h5>
         <table class="table table-hover attr-table">
-          <tr>
-            <th scope="row">{% trans "Bridge Domain Enforcement" %}</th>
-            <td>{% checkmark object.bd_enforcement_enabled %}</td>
-          </tr>
-          <tr>
-            <th scope="row">{% trans "DNS Labels" %}</th>
-            <td>{{ object.dns_labels|join:", "|placeholder }}</td>
-          </tr>
-          <tr>
-            <th scope="row">{% trans "IP Data Plane Learning" %}</th>
-            <td>{% checkmark object.ip_data_plane_learning_enabled %}</td>
-          </tr>
           <tr>
             <th scope="row">{% trans "Policy Control Enforcement Direction" %}</th>
             <td>{% badge object.get_pc_enforcement_direction_display bg_color=object.get_pc_enforcement_direction_color %}</td>
@@ -68,12 +56,8 @@
             <td>{% badge object.get_pc_enforcement_preference_display bg_color=object.get_pc_enforcement_preference_color %}</td>
           </tr>
           <tr>
-            <th scope="row">{% trans "PIM (Multicast) IPv4" %}</th>
-            <td>{% checkmark object.pim_ipv4_enabled %}</td>
-          </tr>
-          <tr>
-            <th scope="row">{% trans "PIM (Multicast) IPv6" %}</th>
-            <td>{% checkmark object.pim_ipv6_enabled %}</td>
+            <th scope="row">{% trans "Bridge Domain Enforcement" %}</th>
+            <td>{% checkmark object.bd_enforcement_enabled %}</td>
           </tr>
           <tr>
             <th scope="row">{% trans "Preferred Group" %}</th>
@@ -81,9 +65,40 @@
           </tr>
         </table>
       </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Endpoint Learning Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "IP Data Plane Learning" %}</th>
+            <td>{% checkmark object.ip_data_plane_learning_enabled %}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Multicast Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "PIM (Multicast) IPv4" %}</th>
+            <td>{% checkmark object.pim_ipv4_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "PIM (Multicast) IPv6" %}</th>
+            <td>{% checkmark object.pim_ipv6_enabled %}</td>
+          </tr>
+        </table>
+      </div>
       {% include 'inc/panels/custom_fields.html' %}
     </div>
     <div class="col col-md-6">
+      <div class="card">
+        <h5 class="card-header">{% trans "Additional Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "DNS Labels" %}</th>
+            <td>{{ object.dns_labels|join:", "|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
       {% include 'inc/panels/tags.html' %}
       {% include 'inc/panels/comments.html' %}
     </div>

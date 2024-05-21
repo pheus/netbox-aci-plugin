@@ -65,7 +65,7 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
     child_model = ACIVRF
     filterset = ACIVRFFilterSet
     tab = ViewTab(
-        label=_("VRF"),
+        label=_("VRFs"),
         badge=lambda obj: obj.aci_vrfs.count(),
         weight=1000,
     )
@@ -73,4 +73,8 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIVRF."""
-        return ACIVRF.objects.all()
+        return ACIVRF.objects.prefetch_related(
+            "aci_tenant",
+            "nb_tenant",
+            "tags",
+        )

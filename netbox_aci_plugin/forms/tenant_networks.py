@@ -86,14 +86,14 @@ class ACIVRFForm(NetBoxModelForm):
     pim_ipv4_enabled = forms.BooleanField(
         label=_("PIM (multicast) IPv4 enabled"),
         help_text=_(
-            "Multicast routing enabled for the VRF. Default is false."
+            "Multicast routing enabled for the VRF. Default is disabled."
         ),
         required=False,
     )
     pim_ipv6_enabled = forms.BooleanField(
         label=_("PIM (multicast) IPv6 enabled"),
         help_text=_(
-            "Multicast routing enabled for the VRF. Default is false."
+            "Multicast routing enabled for the VRF. Default is disabled."
         ),
         required=False,
     )
@@ -101,7 +101,7 @@ class ACIVRFForm(NetBoxModelForm):
         label=_("Preferred group enabled"),
         help_text=_(
             "Whether preferred group feature is enabled for the VRF. "
-            "Default is false."
+            "Default is disabled."
         ),
         required=False,
     )
@@ -117,24 +117,33 @@ class ACIVRFForm(NetBoxModelForm):
             name=_("ACI VRF"),
         ),
         FieldSet(
-            "dns_labels",
             "pc_enforcement_direction",
             "pc_enforcement_preference",
             "bd_enforcement_enabled",
-            "ip_data_plane_learning_enabled",
-            "pim_ipv4_enabled",
-            "pim_ipv6_enabled",
             "preferred_group_enabled",
-            name=_("ACI VRF Settings"),
+            name=_("Policy Control Settings"),
         ),
         FieldSet(
-            "nb_vrf",
-            name=_("NetBox Networking"),
+            "ip_data_plane_learning_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            name=_("Multicast Settings"),
+        ),
+        FieldSet(
+            "dns_labels",
+            name=_("Additional Settings"),
         ),
         FieldSet(
             "nb_tenant_group",
             "nb_tenant",
             name=_("NetBox Tenancy"),
+        ),
+        FieldSet(
+            "nb_vrf",
+            name=_("NetBox Networking"),
         ),
     )
 
@@ -178,24 +187,33 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
             name="Attributes",
         ),
         FieldSet(
-            "dns_labels",
             "pc_enforcement_direction",
             "pc_enforcement_preference",
             "bd_enforcement_enabled",
-            "ip_data_plane_learning_enabled",
-            "pim_ipv4_enabled",
-            "pim_ipv6_enabled",
             "preferred_group_enabled",
-            name=_("ACI VRF Settings"),
+            name=_("Policy Control Settings"),
         ),
         FieldSet(
-            "nb_vrf_id",
-            name=_("NetBox Networking"),
+            "ip_data_plane_learning_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            name=_("Multicast Settings"),
+        ),
+        FieldSet(
+            "dns_labels",
+            name=_("Additional Settings"),
         ),
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
             name="NetBox Tenancy",
+        ),
+        FieldSet(
+            "nb_vrf_id",
+            name=_("NetBox Networking"),
         ),
     )
 

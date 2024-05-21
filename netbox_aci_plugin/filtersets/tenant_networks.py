@@ -51,7 +51,6 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("NetBox VRF (ID)"),
     )
-    # dns_labels = django_filters.CharFilter()
     pc_enforcement_direction = django_filters.MultipleChoiceFilter(
         choices=VRFPCEnforcementDirectionChoices,
         null_value=None,
