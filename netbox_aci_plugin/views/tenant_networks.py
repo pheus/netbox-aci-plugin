@@ -6,7 +6,10 @@ from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
-from ..filtersets.tenant_networks import ACIVRFFilterSet
+from ..filtersets.tenant_networks import (
+    ACIBridgeDomainFilterSet,
+    ACIVRFFilterSet,
+)
 from ..forms.tenant_networks import (
     ACIBridgeDomainForm,
     ACIVRFFilterForm,
@@ -103,6 +106,7 @@ class ACIBridgeDomainListView(generic.ObjectListView):
         "nb_tenant",
         "tags",
     )
+    filterset = ACIBridgeDomainFilterSet
     table = ACIBridgeDomainTable
 
 
