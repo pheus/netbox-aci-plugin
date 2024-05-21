@@ -512,3 +512,155 @@ class ACIBridgeDomainForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+
+class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for ACI Bridge Domain model."""
+
+    model = ACIBridgeDomain
+    fieldsets: tuple = (
+        FieldSet(
+            "q",
+            "filter_id",
+            "tag",
+        ),
+        FieldSet(
+            "name",
+            "alias",
+            "aci_tenant_id",
+            "aci_vrf_id",
+            "description",
+            name="Attributes",
+        ),
+        FieldSet(
+            "unicast_routing_enabled",
+            "advertise_host_routes_enabled",
+            "ep_move_detection_enabled",
+            "mac_address",
+            "virtual_mac_address",
+            name=_("Routing Settings"),
+        ),
+        FieldSet(
+            "arp_flooding_enabled",
+            "unknown_unicast",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "multi_destination_flooding",
+            name=_("Forwarding Method Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            "limit_ip_learn_enabled",
+            "clear_remote_mac_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            "igmp_interface_policy_name",
+            "igmp_snooping_policy_name",
+            "pim_ipv4_source_filter",
+            "pim_ipv4_destination_filter",
+            name=_("Multicast Settings"),
+        ),
+        FieldSet(
+            "dhcp_labels",
+            name=_("Additional Settings"),
+        ),
+        FieldSet(
+            "nb_tenant_group_id",
+            "nb_tenant_id",
+            name="NetBox Tenancy",
+        ),
+    )
+
+    name = forms.CharField(
+        required=False,
+    )
+    alias = forms.CharField(
+        required=False,
+    )
+    description = forms.CharField(
+        required=False,
+    )
+    aci_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"tenant_id": "$nb_tenant_id"},
+        label=_("ACI Tenant"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$nb_tenant_group_id"},
+        label=_("NetBox tenant"),
+    )
+    advertise_host_routes_enabled = forms.BooleanField(
+        label=_("Advertise host routes enabled"),
+        required=False,
+    )
+    arp_flooding_enabled = forms.BooleanField(
+        label=_("ARP flooding enabled"),
+        required=False,
+    )
+    clear_remote_mac_enabled = forms.BooleanField(
+        label=_("Clear remote MAC entries enabled"),
+        required=False,
+    )
+    dhcp_labels = forms.CharField(
+        label=_("DHCP labels"),
+        required=False,
+    )
+    ep_move_detection_enabled = forms.BooleanField(
+        label=_("EP move detection enabled"),
+        required=False,
+    )
+    ip_data_plane_learning_enabled = forms.BooleanField(
+        label=_("IP data plane learning enabled"),
+        required=False,
+    )
+    limit_ip_learn_enabled = forms.BooleanField(
+        label=_("Limit IP learning to subnet enabled"),
+        required=False,
+    )
+    multi_destination_flooding = forms.ChoiceField(
+        choices=BDMultiDestinationFloodingChoices,
+        label=_("Multi destination flooding"),
+        required=False,
+    )
+    pim_ipv4_enabled = forms.BooleanField(
+        label=_("PIM (multicast) IPv4 enabled"),
+        required=False,
+    )
+    pim_ipv6_enabled = forms.BooleanField(
+        label=_("PIM (multicast) IPv6 enabled"),
+        required=False,
+    )
+    unicast_routing_enabled = forms.BooleanField(
+        label=_("Unicast routing enabled"),
+        required=False,
+    )
+    unknown_ipv4_multicast = forms.ChoiceField(
+        choices=BDUnknownMulticastChoices,
+        label=_("Unknown IPv4 multicast"),
+        required=False,
+    )
+    unknown_ipv6_multicast = forms.ChoiceField(
+        choices=BDUnknownMulticastChoices,
+        label=_("Unknown IPv6 multicast"),
+        required=False,
+    )
+    unknown_unicast = forms.ChoiceField(
+        choices=BDUnknownUnicastChoices,
+        label=_("Unknown unicast"),
+        required=False,
+    )
+    tag = TagFilterField(ACITenant)

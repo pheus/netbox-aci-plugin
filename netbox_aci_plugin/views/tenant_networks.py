@@ -11,6 +11,7 @@ from ..filtersets.tenant_networks import (
     ACIVRFFilterSet,
 )
 from ..forms.tenant_networks import (
+    ACIBridgeDomainFilterForm,
     ACIBridgeDomainForm,
     ACIVRFFilterForm,
     ACIVRFForm,
@@ -107,6 +108,7 @@ class ACIBridgeDomainListView(generic.ObjectListView):
         "tags",
     )
     filterset = ACIBridgeDomainFilterSet
+    filterset_form = ACIBridgeDomainFilterForm
     table = ACIBridgeDomainTable
 
 
