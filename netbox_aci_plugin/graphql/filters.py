@@ -8,10 +8,13 @@ import strawberry_django
 from netbox.graphql.filter_mixins import BaseFilterMixin, autotype_decorator
 
 from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
-from ..filtersets.tenant_networks import ACIVRFFilterSet
+from ..filtersets.tenant_networks import (
+    ACIBridgeDomainFilterSet,
+    ACIVRFFilterSet,
+)
 from ..filtersets.tenants import ACITenantFilterSet
 from ..models.tenant_app_profiles import ACIAppProfile
-from ..models.tenant_networks import ACIVRF
+from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
 
 
@@ -37,3 +40,13 @@ class ACIVRFFilter(BaseFilterMixin):
     """GraphQL filter definition for ACIVRF model."""
 
     dns_labels: Optional[list[str]]
+
+
+@strawberry_django.filter(ACIBridgeDomain, lookups=True)
+@autotype_decorator(ACIBridgeDomainFilterSet)
+class ACIBridgeDomainFilter(BaseFilterMixin):
+    """GraphQL filter definition for Bridge Domain model."""
+
+    dhcp_labels: Optional[list[str]]
+    mac_address: Optional[str]
+    virtual_mac_address: Optional[str]

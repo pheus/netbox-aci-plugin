@@ -10,9 +10,14 @@ from netbox.graphql.types import NetBoxObjectType
 from tenancy.graphql.types import TenantType
 
 from ..models.tenant_app_profiles import ACIAppProfile
-from ..models.tenant_networks import ACIVRF
+from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
-from .filters import ACIAppProfileFilter, ACITenantFilter, ACIVRFFilter
+from .filters import (
+    ACIAppProfileFilter,
+    ACIBridgeDomainFilter,
+    ACITenantFilter,
+    ACIVRFFilter,
+)
 
 
 @strawberry_django.type(ACITenant, fields="__all__", filters=ACITenantFilter)
@@ -40,3 +45,16 @@ class ACIVRFType(NetBoxObjectType):
     nb_tenant: Optional[TenantType]
     nb_vrf: Optional[VRFType]
     dns_labels: Optional[List[str]]
+
+
+@strawberry_django.type(
+    ACIBridgeDomain, fields="__all__", filters=ACIBridgeDomainFilter
+)
+class ACIBridgeDomainType(NetBoxObjectType):
+    """GraphQL type definition for ACIBridgeDomain model."""
+
+    aci_vrf: ACIVRFType
+    nb_tenant: Optional[TenantType]
+    dhcp_labels: Optional[List[str]]
+    mac_address: Optional[str]
+    virtual_mac_address: Optional[str]
