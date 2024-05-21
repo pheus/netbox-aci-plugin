@@ -5,13 +5,17 @@
 from netbox.api.viewsets import NetBoxModelViewSet
 
 from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
-from ..filtersets.tenant_networks import ACIVRFFilterSet
+from ..filtersets.tenant_networks import (
+    ACIBridgeDomainFilterSet,
+    ACIVRFFilterSet,
+)
 from ..filtersets.tenants import ACITenantFilterSet
 from ..models.tenant_app_profiles import ACIAppProfile
-from ..models.tenant_networks import ACIVRF
+from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
 from .serializers import (
     ACIAppProfileSerializer,
+    ACIBridgeDomainSerializer,
     ACITenantSerializer,
     ACIVRFSerializer,
 )
@@ -51,3 +55,15 @@ class ACIVRFListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIVRFSerializer
     filterset_class = ACIVRFFilterSet
+
+
+class ACIBridgeDomainListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Bridge Domain instances."""
+
+    queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_vrf",
+        "nb_tenant",
+        "tags",
+    )
+    serializer_class = ACIBridgeDomainSerializer
+    filterset_class = ACIBridgeDomainFilterSet
