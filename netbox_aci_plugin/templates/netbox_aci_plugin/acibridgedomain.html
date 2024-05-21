@@ -6,6 +6,7 @@
 {% block breadcrumbs %}
   {{ block.super }}
     <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomain_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomain_list' %}?aci_vrf_id={{ object.aci_vrf.pk }}">{{ object.aci_vrf }}</a></li>
 {% endblock breadcrumbs %}
 
 {% block content %}
