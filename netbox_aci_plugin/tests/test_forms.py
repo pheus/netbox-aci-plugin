@@ -5,7 +5,7 @@
 from django.test import TestCase
 
 from ..forms.tenant_app_profiles import ACIAppProfileForm
-from ..forms.tenant_networks import ACIVRFForm
+from ..forms.tenant_networks import ACIBridgeDomainForm, ACIVRFForm
 from ..forms.tenants import ACITenantForm
 
 
@@ -145,3 +145,47 @@ class ACIVRFFormTestCase(TestCase):
         self.assertEqual(aci_vrf_form.errors.get("name"), None)
         self.assertEqual(aci_vrf_form.errors.get("alias"), None)
         self.assertEqual(aci_vrf_form.errors.get("description"), None)
+
+
+class ACIBridgeDomainFormTestCase(TestCase):
+    """Test case for ACIBridgeDomain form."""
+
+    name_error_message: str = (
+        "Only alphanumeric characters, hyphens, periods and underscores are\
+        allowed."
+    )
+    description_error_message: str = (
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
+        allowed."
+    )
+
+    def test_invalid_aci_bridge_domain_field_values(self) -> None:
+        """Test validation of invalid ACI Bridge Domain field values."""
+        aci_bd_form = ACIBridgeDomainForm(
+            data={
+                "name": "ACI BD Test 1",
+                "alias": "ACI Test Alias 1",
+                "description": "Invalid Description: ö",
+            }
+        )
+        self.assertEqual(aci_bd_form.errors["name"], [self.name_error_message])
+        self.assertEqual(
+            aci_bd_form.errors["alias"], [self.name_error_message]
+        )
+        self.assertEqual(
+            aci_bd_form.errors["description"],
+            [self.description_error_message],
+        )
+
+    def test_valid_aci_bridge_domain_field_values(self) -> None:
+        """Test validation of valid ACI Bridge Domain field values."""
+        aci_bd_form = ACIBridgeDomainForm(
+            data={
+                "name": "ACIBD1",
+                "alias": "Testing",
+                "description": "BD for NetBox ACI Plugin",
+            }
+        )
+        self.assertEqual(aci_bd_form.errors.get("name"), None)
+        self.assertEqual(aci_bd_form.errors.get("alias"), None)
+        self.assertEqual(aci_bd_form.errors.get("description"), None)
