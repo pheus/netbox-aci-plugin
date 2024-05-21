@@ -7,9 +7,13 @@ from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
 from ..filtersets.tenant_networks import ACIVRFFilterSet
-from ..forms.tenant_networks import ACIVRFFilterForm, ACIVRFForm
-from ..models.tenant_networks import ACIVRF
-from ..tables.tenant_networks import ACIVRFTable
+from ..forms.tenant_networks import (
+    ACIBridgeDomainForm,
+    ACIVRFFilterForm,
+    ACIVRFForm,
+)
+from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..tables.tenant_networks import ACIBridgeDomainTable, ACIVRFTable
 
 
 @register_model_view(ACIVRF)
@@ -78,3 +82,48 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
             "nb_tenant",
             "tags",
         )
+
+
+@register_model_view(ACIBridgeDomain)
+class ACIBridgeDomainView(generic.ObjectView):
+    """Detail view for displaying a single object of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_vrf",
+        "nb_tenant",
+        "tags",
+    )
+
+
+class ACIBridgeDomainListView(generic.ObjectListView):
+    """List view for listing all objects of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_vrf",
+        "nb_tenant",
+        "tags",
+    )
+    table = ACIBridgeDomainTable
+
+
+@register_model_view(ACIBridgeDomain, "edit")
+class ACIBridgeDomainEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_vrf",
+        "nb_tenant",
+        "tags",
+    )
+    form = ACIBridgeDomainForm
+
+
+@register_model_view(ACIBridgeDomain, "delete")
+class ACIBridgeDomainDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_vrf",
+        "nb_tenant",
+        "tags",
+    )
