@@ -6,6 +6,52 @@ from django.utils.translation import gettext_lazy as _
 from utilities.choices import ChoiceSet
 
 #
+# Bridge Domain
+#
+
+
+class BDMultiDestinationFloodingChoices(ChoiceSet):
+    """Choice set of Bridge Domain multi destination flooding."""
+
+    # default "bd-flood"
+    FLOOD_BD = "bd-flood"
+    FLOOD_ENCAP = "encap-flood"
+    FLOOD_DROP = "drop"
+
+    CHOICES = (
+        (FLOOD_BD, _("bd-flood"), "blue"),
+        (FLOOD_ENCAP, _("encap-flood"), "yellow"),
+        (FLOOD_DROP, _("drop"), "red"),
+    )
+
+
+class BDUnknownMulticastChoices(ChoiceSet):
+    """Choice set of Bridge Domain unknown multicast forwarding method."""
+
+    # default "flood"
+    UNKNOWN_MULTI_FLOOD = "flood"
+    UNKNOWN_MULTI_OPT_FLOOD = "opt-flood"
+
+    CHOICES = (
+        (UNKNOWN_MULTI_FLOOD, _("flood"), "yellow"),
+        (UNKNOWN_MULTI_OPT_FLOOD, _("opt-flood"), "blue"),
+    )
+
+
+class BDUnknownUnicastChoices(ChoiceSet):
+    """Choice set of Bridge Domain unknown unicast forwarding method."""
+
+    # default "proxy"
+    UNKNOWN_UNI_PROXY = "proxy"
+    UNKNOWN_UNI_FLOOD = "flood"
+
+    CHOICES = (
+        (UNKNOWN_UNI_PROXY, _("proxy"), "blue"),
+        (UNKNOWN_UNI_FLOOD, _("flood"), "yellow"),
+    )
+
+
+#
 # VRF
 #
 
