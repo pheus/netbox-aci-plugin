@@ -79,6 +79,7 @@ The *ACIVRF* model has the following fields:
 - **NetBox VRF**: a reference to the NetBox vrf model
 - **BD enforcement enabled**: a boolean field, whether endpoints can ping other bridge domain gateways (default is *false*)
 - **DNS labels**: a comma-separated list of DNS labels
+- **IP data plane learning enabled**: a boolean field representing whether IP data plane learning is enabled for the VRF. (default is *true*)
 - **PC enforcement direction**: Direction of policy control enforcement, values: *ingress*, *egress* (default is *ingress*)
 - **PC enforcement preference**: Preference of policy control enforcement, values: *enforced*, *unenforced* (default is *enforced*)
 - **PIM IPv4 enabled**: a boolean field, whether IPv4 multicast is enabled (default is *false*)
