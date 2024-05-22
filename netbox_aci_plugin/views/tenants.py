@@ -13,6 +13,10 @@ from ..tables.tenants import ACITenantTable
 from .tenant_app_profiles import ACIAppProfileChildrenView
 from .tenant_networks import ACIVRFChildrenView
 
+#
+# Tenant views
+#
+
 
 @register_model_view(ACITenant)
 class ACITenantView(generic.ObjectView):

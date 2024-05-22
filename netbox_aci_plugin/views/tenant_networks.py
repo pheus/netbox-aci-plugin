@@ -19,6 +19,36 @@ from ..forms.tenant_networks import (
 from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..tables.tenant_networks import ACIBridgeDomainTable, ACIVRFTable
 
+#
+# Base children views
+#
+
+
+class ACIVRFChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI VRF."""
+
+    child_model = ACIVRF
+    filterset = ACIVRFFilterSet
+    tab = ViewTab(
+        label=_("VRFs"),
+        badge=lambda obj: obj.aci_vrfs.count(),
+        weight=1000,
+    )
+    table = ACIVRFTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIVRF."""
+        return ACIVRF.objects.prefetch_related(
+            "aci_tenant",
+            "nb_tenant",
+            "tags",
+        )
+
+
+#
+# VRF views
+#
+
 
 @register_model_view(ACIVRF)
 class ACIVRFView(generic.ObjectView):
@@ -67,25 +97,9 @@ class ACIVRFDeleteView(generic.ObjectDeleteView):
     )
 
 
-class ACIVRFChildrenView(generic.ObjectChildrenView):
-    """Base children view for attaching a tab of ACI VRF."""
-
-    child_model = ACIVRF
-    filterset = ACIVRFFilterSet
-    tab = ViewTab(
-        label=_("VRFs"),
-        badge=lambda obj: obj.aci_vrfs.count(),
-        weight=1000,
-    )
-    table = ACIVRFTable
-
-    def get_children(self, request, parent):
-        """Return all objects of ACIVRF."""
-        return ACIVRF.objects.prefetch_related(
-            "aci_tenant",
-            "nb_tenant",
-            "tags",
-        )
+#
+# Bridge Domain views
+#
 
 
 @register_model_view(ACIBridgeDomain)

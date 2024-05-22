@@ -14,6 +14,32 @@ from ..forms.tenant_app_profiles import (
 from ..models.tenant_app_profiles import ACIAppProfile
 from ..tables.tenant_app_profiles import ACIAppProfileTable
 
+#
+# Base children views
+#
+
+
+class ACIAppProfileChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI Application Profile."""
+
+    child_model = ACIAppProfile
+    filterset = ACIAppProfileFilterSet
+    tab = ViewTab(
+        label=_("Application Profiles"),
+        badge=lambda obj: obj.aci_app_profiles.count(),
+        weight=1000,
+    )
+    table = ACIAppProfileTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIAppProfile."""
+        return ACIAppProfile.objects.all()
+
+
+#
+# Application Profile views
+#
+
 
 @register_model_view(ACIAppProfile)
 class ACIAppProfileView(generic.ObjectView):
@@ -60,20 +86,3 @@ class ACIAppProfileDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
-
-
-class ACIAppProfileChildrenView(generic.ObjectChildrenView):
-    """Base children view for attaching a tab of ACI Application Profile."""
-
-    child_model = ACIAppProfile
-    filterset = ACIAppProfileFilterSet
-    tab = ViewTab(
-        label=_("Application Profiles"),
-        badge=lambda obj: obj.aci_app_profiles.count(),
-        weight=1000,
-    )
-    table = ACIAppProfileTable
-
-    def get_children(self, request, parent):
-        """Return all objects of ACIAppProfile."""
-        return ACIAppProfile.objects.all()
