@@ -9,12 +9,16 @@ from django.utils.translation import gettext_lazy as _
 from ipam.models import VRF
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
+from utilities.filters import MultiValueMACAddressFilter
 
 from ..choices import (
+    BDMultiDestinationFloodingChoices,
+    BDUnknownMulticastChoices,
+    BDUnknownUnicastChoices,
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ..models.tenant_networks import ACIVRF
+from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
 
 
@@ -78,6 +82,117 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
             "pim_ipv4_enabled",
             "pim_ipv6_enabled",
             "preferred_group_enabled",
+        )
+        filter_overrides = {
+            ArrayField: {
+                "filter_class": django_filters.CharFilter,
+                "extra": lambda f: {
+                    "lookup_expr": "icontains",
+                },
+            }
+        }
+
+    def search(self, queryset, name, value):
+        """Return a QuerySet filtered by the models description."""
+        if not value.strip():
+            return queryset
+        queryset_filter: Q = (
+            Q(name__icontains=value)
+            | Q(alias__icontains=value)
+            | Q(description__icontains=value)
+        )
+        return queryset.filter(queryset_filter)
+
+
+class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
+    """Filter set for ACI Bridge Domain model."""
+
+    aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_vrf__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant (name)"),
+    )
+    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_vrf__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant (ID)"),
+    )
+    aci_vrf = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        label=_("ACI VRF (name)"),
+    )
+    aci_vrf_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIVRF.objects.all(),
+        to_field_name="id",
+        label=_("ACI VRF (ID)"),
+    )
+    nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        label=_("NetBox tenant (name)"),
+    )
+    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=Tenant.objects.all(),
+        to_field_name="id",
+        label=_("NetBox tenant (ID)"),
+    )
+    mac_address = MultiValueMACAddressFilter(
+        field_name="mac_address",
+        label=_("MAC address"),
+    )
+    multi_destination_flooding = django_filters.MultipleChoiceFilter(
+        choices=BDMultiDestinationFloodingChoices,
+        null_value=None,
+    )
+    unknown_ipv4_multicast = django_filters.MultipleChoiceFilter(
+        choices=BDUnknownMulticastChoices,
+        null_value=None,
+    )
+    unknown_ipv6_multicast = django_filters.MultipleChoiceFilter(
+        choices=BDUnknownMulticastChoices,
+        null_value=None,
+    )
+    unknown_unicast = django_filters.MultipleChoiceFilter(
+        choices=BDUnknownUnicastChoices,
+        null_value=None,
+    )
+    virtual_mac_address = MultiValueMACAddressFilter(
+        field_name="virtual_mac_address",
+        label=_("Virtual MAC address"),
+    )
+
+    class Meta:
+        model = ACIBridgeDomain
+        fields: tuple = (
+            "id",
+            "name",
+            "alias",
+            "description",
+            "aci_vrf",
+            "nb_tenant",
+            "advertise_host_routes_enabled",
+            "arp_flooding_enabled",
+            "clear_remote_mac_enabled",
+            "dhcp_labels",
+            "ep_move_detection_enabled",
+            "igmp_interface_policy_name",
+            "igmp_snooping_policy_name",
+            "ip_data_plane_learning_enabled",
+            "limit_ip_learn_enabled",
+            "mac_address",
+            "multi_destination_flooding",
+            "pim_ipv4_enabled",
+            "pim_ipv4_destination_filter",
+            "pim_ipv4_source_filter",
+            "pim_ipv6_enabled",
+            "unicast_routing_enabled",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "unknown_unicast",
+            "virtual_mac_address",
         )
         filter_overrides = {
             ArrayField: {

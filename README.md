@@ -8,6 +8,7 @@ Documentation: https://pheus.github.io/netbox-aci-plugin/
 
 - Tenants
 - Application Profiles
+- Bridge Domains
 - VRF
 
 ## Compatibility
@@ -45,6 +46,7 @@ PLUGINS_CONFIG = {
     "netbox-aci-plugin": {},
 }
 ```
+
 ## Status
 
 This project has just started. Database migrations will be added once the main models have been defined.

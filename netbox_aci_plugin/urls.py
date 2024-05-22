@@ -9,7 +9,12 @@ from .views.tenant_app_profiles import (
     ACIAppProfileEditView,
     ACIAppProfileListView,
 )
-from .views.tenant_networks import ACIVRFEditView, ACIVRFListView
+from .views.tenant_networks import (
+    ACIBridgeDomainEditView,
+    ACIBridgeDomainListView,
+    ACIVRFEditView,
+    ACIVRFListView,
+)
 from .views.tenants import ACITenantEditView, ACITenantListView
 
 urlpatterns: tuple = (
@@ -34,6 +39,21 @@ urlpatterns: tuple = (
     path(
         "app-profiles/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciappprofile")),
+    ),
+    # ACI Bridge Domain
+    path(
+        "bridge-domains/",
+        ACIBridgeDomainListView.as_view(),
+        name="acibridgedomain_list",
+    ),
+    path(
+        "bridge-domains/add/",
+        ACIBridgeDomainEditView.as_view(),
+        name="acibridgedomain_add",
+    ),
+    path(
+        "bridge-domains/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acibridgedomain")),
     ),
     # ACI VRF
     path("vrfs/", ACIVRFListView.as_view(), name="acivrf_list"),

@@ -6,7 +6,7 @@ import django_tables2 as tables
 from django.utils.translation import gettext_lazy as _
 from netbox.tables import NetBoxTable, columns
 
-from ..models.tenant_networks import ACIVRF
+from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 
 
 class ACIVRFTable(NetBoxTable):
@@ -81,5 +81,113 @@ class ACIVRFTable(NetBoxTable):
             "aci_tenant",
             "nb_tenant",
             "description",
+            "tags",
+        )
+
+
+class ACIBridgeDomainTable(NetBoxTable):
+    """NetBox table for ACI Bridge Domain model."""
+
+    name = tables.Column(
+        linkify=True,
+        verbose_name=_("Bridge Domain"),
+    )
+    alias = tables.Column(
+        linkify=True,
+    )
+    aci_tenant = tables.Column(
+        linkify=True,
+    )
+    aci_vrf = tables.Column(
+        linkify=True,
+    )
+    nb_tenant = tables.Column(
+        linkify=True,
+    )
+    advertise_host_routes_enabled = columns.BooleanColumn(
+        verbose_name=_("Advertise host routes")
+    )
+    arp_flooding_enabled = columns.BooleanColumn(
+        verbose_name=_("ARP flooding")
+    )
+    clear_remote_mac_enabled = columns.BooleanColumn(
+        verbose_name=_("Clear remote MAC")
+    )
+    dhcp_labels = columns.ArrayColumn()
+    ep_move_detection_enabled = columns.BooleanColumn(
+        verbose_name=_("EP move detect")
+    )
+    ip_data_plane_learning_enabled = columns.BooleanColumn(
+        verbose_name=_("DP learning"),
+    )
+    limit_ip_learn_enabled = columns.BooleanColumn(
+        verbose_name=_("Limit IP learn"),
+    )
+    multi_destination_flooding = columns.ChoiceFieldColumn(
+        verbose_name=_("Multi dest flooding"),
+    )
+    pim_ipv4_enabled = columns.BooleanColumn(
+        verbose_name=_("PIM IPv4"),
+    )
+    pim_ipv6_enabled = columns.BooleanColumn(
+        verbose_name=_("PIM IPv6"),
+    )
+    unicast_routing_enabled = columns.BooleanColumn(
+        verbose_name=_("Unicast routing"),
+    )
+    unknown_ipv4_multicast = columns.ChoiceFieldColumn(
+        verbose_name=_("Unknown IPv4 multicast"),
+    )
+    unknown_ipv6_multicast = columns.ChoiceFieldColumn(
+        verbose_name=_("Unknown IPv6 multicast"),
+    )
+    unknown_unicast = columns.ChoiceFieldColumn(
+        verbose_name=_("Unknown unicast"),
+    )
+    tags = columns.TagColumn()
+    comments = columns.MarkdownColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIBridgeDomain
+        fields: tuple = (
+            "pk",
+            "id",
+            "name",
+            "alias",
+            "aci_tenant",
+            "aci_vrf",
+            "nb_tenant",
+            "description",
+            "advertise_host_routes_enabled",
+            "arp_flooding_enabled",
+            "clear_remote_mac_enabled",
+            "dhcp_labels",
+            "ep_move_detection_enabled",
+            "igmp_interface_policy_name",
+            "igmp_snooping_policy_name",
+            "ip_data_plane_learning_enabled",
+            "limit_ip_learn_enabled",
+            "mac_address",
+            "multi_destination_flooding",
+            "pim_ipv4_enabled",
+            "pim_ipv4_destination_filter",
+            "pim_ipv4_source_filter",
+            "pim_ipv6_enabled",
+            "unicast_routing_enabled",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "unknown_unicast",
+            "virtual_mac_address",
+            "tags",
+            "comments",
+        )
+        default_columns: tuple = (
+            "name",
+            "alias",
+            "aci_tenant",
+            "aci_vrf",
+            "nb_tenant",
+            "description",
+            "unicast_routing_enabled",
             "tags",
         )

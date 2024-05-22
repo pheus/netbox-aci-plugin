@@ -32,6 +32,20 @@ aciappprofile_item = PluginMenuItem(
     buttons=aciappprofile_buttons,
 )
 
+# ACI Bridge Domain
+acibd_buttons: tuple = (
+    PluginMenuButton(
+        link="plugins:netbox_aci_plugin:acibridgedomain_add",
+        title="Add",
+        icon_class="mdi mdi-plus-thick",
+    ),
+)
+acibd_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acibridgedomain_list",
+    link_text="Bridge Domains",
+    buttons=acibd_buttons,
+)
+
 # ACI VRF
 acivrf_buttons: tuple = (
     PluginMenuButton(
@@ -55,6 +69,7 @@ menu = PluginMenu(
             (
                 acitenant_item,
                 aciappprofile_item,
+                acibd_item,
                 acivrf_item,
             ),
         ),

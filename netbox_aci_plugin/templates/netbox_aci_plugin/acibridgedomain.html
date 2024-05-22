@@ -1,0 +1,154 @@
+
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomain_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomain_list' %}?aci_vrf_id={{ object.aci_vrf.pk }}">{{ object.aci_vrf }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h5 class="card-header">{% trans "ACI Bridge Domain" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ACI Tenant" %}</th>
+            <td>
+                {{ object.aci_tenant|linkify|placeholder }}
+            </td>
+          <tr>
+            <th scope="row">{% trans "Alias" %}</th>
+            <td>{{ object.alias|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Description" %}</th>
+            <td>{{ object.description|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox Tenant" %}</th>
+            <td>
+                {% if object.nb_tenant.group %}
+                    {{ object.nb_tenant.group|linkify }} /
+                {% endif %}
+                {{ object.nb_tenant|linkify|placeholder }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Routing Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Unicast Routing enabled" %}</th>
+            <td>{% checkmark object.unicast_routing_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Advertise Host Routes enabled" %}</th>
+            <td>{% checkmark object.advertise_host_routes_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Endpoint Move Detection enabled" %}</th>
+            <td>{% checkmark object.ep_move_detection_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "MAC Address" %}</th>
+            <td>{{ object.mac_address|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Virtual MAC Address" %}</th>
+            <td>{{ object.virtual_mac_address|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Forwarding Method Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ARP Flooding enabled" %}</th>
+            <td>{% checkmark object.arp_flooding_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Unknown Unicast" %}</th>
+            <td>{% badge object.get_unknown_unicast_display bg_color=object.get_unknown_unicast_color %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Unknown IPv4 Multicast" %}</th>
+            <td>{% badge object.get_unknown_ipv4_multicast_display bg_color=object.get_unknown_ipv4_multicast_color %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Unknown IPv6 Multicast" %}</th>
+            <td>{% badge object.get_unknown_ipv6_multicast_display bg_color=object.get_unknown_ipv6_multicast_color %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Multi Destination Flooding" %}</th>
+            <td>{% badge object.get_multi_destination_flooding_display bg_color=object.get_multi_destination_flooding_color %}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Endpoint Learning Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "IP Data Plane Learning enabled" %}</th>
+            <td>{% checkmark object.ip_data_plane_learning_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Limit IP Learn to Subnet enabled" %}</th>
+            <td>{% checkmark object.limit_ip_learn_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Clear Remote MAC Entries enabled" %}</th>
+            <td>{% checkmark object.clear_remote_mac_enabled %}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Multicast Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "PIM (Multicast) IPv4" %}</th>
+            <td>{% checkmark object.pim_ipv4_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "PIM (Multicast) IPv6" %}</th>
+            <td>{% checkmark object.pim_ipv6_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "IGMP Interface Policy" %}</th>
+            <td>{{ object.igmp_interface_policy_name|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "IGMP Snooping Policy" %}</th>
+            <td>{{ object.igmp_snooping_policy_name|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "PIM IPv4 Source Filter" %}</th>
+            <td>{{ object.pim_ipv4_source_filter|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "PIM IPv4 Destination Filter" %}</th>
+            <td>{{ object.pim_ipv4_destination_filter|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      <div class="card">
+        <h5 class="card-header">{% trans "Additional Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "DHCP Labels" %}</th>
+            <td>{{ object.dhcp_labels|join:", "|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}
