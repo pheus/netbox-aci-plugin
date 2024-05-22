@@ -45,6 +45,27 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
         )
 
 
+class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI Bridge Domain."""
+
+    child_model = ACIBridgeDomain
+    filterset = ACIBridgeDomainFilterSet
+    tab = ViewTab(
+        label=_("Bridge Domains"),
+        badge=lambda obj: obj.aci_bds.count(),
+        weight=1000,
+    )
+    table = ACIBridgeDomainTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIBridgeDomain."""
+        return ACIBridgeDomain.objects.prefetch_related(
+            "aci_vrf",
+            "nb_tenant",
+            "tags",
+        )
+
+
 #
 # VRF views
 #
@@ -95,6 +116,29 @@ class ACIVRFDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+@register_model_view(ACIVRF, "bridgedomains", path="bridge-domains")
+class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
+    """Children view of ACI Bridge Domain of ACI VRF."""
+
+    queryset = ACIVRF.objects.all()
+    template_name = "netbox_aci_plugin/acivrf_bds.html"
+
+    def get_children(self, request, parent):
+        """Return all ACIVRF objects for current ACITenant."""
+        return super().get_children(request, parent).filter(aci_vrf=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return table with ACITenant and ACIVRF colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column
+        table.columns.hide("aci_tenant")
+        # Hide ACIVRF column
+        table.columns.hide("aci_vrf")
+
+        return table
 
 
 #
