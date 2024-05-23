@@ -25,30 +25,30 @@ class ACIVRF(NetBoxModel):
     """NetBox model for ACI VRF."""
 
     name = models.CharField(
+        verbose_name=_("name"),
         max_length=64,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("name"),
     )
     alias = models.CharField(
+        verbose_name=_("alias"),
         max_length=64,
         blank=True,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("alias"),
     )
     description = models.CharField(
+        verbose_name=_("description"),
         max_length=128,
         blank=True,
         validators=[
             MaxLengthValidator(128),
             ACIPolicyDescriptionValidator,
         ],
-        verbose_name=_("description"),
     )
     aci_tenant = models.ForeignKey(
         to=ACITenant,
@@ -60,17 +60,17 @@ class ACIVRF(NetBoxModel):
         to="tenancy.Tenant",
         on_delete=models.PROTECT,
         related_name="+",
+        verbose_name=_("NetBox tenant"),
         blank=True,
         null=True,
-        verbose_name=_("NetBox tenant"),
     )
     nb_vrf = models.ForeignKey(
         to="ipam.VRF",
         on_delete=models.PROTECT,
         related_name="+",
+        verbose_name=_("NetBox VRF"),
         blank=True,
         null=True,
-        verbose_name=_("NetBox VRF"),
     )
     bd_enforcement_enabled = models.BooleanField(
         default=False,
@@ -88,64 +88,64 @@ class ACIVRF(NetBoxModel):
                 ACIPolicyNameValidator,
             ],
         ),
+        verbose_name=_("DNS labels"),
         blank=True,
         null=True,
-        verbose_name=_("DNS labels"),
         help_text=_("Enter labels separated by comma"),
     )
     ip_data_plane_learning_enabled = models.BooleanField(
-        default=True,
         verbose_name=_("IP data plane learning enabled"),
+        default=True,
         help_text=_(
             "Whether IP data plane learning is enabled for VRF. "
             "Default is enabled."
         ),
     )
     pc_enforcement_direction = models.CharField(
-        max_length=8,
-        choices=VRFPCEnforcementDirectionChoices,
-        default=VRFPCEnforcementDirectionChoices.DIR_INGRESS,
         verbose_name=_("policy control enforcement direction"),
+        max_length=8,
+        default=VRFPCEnforcementDirectionChoices.DIR_INGRESS,
+        choices=VRFPCEnforcementDirectionChoices,
         help_text=_(
             "Controls policy enforcement direction for VRF. "
             "Default is 'ingress'."
         ),
     )
     pc_enforcement_preference = models.CharField(
-        max_length=10,
-        choices=VRFPCEnforcementPreferenceChoices,
-        default=VRFPCEnforcementPreferenceChoices.PREF_ENFORCED,
         verbose_name=_("policy control enforcement preference"),
+        max_length=10,
+        default=VRFPCEnforcementPreferenceChoices.PREF_ENFORCED,
+        choices=VRFPCEnforcementPreferenceChoices,
         help_text=_(
             "Controls policy enforcement preference for VRF. "
             "Default is 'enforced'."
         ),
     )
     pim_ipv4_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("PIM (multicast) IPv4 enabled"),
+        default=False,
         help_text=_(
             "Multicast routing enabled for the VRF. Default is disabled."
         ),
     )
     pim_ipv6_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("PIM (multicast) IPv6 enabled"),
+        default=False,
         help_text=_(
             "Multicast routing enabled for the VRF. Default is disabled."
         ),
     )
     preferred_group_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("preferred group enabled"),
+        default=False,
         help_text=_(
             "Whether preferred group feature is enabled for the VRF. "
             "Default is disabled."
         ),
     )
     comments = models.TextField(
-        blank=True,
         verbose_name=_("comments"),
+        blank=True,
     )
 
     clone_fields: tuple = (
@@ -194,30 +194,30 @@ class ACIBridgeDomain(NetBoxModel):
     """NetBox model for ACI Bridge Domain."""
 
     name = models.CharField(
+        verbose_name=_("name"),
         max_length=64,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("name"),
     )
     alias = models.CharField(
+        verbose_name=_("alias"),
         max_length=64,
         blank=True,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("alias"),
     )
     description = models.CharField(
+        verbose_name=_("description"),
         max_length=128,
         blank=True,
         validators=[
             MaxLengthValidator(128),
             ACIPolicyDescriptionValidator,
         ],
-        verbose_name=_("description"),
     )
     aci_vrf = models.ForeignKey(
         to=ACIVRF,
@@ -229,29 +229,29 @@ class ACIBridgeDomain(NetBoxModel):
         to="tenancy.Tenant",
         on_delete=models.PROTECT,
         related_name="+",
+        verbose_name=_("NetBox tenant"),
         blank=True,
         null=True,
-        verbose_name=_("NetBox tenant"),
     )
     advertise_host_routes_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("advertise host routes enabled"),
+        default=False,
         help_text=_(
             "Advertise associated endpoints as host routes (/32 prefixes) "
             "out of the L3Outs. Default is disabled."
         ),
     )
     arp_flooding_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("ARP flooding enabled"),
+        default=False,
         help_text=_(
             "Allow Address Resolution Protocol (ARP) to flood in this Bridge "
             "Domain. Default is disabled."
         ),
     )
     clear_remote_mac_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("clear remote MAC entries enabled"),
+        default=False,
         help_text=_(
             "Enables deletion of MAC EP on remote leaves, when EP gets "
             "deleted from local leaf. Default is disabled."
@@ -265,149 +265,149 @@ class ACIBridgeDomain(NetBoxModel):
                 ACIPolicyNameValidator,
             ],
         ),
+        verbose_name=_("DHCP labels"),
         blank=True,
         null=True,
-        verbose_name=_("DHCP labels"),
         help_text=_("Enter labels separated by comma"),
     )
     ep_move_detection_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("EP move detection enabled"),
+        default=False,
         help_text=_(
             "Enables Gratuitous ARP (GARP) to detect endpoint move. "
             "Default is disabled."
         ),
     )
     igmp_interface_policy_name = models.CharField(
+        verbose_name=_("IGMP interface policy name"),
         max_length=64,
         blank=True,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("IGMP interface policy name"),
     )
     igmp_snooping_policy_name = models.CharField(
+        verbose_name=_("IGMP snooping policy name"),
         max_length=64,
         blank=True,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("IGMP snooping policy name"),
     )
     ip_data_plane_learning_enabled = models.BooleanField(
-        default=True,
         verbose_name=_("IP data plane learning enabled"),
+        default=True,
         help_text=_(
             "Whether IP data plane learning is enabled for Bridge Domain. "
             "Default is enabled."
         ),
     )
     limit_ip_learn_enabled = models.BooleanField(
-        default=True,
         verbose_name=_("limit IP learning to subnet enabled"),
+        default=True,
         help_text=_(
             "IP learning is limited to the Bridge Domain's subnets. "
             "Default is enabled."
         ),
     )
     mac_address = MACAddressField(
-        default="00:22:BD:F8:19:FF",
+        verbose_name=_("MAC address"),
         blank=True,
         null=True,
-        verbose_name=_("MAC address"),
+        default="00:22:BD:F8:19:FF",
     )
     multi_destination_flooding = models.CharField(
-        max_length=11,
-        choices=BDMultiDestinationFloodingChoices,
-        default=BDMultiDestinationFloodingChoices.FLOOD_BD,
         verbose_name=_("multi destination flooding"),
+        max_length=11,
+        default=BDMultiDestinationFloodingChoices.FLOOD_BD,
+        choices=BDMultiDestinationFloodingChoices,
         help_text=_(
             "Forwarding method for L2 multicast, broadcast, and link layer "
             "traffic. Default is 'bd-flood'."
         ),
     )
     pim_ipv4_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("PIM (multicast) IPv4 enabled"),
+        default=False,
         help_text=_(
             "Multicast routing enabled for the Bridge Domain. "
             "Default is disabled."
         ),
     )
     pim_ipv4_destination_filter = models.CharField(
+        verbose_name=_("PIM destination filter"),
         max_length=64,
         blank=True,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("PIM destination filter"),
     )
     pim_ipv4_source_filter = models.CharField(
+        verbose_name=_("PIM destination filter"),
         max_length=64,
         blank=True,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("PIM destination filter"),
     )
     pim_ipv6_enabled = models.BooleanField(
-        default=False,
         verbose_name=_("PIM (multicast) IPv6 enabled"),
+        default=False,
         help_text=_(
             "Multicast routing enabled for the Bridge Domain. "
             "Default is disabled."
         ),
     )
     unicast_routing_enabled = models.BooleanField(
-        default=True,
         verbose_name=_("unicast routing enabled"),
+        default=True,
         help_text=_(
             "Whether IP forwarding is enabled for this Bridge Domain. "
             "Default is enabled."
         ),
     )
     unknown_ipv4_multicast = models.CharField(
-        max_length=9,
-        choices=BDUnknownMulticastChoices,
-        default=BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD,
         verbose_name=_("unknown IPv4 multicast"),
+        max_length=9,
+        default=BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD,
+        choices=BDUnknownMulticastChoices,
         help_text=_(
             "Defines the IPv4 unknown multicast forwarding method. "
             "Default is 'flood'."
         ),
     )
     unknown_ipv6_multicast = models.CharField(
-        max_length=9,
-        choices=BDUnknownMulticastChoices,
-        default=BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD,
         verbose_name=_("unknown IPv6 multicast"),
+        max_length=9,
+        default=BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD,
+        choices=BDUnknownMulticastChoices,
         help_text=_(
             "Defines the IPv6 unknown multicast forwarding method. "
             "Default is 'flood'."
         ),
     )
     unknown_unicast = models.CharField(
-        max_length=5,
-        choices=BDUnknownUnicastChoices,
-        default=BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY,
         verbose_name=_("unknown unicast"),
+        max_length=5,
+        default=BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY,
+        choices=BDUnknownUnicastChoices,
         help_text=_(
             "Defines the layer 2 unknown unicast forwarding method. "
             "Default is 'proxy'."
         ),
     )
     virtual_mac_address = MACAddressField(
+        verbose_name=_("virtual MAC address"),
         blank=True,
         null=True,
-        verbose_name=_("virtual MAC address"),
     )
     comments = models.TextField(
-        blank=True,
         verbose_name=_("comments"),
+        blank=True,
     )
 
     clone_fields: tuple = (

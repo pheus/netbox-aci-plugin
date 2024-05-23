@@ -13,8 +13,8 @@ class ACIVRFTable(NetBoxTable):
     """NetBox table for ACI VRF model."""
 
     name = tables.Column(
-        linkify=True,
         verbose_name=_("ACI VRF"),
+        linkify=True,
     )
     alias = tables.Column(
         linkify=True,

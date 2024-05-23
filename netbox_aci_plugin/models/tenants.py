@@ -15,42 +15,42 @@ class ACITenant(NetBoxModel):
     """NetBox model for ACI Tenant."""
 
     name = models.CharField(
+        verbose_name=_("name"),
         max_length=64,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("name"),
     )
     alias = models.CharField(
+        verbose_name=_("alias"),
         max_length=64,
         blank=True,
         validators=[
             MaxLengthValidator(64),
             ACIPolicyNameValidator,
         ],
-        verbose_name=_("alias"),
     )
     description = models.CharField(
+        verbose_name=_("description"),
         max_length=128,
         blank=True,
         validators=[
             MaxLengthValidator(128),
             ACIPolicyDescriptionValidator,
         ],
-        verbose_name=_("description"),
     )
     nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.PROTECT,
         related_name="+",
+        verbose_name=_("NetBox tenant"),
         blank=True,
         null=True,
-        verbose_name=_("NetBox tenant"),
     )
     comments = models.TextField(
-        blank=True,
         verbose_name=_("comments"),
+        blank=True,
     )
 
     clone_fields: tuple = (

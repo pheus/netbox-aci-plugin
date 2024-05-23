@@ -13,8 +13,8 @@ class ACITenantTable(NetBoxTable):
     """NetBox table for ACI Tenant model."""
 
     name = tables.Column(
-        linkify=True,
         verbose_name=_("ACI Tenant"),
+        linkify=True,
     )
     alias = tables.Column(
         linkify=True,

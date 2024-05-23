@@ -22,15 +22,15 @@ class ACITenantForm(NetBoxModelForm):
 
     nb_tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
         required=False,
         label=_("NetBox tenant group"),
-        initial_params={"tenants": "$nb_tenant"},
     )
     nb_tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
         required=False,
         label=_("NetBox tenant"),
-        query_params={"group_id": "$nb_tenant_group"},
     )
     comments = CommentField()
 
@@ -95,15 +95,15 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
     )
     nb_tenant_group_id = DynamicModelMultipleChoiceField(
         queryset=TenantGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Tenant group"),
     )
     nb_tenant_id = DynamicModelMultipleChoiceField(
         queryset=Tenant.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
         label=_("Tenant"),
     )
     tag = TagFilterField(ACITenant)

@@ -13,8 +13,8 @@ class ACIAppProfileTable(NetBoxTable):
     """NetBox table for ACI Application Profile model."""
 
     name = tables.Column(
-        linkify=True,
         verbose_name=_("Application Profile"),
+        linkify=True,
     )
     alias = tables.Column(
         linkify=True,

@@ -21,48 +21,48 @@ from .types import (
 class ACITenantsQuery:
     """GraphQL query definition for ACITenant model."""
 
+    aci_tenant_list: List[ACITenantType] = strawberry_django.field()
+
     @strawberry.field
     def aci_tenant(self, id: int) -> ACITenantType:
         return ACITenant.objects.get(pk=id)
-
-    aci_tenant_list: List[ACITenantType] = strawberry_django.field()
 
 
 @strawberry.type
 class ACIAppProfilesQuery:
     """GraphQL query definition for ACIAppProfile model."""
 
-    @strawberry.field
-    def aci_application_profile(self, id: int) -> ACIAppProfileType:
-        return ACIAppProfile.objects.get(pk=id)
-
     aci_application_profile_list: List[ACIAppProfileType] = (
         strawberry_django.field()
     )
+
+    @strawberry.field
+    def aci_application_profile(self, id: int) -> ACIAppProfileType:
+        return ACIAppProfile.objects.get(pk=id)
 
 
 @strawberry.type
 class ACIVRFQuery:
     """GraphQL query definition for ACIVRF model."""
 
+    aci_vrf_list: List[ACIVRFType] = strawberry_django.field()
+
     @strawberry.field
     def aci_vrf(self, id: int) -> ACIVRFType:
         return ACIVRF.objects.get(pk=id)
-
-    aci_vrf_list: List[ACIVRFType] = strawberry_django.field()
 
 
 @strawberry.type
 class ACIBridgeDomainQuery:
     """GraphQL query definition for ACIBridgeDomain model."""
 
-    @strawberry.field
-    def aci_bridge_domain(self, id: int) -> ACIBridgeDomainType:
-        return ACIBridgeDomain.objects.get(pk=id)
-
     aci_bridge_domain_list: List[ACIBridgeDomainType] = (
         strawberry_django.field()
     )
+
+    @strawberry.field
+    def aci_bridge_domain(self, id: int) -> ACIBridgeDomainType:
+        return ACIBridgeDomain.objects.get(pk=id)
 
 
 schema: list = [
