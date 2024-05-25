@@ -113,7 +113,7 @@ class ACIVRFForm(NetBoxModelForm):
     fieldsets: tuple = (
         FieldSet(
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "description",
             "tags",
@@ -154,7 +154,7 @@ class ACIVRFForm(NetBoxModelForm):
         model = ACIVRF
         fields: tuple = (
             "name",
-            "alias",
+            "name_alias",
             "description",
             "aci_tenant",
             "nb_tenant",
@@ -184,7 +184,7 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         ),
         FieldSet(
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant_id",
             "description",
             name="Attributes",
@@ -223,7 +223,7 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
     name = forms.CharField(
         required=False,
     )
-    alias = forms.CharField(
+    name_alias = forms.CharField(
         required=False,
     )
     description = forms.CharField(
@@ -432,7 +432,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
     fieldsets: tuple = (
         FieldSet(
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "aci_vrf",
             "description",
@@ -485,7 +485,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
         model = ACIBridgeDomain
         fields: tuple = (
             "name",
-            "alias",
+            "name_alias",
             "description",
             "aci_vrf",
             "advertise_host_routes_enabled",
@@ -525,7 +525,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
         FieldSet(
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant_id",
             "aci_vrf_id",
             "description",
@@ -576,7 +576,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
     name = forms.CharField(
         required=False,
     )
-    alias = forms.CharField(
+    name_alias = forms.CharField(
         required=False,
     )
     description = forms.CharField(

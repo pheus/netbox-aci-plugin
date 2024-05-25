@@ -30,11 +30,11 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     model = ACITenant
     view_namespace: str = f"plugins-api:{app_name}"
     brief_fields: list[str] = [
-        "alias",
         "description",
         "display",
         "id",
         "name",
+        "name_alias",
         "nb_tenant",
         "url",
     ]
@@ -51,21 +51,21 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         aci_tenants = (
             ACITenant(
                 name="ACITestTenantAPI1",
-                alias="TestingTenant1",
+                name_alias="TestingTenant1",
                 description="First ACI Test Tenant",
                 comments="# ACI Test Tenant 1",
                 nb_tenant=nb_tenant1,
             ),
             ACITenant(
                 name="ACITestTenantAPI2",
-                alias="TestingTenant2",
+                name_alias="TestingTenant2",
                 description="Second ACI Test Tenant",
                 comments="# ACI Test Tenant 2",
                 nb_tenant=nb_tenant1,
             ),
             ACITenant(
                 name="ACITestTenantAPI3",
-                alias="TestingTenant3",
+                name_alias="TestingTenant3",
                 description="Third ACI Test Tenant",
                 comments="# ACI Test Tenant 3",
                 nb_tenant=nb_tenant2,
@@ -76,14 +76,14 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.create_data = [
             {
                 "name": "ACITestTenantAPI4",
-                "alias": "TestingTenant4",
+                "name_alias": "TestingTenant4",
                 "description": "Forth ACI Test Tenant",
                 "comments": "# ACI Test Tenant 4",
                 "nb_tenant": nb_tenant1.id,
             },
             {
                 "name": "ACITestTenantAPI5",
-                "alias": "TestingTenant5",
+                "name_alias": "TestingTenant5",
                 "description": "Fifth ACI Test Tenant",
                 "comments": "# ACI Test Tenant 5",
                 "nb_tenant": nb_tenant2.id,
@@ -98,11 +98,11 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     view_namespace: str = f"plugins-api:{app_name}"
     brief_fields: list[str] = [
         "aci_tenant",
-        "alias",
         "description",
         "display",
         "id",
         "name",
+        "name_alias",
         "nb_tenant",
         "url",
     ]
@@ -122,7 +122,7 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         aci_app_profiles = (
             ACIAppProfile(
                 name="ACIAppProfileTestAPI1",
-                alias="Testing",
+                name_alias="Testing",
                 description="First ACI Test",
                 comments="# ACI Test 1",
                 aci_tenant=aci_tenant1,
@@ -130,7 +130,7 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             ),
             ACIAppProfile(
                 name="ACIAppProfileTestAPI2",
-                alias="Testing",
+                name_alias="Testing",
                 description="Second ACI Test",
                 comments="# ACI Test 2",
                 aci_tenant=aci_tenant2,
@@ -138,7 +138,7 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             ),
             ACIAppProfile(
                 name="ACIAppProfileTestAPI3",
-                alias="Testing",
+                name_alias="Testing",
                 description="Third ACI Test",
                 comments="# ACI Test 3",
                 aci_tenant=aci_tenant1,
@@ -150,7 +150,7 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.create_data: list[dict] = [
             {
                 "name": "ACIAppProfileTestAPI4",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "Forth ACI Test",
                 "comments": "# ACI Test 4",
                 "aci_tenant": aci_tenant2.id,
@@ -158,7 +158,7 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             },
             {
                 "name": "ACIAppProfileTestAPI5",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "Fifth ACI Test",
                 "comments": "# ACI Test 5",
                 "aci_tenant": aci_tenant1.id,
@@ -174,11 +174,11 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     view_namespace: str = f"plugins-api:{app_name}"
     brief_fields: list[str] = [
         "aci_tenant",
-        "alias",
         "description",
         "display",
         "id",
         "name",
+        "name_alias",
         "nb_tenant",
         "nb_vrf",
         "url",
@@ -205,7 +205,7 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         aci_vrfs: tuple = (
             ACIVRF(
                 name="ACIVRFTestAPI1",
-                alias="Testing",
+                name_alias="Testing",
                 description="First ACI Test",
                 comments="# ACI Test 1",
                 aci_tenant=aci_tenant1,
@@ -222,7 +222,7 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             ),
             ACIVRF(
                 name="ACIVRFTestAPI2",
-                alias="Testing",
+                name_alias="Testing",
                 description="Second ACI Test",
                 comments="# ACI Test 2",
                 aci_tenant=aci_tenant2,
@@ -231,7 +231,7 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             ),
             ACIVRF(
                 name="ACIVRFTestAPI3",
-                alias="Testing",
+                name_alias="Testing",
                 description="Third ACI Test",
                 comments="# ACI Test 3",
                 aci_tenant=aci_tenant1,
@@ -250,7 +250,7 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.create_data: list[dict] = [
             {
                 "name": "ACIVRFTestAPI4",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "Forth ACI Test",
                 "comments": "# ACI Test 4",
                 "aci_tenant": aci_tenant2.id,
@@ -265,7 +265,7 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             },
             {
                 "name": "ACIVRFTestAPI5",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "Fifth ACI Test",
                 "comments": "# ACI Test 5",
                 "aci_tenant": aci_tenant1.id,
@@ -287,11 +287,11 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     view_namespace: str = f"plugins-api:{app_name}"
     brief_fields: list[str] = [
         "aci_vrf",
-        "alias",
         "description",
         "display",
         "id",
         "name",
+        "name_alias",
         "nb_tenant",
         "url",
     ]
@@ -317,7 +317,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         aci_bds: tuple = (
             ACIBridgeDomain(
                 name="ACIBridgeDomainTestAPI1",
-                alias="Testing",
+                name_alias="Testing",
                 description="First ACI Test",
                 comments="# ACI Test 1",
                 aci_vrf=aci_vrf1,
@@ -348,7 +348,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             ),
             ACIBridgeDomain(
                 name="ACIBridgeDomainTestAPI2",
-                alias="Testing",
+                name_alias="Testing",
                 description="Second ACI Test",
                 comments="# ACI Test 2",
                 aci_vrf=aci_vrf2,
@@ -356,7 +356,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             ),
             ACIBridgeDomain(
                 name="ACIBridgeDomainTestAPI3",
-                alias="Testing",
+                name_alias="Testing",
                 description="Third ACI Test",
                 comments="# ACI Test 3",
                 aci_vrf=aci_vrf1,
@@ -389,7 +389,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.create_data: list[dict] = [
             {
                 "name": "ACIBridgeDomainTestAPI4",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "Forth ACI Test",
                 "comments": "# ACI Test 4",
                 "aci_vrf": aci_vrf2.id,
@@ -417,7 +417,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             },
             {
                 "name": "ACIBridgeDomainTestAPI5",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "Fifth ACI Test",
                 "comments": "# ACI Test 5",
                 "aci_vrf": aci_vrf1.id,

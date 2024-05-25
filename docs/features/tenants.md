@@ -35,7 +35,7 @@ The *ACITenant* model has the following fields:
 
 *Optional fields*:
 
-- **Alias**: an alias in the ACI
+- **Name alias**: a name alias in the ACI
 - **Description**: a description of the ACI tenant
 - **NetBox Tenant**: an assignment to the NetBox tenant model
 - **Comments**: a text field for additional notes
@@ -54,7 +54,7 @@ The *ACIAppProfile* model has the following fields:
 
 *Optional fields*:
 
-- **Alias**: an alias in the ACI for the application profile
+- **Name alias**: a name alias in the ACI for the application profile
 - **Description**: a description of the application profile
 - **NetBox Tenant**: a reference to the NetBox tenant model
 - **Comments**: a text field for additional notes
@@ -73,7 +73,7 @@ The *ACIVRF* model has the following fields:
 
 *Optional fields*:
 
-- **Alias**: an alias in the ACI for the VRF
+- **Name alias**: a name alias in the ACI for the VRF
 - **Description**: a description of the VRF
 - **NetBox Tenant**: a reference to the NetBox tenant model
 - **NetBox VRF**: a reference to the NetBox vrf model
@@ -102,7 +102,7 @@ The *ACIBridgeDomain* model has the following fields:
 
 *Optional fields*:
 
-- **Alias**: an alias in the ACI for the Bridge Domain
+- **Name alias**: a name alias in the ACI for the Bridge Domain
 - **Description**: a description of the Bridge Domain
 - **NetBox Tenant**: a reference to the NetBox tenant model
 - **Advertise host routes enabled**: a boolean field, whether associated endpoints are advertised as host routes (/32 prefixes) out of the L3Outs. (default is *false*)

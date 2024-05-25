@@ -16,7 +16,8 @@ class ACIVRFTable(NetBoxTable):
         verbose_name=_("ACI VRF"),
         linkify=True,
     )
-    alias = tables.Column(
+    name_alias = tables.Column(
+        verbose_name=_("Alias"),
         linkify=True,
     )
     aci_tenant = tables.Column(
@@ -59,7 +60,7 @@ class ACIVRFTable(NetBoxTable):
             "pk",
             "id",
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "nb_tenant",
             "nb_vrf",
@@ -77,7 +78,7 @@ class ACIVRFTable(NetBoxTable):
         )
         default_columns: tuple = (
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "nb_tenant",
             "description",
@@ -89,10 +90,11 @@ class ACIBridgeDomainTable(NetBoxTable):
     """NetBox table for ACI Bridge Domain model."""
 
     name = tables.Column(
-        linkify=True,
         verbose_name=_("Bridge Domain"),
+        linkify=True,
     )
-    alias = tables.Column(
+    name_alias = tables.Column(
+        verbose_name=_("Alias"),
         linkify=True,
     )
     aci_tenant = tables.Column(
@@ -153,7 +155,7 @@ class ACIBridgeDomainTable(NetBoxTable):
             "pk",
             "id",
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "aci_vrf",
             "nb_tenant",
@@ -183,7 +185,7 @@ class ACIBridgeDomainTable(NetBoxTable):
         )
         default_columns: tuple = (
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "aci_vrf",
             "nb_tenant",

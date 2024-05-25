@@ -37,7 +37,7 @@ class ACITenantForm(NetBoxModelForm):
     fieldsets: tuple = (
         FieldSet(
             "name",
-            "alias",
+            "name_alias",
             "description",
             "tags",
             name=_("ACI Tenant"),
@@ -53,7 +53,7 @@ class ACITenantForm(NetBoxModelForm):
         model = ACITenant
         fields: tuple = (
             "name",
-            "alias",
+            "name_alias",
             "description",
             "nb_tenant",
             "comments",
@@ -73,7 +73,7 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
         ),
         FieldSet(
             "name",
-            "alias",
+            "name_alias",
             "description",
             name="Attributes",
         ),
@@ -87,7 +87,7 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
     name = forms.CharField(
         required=False,
     )
-    alias = forms.CharField(
+    name_alias = forms.CharField(
         required=False,
     )
     description = forms.CharField(

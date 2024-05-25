@@ -69,7 +69,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         fields: tuple = (
             "id",
             "name",
-            "alias",
+            "name_alias",
             "description",
             "aci_tenant",
             "nb_tenant",
@@ -98,7 +98,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
             return queryset
         queryset_filter: Q = (
             Q(name__icontains=value)
-            | Q(alias__icontains=value)
+            | Q(name_name_alias__icontains=value)
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
@@ -169,7 +169,7 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         fields: tuple = (
             "id",
             "name",
-            "alias",
+            "name_alias",
             "description",
             "aci_vrf",
             "nb_tenant",
@@ -209,7 +209,7 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
             return queryset
         queryset_filter: Q = (
             Q(name__icontains=value)
-            | Q(alias__icontains=value)
+            | Q(name_name_alias__icontains=value)
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)

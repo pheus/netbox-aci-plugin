@@ -25,7 +25,7 @@ class ACITenantTestCase(TestCase):
     def setUp(self) -> None:
         """Set up an ACI Tenant for testing."""
         acitenant_name = "ACITestTenant1"
-        acitenant_alias = "TestingTenant"
+        acitenant_name_alias = "TestingTenant"
         acitenant_description = "Tenant for NetBox ACI Plugin testing"
         acitenant_comments = """
         Tenant for NetBox ACI Plugin testing.
@@ -34,7 +34,7 @@ class ACITenantTestCase(TestCase):
 
         self.aci_tenant = ACITenant.objects.create(
             name=acitenant_name,
-            alias=acitenant_alias,
+            name_alias=acitenant_name_alias,
             description=acitenant_description,
             comments=acitenant_comments,
             nb_tenant=nb_tenant,
@@ -45,7 +45,7 @@ class ACITenantTestCase(TestCase):
         """Test type and values of created ACI Tenant."""
         self.assertTrue(isinstance(self.aci_tenant, ACITenant))
         self.assertEqual(self.aci_tenant.__str__(), self.aci_tenant.name)
-        self.assertEqual(self.aci_tenant.alias, "TestingTenant")
+        self.assertEqual(self.aci_tenant.name_alias, "TestingTenant")
         self.assertEqual(
             self.aci_tenant.description, "Tenant for NetBox ACI Plugin testing"
         )
@@ -57,9 +57,9 @@ class ACITenantTestCase(TestCase):
         tenant = ACITenant(name="ACI Test Tenant 1")
         self.assertRaises(ValidationError, tenant.full_clean)
 
-    def test_invalid_aci_tenant_alias(self) -> None:
+    def test_invalid_aci_tenant_name_alias(self) -> None:
         """Test validation of ACI Tenant aliasing."""
-        tenant = ACITenant(name="ACITestTenant1", alias="Invalid Alias")
+        tenant = ACITenant(name="ACITestTenant1", name_alias="Invalid Alias")
         self.assertRaises(ValidationError, tenant.full_clean)
 
     def test_invalid_aci_tenant_description(self) -> None:
@@ -77,7 +77,7 @@ class ACIAppProfileTestCase(TestCase):
         """Set up an ACI AppProfile for testing."""
         acitenant_name = "ACITestTenant1"
         aciappprofile_name = "AppProfileTest1"
-        aciappprofile_alias = "TestingAppProfile"
+        aciappprofile_name_alias = "TestingAppProfile"
         aciappprofile_description = "AppProfile for NetBox ACI Plugin testing"
         aciappprofile_comments = """
         AppProfile for NetBox ACI Plugin testing.
@@ -87,7 +87,7 @@ class ACIAppProfileTestCase(TestCase):
 
         self.aci_app_profile = ACIAppProfile.objects.create(
             name=aciappprofile_name,
-            alias=aciappprofile_alias,
+            name_alias=aciappprofile_name_alias,
             description=aciappprofile_description,
             comments=aciappprofile_comments,
             aci_tenant=aci_tenant,
@@ -101,7 +101,7 @@ class ACIAppProfileTestCase(TestCase):
         self.assertEqual(
             self.aci_app_profile.__str__(), self.aci_app_profile.name
         )
-        self.assertEqual(self.aci_app_profile.alias, "TestingAppProfile")
+        self.assertEqual(self.aci_app_profile.name_alias, "TestingAppProfile")
         self.assertEqual(
             self.aci_app_profile.description,
             "AppProfile for NetBox ACI Plugin testing",
@@ -118,10 +118,10 @@ class ACIAppProfileTestCase(TestCase):
         app_profile = ACIAppProfile(name="ACI App Profile Test 1")
         self.assertRaises(ValidationError, app_profile.full_clean)
 
-    def test_invalid_aci_app_profile_alias(self) -> None:
+    def test_invalid_aci_app_profile_name_alias(self) -> None:
         """Test validation of ACI AppProfile aliasing."""
         app_profile = ACIAppProfile(
-            name="ACIAppProfileTest1", alias="Invalid Alias"
+            name="ACIAppProfileTest1", name_alias="Invalid Alias"
         )
         self.assertRaises(ValidationError, app_profile.full_clean)
 
@@ -140,7 +140,7 @@ class ACIVRFTestCase(TestCase):
         """Set up an ACI VRF for testing."""
         acitenant_name = "ACITestTenant1"
         acivrf_name = "VRFTest1"
-        acivrf_alias = "TestingVRF"
+        acivrf_name_alias = "TestingVRF"
         acivrf_description = "VRF for NetBox ACI Plugin testing"
         acivrf_comments = """
         VRF for NetBox ACI Plugin testing.
@@ -163,7 +163,7 @@ class ACIVRFTestCase(TestCase):
 
         self.aci_vrf = ACIVRF.objects.create(
             name=acivrf_name,
-            alias=acivrf_alias,
+            name_alias=acivrf_name_alias,
             description=acivrf_description,
             comments=acivrf_comments,
             aci_tenant=aci_tenant,
@@ -184,7 +184,7 @@ class ACIVRFTestCase(TestCase):
         """Test type and values of created ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf, ACIVRF))
         self.assertEqual(self.aci_vrf.__str__(), self.aci_vrf.name)
-        self.assertEqual(self.aci_vrf.alias, "TestingVRF")
+        self.assertEqual(self.aci_vrf.name_alias, "TestingVRF")
         self.assertEqual(
             self.aci_vrf.description, "VRF for NetBox ACI Plugin testing"
         )
@@ -208,9 +208,9 @@ class ACIVRFTestCase(TestCase):
         vrf = ACIVRF(name="ACI VRF Test 1")
         self.assertRaises(ValidationError, vrf.full_clean)
 
-    def test_invalid_aci_vrf_alias(self) -> None:
+    def test_invalid_aci_vrf_name_alias(self) -> None:
         """Test validation of ACI VRF aliasing."""
-        vrf = ACIVRF(name="ACIVRFTest1", alias="Invalid Alias")
+        vrf = ACIVRF(name="ACIVRFTest1", name_alias="Invalid Alias")
         self.assertRaises(ValidationError, vrf.full_clean)
 
     def test_invalid_aci_vrf_description(self) -> None:
@@ -227,7 +227,7 @@ class ACIBridgeDomainTestCase(TestCase):
         acitenant_name = "ACITestTenant1"
         acivrf_name = "VRFTest1"
         acibd_name = "BDTest1"
-        acibd_alias = "TestingBD"
+        acibd_name_alias = "TestingBD"
         acibd_description = "BD for NetBox ACI Plugin testing"
         acibd_comments = """
         BD for NetBox ACI Plugin testing.
@@ -267,7 +267,7 @@ class ACIBridgeDomainTestCase(TestCase):
 
         self.aci_bd = ACIBridgeDomain.objects.create(
             name=acibd_name,
-            alias=acibd_alias,
+            name_alias=acibd_name_alias,
             description=acibd_description,
             comments=acibd_comments,
             aci_vrf=aci_vrf,
@@ -299,7 +299,7 @@ class ACIBridgeDomainTestCase(TestCase):
         """Test type and values of created ACI Bridge Domain."""
         self.assertTrue(isinstance(self.aci_bd, ACIBridgeDomain))
         self.assertEqual(self.aci_bd.__str__(), self.aci_bd.name)
-        self.assertEqual(self.aci_bd.alias, "TestingBD")
+        self.assertEqual(self.aci_bd.name_alias, "TestingBD")
         self.assertEqual(
             self.aci_bd.description, "BD for NetBox ACI Plugin testing"
         )
@@ -343,9 +343,9 @@ class ACIBridgeDomainTestCase(TestCase):
         bd = ACIBridgeDomain(name="ACI BD Test 1")
         self.assertRaises(ValidationError, bd.full_clean)
 
-    def test_invalid_aci_bridge_domain_alias(self) -> None:
+    def test_invalid_aci_bridge_domain_name_alias(self) -> None:
         """Test validation of ACI Bridge Domain aliasing."""
-        bd = ACIBridgeDomain(name="ACIBDTest1", alias="Invalid Alias")
+        bd = ACIBridgeDomain(name="ACIBDTest1", name_alias="Invalid Alias")
         self.assertRaises(ValidationError, bd.full_clean)
 
     def test_invalid_aci_bridge_domain_description(self) -> None:

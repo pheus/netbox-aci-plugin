@@ -43,7 +43,7 @@ class ACIAppProfileForm(NetBoxModelForm):
     fieldsets: tuple = (
         FieldSet(
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "description",
             "tags",
@@ -60,7 +60,7 @@ class ACIAppProfileForm(NetBoxModelForm):
         model = ACIAppProfile
         fields: tuple = (
             "name",
-            "alias",
+            "name_alias",
             "description",
             "aci_tenant",
             "nb_tenant",
@@ -81,7 +81,7 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
         ),
         FieldSet(
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant_id",
             "description",
             name="Attributes",
@@ -94,7 +94,7 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
     )
 
     name = forms.CharField(required=False)
-    alias = forms.CharField(required=False)
+    name_alias = forms.CharField(required=False)
     description = forms.CharField(required=False)
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),

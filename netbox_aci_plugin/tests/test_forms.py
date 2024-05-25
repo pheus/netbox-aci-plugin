@@ -26,7 +26,7 @@ class ACITenantFormTestCase(TestCase):
         aci_tenant_form = ACITenantForm(
             data={
                 "name": "ACI Test Tenant 1",
-                "alias": "ACI Test Tenant Alias 1",
+                "name_alias": "ACI Test Tenant Alias 1",
                 "description": "Invalid Description: ö",
             }
         )
@@ -34,7 +34,7 @@ class ACITenantFormTestCase(TestCase):
             aci_tenant_form.errors["name"], [self.name_error_message]
         )
         self.assertEqual(
-            aci_tenant_form.errors["alias"], [self.name_error_message]
+            aci_tenant_form.errors["name_alias"], [self.name_error_message]
         )
         self.assertEqual(
             aci_tenant_form.errors["description"],
@@ -46,12 +46,12 @@ class ACITenantFormTestCase(TestCase):
         aci_tenant_form = ACITenantForm(
             data={
                 "name": "ACITestTenant1",
-                "alias": "TestingTenant",
+                "name_alias": "TestingTenant",
                 "description": "Tenant for NetBox ACI Plugin testing",
             }
         )
         self.assertEqual(aci_tenant_form.errors.get("name"), None)
-        self.assertEqual(aci_tenant_form.errors.get("alias"), None)
+        self.assertEqual(aci_tenant_form.errors.get("name_alias"), None)
         self.assertEqual(aci_tenant_form.errors.get("description"), None)
 
 
@@ -72,7 +72,7 @@ class ACIAppProfileFormTestCase(TestCase):
         aci_app_profile_form = ACIAppProfileForm(
             data={
                 "name": "ACI App Profile Test 1",
-                "alias": "ACI Test Alias 1",
+                "name_alias": "ACI Test Alias 1",
                 "description": "Invalid Description: ö",
             }
         )
@@ -80,7 +80,8 @@ class ACIAppProfileFormTestCase(TestCase):
             aci_app_profile_form.errors["name"], [self.name_error_message]
         )
         self.assertEqual(
-            aci_app_profile_form.errors["alias"], [self.name_error_message]
+            aci_app_profile_form.errors["name_alias"],
+            [self.name_error_message],
         )
         self.assertEqual(
             aci_app_profile_form.errors["description"],
@@ -92,12 +93,12 @@ class ACIAppProfileFormTestCase(TestCase):
         aci_app_profile_form = ACIAppProfileForm(
             data={
                 "name": "ACIAppProfile1",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "Application Profile for NetBox ACI Plugin",
             }
         )
         self.assertEqual(aci_app_profile_form.errors.get("name"), None)
-        self.assertEqual(aci_app_profile_form.errors.get("alias"), None)
+        self.assertEqual(aci_app_profile_form.errors.get("name_alias"), None)
         self.assertEqual(aci_app_profile_form.errors.get("description"), None)
 
 
@@ -118,7 +119,7 @@ class ACIVRFFormTestCase(TestCase):
         aci_vrf_form = ACIVRFForm(
             data={
                 "name": "ACI VRF Test 1",
-                "alias": "ACI Test Alias 1",
+                "name_alias": "ACI Test Alias 1",
                 "description": "Invalid Description: ö",
             }
         )
@@ -126,7 +127,7 @@ class ACIVRFFormTestCase(TestCase):
             aci_vrf_form.errors["name"], [self.name_error_message]
         )
         self.assertEqual(
-            aci_vrf_form.errors["alias"], [self.name_error_message]
+            aci_vrf_form.errors["name_alias"], [self.name_error_message]
         )
         self.assertEqual(
             aci_vrf_form.errors["description"],
@@ -138,12 +139,12 @@ class ACIVRFFormTestCase(TestCase):
         aci_vrf_form = ACIVRFForm(
             data={
                 "name": "ACIVRF1",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "VRF for NetBox ACI Plugin",
             }
         )
         self.assertEqual(aci_vrf_form.errors.get("name"), None)
-        self.assertEqual(aci_vrf_form.errors.get("alias"), None)
+        self.assertEqual(aci_vrf_form.errors.get("name_alias"), None)
         self.assertEqual(aci_vrf_form.errors.get("description"), None)
 
 
@@ -164,13 +165,13 @@ class ACIBridgeDomainFormTestCase(TestCase):
         aci_bd_form = ACIBridgeDomainForm(
             data={
                 "name": "ACI BD Test 1",
-                "alias": "ACI Test Alias 1",
+                "name_alias": "ACI Test Alias 1",
                 "description": "Invalid Description: ö",
             }
         )
         self.assertEqual(aci_bd_form.errors["name"], [self.name_error_message])
         self.assertEqual(
-            aci_bd_form.errors["alias"], [self.name_error_message]
+            aci_bd_form.errors["name_alias"], [self.name_error_message]
         )
         self.assertEqual(
             aci_bd_form.errors["description"],
@@ -182,10 +183,10 @@ class ACIBridgeDomainFormTestCase(TestCase):
         aci_bd_form = ACIBridgeDomainForm(
             data={
                 "name": "ACIBD1",
-                "alias": "Testing",
+                "name_alias": "Testing",
                 "description": "BD for NetBox ACI Plugin",
             }
         )
         self.assertEqual(aci_bd_form.errors.get("name"), None)
-        self.assertEqual(aci_bd_form.errors.get("alias"), None)
+        self.assertEqual(aci_bd_form.errors.get("name_alias"), None)
         self.assertEqual(aci_bd_form.errors.get("description"), None)

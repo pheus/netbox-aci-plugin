@@ -32,8 +32,8 @@ class ACIVRF(NetBoxModel):
             ACIPolicyNameValidator,
         ],
     )
-    alias = models.CharField(
-        verbose_name=_("alias"),
+    name_alias = models.CharField(
+        verbose_name=_("name alias"),
         max_length=64,
         blank=True,
         validators=[
@@ -201,8 +201,8 @@ class ACIBridgeDomain(NetBoxModel):
             ACIPolicyNameValidator,
         ],
     )
-    alias = models.CharField(
-        verbose_name=_("alias"),
+    name_alias = models.CharField(
+        verbose_name=_("name alias"),
         max_length=64,
         blank=True,
         validators=[

@@ -16,7 +16,8 @@ class ACIAppProfileTable(NetBoxTable):
         verbose_name=_("Application Profile"),
         linkify=True,
     )
-    alias = tables.Column(
+    name_alias = tables.Column(
+        verbose_name=_("Alias"),
         linkify=True,
     )
     aci_tenant = tables.Column(
@@ -34,7 +35,7 @@ class ACIAppProfileTable(NetBoxTable):
             "pk",
             "id",
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "nb_tenant",
             "description",
@@ -43,7 +44,7 @@ class ACIAppProfileTable(NetBoxTable):
         )
         default_columns: tuple = (
             "name",
-            "alias",
+            "name_alias",
             "aci_tenant",
             "nb_tenant",
             "description",

@@ -17,12 +17,12 @@ class ACITenantIndex(SearchIndex):
 
     fields: tuple = (
         ("name", 100),
-        ("alias", 300),
+        ("name_alias", 300),
         ("description", 500),
     )
     display_attrs: tuple = (
         "name",
-        "alias",
+        "name_alias",
         "description",
         "nb_tenant",
     )
@@ -36,12 +36,12 @@ class ACIAppProfileIndex(SearchIndex):
 
     fields: tuple = (
         ("name", 100),
-        ("alias", 300),
+        ("name_alias", 300),
         ("description", 500),
     )
     display_attrs: tuple = (
         "name",
-        "alias",
+        "name_alias",
         "description",
         "aci_tenant",
         "nb_tenant",
@@ -56,7 +56,7 @@ class ACIVRFIndex(SearchIndex):
 
     fields: tuple = (
         ("name", 100),
-        ("alias", 300),
+        ("name_alias", 300),
         ("description", 500),
     )
     display_attrs: tuple = (
@@ -77,12 +77,12 @@ class ACIBridgeDomainIndex(SearchIndex):
 
     fields: tuple = (
         ("name", 100),
-        ("alias", 300),
+        ("name_alias", 300),
         ("description", 500),
     )
     display_attrs: tuple = (
         "name",
-        "alias",
+        "name_alias",
         "description",
         "aci_vrf",
         "nb_tenant",
