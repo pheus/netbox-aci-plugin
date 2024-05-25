@@ -93,9 +93,15 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
         ),
     )
 
-    name = forms.CharField(required=False)
-    name_alias = forms.CharField(required=False)
-    description = forms.CharField(required=False)
+    name = forms.CharField(
+        required=False,
+    )
+    name_alias = forms.CharField(
+        required=False,
+    )
+    description = forms.CharField(
+        required=False,
+    )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
         query_params={"tenant_id": "$nb_tenant_id"},
