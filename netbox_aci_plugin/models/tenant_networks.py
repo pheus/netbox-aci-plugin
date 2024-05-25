@@ -222,7 +222,7 @@ class ACIBridgeDomain(NetBoxModel):
     aci_vrf = models.ForeignKey(
         to=ACIVRF,
         on_delete=models.PROTECT,
-        related_name="aci_bds",
+        related_name="aci_bridge_domains",
         verbose_name=_("ACI VRF"),
     )
     nb_tenant = models.ForeignKey(
