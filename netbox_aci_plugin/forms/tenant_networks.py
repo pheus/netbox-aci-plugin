@@ -4,7 +4,7 @@
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from ipam.models import VRF
+from ipam.models import VRF, IPAddress
 from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
 from tenancy.models import Tenant, TenantGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
@@ -23,7 +23,11 @@ from ..choices import (
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..models.tenant_networks import (
+    ACIVRF,
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
 from ..models.tenants import ACITenant
 
 
@@ -706,3 +710,176 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         label=_("Unknown unicast"),
     )
     tag = TagFilterField(ACITenant)
+
+
+class ACIBridgeDomainSubnetForm(NetBoxModelForm):
+    """NetBox form for ACI Bridge Domain Subnet model."""
+
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        initial_params={"aci_vrfs": "$aci_vrf"},
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_vrf = DynamicModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        required=False,
+        label=_("ACI VRF"),
+    )
+    aci_bridge_domain = DynamicModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        query_params={"aci_vrf_id": "$aci_vrf"},
+        label=_("ACI Bridge Domain"),
+    )
+    nb_vrf = DynamicModelChoiceField(
+        queryset=VRF.objects.all(),
+        query_params={"nb_tenant_id": "$nb_tenant"},
+        required=False,
+        label=_("NetBox VRF"),
+    )
+    gateway_ip_address = DynamicModelChoiceField(
+        queryset=IPAddress.objects.all(),
+        query_params={"present_in_vrf_id": "$nd_vrf"},
+        label=_("Gateway IP address"),
+    )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    advertised_externally_enabled = forms.BooleanField(
+        required=False,
+        label=_("Advertised externally enabled"),
+        help_text=_(
+            "Advertises the subnet to the outside to any associated L3Outs "
+            "(public scope). Default is disabled."
+        ),
+    )
+    igmp_querier_enabled = forms.BooleanField(
+        required=False,
+        label=_("IGMP querier enabled"),
+        help_text=_(
+            "Treat the gateway IP address as an IGMP querier source IP. "
+            "Default is disabled."
+        ),
+    )
+    ip_data_plane_learning_enabled = forms.BooleanField(
+        required=False,
+        label=_("IP data plane learning enabled"),
+        help_text=_(
+            "Whether IP data plane learning is enabled for Bridge Domain. "
+            "Default is enabled."
+        ),
+    )
+    no_default_gateway = forms.BooleanField(
+        required=False,
+        label=_("No default gateway enabled"),
+        help_text=_(
+            "Remove the default gateway functionality of this gateway address. "
+            "Default is disabled."
+        ),
+    )
+    nd_ra_enabled = forms.BooleanField(
+        required=False,
+        label=_("ND RA enabled"),
+        help_text=_(
+            "Enables the gateway IP as a IPv6 Neighbor Discovery Router "
+            "Advertisement Prefix. Default is enabled."
+        ),
+    )
+    preferred_ip_address_enabled = forms.BooleanField(
+        required=False,
+        label=_("Preferred (primary) IP enabled"),
+        help_text=_(
+            "Make this the preferred (primary) IP gateway of the Bridge "
+            "Domain. Default is disabled."
+        ),
+    )
+    shared_enabled = forms.BooleanField(
+        label=_("Shared enabled"),
+        required=False,
+        help_text=_(
+            "Controls communication to the shared VRF (inter-VRF route "
+            "leaking). Default is disabled."
+        ),
+    )
+    virtual_ip_enabled = forms.BooleanField(
+        label=_("Virtual IP enabled"),
+        required=False,
+        help_text=_(
+            "Treat the gateway IP as virtual IP. Default is disabled."
+        ),
+    )
+    comments = CommentField()
+
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "nb_vrf",
+            "gateway_ip_address",
+            "description",
+            "tags",
+            "preferred_ip_address_enabled",
+            "virtual_ip_enabled",
+            name=_("ACI Bridge Domain Subnet"),
+        ),
+        FieldSet(
+            "advertised_externally_enabled",
+            "shared_enabled",
+            name=_("Scope Settings"),
+        ),
+        FieldSet(
+            "igmp_querier_enabled",
+            "no_default_gateway",
+            name=_("Subnet Control Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            name=_("IPv6 Settings"),
+        ),
+        FieldSet(
+            "nb_tenant_group",
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+
+    class Meta:
+        model = ACIBridgeDomainSubnet
+        fields: tuple = (
+            "name",
+            "name_alias",
+            "gateway_ip_address",
+            "aci_bridge_domain",
+            "description",
+            "aci_vrf",
+            "nb_tenant",
+            "advertised_externally_enabled",
+            "igmp_querier_enabled",
+            "ip_data_plane_learning_enabled",
+            "no_default_gateway",
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            "preferred_ip_address_enabled",
+            "shared_enabled",
+            "virtual_ip_enabled",
+            "comments",
+            "tags",
+        )
