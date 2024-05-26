@@ -478,3 +478,178 @@ class ACIBridgeDomain(NetBoxModel):
     def get_unknown_unicast_color(self):
         """Return the associated color of choice from the ChoiceSet."""
         return BDUnknownUnicastChoices.colors.get(self.unknown_unicast)
+
+
+class ACIBridgeDomainSubnet(NetBoxModel):
+    """NetBox model for ACI Bridge Domain Subnet."""
+
+    name = models.CharField(
+        verbose_name=_("name"),
+        max_length=64,
+        validators=[
+            MaxLengthValidator(64),
+            ACIPolicyNameValidator,
+        ],
+    )
+    name_alias = models.CharField(
+        verbose_name=_("name alias"),
+        max_length=64,
+        blank=True,
+        validators=[
+            MaxLengthValidator(64),
+            ACIPolicyNameValidator,
+        ],
+    )
+    description = models.CharField(
+        verbose_name=_("description"),
+        max_length=128,
+        blank=True,
+        validators=[
+            MaxLengthValidator(128),
+            ACIPolicyDescriptionValidator,
+        ],
+    )
+    aci_bridge_domain = models.ForeignKey(
+        to=ACIBridgeDomain,
+        on_delete=models.PROTECT,
+        related_name="aci_bridge_domain_subnets",
+        verbose_name=_("ACI Bridge Domain"),
+    )
+    gateway_ip_address = models.OneToOneField(
+        to="ipam.IPAddress",
+        on_delete=models.CASCADE,
+        related_name="aci_bridge_domain_subnet",
+        verbose_name=_("gateway IP address"),
+    )
+    nb_tenant = models.ForeignKey(
+        to="tenancy.Tenant",
+        on_delete=models.PROTECT,
+        related_name="+",
+        verbose_name=_("NetBox tenant"),
+        blank=True,
+        null=True,
+    )
+    advertised_externally_enabled = models.BooleanField(
+        verbose_name=_("advertised externally enabled"),
+        default=False,
+        help_text=_(
+            "Advertises the subnet to the outside to any associated L3Outs "
+            "(public scope). Default is disabled."
+        ),
+    )
+    igmp_querier_enabled = models.BooleanField(
+        verbose_name=_("IGMP querier enabled"),
+        default=False,
+        help_text=_(
+            "Treat the gateway IP as an IGMP querier source IP. "
+            "Default is disabled."
+        ),
+    )
+    ip_data_plane_learning_enabled = models.BooleanField(
+        verbose_name=_("IP data plane learning enabled"),
+        default=True,
+        help_text=_(
+            "Whether IP data plane learning is enabled for Bridge Domain "
+            "Subnet. Default is enabled."
+        ),
+    )
+    no_default_gateway = models.BooleanField(
+        verbose_name=_("no default gateway enabled"),
+        default=False,
+        help_text=_(
+            "Remove default gateway functionality of this gateway address. "
+            "Default is disabled."
+        ),
+    )
+    nd_ra_enabled = models.BooleanField(
+        verbose_name=_("ND RA enabled"),
+        default=True,
+        help_text=_(
+            "Enables the gateway IP as a IPv6 Neighbor Discovery Router "
+            "Advertisement Prefix. Default is enabled."
+        ),
+    )
+    nd_ra_prefix_policy_name = models.CharField(
+        verbose_name=_("ND RA prefix policy name"),
+        max_length=64,
+        blank=True,
+        help_text=_(
+            "IPv6 Neighbor Discovery Prefix Policy to associate with the "
+            "Subnet."
+        ),
+        validators=[
+            MaxLengthValidator(64),
+            ACIPolicyNameValidator,
+        ],
+    )
+    preferred_ip_address_enabled = models.BooleanField(
+        verbose_name=_("preferred IP address enabled"),
+        default=False,
+        help_text=_(
+            "Make this the preferred (primary) IP gateway of the Bridge "
+            "Domain. Default is disabled."
+        ),
+    )
+    shared_enabled = models.BooleanField(
+        verbose_name=_("shared enabled"),
+        default=False,
+        help_text=_(
+            "Controls communication to the shared VRF (inter-VRF route "
+            "leaking). Default is disabled."
+        ),
+    )
+    virtual_ip_enabled = models.BooleanField(
+        verbose_name=_("virtual IP enabled"),
+        default=False,
+        help_text=_(
+            "Treat the gateway IP as virtual IP. Default is disabled."
+        ),
+    )
+    comments = models.TextField(
+        verbose_name=_("comments"),
+        blank=True,
+    )
+
+    clone_fields: tuple = (
+        "description",
+        "aci_bridge_domain",
+        "nb_tenant",
+        "advertised_externally_enabled",
+        "igmp_querier_enabled",
+        "ip_data_plane_learning_enabled",
+        "no_default_gateway",
+        "nd_ra_enabled",
+        "nd_ra_prefix_policy_name",
+        "shared_enabled",
+        "virtual_ip_enabled",
+    )
+    prerequisite_models: tuple = ("netbox_aci_plugin.ACIBridgeDomain",)
+
+    class Meta:
+        ordering: tuple = ("aci_bridge_domain", "name")
+        unique_together: tuple = (
+            "aci_bridge_domain",
+            "name",
+            "gateway_ip_address",
+        )
+        verbose_name: str = _("ACI Bridge Domain Subnet")
+
+    def __str__(self) -> str:
+        """Return string representation of the instance."""
+        return self.name
+
+    @property
+    def aci_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of related ACIBridgeDomain's ACIVRF."""
+        return self.aci_bridge_domain.aci_vrf.aci_tenant
+
+    @property
+    def aci_vrf(self) -> ACIVRF:
+        """Return the ACIVRF instance of related ACIBridgeDomain."""
+        return self.aci_bridge_domain.aci_vrf
+
+    def get_absolute_url(self) -> str:
+        """Return the absolute URL of the instance."""
+        return reverse(
+            "plugins:netbox_aci_plugin:acibridgedomainsubnet", args=[self.pk]
+        )

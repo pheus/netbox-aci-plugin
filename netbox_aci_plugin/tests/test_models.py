@@ -4,7 +4,7 @@
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from ipam.models import VRF
+from ipam.models import VRF, IPAddress
 from tenancy.models import Tenant
 
 from ..choices import (
@@ -15,7 +15,11 @@ from ..choices import (
     VRFPCEnforcementPreferenceChoices,
 )
 from ..models.tenant_app_profiles import ACIAppProfile
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..models.tenant_networks import (
+    ACIVRF,
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
 from ..models.tenants import ACITenant
 
 
@@ -354,3 +358,121 @@ class ACIBridgeDomainTestCase(TestCase):
             name="ACIBDTest1", description="Invalid Description: ö"
         )
         self.assertRaises(ValidationError, bd.full_clean)
+
+
+class ACIBridgeDomainSubnetTestCase(TestCase):
+    """Test case for ACIBridgeDomainSubnet model."""
+
+    def setUp(self) -> None:
+        """Set up an ACI Bridge Domain Subnet for testing."""
+        acitenant_name = "ACITestTenant1"
+        acivrf_name = "VRFTest1"
+        acibd_name = "BDTest1"
+        acisnet_name = "BDSubnetTest1"
+        acisnet_name_alias = "TestingBDSubnet"
+        acisnet_description = "BDSubnet for NetBox ACI Plugin testing"
+        acisnet_comments = """
+        BDSubnet for NetBox ACI Plugin testing.
+        """
+        acisnet_gateway_ip_address = "10.0.0.1/24"
+        acisnet_advertised_externally_enabled = False
+        acisnet_igmp_querier_enabled = True
+        acisnet_ip_dp_learning_enabled = True
+        acisnet_no_default_gateway = False
+        acisnet_nd_ra_enabled = True
+        acisnet_nd_ra_prefix_policy_name = "NDRAPolicy1"
+        acisnet_preferred_ip_address_enabled = True
+        acisnet_shared_enabled = False
+        acisnet_virtual_ip_enabled = False
+
+        aci_tenant = ACITenant.objects.create(name=acitenant_name)
+        aci_vrf = ACIVRF.objects.create(
+            name=acivrf_name, aci_tenant=aci_tenant
+        )
+        aci_bridge_domain = ACIBridgeDomain.objects.create(
+            name=acibd_name, aci_vrf=aci_vrf
+        )
+        aci_bd_gateway = IPAddress.objects.create(
+            address=acisnet_gateway_ip_address
+        )
+        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
+
+        self.aci_bd_subnet = ACIBridgeDomainSubnet.objects.create(
+            name=acisnet_name,
+            name_alias=acisnet_name_alias,
+            description=acisnet_description,
+            comments=acisnet_comments,
+            aci_bridge_domain=aci_bridge_domain,
+            gateway_ip_address=aci_bd_gateway,
+            nb_tenant=nb_tenant,
+            advertised_externally_enabled=acisnet_advertised_externally_enabled,
+            igmp_querier_enabled=acisnet_igmp_querier_enabled,
+            ip_data_plane_learning_enabled=acisnet_ip_dp_learning_enabled,
+            no_default_gateway=acisnet_no_default_gateway,
+            nd_ra_enabled=acisnet_nd_ra_enabled,
+            nd_ra_prefix_policy_name=acisnet_nd_ra_prefix_policy_name,
+            preferred_ip_address_enabled=acisnet_preferred_ip_address_enabled,
+            shared_enabled=acisnet_shared_enabled,
+            virtual_ip_enabled=acisnet_virtual_ip_enabled,
+        )
+        super().setUp()
+
+    def test_create_aci_bridge_domain(self) -> None:
+        """Test type and values of created ACI Bridge Domain."""
+        self.assertTrue(isinstance(self.aci_bd_subnet, ACIBridgeDomainSubnet))
+        self.assertEqual(self.aci_bd_subnet.__str__(), self.aci_bd_subnet.name)
+        self.assertEqual(self.aci_bd_subnet.name_alias, "TestingBDSubnet")
+        self.assertEqual(
+            self.aci_bd_subnet.description,
+            "BDSubnet for NetBox ACI Plugin testing",
+        )
+        self.assertTrue(isinstance(self.aci_bd_subnet.aci_tenant, ACITenant))
+        self.assertEqual(self.aci_bd_subnet.aci_tenant.name, "ACITestTenant1")
+        self.assertTrue(isinstance(self.aci_bd_subnet.aci_vrf, ACIVRF))
+        self.assertEqual(self.aci_bd_subnet.aci_vrf.name, "VRFTest1")
+        self.assertTrue(
+            isinstance(self.aci_bd_subnet.aci_bridge_domain, ACIBridgeDomain)
+        )
+        self.assertEqual(self.aci_bd_subnet.aci_bridge_domain.name, "BDTest1")
+        self.assertTrue(
+            isinstance(self.aci_bd_subnet.gateway_ip_address, IPAddress)
+        )
+        self.assertEqual(
+            self.aci_bd_subnet.gateway_ip_address.address, "10.0.0.1/24"
+        )
+        self.assertTrue(isinstance(self.aci_bd_subnet.nb_tenant, Tenant))
+        self.assertEqual(self.aci_bd_subnet.nb_tenant.name, "NetBox Tenant")
+        self.assertEqual(
+            self.aci_bd_subnet.advertised_externally_enabled, False
+        )
+        self.assertEqual(self.aci_bd_subnet.igmp_querier_enabled, True)
+        self.assertEqual(
+            self.aci_bd_subnet.ip_data_plane_learning_enabled, True
+        )
+        self.assertEqual(self.aci_bd_subnet.no_default_gateway, False)
+        self.assertEqual(self.aci_bd_subnet.nd_ra_enabled, True)
+        self.assertEqual(
+            self.aci_bd_subnet.nd_ra_prefix_policy_name, "NDRAPolicy1"
+        )
+        self.assertEqual(self.aci_bd_subnet.preferred_ip_address_enabled, True)
+        self.assertEqual(self.aci_bd_subnet.shared_enabled, False)
+        self.assertEqual(self.aci_bd_subnet.virtual_ip_enabled, False)
+
+    def test_invalid_aci_bridge_domain_subnet_name(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet naming."""
+        subnet = ACIBridgeDomainSubnet(name="ACI BDSubnet Test 1")
+        self.assertRaises(ValidationError, subnet.full_clean)
+
+    def test_invalid_aci_bridge_domain_subnet_name_alias(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet aliasing."""
+        subnet = ACIBridgeDomainSubnet(
+            name="ACIBDSubnetTest1", name_alias="Invalid Alias"
+        )
+        self.assertRaises(ValidationError, subnet.full_clean)
+
+    def test_invalid_aci_bridge_domain_subnet_description(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet description."""
+        subnet = ACIBridgeDomainSubnet(
+            name="ACIBDSubnetTest1", description="Invalid Description: ö"
+        )
+        self.assertRaises(ValidationError, subnet.full_clean)
