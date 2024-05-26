@@ -52,7 +52,7 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
     filterset = ACIBridgeDomainFilterSet
     tab = ViewTab(
         label=_("Bridge Domains"),
-        badge=lambda obj: obj.aci_bds.count(),
+        badge=lambda obj: obj.aci_bridge_domains.count(),
         weight=1000,
     )
     table = ACIBridgeDomainTable
