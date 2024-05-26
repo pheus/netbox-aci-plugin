@@ -6,7 +6,11 @@ import django_tables2 as tables
 from django.utils.translation import gettext_lazy as _
 from netbox.tables import NetBoxTable, columns
 
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..models.tenant_networks import (
+    ACIVRF,
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
 
 
 class ACIVRFTable(NetBoxTable):
@@ -191,5 +195,99 @@ class ACIBridgeDomainTable(NetBoxTable):
             "nb_tenant",
             "description",
             "unicast_routing_enabled",
+            "tags",
+        )
+
+
+class ACIBridgeDomainSubnetTable(NetBoxTable):
+    """NetBox table for ACI Bridge Domain Subnet model."""
+
+    name = tables.Column(
+        verbose_name=_("Subnet Name"),
+        linkify=True,
+    )
+    name_alias = tables.Column(
+        verbose_name=_("Alias"),
+        linkify=True,
+    )
+    gateway_ip_address = tables.Column(
+        verbose_name=_("Gateway IP"),
+        linkify=True,
+    )
+    aci_tenant = tables.Column(
+        linkify=True,
+    )
+    aci_vrf = tables.Column(
+        linkify=True,
+    )
+    aci_bridge_domain = tables.Column(
+        linkify=True,
+    )
+    nb_tenant = tables.Column(
+        linkify=True,
+    )
+    advertised_externally_enabled = columns.BooleanColumn(
+        verbose_name=_("Advertised externally")
+    )
+    igmp_querier_enabled = columns.BooleanColumn(
+        verbose_name=_("IGMP querier")
+    )
+    ip_data_plane_learning_enabled = columns.BooleanColumn(
+        verbose_name=_("DP learning"),
+    )
+    no_default_gateway = columns.BooleanColumn(
+        verbose_name=_("No default GW"),
+    )
+    nd_ra_enabled = columns.BooleanColumn(
+        verbose_name=_("ND RA"),
+    )
+    preferred_ip_address_enabled = columns.BooleanColumn(
+        verbose_name=_("Preferred"),
+    )
+    shared_enabled = columns.BooleanColumn(
+        verbose_name=_("Shared"),
+    )
+    virtual_ip_enabled = columns.BooleanColumn(
+        verbose_name=_("VIP"),
+    )
+    tags = columns.TagColumn()
+    comments = columns.MarkdownColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIBridgeDomainSubnet
+        fields: tuple = (
+            "pk",
+            "id",
+            "name",
+            "gateway_ip_address",
+            "name_alias",
+            "aci_tenant",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "nb_tenant",
+            "description",
+            "advertised_externally_enabled",
+            "igmp_querier_enabled",
+            "ip_data_plane_learning_enabled",
+            "no_default_gateway",
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            "preferred_ip_address_enabled",
+            "shared_enabled",
+            "virtual_ip_enabled",
+            "tags",
+            "comments",
+        )
+        default_columns: tuple = (
+            "name",
+            "gateway_ip_address",
+            "name_alias",
+            "aci_tenant",
+            "aci_bridge_domain",
+            "nb_tenant",
+            "description",
+            "advertised_externally_enabled",
+            "preferred_ip_address_enabled",
+            "shared_enabled",
             "tags",
         )
