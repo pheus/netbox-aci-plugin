@@ -883,3 +883,161 @@ class ACIBridgeDomainSubnetForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+
+class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for ACI Bridge Domain Subnet model."""
+
+    model = ACIBridgeDomainSubnet
+    fieldsets: tuple = (
+        FieldSet(
+            "q",
+            "filter_id",
+            "tag",
+        ),
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant_id",
+            "aci_vrf_id",
+            "aci_bridge_domain_id",
+            "nb_vrf_id",
+            "gateway_ip_address",
+            "description",
+            "preferred_ip_address_enabled",
+            "virtual_ip_enabled",
+            name="Attributes",
+        ),
+        FieldSet(
+            "advertised_externally_enabled",
+            "shared_enabled",
+            name=_("Scope Settings"),
+        ),
+        FieldSet(
+            "igmp_querier_enabled",
+            "no_default_gateway",
+            name=_("Subnet Control Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            name=_("IPv6 Settings"),
+        ),
+        FieldSet(
+            "nb_tenant_group_id",
+            "nb_tenant_id",
+            name="NetBox Tenancy",
+        ),
+    )
+
+    name = forms.CharField(
+        required=False,
+    )
+    name_alias = forms.CharField(
+        required=False,
+    )
+    gateway_ip_address = forms.CharField(
+        required=False,
+        label=_("Gateway IP address"),
+    )
+    description = forms.CharField(
+        required=False,
+    )
+    aci_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        query_params={"nb_tenant_id": "$nb_tenant_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_vrf_id = DynamicModelMultipleChoiceField(
+        queryset=ACIVRF.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI VRF"),
+    )
+    aci_bridge_domain_id = DynamicModelMultipleChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        query_params={"aci_vrf_id": "$aci_vrf_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI Bridge Domain"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    advertised_externally_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Advertised externally enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    igmp_querier_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("IGMP querier enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("IP data plane learning enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    no_default_gateway = forms.NullBooleanField(
+        required=False,
+        label=_("No default SVI gateway"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    nd_ra_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("NA RA enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    nd_ra_prefix_policy_name = forms.CharField(
+        required=False,
+    )
+    preferred_ip_address_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Preferred (Primary) IP address enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    shared_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Shared enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    virtual_ip_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Virtual IP enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    tag = TagFilterField(ACITenant)
