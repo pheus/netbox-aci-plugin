@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from ipam.models import VRF
 from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
 from tenancy.models import Tenant, TenantGroup
+from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
 from utilities.forms.fields import (
     CommentField,
     DynamicModelChoiceField,
@@ -256,17 +257,23 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox VRF"),
     )
-    bd_enforcement_enabled = forms.BooleanField(
+    bd_enforcement_enabled = forms.NullBooleanField(
         required=False,
         label=_("Enabled Bridge Domain enforcement"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
     dns_labels = forms.CharField(
         required=False,
         label=_("DNS labels"),
     )
-    ip_data_plane_learning_enabled = forms.BooleanField(
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
         required=False,
         label=_("Enabled IP data plane learning"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
     pc_enforcement_direction = forms.ChoiceField(
         choices=VRFPCEnforcementDirectionChoices,
@@ -278,17 +285,26 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Policy control enforcement preference"),
     )
-    pim_ipv4_enabled = forms.BooleanField(
+    pim_ipv4_enabled = forms.NullBooleanField(
         required=False,
         label=_("Enabled PIM (multicast) IPv4"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
-    pim_ipv6_enabled = forms.BooleanField(
+    pim_ipv6_enabled = forms.NullBooleanField(
         required=False,
         label=_("Enabled PIM (multicast) IPv6"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
-    preferred_group_enabled = forms.BooleanField(
+    preferred_group_enabled = forms.NullBooleanField(
         required=False,
         label=_("Enabled preferred group"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
     tag = TagFilterField(ACITenant)
 
@@ -602,50 +618,77 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
-    advertise_host_routes_enabled = forms.BooleanField(
+    advertise_host_routes_enabled = forms.NullBooleanField(
         required=False,
         label=_("Advertise host routes enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
-    arp_flooding_enabled = forms.BooleanField(
+    arp_flooding_enabled = forms.NullBooleanField(
         required=False,
         label=_("ARP flooding enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
-    clear_remote_mac_enabled = forms.BooleanField(
+    clear_remote_mac_enabled = forms.NullBooleanField(
         required=False,
         label=_("Clear remote MAC entries enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
     dhcp_labels = forms.CharField(
         required=False,
         label=_("DHCP labels"),
     )
-    ep_move_detection_enabled = forms.BooleanField(
+    ep_move_detection_enabled = forms.NullBooleanField(
         required=False,
         label=_("EP move detection enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
-    ip_data_plane_learning_enabled = forms.BooleanField(
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
         required=False,
         label=_("IP data plane learning enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
-    limit_ip_learn_enabled = forms.BooleanField(
+    limit_ip_learn_enabled = forms.NullBooleanField(
         required=False,
         label=_("Limit IP learning to subnet enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
     multi_destination_flooding = forms.ChoiceField(
         choices=BDMultiDestinationFloodingChoices,
         required=False,
         label=_("Multi destination flooding"),
     )
-    pim_ipv4_enabled = forms.BooleanField(
+    pim_ipv4_enabled = forms.NullBooleanField(
         required=False,
         label=_("PIM (multicast) IPv4 enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
-    pim_ipv6_enabled = forms.BooleanField(
+    pim_ipv6_enabled = forms.NullBooleanField(
         required=False,
         label=_("PIM (multicast) IPv6 enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
-    unicast_routing_enabled = forms.BooleanField(
+    unicast_routing_enabled = forms.NullBooleanField(
         required=False,
         label=_("Unicast routing enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
     )
     unknown_ipv4_multicast = forms.ChoiceField(
         choices=BDUnknownMulticastChoices,
