@@ -6,7 +6,7 @@ import django_filters
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from ipam.models import VRF
+from ipam.models import VRF, IPAddress
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
 from utilities.filters import MultiValueMACAddressFilter
@@ -18,7 +18,11 @@ from ..choices import (
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..models.tenant_networks import (
+    ACIVRF,
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
 from ..models.tenants import ACITenant
 
 
@@ -211,5 +215,98 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
             Q(name__icontains=value)
             | Q(name_name_alias__icontains=value)
             | Q(description__icontains=value)
+        )
+        return queryset.filter(queryset_filter)
+
+
+class ACIBridgeDomainSubnetFilterSet(NetBoxModelFilterSet):
+    """Filter set for ACI Bridge Domain Subnet model."""
+
+    aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_vrf__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant (name)"),
+    )
+    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_vrf__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant (ID)"),
+    )
+    aci_vrf = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_vrf",
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        label=_("ACI VRF (name)"),
+    )
+    aci_vrf_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_vrf",
+        queryset=ACIVRF.objects.all(),
+        to_field_name="id",
+        label=_("ACI VRF (ID)"),
+    )
+    aci_bridge_domain = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIBridgeDomain.objects.all(),
+        to_field_name="name",
+        label=_("ACI Bridge Domain (name)"),
+    )
+    aci_bridge_domain_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIBridgeDomain.objects.all(),
+        to_field_name="id",
+        label=_("ACI Bridge Domain (ID)"),
+    )
+    gateway_ip_address = django_filters.ModelMultipleChoiceFilter(
+        queryset=IPAddress.objects.all(),
+        to_field_name="address",
+        label=_("Gateway IP address (address)"),
+    )
+    gateway_ip_address_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=IPAddress.objects.all(),
+        to_field_name="id",
+        label=_("Gateway IP address (ID)"),
+    )
+    nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        label=_("NetBox tenant (name)"),
+    )
+    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=Tenant.objects.all(),
+        to_field_name="id",
+        label=_("NetBox tenant (ID)"),
+    )
+
+    class Meta:
+        model = ACIBridgeDomainSubnet
+        fields: tuple = (
+            "id",
+            "name",
+            "name_alias",
+            "description",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "gateway_ip_address",
+            "nb_tenant",
+            "advertised_externally_enabled",
+            "igmp_querier_enabled",
+            "ip_data_plane_learning_enabled",
+            "no_default_gateway",
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            "preferred_ip_address_enabled",
+            "shared_enabled",
+            "virtual_ip_enabled",
+        )
+
+    def search(self, queryset, name, value):
+        """Return a QuerySet filtered by the models description."""
+        if not value.strip():
+            return queryset
+        queryset_filter: Q = (
+            Q(name__icontains=value)
+            | Q(name_alias__icontains=value)
+            | Q(description__icontains=value)
+            | Q(gateway_ip__istartswith=value)
         )
         return queryset.filter(queryset_filter)
