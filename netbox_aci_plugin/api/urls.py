@@ -11,6 +11,9 @@ router = NetBoxRouter()
 router.register("tenants", views.ACITenantListViewSet)
 router.register("app-profiles", views.ACIAppProfileListViewSet)
 router.register("bridge-domains", views.ACIBridgeDomainListViewSet)
+router.register(
+    "bridge-domain-subnets", views.ACIBridgeDomainSubnetListViewSet
+)
 router.register("vrfs", views.ACIVRFListViewSet)
 
 urlpatterns = router.urls
