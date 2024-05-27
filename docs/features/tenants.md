@@ -7,6 +7,7 @@ flowchart TD
     TN([Tenant])
     AP(Application Profile)
     BD(Bridge Domain)
+    SN(Subnet)
     VRF(VRF)
     subgraph graphTN [Tenant]
         TN
@@ -18,6 +19,7 @@ flowchart TD
         TN -->|1:n| VRF
         subgraph graphBD [Bridge Domain]
             TN -->|1:n| BD
+            BD -->|1:n| SN
         end
         BD -.->|1:n| VRF
     end
@@ -124,5 +126,35 @@ The *ACIBridgeDomain* model has the following fields:
 - **Unknown IPv4 multicast**: defines the IPv4 unknown multicast forwarding method, values: *flood*, *opt-flood* (default is *flood*)
 - **Unknown IPv6 multicast**: defines the IPv6 unknown multicast forwarding method, values: *flood*, *opt-flood* (default is *flood*)
 - **Virtual MAC address**: the virtual MAC address of the Bridge Domain / SVI used when the Bridge Domain is extended to multiple sites using L2Outs
+- **Comments**: a text field for additional notes
+- **Tags**: a list of NetBox tags
+
+## Bridge Domain Subnet
+
+A *Bridge Domain Subnet* is anycast gateway IP address of the Bridge Domain.
+The Subnet must be linked to a Bridge Domain instance. One or more Subnets can be associated with a Bridge Domain, but ony one Subnet can be preferred.
+
+The *ACIBridgeDomainSubnet* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represent the Bridge Domain name in the ACI
+- **ACI Bridge Domain**: a reference to the ACIBridgeDomain model.
+- **Gateway IP Address**: the gateway IP address of the Bridge Domain (referencing an NetBox IP address)
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Bridge Domain Subnet
+- **Description**: a description of the Bridge Domain Subnet
+- **NetBox Tenant**: a reference to the NetBox tenant model
+- **Advertised externally enabled**: a boolean field, whether the subnet is advertised to the outside to any associated L3Outs (public scope). (default is *false*)
+- **IGMP querier enabled**: a boolean field specifying, whether the gateway IP address is treated as an IGMP querier source IP. (default is *false*)
+- **IP data plane learning enabled**: a boolean field representing whether IP data plane learning is enabled for the Bridge Domain Subnet. (default is *true*)
+- **No default SVI gateway**: a boolean field, if the default gateway functionality of the address is removed. (default is *false*)
+- **ND RA enabled**: a boolean field, whether the gateway IP is treated as a IPv6 Neighbor Discovery Router Advertisement prefix. (default is *true*)
+- **ND RA prefix policy name**: the name of the Neighbor Discovery Router Advertisement prefix policy
+- **Preferred IP address enabled**: a boolean field, if the gateway IP address is the preferred (primary) IP gateway of the Bridge Domain. (default is *false*)
+- **Shared enabled**: a boolean field, if endpoints can communicate only within the same (*disabled*) or shared VRFs (*enabled*) in the ACI fabric (inter-VRF route leaking). (default is *false*)
+- **Virtual IP enabled**: a boolean field determining, if the gateway is a virtual IP address (used for stretched Bridge Domains to multiple sites). (default is *false*)
 - **Comments**: a text field for additional notes
 - **Tags**: a list of NetBox tags
