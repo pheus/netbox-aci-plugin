@@ -508,6 +508,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
             "name_alias",
             "description",
             "aci_vrf",
+            "nb_tenant",
             "advertise_host_routes_enabled",
             "arp_flooding_enabled",
             "clear_remote_mac_enabled",
