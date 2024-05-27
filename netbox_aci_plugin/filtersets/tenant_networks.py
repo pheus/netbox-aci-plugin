@@ -102,7 +102,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
             return queryset
         queryset_filter: Q = (
             Q(name__icontains=value)
-            | Q(name_name_alias__icontains=value)
+            | Q(name_alias__icontains=value)
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
@@ -213,7 +213,7 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
             return queryset
         queryset_filter: Q = (
             Q(name__icontains=value)
-            | Q(name_name_alias__icontains=value)
+            | Q(name_alias__icontains=value)
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
