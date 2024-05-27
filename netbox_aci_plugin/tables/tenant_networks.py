@@ -291,3 +291,29 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
             "shared_enabled",
             "tags",
         )
+
+
+class ACIBridgeDomainSubnetReducedTable(NetBoxTable):
+    """Reduced NetBox table for ACI Bridge Domain Subnet model."""
+
+    name = tables.Column(
+        verbose_name=_("Subnet Name"),
+        linkify=True,
+    )
+    gateway_ip_address = tables.Column(
+        verbose_name=_("Gateway IP"),
+        linkify=True,
+    )
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIBridgeDomainSubnet
+        fields: tuple = (
+            "pk",
+            "id",
+            "name",
+            "gateway_ip_address",
+        )
+        default_columns: tuple = (
+            "name",
+            "gateway_ip_address",
+        )

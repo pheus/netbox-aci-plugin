@@ -25,6 +25,7 @@ from ..models.tenant_networks import (
     ACIBridgeDomainSubnet,
 )
 from ..tables.tenant_networks import (
+    ACIBridgeDomainSubnetReducedTable,
     ACIBridgeDomainSubnetTable,
     ACIBridgeDomainTable,
     ACIVRFTable,
@@ -188,6 +189,17 @@ class ACIBridgeDomainView(generic.ObjectView):
         "nb_tenant",
         "tags",
     )
+
+    def get_extra_context(self, request, instance) -> dict:
+        """Return related Bridge Domain Subnets as extra context."""
+        subnets_table = ACIBridgeDomainSubnetReducedTable(
+            instance.aci_bridge_domain_subnets.all()
+        )
+        subnets_table.configure(request=request)
+
+        return {
+            "subnets_table": subnets_table,
+        }
 
 
 class ACIBridgeDomainListView(generic.ObjectListView):
