@@ -77,6 +77,28 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
         )
 
 
+class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI Bridge Domain Subnet."""
+
+    child_model = ACIBridgeDomainSubnet
+    filterset = ACIBridgeDomainSubnetFilterSet
+    tab = ViewTab(
+        label=_("BD Subnets"),
+        badge=lambda obj: obj.aci_bridge_domain_subnets.count(),
+        weight=1000,
+    )
+    table = ACIBridgeDomainSubnetTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIBridgeDomainSubnet."""
+        return ACIBridgeDomainSubnet.objects.prefetch_related(
+            "aci_bridge_domain",
+            "gateway_ip_address",
+            "nb_tenant",
+            "tags",
+        )
+
+
 #
 # VRF views
 #
@@ -202,6 +224,31 @@ class ACIBridgeDomainDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+@register_model_view(ACIBridgeDomain, "bridgedomainsubnetss", path="subnets")
+class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
+    """Children view of ACI Bridge Domain Subnet of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    template_name = "netbox_aci_plugin/acibridgedomain_subnets.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects for current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_bridge_domain=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return table with ACIBridgeDomain colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIBridgeDomain column
+        table.columns.hide("aci_bridge_domain")
+
+        return table
 
 
 #
