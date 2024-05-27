@@ -12,6 +12,8 @@ from .views.tenant_app_profiles import (
 from .views.tenant_networks import (
     ACIBridgeDomainEditView,
     ACIBridgeDomainListView,
+    ACIBridgeDomainSubnetEditView,
+    ACIBridgeDomainSubnetListView,
     ACIVRFEditView,
     ACIVRFListView,
 )
@@ -54,6 +56,21 @@ urlpatterns: tuple = (
     path(
         "bridge-domains/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acibridgedomain")),
+    ),
+    # ACI Bridge Domain Subnet
+    path(
+        "bridge-domain-subnets/",
+        ACIBridgeDomainSubnetListView.as_view(),
+        name="acibridgedomainsubnet_list",
+    ),
+    path(
+        "bridge-domain-subnets/add/",
+        ACIBridgeDomainSubnetEditView.as_view(),
+        name="acibridgedomainsubnet_add",
+    ),
+    path(
+        "bridge-domain-subnets/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acibridgedomainsubnet")),
     ),
     # ACI VRF
     path("vrfs/", ACIVRFListView.as_view(), name="acivrf_list"),

@@ -1,0 +1,105 @@
+
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainsubnet_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainsubnet_list' %}?aci_vrf_id={{ object.aci_vrf.pk }}">{{ object.aci_vrf }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainsubnet_list' %}?aci_bridge_domain_id={{ object.aci_bridge_domain.pk }}">{{ object.aci_bridge_domain }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h5 class="card-header">{% trans "ACI Bridge Domain Subnet" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ACI Tenant" %}</th>
+            <td>{{ object.aci_tenant|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ACI VRF" %}</th>
+            <td>{{ object.aci_vrf|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ACI Bridge Domain" %}</th>
+            <td>{{ object.aci_bridge_domain|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Name Alias" %}</th>
+            <td>{{ object.name_alias|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Description" %}</th>
+            <td>{{ object.description|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox Tenant" %}</th>
+            <td>
+                {% if object.nb_tenant.group %}
+                    {{ object.nb_tenant.group|linkify }} /
+                {% endif %}
+                {{ object.nb_tenant|linkify|placeholder }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Scope Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Advertised externally enabled" %}</th>
+            <td>{% checkmark object.advertised_externally_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Shared enabled" %}</th>
+            <td>{% checkmark object.shared_enabled %}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Subnet Control Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "IGMP Querier enabled" %}</th>
+            <td>{% checkmark object.igmp_querier_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "No Default SVI Gateway" %}</th>
+            <td>{% checkmark object.no_default_gateway %}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "Endpoint Learning Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "IP Data Plane Learning enabled" %}</th>
+            <td>{% checkmark object.ip_data_plane_learning_enabled %}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h5 class="card-header">{% trans "IPv6 Settings" %}</h5>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ND RA enabled" %}</th>
+            <td>{% checkmark object.nd_ra_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ND RA Prefix Policy" %}</th>
+            <td>{% checkmark object.nd_ra_prefix_policy_name %}</td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}

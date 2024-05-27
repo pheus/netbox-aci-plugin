@@ -10,11 +10,16 @@ from netbox.graphql.filter_mixins import BaseFilterMixin, autotype_decorator
 from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
 from ..filtersets.tenant_networks import (
     ACIBridgeDomainFilterSet,
+    ACIBridgeDomainSubnetFilterSet,
     ACIVRFFilterSet,
 )
 from ..filtersets.tenants import ACITenantFilterSet
 from ..models.tenant_app_profiles import ACIAppProfile
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..models.tenant_networks import (
+    ACIVRF,
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
 from ..models.tenants import ACITenant
 
 
@@ -50,3 +55,11 @@ class ACIBridgeDomainFilter(BaseFilterMixin):
     dhcp_labels: Optional[list[str]]
     mac_address: Optional[str]
     virtual_mac_address: Optional[str]
+
+
+@strawberry_django.filter(ACIBridgeDomainSubnet, lookups=True)
+@autotype_decorator(ACIBridgeDomainSubnetFilterSet)
+class ACIBridgeDomainSubnetFilter(BaseFilterMixin):
+    """GraphQL filter definition for Bridge Domain Subnet model."""
+
+    pass

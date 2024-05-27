@@ -1,6 +1,7 @@
 
 {% extends 'generic/object.html' %}
 {% load render_table from django_tables2 %}
+{% load helpers %}
 {% load i18n %}
 
 {% block breadcrumbs %}
@@ -8,6 +9,14 @@
     <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomain_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
     <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomain_list' %}?aci_vrf_id={{ object.aci_vrf.pk }}">{{ object.aci_vrf }}</a></li>
 {% endblock breadcrumbs %}
+
+{% block extra_controls %}
+  {% with viewname=object|viewname:"" %}
+  <a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainsubnet_add' %}?aci_bridge_domain={{ object.pk }}&aci_vrf={{ object.aci_vrf.pk }}&nb_vrf={{ object.aci_vrf.pk }}&nb_tenant={{ object.nb_tenant.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
+    <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add a BD Subnet" %}
+  </a>
+  {% endwith %}
+{% endblock %}
 
 {% block content %}
   <div class="row">
@@ -141,6 +150,12 @@
       {% include 'inc/panels/custom_fields.html' %}
     </div>
     <div class="col col-md-6">
+      <div class="card">
+        <h5 class="card-header">Subnets</h5>
+        <div class="table-responsive">
+          {% render_table subnets_table %}
+        </div>
+      </div>
       <div class="card">
         <h5 class="card-header">{% trans "Additional Settings" %}</h5>
         <table class="table table-hover attr-table">

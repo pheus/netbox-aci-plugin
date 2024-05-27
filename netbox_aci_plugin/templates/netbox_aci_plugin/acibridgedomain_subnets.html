@@ -1,0 +1,11 @@
+{% extends 'generic/object_children.html' %}
+{% load helpers %}
+{% load i18n %}
+
+{% block extra_controls %}
+  {% with viewname=object|viewname:"" %}
+  <a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainsubnet_add' %}?aci_bridge_domain={{ object.pk }}&aci_vrf={{ object.aci_vrf.pk }}&nb_vrf={{ object.aci_vrf.pk }}&nb_tenant={{ object.nb_tenant.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
+    <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add a BD Subnet" %}
+  </a>
+  {% endwith %}
+{% endblock %}

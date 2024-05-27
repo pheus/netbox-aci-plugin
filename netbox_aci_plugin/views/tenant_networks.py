@@ -8,16 +8,28 @@ from utilities.views import ViewTab, register_model_view
 
 from ..filtersets.tenant_networks import (
     ACIBridgeDomainFilterSet,
+    ACIBridgeDomainSubnetFilterSet,
     ACIVRFFilterSet,
 )
 from ..forms.tenant_networks import (
     ACIBridgeDomainFilterForm,
     ACIBridgeDomainForm,
+    ACIBridgeDomainSubnetFilterForm,
+    ACIBridgeDomainSubnetForm,
     ACIVRFFilterForm,
     ACIVRFForm,
 )
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
-from ..tables.tenant_networks import ACIBridgeDomainTable, ACIVRFTable
+from ..models.tenant_networks import (
+    ACIVRF,
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
+from ..tables.tenant_networks import (
+    ACIBridgeDomainSubnetReducedTable,
+    ACIBridgeDomainSubnetTable,
+    ACIBridgeDomainTable,
+    ACIVRFTable,
+)
 
 #
 # Base children views
@@ -61,6 +73,28 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
         """Return all objects of ACIBridgeDomain."""
         return ACIBridgeDomain.objects.prefetch_related(
             "aci_vrf",
+            "nb_tenant",
+            "tags",
+        )
+
+
+class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI Bridge Domain Subnet."""
+
+    child_model = ACIBridgeDomainSubnet
+    filterset = ACIBridgeDomainSubnetFilterSet
+    tab = ViewTab(
+        label=_("BD Subnets"),
+        badge=lambda obj: obj.aci_bridge_domain_subnets.count(),
+        weight=1000,
+    )
+    table = ACIBridgeDomainSubnetTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIBridgeDomainSubnet."""
+        return ACIBridgeDomainSubnet.objects.prefetch_related(
+            "aci_bridge_domain",
+            "gateway_ip_address",
             "nb_tenant",
             "tags",
         )
@@ -156,6 +190,17 @@ class ACIBridgeDomainView(generic.ObjectView):
         "tags",
     )
 
+    def get_extra_context(self, request, instance) -> dict:
+        """Return related Bridge Domain Subnets as extra context."""
+        subnets_table = ACIBridgeDomainSubnetReducedTable(
+            instance.aci_bridge_domain_subnets.all()
+        )
+        subnets_table.configure(request=request)
+
+        return {
+            "subnets_table": subnets_table,
+        }
+
 
 class ACIBridgeDomainListView(generic.ObjectListView):
     """List view for listing all objects of ACI Bridge Domain."""
@@ -188,6 +233,87 @@ class ACIBridgeDomainDeleteView(generic.ObjectDeleteView):
 
     queryset = ACIBridgeDomain.objects.prefetch_related(
         "aci_vrf",
+        "nb_tenant",
+        "tags",
+    )
+
+
+@register_model_view(ACIBridgeDomain, "bridgedomainsubnetss", path="subnets")
+class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
+    """Children view of ACI Bridge Domain Subnet of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    template_name = "netbox_aci_plugin/acibridgedomain_subnets.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects for current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_bridge_domain=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return table with ACIBridgeDomain colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIBridgeDomain column
+        table.columns.hide("aci_bridge_domain")
+
+        return table
+
+
+#
+# Bridge Domain Subnet views
+#
+
+
+@register_model_view(ACIBridgeDomainSubnet)
+class ACIBridgeDomainSubnetView(generic.ObjectView):
+    """Detail view for displaying a single object of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+        "aci_bridge_domain",
+        "gateway_ip_address",
+        "nb_tenant",
+        "tags",
+    )
+
+
+class ACIBridgeDomainSubnetListView(generic.ObjectListView):
+    """List view for listing all objects of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+        "aci_bridge_domain",
+        "gateway_ip_address",
+        "nb_tenant",
+        "tags",
+    )
+    filterset = ACIBridgeDomainSubnetFilterSet
+    filterset_form = ACIBridgeDomainSubnetFilterForm
+    table = ACIBridgeDomainSubnetTable
+
+
+@register_model_view(ACIBridgeDomainSubnet, "edit")
+class ACIBridgeDomainSubnetEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+        "aci_bridge_domain",
+        "gateway_ip_address",
+        "nb_tenant",
+        "tags",
+    )
+    form = ACIBridgeDomainSubnetForm
+
+
+@register_model_view(ACIBridgeDomainSubnet, "delete")
+class ACIBridgeDomainSubnetDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+        "aci_bridge_domain",
+        "gateway_ip_address",
         "nb_tenant",
         "tags",
     )

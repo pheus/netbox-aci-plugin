@@ -46,6 +46,20 @@ acibd_item = PluginMenuItem(
     buttons=acibd_buttons,
 )
 
+# ACI Bridge Domain Subnet
+acibdsubnet_buttons: tuple = (
+    PluginMenuButton(
+        link="plugins:netbox_aci_plugin:acibridgedomainsubnet_add",
+        title="Add",
+        icon_class="mdi mdi-plus-thick",
+    ),
+)
+acibdsubnet_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acibridgedomainsubnet_list",
+    link_text="Bridge Domain Subnets",
+    buttons=acibdsubnet_buttons,
+)
+
 # ACI VRF
 acivrf_buttons: tuple = (
     PluginMenuButton(
@@ -70,6 +84,7 @@ menu = PluginMenu(
                 acitenant_item,
                 aciappprofile_item,
                 acibd_item,
+                acibdsubnet_item,
                 acivrf_item,
             ),
         ),

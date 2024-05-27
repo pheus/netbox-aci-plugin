@@ -2,13 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from ipam.api.serializers import VRFSerializer
+from ipam.api.serializers import IPAddressSerializer, VRFSerializer
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 
 from ..models.tenant_app_profiles import ACIAppProfile
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..models.tenant_networks import (
+    ACIVRF,
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
 from ..models.tenants import ACITenant
 
 
@@ -188,5 +192,56 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
             "name_alias",
             "description",
             "aci_vrf",
+            "nb_tenant",
+        )
+
+
+class ACIBridgeDomainSubnetSerializer(NetBoxModelSerializer):
+    """Serializer for ACI Bridge Domain Subnet model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:acibridgedomainsubnet-detail"
+    )
+    aci_bridge_domain = ACIBridgeDomainSerializer(nested=True, required=True)
+    gateway_ip_address = IPAddressSerializer(nested=True, required=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+
+    class Meta:
+        model = ACIBridgeDomainSubnet
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_bridge_domain",
+            "gateway_ip_address",
+            "nb_tenant",
+            "description",
+            "advertised_externally_enabled",
+            "igmp_querier_enabled",
+            "ip_data_plane_learning_enabled",
+            "no_default_gateway",
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            "preferred_ip_address_enabled",
+            "shared_enabled",
+            "virtual_ip_enabled",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "gateway_ip_address",
+            "aci_bridge_domain",
             "nb_tenant",
         )

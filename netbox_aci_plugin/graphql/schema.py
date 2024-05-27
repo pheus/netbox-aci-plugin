@@ -7,10 +7,15 @@ import strawberry
 import strawberry_django
 
 from ..models.tenant_app_profiles import ACIAppProfile
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..models.tenant_networks import (
+    ACIVRF,
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
 from ..models.tenants import ACITenant
 from .types import (
     ACIAppProfileType,
+    ACIBridgeDomainSubnetType,
     ACIBridgeDomainType,
     ACITenantType,
     ACIVRFType,
@@ -65,9 +70,23 @@ class ACIBridgeDomainQuery:
         return ACIBridgeDomain.objects.get(pk=id)
 
 
+@strawberry.type
+class ACIBridgeDomainSubnetQuery:
+    """GraphQL query definition for ACIBridgeDomainSubnet model."""
+
+    aci_bridge_domain_subnet_list: List[ACIBridgeDomainSubnetType] = (
+        strawberry_django.field()
+    )
+
+    @strawberry.field
+    def aci_bridge_domain_subnet(self, id: int) -> ACIBridgeDomainSubnetType:
+        return ACIBridgeDomainSubnet.objects.get(pk=id)
+
+
 schema: list = [
     ACITenantsQuery,
     ACIAppProfilesQuery,
     ACIBridgeDomainQuery,
+    ACIBridgeDomainSubnetQuery,
     ACIVRFQuery,
 ]
