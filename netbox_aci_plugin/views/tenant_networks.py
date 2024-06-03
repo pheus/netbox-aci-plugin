@@ -157,7 +157,7 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
     """Children view of ACI Bridge Domain of ACI VRF."""
 
     queryset = ACIVRF.objects.all()
-    template_name = "netbox_aci_plugin/acivrf_bds.html"
+    template_name = "netbox_aci_plugin/acivrf_bridgedomains.html"
 
     def get_children(self, request, parent):
         """Return all children objects for current parent object."""
