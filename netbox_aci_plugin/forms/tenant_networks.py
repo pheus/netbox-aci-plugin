@@ -731,7 +731,10 @@ class ACIBridgeDomainSubnetForm(NetBoxModelForm):
     )
     aci_bridge_domain = DynamicModelChoiceField(
         queryset=ACIBridgeDomain.objects.all(),
-        query_params={"aci_vrf_id": "$aci_vrf"},
+        query_params={
+            "aci_tenant_id": "$aci_tenant",
+            "aci_vrf_id": "$aci_vrf",
+        },
         label=_("ACI Bridge Domain"),
     )
     nb_vrf = DynamicModelChoiceField(
