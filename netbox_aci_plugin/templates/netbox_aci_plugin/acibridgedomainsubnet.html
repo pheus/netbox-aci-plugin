@@ -91,7 +91,7 @@
           </tr>
           <tr>
             <th scope="row">{% trans "ND RA Prefix Policy" %}</th>
-            <td>{% checkmark object.nd_ra_prefix_policy_name %}</td>
+            <td>{{ object.nd_ra_prefix_policy_name|placeholder }}</td>
           </tr>
         </table>
       </div>
