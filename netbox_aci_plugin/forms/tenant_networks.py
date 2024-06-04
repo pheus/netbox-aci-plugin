@@ -742,7 +742,7 @@ class ACIBridgeDomainSubnetForm(NetBoxModelForm):
     )
     gateway_ip_address = DynamicModelChoiceField(
         queryset=IPAddress.objects.all(),
-        query_params={"present_in_vrf_id": "$nd_vrf"},
+        query_params={"present_in_vrf_id": "$nb_vrf"},
         label=_("Gateway IP address"),
     )
     nb_tenant_group = DynamicModelChoiceField(
