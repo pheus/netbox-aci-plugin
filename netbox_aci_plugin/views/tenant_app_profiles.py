@@ -6,13 +6,21 @@ from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
-from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
+from ..filtersets.tenant_app_profiles import (
+    ACIAppProfileFilterSet,
+    ACIEndpointGroupFilterSet,
+)
 from ..forms.tenant_app_profiles import (
     ACIAppProfileFilterForm,
     ACIAppProfileForm,
+    ACIEndpointGroupFilterForm,
+    ACIEndpointGroupForm,
 )
-from ..models.tenant_app_profiles import ACIAppProfile
-from ..tables.tenant_app_profiles import ACIAppProfileTable
+from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
+from ..tables.tenant_app_profiles import (
+    ACIAppProfileTable,
+    ACIEndpointGroupTable,
+)
 
 #
 # Base children views
@@ -83,6 +91,62 @@ class ACIAppProfileDeleteView(generic.ObjectDeleteView):
 
     queryset = ACIAppProfile.objects.prefetch_related(
         "aci_tenant",
+        "nb_tenant",
+        "tags",
+    )
+
+
+#
+# Endpoint Group views
+#
+
+
+@register_model_view(ACIEndpointGroup)
+class ACIEndpointGroupView(generic.ObjectView):
+    """Detail view for displaying a single object of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.prefetch_related(
+        "aci_app_profile",
+        "aci_bridge_domain",
+        "nb_tenant",
+        "tags",
+    )
+
+
+class ACIEndpointGroupListView(generic.ObjectListView):
+    """List view for listing all objects of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.prefetch_related(
+        "aci_app_profile",
+        "aci_bridge_domain",
+        "nb_tenant",
+        "tags",
+    )
+    filterset = ACIEndpointGroupFilterSet
+    filterset_form = ACIEndpointGroupFilterForm
+    table = ACIEndpointGroupTable
+
+
+@register_model_view(ACIEndpointGroup, "edit")
+class ACIEndpointGroupEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.prefetch_related(
+        "aci_app_profile",
+        "aci_bridge_domain",
+        "nb_tenant",
+        "tags",
+    )
+    form = ACIEndpointGroupForm
+
+
+@register_model_view(ACIEndpointGroup, "delete")
+class ACIEndpointGroupDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.prefetch_related(
+        "aci_app_profile",
+        "aci_bridge_domain",
         "nb_tenant",
         "tags",
     )
