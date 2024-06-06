@@ -6,6 +6,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
 from tenancy.models import Tenant, TenantGroup
+from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
 from utilities.forms.fields import (
     CommentField,
     DynamicModelChoiceField,
@@ -272,3 +273,139 @@ class ACIEndpointGroupForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+
+class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for ACI Endpoint Group model."""
+
+    model = ACIEndpointGroup
+    fieldsets: tuple = (
+        FieldSet(
+            "q",
+            "filter_id",
+            "tag",
+        ),
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant_id",
+            "aci_app_profile_id",
+            "aci_vrf_id",
+            "aci_bridge_domain_id",
+            "description",
+            "admin_shutdown",
+            name="Attributes",
+        ),
+        FieldSet(
+            "preferred_group_member_enabled",
+            "intra_epg_isolation_enabled",
+            name=_("Policy Enforcement Settings"),
+        ),
+        FieldSet(
+            "flood_in_encap_enabled",
+            "proxy_arp_enabled",
+            name=_("Endpoint Forwarding Settings"),
+        ),
+        FieldSet(
+            "qos_class",
+            "custom_qos_policy_name",
+            name=_("Quality of Service (QoS) Settings"),
+        ),
+        FieldSet(
+            "nb_tenant_group_id",
+            "nb_tenant_id",
+            name="NetBox Tenancy",
+        ),
+    )
+
+    name = forms.CharField(
+        required=False,
+    )
+    name_alias = forms.CharField(
+        required=False,
+    )
+    description = forms.CharField(
+        required=False,
+    )
+    aci_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        query_params={"nb_tenant_id": "$nb_tenant_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_app_profile_id = DynamicModelMultipleChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI Application Profile"),
+    )
+    aci_vrf_id = DynamicModelMultipleChoiceField(
+        queryset=ACIVRF.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI VRF"),
+    )
+    aci_bridge_domain_id = DynamicModelMultipleChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        query_params={"aci_vrf_id": "$aci_vrf_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI Bridge Domain"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    admin_shutdown = forms.NullBooleanField(
+        required=False,
+        label=_("Admin shutdown"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    flood_in_encap_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Flood in encapsulation enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    intra_epg_isolation_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Intra-EPG isolation enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    qos_class = forms.ChoiceField(
+        choices=EPGQualityOfServiceClassChoices,
+        required=False,
+        label=_("Quality of Service (QoS) class"),
+    )
+    preferred_group_member_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Preferred group member enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    proxy_arp_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Proxy ARP enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    tag = TagFilterField(ACIEndpointGroup)
