@@ -11,10 +11,11 @@ from ..choices import (
     BDMultiDestinationFloodingChoices,
     BDUnknownMulticastChoices,
     BDUnknownUnicastChoices,
+    EPGQualityOfServiceClassChoices,
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -476,3 +477,106 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
             name="ACIBDSubnetTest1", description="Invalid Description: ö"
         )
         self.assertRaises(ValidationError, subnet.full_clean)
+
+
+class ACIEndpointGroupTestCase(TestCase):
+    """Test case for ACIEndpointGroup model."""
+
+    def setUp(self) -> None:
+        """Set up an ACI Endpoint Group for testing."""
+        acitenant_name = "ACITestTenant1"
+        aciappprofile_name = "AppProfileTest1"
+        acivrf_name = "VRFTest1"
+        acibd_name = "BDTest1"
+        aciepg_name = "EPGTest1"
+        aciepg_name_alias = "TestingEPG"
+        aciepg_description = "EPG for NetBox ACI Plugin testing"
+        aciepg_comments = """
+        EPG for NetBox ACI Plugin testing.
+        """
+        aciepg_admin_shutdown = False
+        aciepg_custom_qos_policy_name = "CustomQoSPolicy1"
+        aciepg_flood_in_encap_enabled = False
+        aciepg_intra_epg_isolation_enabled = False
+        aciepg_qos_class = EPGQualityOfServiceClassChoices.CLASS_LEVEL_3
+        aciepg_preferred_group_member_enabled = False
+        aciepg_proxy_arp_enabled = False
+
+        aci_tenant = ACITenant.objects.create(name=acitenant_name)
+        aci_app_profile = ACIAppProfile.objects.create(
+            name=aciappprofile_name, aci_tenant=aci_tenant
+        )
+        aci_vrf = ACIVRF.objects.create(
+            name=acivrf_name, aci_tenant=aci_tenant
+        )
+        aci_bd = ACIBridgeDomain.objects.create(
+            name=acibd_name, aci_vrf=aci_vrf
+        )
+        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
+
+        self.aci_epg = ACIEndpointGroup.objects.create(
+            name=aciepg_name,
+            name_alias=aciepg_name_alias,
+            description=aciepg_description,
+            comments=aciepg_comments,
+            aci_app_profile=aci_app_profile,
+            aci_bridge_domain=aci_bd,
+            nb_tenant=nb_tenant,
+            admin_shutdown=aciepg_admin_shutdown,
+            custom_qos_policy_name=aciepg_custom_qos_policy_name,
+            flood_in_encap_enabled=aciepg_flood_in_encap_enabled,
+            intra_epg_isolation_enabled=aciepg_intra_epg_isolation_enabled,
+            qos_class=aciepg_qos_class,
+            preferred_group_member_enabled=aciepg_preferred_group_member_enabled,
+            proxy_arp_enabled=aciepg_proxy_arp_enabled,
+        )
+        super().setUp()
+
+    def test_create_aci_endpoint_group(self) -> None:
+        """Test type and values of created ACI Endpoint Group."""
+        self.assertTrue(isinstance(self.aci_epg, ACIEndpointGroup))
+        self.assertEqual(self.aci_epg.__str__(), self.aci_epg.name)
+        self.assertEqual(self.aci_epg.name_alias, "TestingEPG")
+        self.assertEqual(
+            self.aci_epg.description, "EPG for NetBox ACI Plugin testing"
+        )
+        self.assertTrue(isinstance(self.aci_epg.aci_tenant, ACITenant))
+        self.assertEqual(self.aci_epg.aci_tenant.name, "ACITestTenant1")
+        self.assertTrue(
+            isinstance(self.aci_epg.aci_app_profile, ACIAppProfile)
+        )
+        self.assertEqual(self.aci_epg.aci_app_profile.name, "AppProfileTest1")
+        self.assertTrue(isinstance(self.aci_epg.aci_vrf, ACIVRF))
+        self.assertEqual(self.aci_epg.aci_vrf.name, "VRFTest1")
+        self.assertTrue(
+            isinstance(self.aci_epg.aci_bridge_domain, ACIBridgeDomain)
+        )
+        self.assertEqual(self.aci_epg.aci_bridge_domain.name, "BDTest1")
+        self.assertTrue(isinstance(self.aci_epg.nb_tenant, Tenant))
+        self.assertEqual(self.aci_epg.nb_tenant.name, "NetBox Tenant")
+        self.assertEqual(self.aci_epg.admin_shutdown, False)
+        self.assertEqual(
+            self.aci_epg.custom_qos_policy_name, "CustomQoSPolicy1"
+        )
+        self.assertEqual(self.aci_epg.flood_in_encap_enabled, False)
+        self.assertEqual(self.aci_epg.intra_epg_isolation_enabled, False)
+        self.assertEqual(self.aci_epg.qos_class, "level3")
+        self.assertEqual(self.aci_epg.preferred_group_member_enabled, False)
+        self.assertEqual(self.aci_epg.proxy_arp_enabled, False)
+
+    def test_invalid_aci_endpoint_group_name(self) -> None:
+        """Test validation of ACI Endpoint Group naming."""
+        epg = ACIEndpointGroup(name="ACI EPG Test 1")
+        self.assertRaises(ValidationError, epg.full_clean)
+
+    def test_invalid_aci_endpoint_group_name_alias(self) -> None:
+        """Test validation of ACI Endpoint Group aliasing."""
+        epg = ACIEndpointGroup(name="ACIEPGTest1", name_alias="Invalid Alias")
+        self.assertRaises(ValidationError, epg.full_clean)
+
+    def test_invalid_aci_endpoint_group_description(self) -> None:
+        """Test validation of ACI Endpoint Group description."""
+        epg = ACIEndpointGroup(
+            name="ACIEPGTest1", description="Invalid Description: ö"
+        )
+        self.assertRaises(ValidationError, epg.full_clean)
