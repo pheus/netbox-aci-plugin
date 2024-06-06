@@ -8,6 +8,8 @@ from utilities.urls import get_model_urls
 from .views.tenant_app_profiles import (
     ACIAppProfileEditView,
     ACIAppProfileListView,
+    ACIEndpointGroupEditView,
+    ACIEndpointGroupListView,
 )
 from .views.tenant_networks import (
     ACIBridgeDomainEditView,
@@ -41,6 +43,21 @@ urlpatterns: tuple = (
     path(
         "app-profiles/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciappprofile")),
+    ),
+    # ACI Endpoint Group
+    path(
+        "endpoint-groups/",
+        ACIEndpointGroupListView.as_view(),
+        name="aciendpointgroup_list",
+    ),
+    path(
+        "endpoint-groups/add/",
+        ACIEndpointGroupEditView.as_view(),
+        name="aciendpointgroup_add",
+    ),
+    path(
+        "endpoint-groups/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciendpointgroup")),
     ),
     # ACI Bridge Domain
     path(
