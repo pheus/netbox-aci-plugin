@@ -4,7 +4,7 @@
 
 from netbox.search import SearchIndex, register_search
 
-from .models.tenant_app_profiles import ACIAppProfile
+from .models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from .models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -110,5 +110,26 @@ class ACIBridgeDomainSubnetIndex(SearchIndex):
         "description",
         "aci_bridge_domain",
         "gateway_ip_address",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIEndpointGroupIndex(SearchIndex):
+    """NetBox search definition for ACI Endpoint Group model."""
+
+    model = ACIEndpointGroup
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_app_profile",
+        "aci_bridge_domain",
         "nb_tenant",
     )

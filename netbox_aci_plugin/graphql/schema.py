@@ -6,7 +6,7 @@ from typing import List
 import strawberry
 import strawberry_django
 
-from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -17,6 +17,7 @@ from .types import (
     ACIAppProfileType,
     ACIBridgeDomainSubnetType,
     ACIBridgeDomainType,
+    ACIEndpointGroupType,
     ACITenantType,
     ACIVRFType,
 )
@@ -83,10 +84,24 @@ class ACIBridgeDomainSubnetQuery:
         return ACIBridgeDomainSubnet.objects.get(pk=id)
 
 
+@strawberry.type
+class ACIEndpointGroupQuery:
+    """GraphQL query definition for ACIEndpointGroup model."""
+
+    aci_endpoint_group_list: List[ACIEndpointGroupType] = (
+        strawberry_django.field()
+    )
+
+    @strawberry.field
+    def aci_endpoint_group(self, id: int) -> ACIEndpointGroupType:
+        return ACIEndpointGroup.objects.get(pk=id)
+
+
 schema: list = [
     ACITenantsQuery,
     ACIAppProfilesQuery,
     ACIBridgeDomainQuery,
     ACIBridgeDomainSubnetQuery,
+    ACIEndpointGroupQuery,
     ACIVRFQuery,
 ]

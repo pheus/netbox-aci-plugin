@@ -6,6 +6,7 @@ An ACI fabric manages one or more *tenants* based on the tenant portion of the h
 flowchart TD
     TN([Tenant])
     AP(Application Profile)
+    EPG(Endpoint Group)
     BD(Bridge Domain)
     SN(Subnet)
     VRF(VRF)
@@ -14,6 +15,7 @@ flowchart TD
     end
     subgraph graphAP [Application Profile]
         TN -->|1:n| AP
+        AP -->|1:n| EPG
     end
     subgraph graphNW [Network]
         TN -->|1:n| VRF
@@ -23,6 +25,7 @@ flowchart TD
         end
         BD -.->|1:n| VRF
     end
+    EPG -->|n:1| BD
 ```
 
 ## Tenant
@@ -139,7 +142,7 @@ The *ACIBridgeDomainSubnet* model has the following fields:
 *Required fields*:
 
 - **Name**: represent the Bridge Domain name in the ACI
-- **ACI Bridge Domain**: a reference to the ACIBridgeDomain model.
+- **ACI Bridge Domain**: a reference to the ACIBridgeDomain model
 - **Gateway IP Address**: the gateway IP address of the Bridge Domain (referencing an NetBox IP address)
 
 *Optional fields*:
@@ -156,5 +159,33 @@ The *ACIBridgeDomainSubnet* model has the following fields:
 - **Preferred IP address enabled**: a boolean field, if the gateway IP address is the preferred (primary) IP gateway of the Bridge Domain. (default is *false*)
 - **Shared enabled**: a boolean field, if endpoints can communicate only within the same (*disabled*) or shared VRFs (*enabled*) in the ACI fabric (inter-VRF route leaking). (default is *false*)
 - **Virtual IP enabled**: a boolean field determining, if the gateway is a virtual IP address (used for stretched Bridge Domains to multiple sites). (default is *false*)
+- **Comments**: a text field for additional notes
+- **Tags**: a list of NetBox tags
+
+## Endpoint Group
+
+A *Endpoint Group* (EPG) is a named collection of endpoints (network connected devices).
+The EPG needs to be contained in an Application Profile and be linked to a Bridge Domain.
+
+The *ACIEndpointGroup* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represent the Endpoint Group name in the ACI
+- **ACI Application Profile**: containing the Endpoint Group
+- **ACI Bridge Domain**: linking the associated Bridge Domain
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Endpoint Group
+- **Description**: a description of the Endpoint Group
+- **NetBox Tenant**: a reference to the NetBox tenant model
+- **Admin shutdown**: a boolean field, whether the EPG is in shutdown mode removing all policy configuration from all switches. (default is *false*)
+- **Custom QoS policy name**: the name of the custom Quality of Service (Qos) policy name associated with the EPG
+- **Flood in encapsulation enabled**: a boolean field representing whether the flooding traffic is limited to the encapsulation of the EPG. (default is *false*)
+- **Intra-EPG isolation enabled**: a boolean field, whether the communication between endpoints in the EPG is prevented. (default is *false*)
+- **QoS class**: represents the assignment of the ACI Quality of Service (QoS) level for traffic sourced in the EPG, values: *unspecified*, *level1*, *level2*, *level3*, *level4*, *level5*, *level6*. (default is *unspecified*)
+- **Preferred group member enabled**: a boolean field, if the EPG is a member of the preferred group and allows communication without contracts. (default is *false*)
+- **Proxy-ARP enabled**: a boolean field, whether proxy ARP is enabled for the EPG. (default is *false*)
 - **Comments**: a text field for additional notes
 - **Tags**: a list of NetBox tags

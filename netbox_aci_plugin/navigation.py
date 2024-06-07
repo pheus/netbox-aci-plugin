@@ -60,6 +60,20 @@ acibdsubnet_item = PluginMenuItem(
     buttons=acibdsubnet_buttons,
 )
 
+# ACI Endpoint Group
+aciendpointgroup_buttons: tuple = (
+    PluginMenuButton(
+        link="plugins:netbox_aci_plugin:aciendpointgroup_add",
+        title="Add",
+        icon_class="mdi mdi-plus-thick",
+    ),
+)
+aciendpointgroup_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:aciendpointgroup_list",
+    link_text="Endpoint Groups",
+    buttons=aciendpointgroup_buttons,
+)
+
 # ACI VRF
 acivrf_buttons: tuple = (
     PluginMenuButton(
@@ -83,6 +97,7 @@ menu = PluginMenu(
             (
                 acitenant_item,
                 aciappprofile_item,
+                aciendpointgroup_item,
                 acibd_item,
                 acibdsubnet_item,
                 acivrf_item,

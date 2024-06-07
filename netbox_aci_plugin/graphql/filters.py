@@ -7,14 +7,17 @@ from typing import Optional
 import strawberry_django
 from netbox.graphql.filter_mixins import BaseFilterMixin, autotype_decorator
 
-from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
+from ..filtersets.tenant_app_profiles import (
+    ACIAppProfileFilterSet,
+    ACIEndpointGroupFilterSet,
+)
 from ..filtersets.tenant_networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
     ACIVRFFilterSet,
 )
 from ..filtersets.tenants import ACITenantFilterSet
-from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -61,5 +64,13 @@ class ACIBridgeDomainFilter(BaseFilterMixin):
 @autotype_decorator(ACIBridgeDomainSubnetFilterSet)
 class ACIBridgeDomainSubnetFilter(BaseFilterMixin):
     """GraphQL filter definition for Bridge Domain Subnet model."""
+
+    pass
+
+
+@strawberry_django.filter(ACIEndpointGroup, lookups=True)
+@autotype_decorator(ACIEndpointGroupFilterSet)
+class ACIEndpointGroupFilter(BaseFilterMixin):
+    """GraphQL filter definition for Endpoint Group model."""
 
     pass

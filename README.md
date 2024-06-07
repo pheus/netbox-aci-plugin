@@ -8,6 +8,7 @@ Documentation: https://pheus.github.io/netbox-aci-plugin/
 
 - Tenants
 - Application Profiles
+- Endpoint Groups
 - Bridge Domains
 - VRF
 

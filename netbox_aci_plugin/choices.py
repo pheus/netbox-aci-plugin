@@ -52,6 +52,34 @@ class BDUnknownUnicastChoices(ChoiceSet):
 
 
 #
+# Endpoint Group
+#
+
+
+class EPGQualityOfServiceClassChoices(ChoiceSet):
+    """Choice set of Endpoint Group QoS class."""
+
+    # default "unspecified"
+    CLASS_UNSPECIFIED = "unspecified"
+    CLASS_LEVEL_1 = "level1"
+    CLASS_LEVEL_2 = "level2"
+    CLASS_LEVEL_3 = "level3"
+    CLASS_LEVEL_4 = "level4"
+    CLASS_LEVEL_5 = "level5"
+    CLASS_LEVEL_6 = "level6"
+
+    CHOICES = (
+        (CLASS_UNSPECIFIED, _("unspecified"), "gray"),
+        (CLASS_LEVEL_1, _("level 1"), "red"),
+        (CLASS_LEVEL_2, _("level 2"), "orange"),
+        (CLASS_LEVEL_3, _("level 3"), "yellow"),
+        (CLASS_LEVEL_4, _("level 4"), "teal"),
+        (CLASS_LEVEL_5, _("level 5"), "cyan"),
+        (CLASS_LEVEL_6, _("level 6"), "blue"),
+    )
+
+
+#
 # VRF
 #
 
