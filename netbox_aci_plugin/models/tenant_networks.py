@@ -317,6 +317,10 @@ class ACIBridgeDomain(NetBoxModel):
         blank=True,
         null=True,
         default="00:22:BD:F8:19:FF",
+        help_text=_(
+            "MAC address of the bridge domain. "
+            "Default is '00:22:BD:F8:19:FF'."
+        ),
     )
     multi_destination_flooding = models.CharField(
         verbose_name=_("multi destination flooding"),
@@ -404,6 +408,10 @@ class ACIBridgeDomain(NetBoxModel):
         verbose_name=_("virtual MAC address"),
         blank=True,
         null=True,
+        help_text=_(
+            "Virtual MAC address of the bridge domain, used when extended to "
+            "multiple sites. Default is ''."
+        ),
     )
     comments = models.TextField(
         verbose_name=_("comments"),
