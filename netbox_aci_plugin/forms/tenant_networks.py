@@ -310,7 +310,7 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
     )
-    tag = TagFilterField(ACITenant)
+    tag = TagFilterField(ACIVRF)
 
 
 class ACIBridgeDomainForm(NetBoxModelForm):
@@ -710,7 +710,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Unknown unicast"),
     )
-    tag = TagFilterField(ACITenant)
+    tag = TagFilterField(ACIBridgeDomain)
 
 
 class ACIBridgeDomainSubnetForm(NetBoxModelForm):
@@ -1045,4 +1045,4 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
     )
-    tag = TagFilterField(ACITenant)
+    tag = TagFilterField(ACIBridgeDomainSubnet)

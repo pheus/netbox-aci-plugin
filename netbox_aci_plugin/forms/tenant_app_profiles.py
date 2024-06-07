@@ -125,7 +125,7 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
-    tag = TagFilterField(ACITenant)
+    tag = TagFilterField(ACIAppProfile)
 
 
 class ACIEndpointGroupForm(NetBoxModelForm):
