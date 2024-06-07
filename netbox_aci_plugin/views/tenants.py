@@ -166,7 +166,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
     template_name = "netbox_aci_plugin/acitenant_bds.html"
 
     def get_children(self, request, parent):
-        """Return all ACIVRF objects for current ACITenant."""
+        """Return all children objects for current parent object."""
         return (
             super()
             .get_children(request, parent)
