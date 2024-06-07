@@ -30,6 +30,7 @@ from ..tables.tenant_networks import (
     ACIBridgeDomainTable,
     ACIVRFTable,
 )
+from .tenant_app_profiles import ACIEndpointGroupChildrenView
 
 #
 # Base children views
@@ -244,6 +245,31 @@ class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
 
     queryset = ACIBridgeDomain.objects.all()
     template_name = "netbox_aci_plugin/acibridgedomain_subnets.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects for current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_bridge_domain=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return table with ACIBridgeDomain colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIBridgeDomain column
+        table.columns.hide("aci_bridge_domain")
+
+        return table
+
+
+@register_model_view(ACIBridgeDomain, "endpointgroups", path="endpoint-groups")
+class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
+    """Children view of ACI Endpoint Group of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    template_name = "netbox_aci_plugin/acibridgedomain_endpointgroups.html"
 
     def get_children(self, request, parent):
         """Return all children objects for current parent object."""

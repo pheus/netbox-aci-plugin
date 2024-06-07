@@ -44,6 +44,23 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
         return ACIAppProfile.objects.all()
 
 
+class ACIEndpointGroupChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI Endpoint Group."""
+
+    child_model = ACIEndpointGroup
+    filterset = ACIEndpointGroupFilterSet
+    tab = ViewTab(
+        label=_("Endpoint Groups"),
+        badge=lambda obj: obj.aci_endpoint_groups.count(),
+        weight=1000,
+    )
+    table = ACIEndpointGroupTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIEndpointGroup."""
+        return ACIEndpointGroup.objects.all()
+
+
 #
 # Application Profile views
 #
@@ -94,6 +111,31 @@ class ACIAppProfileDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+@register_model_view(ACIAppProfile, "endpointgroups", path="endpoint-groups")
+class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
+    """Children view of ACI Endpoint Group of ACI Application Profile."""
+
+    queryset = ACIAppProfile.objects.all()
+    template_name = "netbox_aci_plugin/aciappprofile_endpointgroups.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects for current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_app_profile=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return table with ACIAppProfile colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIAppProfile column
+        table.columns.hide("aci_app_profile")
+
+        return table
 
 
 #
