@@ -9,7 +9,7 @@ from ipam.graphql.types import IPAddressType, VRFType
 from netbox.graphql.types import NetBoxObjectType
 from tenancy.graphql.types import TenantType
 
-from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -20,6 +20,7 @@ from .filters import (
     ACIAppProfileFilter,
     ACIBridgeDomainFilter,
     ACIBridgeDomainSubnetFilter,
+    ACIEndpointGroupFilter,
     ACITenantFilter,
     ACIVRFFilter,
 )
@@ -75,4 +76,17 @@ class ACIBridgeDomainSubnetType(NetBoxObjectType):
 
     aci_bridge_domain: ACIBridgeDomainType
     gateway_ip_address: IPAddressType
+    nb_tenant: Optional[TenantType]
+
+
+@strawberry_django.type(
+    ACIEndpointGroup,
+    fields="__all__",
+    filters=ACIEndpointGroupFilter,
+)
+class ACIEndpointGroupType(NetBoxObjectType):
+    """GraphQL type definition for ACIEndpointGroup model."""
+
+    aci_app_profile: ACIAppProfileType
+    aci_bridge_domain: ACIBridgeDomainType
     nb_tenant: Optional[TenantType]
