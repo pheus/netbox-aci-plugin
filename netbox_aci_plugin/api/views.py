@@ -4,14 +4,17 @@
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
-from ..filtersets.tenant_app_profiles import ACIAppProfileFilterSet
+from ..filtersets.tenant_app_profiles import (
+    ACIAppProfileFilterSet,
+    ACIEndpointGroupFilterSet,
+)
 from ..filtersets.tenant_networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
     ACIVRFFilterSet,
 )
 from ..filtersets.tenants import ACITenantFilterSet
-from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -22,6 +25,7 @@ from .serializers import (
     ACIAppProfileSerializer,
     ACIBridgeDomainSerializer,
     ACIBridgeDomainSubnetSerializer,
+    ACIEndpointGroupSerializer,
     ACITenantSerializer,
     ACIVRFSerializer,
 )
@@ -86,3 +90,16 @@ class ACIBridgeDomainSubnetListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIBridgeDomainSubnetSerializer
     filterset_class = ACIBridgeDomainSubnetFilterSet
+
+
+class ACIEndpointGroupListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Endpoint Group instances."""
+
+    queryset = ACIEndpointGroup.objects.prefetch_related(
+        "aci_app_profile",
+        "aci_bridge_domain",
+        "nb_tenant",
+        "tags",
+    )
+    serializer_class = ACIEndpointGroupSerializer
+    filterset_class = ACIEndpointGroupFilterSet
