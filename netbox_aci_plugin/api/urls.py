@@ -14,6 +14,7 @@ router.register("bridge-domains", views.ACIBridgeDomainListViewSet)
 router.register(
     "bridge-domain-subnets", views.ACIBridgeDomainSubnetListViewSet
 )
+router.register("endpointgroups", views.ACIEndpointGroupListViewSet)
 router.register("vrfs", views.ACIVRFListViewSet)
 
 urlpatterns = router.urls
