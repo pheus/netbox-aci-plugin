@@ -206,7 +206,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
         required=False,
         label=_("Preferred group member enabled"),
         help_text=_(
-            "Whether this EPG is a member of the preferred group and allow "
+            "Whether this EPG is a member of the preferred group and allows "
             "communication without contracts. Default is disabled."
         ),
     )

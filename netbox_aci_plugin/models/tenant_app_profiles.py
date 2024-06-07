@@ -185,7 +185,7 @@ class ACIEndpointGroup(NetBoxModel):
         verbose_name=_("preferred group member enabled"),
         default=False,
         help_text=_(
-            "Whether this EPG is a member of the preferred group and allow "
+            "Whether this EPG is a member of the preferred group and allows "
             "communication without contracts. Default is disabled."
         ),
     )
