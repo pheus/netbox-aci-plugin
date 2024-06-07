@@ -163,7 +163,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
         ).count(),
         weight=1000,
     )
-    template_name = "netbox_aci_plugin/acitenant_bds.html"
+    template_name = "netbox_aci_plugin/acitenant_bridgedomains.html"
 
     def get_children(self, request, parent):
         """Return all children objects for current parent object."""
