@@ -239,7 +239,7 @@ class ACIBridgeDomainDeleteView(generic.ObjectDeleteView):
     )
 
 
-@register_model_view(ACIBridgeDomain, "bridgedomainsubnetss", path="subnets")
+@register_model_view(ACIBridgeDomain, "bridgedomainsubnets", path="subnets")
 class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
     """Children view of ACI Bridge Domain Subnet of ACI Bridge Domain."""
 
