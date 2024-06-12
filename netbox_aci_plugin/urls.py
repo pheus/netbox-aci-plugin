@@ -19,12 +19,27 @@ from .views.tenant_networks import (
     ACIVRFEditView,
     ACIVRFListView,
 )
-from .views.tenants import ACITenantEditView, ACITenantListView
+from .views.tenants import (
+    ACITenantBulkDeleteView,
+    ACITenantBulkEditView,
+    ACITenantEditView,
+    ACITenantListView,
+)
 
 urlpatterns: tuple = (
     # ACI Tenants
     path("tenants/", ACITenantListView.as_view(), name="acitenant_list"),
     path("tenants/add/", ACITenantEditView.as_view(), name="acitenant_add"),
+    path(
+        "tenants/edit/",
+        ACITenantBulkEditView.as_view(),
+        name="acitenant_bulk_edit",
+    ),
+    path(
+        "tenants/delete/",
+        ACITenantBulkDeleteView.as_view(),
+        name="acitenant_bulk_delete",
+    ),
     path(
         "tenants/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acitenant")),

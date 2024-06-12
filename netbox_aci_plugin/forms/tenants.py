@@ -4,7 +4,11 @@
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
+from netbox.forms import (
+    NetBoxModelBulkEditForm,
+    NetBoxModelFilterSetForm,
+    NetBoxModelForm,
+)
 from tenancy.models import Tenant, TenantGroup
 from utilities.forms.fields import (
     CommentField,
@@ -59,6 +63,46 @@ class ACITenantForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+
+class ACITenantBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI Tenant model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        label=_("Name Alias"),
+        required=False,
+    )
+    description = forms.CharField(
+        max_length=128,
+        label=_("Description"),
+        required=False,
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    comments = CommentField()
+
+    model = ACITenant
+    fieldsets: tuple = (
+        FieldSet(
+            "name_alias",
+            "description",
+            name=_("ACI Tenant"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "comments",
+    )
 
 
 class ACITenantFilterForm(NetBoxModelFilterSetForm):
