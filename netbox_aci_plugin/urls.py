@@ -22,6 +22,7 @@ from .views.tenant_networks import (
 from .views.tenants import (
     ACITenantBulkDeleteView,
     ACITenantBulkEditView,
+    ACITenantBulkImportView,
     ACITenantEditView,
     ACITenantListView,
 )
@@ -31,14 +32,19 @@ urlpatterns: tuple = (
     path("tenants/", ACITenantListView.as_view(), name="acitenant_list"),
     path("tenants/add/", ACITenantEditView.as_view(), name="acitenant_add"),
     path(
+        "tenants/delete/",
+        ACITenantBulkDeleteView.as_view(),
+        name="acitenant_bulk_delete",
+    ),
+    path(
         "tenants/edit/",
         ACITenantBulkEditView.as_view(),
         name="acitenant_bulk_edit",
     ),
     path(
-        "tenants/delete/",
-        ACITenantBulkDeleteView.as_view(),
-        name="acitenant_bulk_delete",
+        "tenants/import/",
+        ACITenantBulkImportView.as_view(),
+        name="acitenant_import",
     ),
     path(
         "tenants/<int:pk>/",

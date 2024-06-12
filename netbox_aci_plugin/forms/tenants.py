@@ -8,10 +8,12 @@ from netbox.forms import (
     NetBoxModelBulkEditForm,
     NetBoxModelFilterSetForm,
     NetBoxModelForm,
+    NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
 from utilities.forms.fields import (
     CommentField,
+    CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     TagFilterField,
@@ -151,3 +153,26 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
         label=_("Tenant"),
     )
     tag = TagFilterField(ACITenant)
+
+
+class ACITenantImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACITenant."""
+
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+
+    class Meta:
+        model = ACITenant
+        fields = (
+            "name",
+            "name_alias",
+            "description",
+            "nb_tenant",
+            "comments",
+            "tags",
+        )

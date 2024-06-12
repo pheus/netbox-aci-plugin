@@ -12,6 +12,7 @@ from ..forms.tenants import (
     ACITenantBulkEditForm,
     ACITenantFilterForm,
     ACITenantForm,
+    ACITenantImportForm,
 )
 from ..models.tenant_app_profiles import ACIEndpointGroup
 from ..models.tenant_networks import ACIBridgeDomain
@@ -217,6 +218,13 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
         table.columns.hide("aci_tenant")
 
         return table
+
+
+class ACITenantBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI Tenant."""
+
+    queryset = ACITenant.objects.all()
+    model_form = ACITenantImportForm
 
 
 class ACITenantBulkEditView(generic.BulkEditView):
