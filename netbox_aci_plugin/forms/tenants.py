@@ -72,13 +72,13 @@ class ACITenantBulkEditForm(NetBoxModelBulkEditForm):
 
     name_alias = forms.CharField(
         max_length=64,
-        label=_("Name Alias"),
         required=False,
+        label=_("Name Alias"),
     )
     description = forms.CharField(
         max_length=128,
-        label=_("Description"),
         required=False,
+        label=_("Description"),
     )
     nb_tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
