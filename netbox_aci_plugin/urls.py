@@ -6,6 +6,8 @@ from django.urls import include, path
 from utilities.urls import get_model_urls
 
 from .views.tenant_app_profiles import (
+    ACIAppProfileBulkDeleteView,
+    ACIAppProfileBulkEditView,
     ACIAppProfileEditView,
     ACIAppProfileListView,
     ACIEndpointGroupEditView,
@@ -60,6 +62,16 @@ urlpatterns: tuple = (
         "app-profiles/add/",
         ACIAppProfileEditView.as_view(),
         name="aciappprofile_add",
+    ),
+    path(
+        "app-profiles/delete/",
+        ACIAppProfileBulkDeleteView.as_view(),
+        name="aciappprofile_bulk_delete",
+    ),
+    path(
+        "app-profiles/edit/",
+        ACIAppProfileBulkEditView.as_view(),
+        name="aciappprofile_bulk_edit",
     ),
     path(
         "app-profiles/<int:pk>/",

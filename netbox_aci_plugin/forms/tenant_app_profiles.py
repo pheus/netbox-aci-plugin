@@ -4,7 +4,11 @@
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
+from netbox.forms import (
+    NetBoxModelBulkEditForm,
+    NetBoxModelFilterSetForm,
+    NetBoxModelForm,
+)
 from tenancy.models import Tenant, TenantGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
 from utilities.forms.fields import (
@@ -19,6 +23,10 @@ from ..choices import EPGQualityOfServiceClassChoices
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
+
+#
+# Application Profile forms
+#
 
 
 class ACIAppProfileForm(NetBoxModelForm):
@@ -70,6 +78,52 @@ class ACIAppProfileForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+
+class ACIAppProfileBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI Application Profile model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    comments = CommentField()
+
+    model = ACIAppProfile
+    fieldsets: tuple = (
+        FieldSet(
+            "name_alias",
+            "description",
+            "aci_tenant",
+            name=_("ACI Application Profile"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "comments",
+    )
 
 
 class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
@@ -126,6 +180,11 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
         label=_("NetBox tenant"),
     )
     tag = TagFilterField(ACIAppProfile)
+
+
+#
+# Endpoint Group forms
+#
 
 
 class ACIEndpointGroupForm(NetBoxModelForm):
