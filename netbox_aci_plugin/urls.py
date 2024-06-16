@@ -8,6 +8,7 @@ from utilities.urls import get_model_urls
 from .views.tenant_app_profiles import (
     ACIAppProfileBulkDeleteView,
     ACIAppProfileBulkEditView,
+    ACIAppProfileBulkImportView,
     ACIAppProfileEditView,
     ACIAppProfileListView,
     ACIEndpointGroupEditView,
@@ -72,6 +73,11 @@ urlpatterns: tuple = (
         "app-profiles/edit/",
         ACIAppProfileBulkEditView.as_view(),
         name="aciappprofile_bulk_edit",
+    ),
+    path(
+        "app-profiles/import/",
+        ACIAppProfileBulkImportView.as_view(),
+        name="aciappprofile_import",
     ),
     path(
         "app-profiles/<int:pk>/",

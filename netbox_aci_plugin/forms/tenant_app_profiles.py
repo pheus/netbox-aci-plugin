@@ -8,11 +8,13 @@ from netbox.forms import (
     NetBoxModelBulkEditForm,
     NetBoxModelFilterSetForm,
     NetBoxModelForm,
+    NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
 from utilities.forms.fields import (
     CommentField,
+    CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     TagFilterField,
@@ -109,8 +111,8 @@ class ACIAppProfileBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
-            "description",
             "aci_tenant",
+            "description",
             name=_("ACI Application Profile"),
         ),
         FieldSet(
@@ -180,6 +182,37 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
         label=_("NetBox tenant"),
     )
     tag = TagFilterField(ACIAppProfile)
+
+
+class ACIAppProfileImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACI Application Profile."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Assigned ACI Tenant"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+
+    class Meta:
+        model = ACIAppProfile
+        fields = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "description",
+            "nb_tenant",
+            "comments",
+            "tags",
+        )
 
 
 #

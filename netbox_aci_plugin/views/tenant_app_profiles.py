@@ -14,6 +14,7 @@ from ..forms.tenant_app_profiles import (
     ACIAppProfileBulkEditForm,
     ACIAppProfileFilterForm,
     ACIAppProfileForm,
+    ACIAppProfileImportForm,
     ACIEndpointGroupFilterForm,
     ACIEndpointGroupForm,
 )
@@ -137,6 +138,13 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
         table.columns.hide("aci_app_profile")
 
         return table
+
+
+class ACIAppProfileBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI App Profile."""
+
+    queryset = ACIAppProfile.objects.all()
+    model_form = ACIAppProfileImportForm
 
 
 class ACIAppProfileBulkEditView(generic.BulkEditView):
