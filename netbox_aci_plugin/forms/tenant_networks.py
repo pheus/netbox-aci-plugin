@@ -737,6 +737,177 @@ class ACIBridgeDomainForm(NetBoxModelForm):
         )
 
 
+class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI Bridge Domain model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_vrf = DynamicModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        required=False,
+        label=_("ACI VRF"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    advertise_host_routes_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Advertise host routes enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    arp_flooding_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("ARP flooding enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    clear_remote_mac_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Clear remote MAC entries enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    dhcp_labels = forms.CharField(
+        required=False,
+        label=_("DHCP labels"),
+    )
+    ep_move_detection_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("EP move detection enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("IP data plane learning enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    limit_ip_learn_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Limit IP learning to subnet enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    multi_destination_flooding = forms.ChoiceField(
+        choices=add_blank_choice(BDMultiDestinationFloodingChoices),
+        required=False,
+        label=_("Multi destination flooding"),
+    )
+    pim_ipv4_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("PIM (multicast) IPv4 enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    pim_ipv6_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("PIM (multicast) IPv6 enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    unicast_routing_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Unicast routing enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    unknown_ipv4_multicast = forms.ChoiceField(
+        choices=add_blank_choice(BDUnknownMulticastChoices),
+        required=False,
+        label=_("Unknown IPv4 multicast"),
+    )
+    unknown_ipv6_multicast = forms.ChoiceField(
+        choices=add_blank_choice(BDUnknownMulticastChoices),
+        required=False,
+        label=_("Unknown IPv6 multicast"),
+    )
+    unknown_unicast = forms.ChoiceField(
+        choices=add_blank_choice(BDUnknownUnicastChoices),
+        required=False,
+        label=_("Unknown unicast"),
+    )
+    comments = CommentField()
+
+    model = ACIBridgeDomain
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_vrf",
+            "description",
+            "tags",
+            name=_("ACI Bridge Domain"),
+        ),
+        FieldSet(
+            "unicast_routing_enabled",
+            "advertise_host_routes_enabled",
+            "ep_move_detection_enabled",
+            "mac_address",
+            "virtual_mac_address",
+            name=_("Routing Settings"),
+        ),
+        FieldSet(
+            "arp_flooding_enabled",
+            "unknown_unicast",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "multi_destination_flooding",
+            name=_("Forwarding Method Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            "limit_ip_learn_enabled",
+            "clear_remote_mac_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            "igmp_interface_policy_name",
+            "igmp_snooping_policy_name",
+            "pim_ipv4_source_filter",
+            "pim_ipv4_destination_filter",
+            name=_("Multicast Settings"),
+        ),
+        FieldSet(
+            "dhcp_labels",
+            name=_("Additional Settings"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "dhcp_labels",
+        "comments",
+    )
+
+
 class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
     """NetBox filter form for ACI Bridge Domain model."""
 

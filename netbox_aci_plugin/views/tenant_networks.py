@@ -12,6 +12,7 @@ from ..filtersets.tenant_networks import (
     ACIVRFFilterSet,
 )
 from ..forms.tenant_networks import (
+    ACIBridgeDomainBulkEditForm,
     ACIBridgeDomainFilterForm,
     ACIBridgeDomainForm,
     ACIBridgeDomainSubnetFilterForm,
@@ -313,6 +314,23 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
         table.columns.hide("aci_bridge_domain")
 
         return table
+
+
+class ACIBridgeDomainBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    filterset = ACIBridgeDomainFilterSet
+    table = ACIBridgeDomainTable
+    form = ACIBridgeDomainBulkEditForm
+
+
+class ACIBridgeDomainBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    filterset = ACIBridgeDomainFilterSet
+    table = ACIBridgeDomainTable
 
 
 #
