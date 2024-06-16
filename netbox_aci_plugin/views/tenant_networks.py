@@ -15,6 +15,7 @@ from ..forms.tenant_networks import (
     ACIBridgeDomainBulkEditForm,
     ACIBridgeDomainFilterForm,
     ACIBridgeDomainForm,
+    ACIBridgeDomainImportForm,
     ACIBridgeDomainSubnetFilterForm,
     ACIBridgeDomainSubnetForm,
     ACIVRFBulkEditForm,
@@ -314,6 +315,13 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
         table.columns.hide("aci_bridge_domain")
 
         return table
+
+
+class ACIBridgeDomainBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    model_form = ACIBridgeDomainImportForm
 
 
 class ACIBridgeDomainBulkEditView(generic.BulkEditView):

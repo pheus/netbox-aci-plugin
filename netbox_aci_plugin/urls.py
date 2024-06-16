@@ -17,6 +17,7 @@ from .views.tenant_app_profiles import (
 from .views.tenant_networks import (
     ACIBridgeDomainBulkDeleteView,
     ACIBridgeDomainBulkEditView,
+    ACIBridgeDomainBulkImportView,
     ACIBridgeDomainEditView,
     ACIBridgeDomainListView,
     ACIBridgeDomainSubnetEditView,
@@ -123,6 +124,11 @@ urlpatterns: tuple = (
         "bridge-domains/edit/",
         ACIBridgeDomainBulkEditView.as_view(),
         name="acibridgedomain_bulk_edit",
+    ),
+    path(
+        "bridge-domains/import/",
+        ACIBridgeDomainBulkImportView.as_view(),
+        name="acibridgedomain_import",
     ),
     path(
         "bridge-domains/<int:pk>/",

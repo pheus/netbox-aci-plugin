@@ -1087,6 +1087,109 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
     tag = TagFilterField(ACIBridgeDomain)
 
 
+class ACIBridgeDomainImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACIBridgeDomain."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI VRF"),
+    )
+    aci_vrf = CSVModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI VRF"),
+        help_text=_("Assigned ACI VRF"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    multi_destination_flooding = CSVChoiceField(
+        choices=BDMultiDestinationFloodingChoices,
+        required=True,
+        label=_("Multi destination flooding"),
+        help_text=_(
+            "Forwarding method for L2 multicast, broadcast, and link layer "
+            "traffic."
+        ),
+    )
+    unknown_ipv4_multicast = CSVChoiceField(
+        choices=BDUnknownMulticastChoices,
+        required=True,
+        label=_("Unknown IPv4 multicast"),
+        help_text=_("Defines the IPv4 unknown multicast forwarding method."),
+    )
+    unknown_ipv6_multicast = CSVChoiceField(
+        choices=BDUnknownMulticastChoices,
+        required=True,
+        label=_("Unknown IPv6 multicast"),
+        help_text=_("Defines the IPv6 unknown multicast forwarding method."),
+    )
+    unknown_unicast = CSVChoiceField(
+        choices=BDUnknownUnicastChoices,
+        required=True,
+        label=_("Unknown unicast"),
+        help_text=_("Defines the layer 2 unknown unicast forwarding method."),
+    )
+
+    class Meta:
+        model = ACIBridgeDomain
+        fields = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_vrf",
+            "description",
+            "nb_tenant",
+            "advertise_host_routes_enabled",
+            "arp_flooding_enabled",
+            "clear_remote_mac_enabled",
+            "dhcp_labels",
+            "ep_move_detection_enabled",
+            "igmp_interface_policy_name",
+            "igmp_snooping_policy_name",
+            "ip_data_plane_learning_enabled",
+            "limit_ip_learn_enabled",
+            "mac_address",
+            "multi_destination_flooding",
+            "pim_ipv4_enabled",
+            "pim_ipv4_destination_filter",
+            "pim_ipv4_source_filter",
+            "pim_ipv6_enabled",
+            "unicast_routing_enabled",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "unknown_unicast",
+            "virtual_mac_address",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+
+        super().__init__(data, *args, **kwargs)
+
+        if data:
+            # Limit ACIVRF queryset by parent ACITenant
+            if data.get("aci_tenant"):
+                self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                    aci_tenant__name=data["aci_tenant"]
+                )
+
+
+#
+# Bridge Domain Subnet forms
+#
+
+
 class ACIBridgeDomainSubnetForm(NetBoxModelForm):
     """NetBox form for ACI Bridge Domain Subnet model."""
 
