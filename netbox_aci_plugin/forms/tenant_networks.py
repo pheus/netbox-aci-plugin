@@ -12,7 +12,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
-from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
+from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
     CommentField,
     CSVChoiceField,
@@ -235,12 +235,12 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
         ),
     )
     pc_enforcement_direction = forms.ChoiceField(
-        choices=VRFPCEnforcementDirectionChoices,
+        choices=add_blank_choice(VRFPCEnforcementDirectionChoices),
         required=False,
         label=_("Policy control enforcement direction"),
     )
     pc_enforcement_preference = forms.ChoiceField(
-        choices=VRFPCEnforcementPreferenceChoices,
+        choices=add_blank_choice(VRFPCEnforcementPreferenceChoices),
         required=False,
         label=_("Policy control enforcement preference"),
     )
