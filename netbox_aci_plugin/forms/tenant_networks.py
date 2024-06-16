@@ -595,7 +595,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
         required=False,
         label=_("Multi destination flooding"),
         help_text=_(
-            "Forwarding methof for L2 multicast, broadcast, and link layer "
+            "Forwarding method for L2 multicast, broadcast, and link layer "
             "traffic. Default is 'bd-flood'."
         ),
     )
