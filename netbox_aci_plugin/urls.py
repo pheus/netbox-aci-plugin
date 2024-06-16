@@ -21,6 +21,7 @@ from .views.tenant_networks import (
     ACIBridgeDomainSubnetListView,
     ACIVRFBulkDeleteView,
     ACIVRFBulkEditView,
+    ACIVRFBulkImportView,
     ACIVRFEditView,
     ACIVRFListView,
 )
@@ -142,6 +143,11 @@ urlpatterns: tuple = (
         "vrfs/edit/",
         ACIVRFBulkEditView.as_view(),
         name="acivrf_bulk_edit",
+    ),
+    path(
+        "vrfs/import/",
+        ACIVRFBulkImportView.as_view(),
+        name="acivrf_import",
     ),
     path(
         "vrfs/<int:pk>/",

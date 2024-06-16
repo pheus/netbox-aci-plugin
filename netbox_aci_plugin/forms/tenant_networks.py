@@ -9,11 +9,14 @@ from netbox.forms import (
     NetBoxModelBulkEditForm,
     NetBoxModelFilterSetForm,
     NetBoxModelForm,
+    NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
 from utilities.forms.fields import (
     CommentField,
+    CSVChoiceField,
+    CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     TagFilterField,
@@ -446,6 +449,65 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     tag = TagFilterField(ACIVRF)
+
+
+class ACIVRFImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACIVRF."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Assigned ACI Tenant"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    nb_vrf = CSVModelChoiceField(
+        queryset=VRF.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox VRF"),
+        help_text=_("Assigned NetBox VRF"),
+    )
+    pc_enforcement_direction = CSVChoiceField(
+        choices=VRFPCEnforcementDirectionChoices,
+        required=True,
+        label=_("Policy control enforcement direction"),
+        help_text=_("Controls policy enforcement direction for VRF."),
+    )
+    pc_enforcement_preference = CSVChoiceField(
+        choices=VRFPCEnforcementPreferenceChoices,
+        required=True,
+        label=_("Policy control enforcement preference"),
+        help_text=_("Controls policy enforcement preference for VRF."),
+    )
+
+    class Meta:
+        model = ACIVRF
+        fields = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "description",
+            "nb_tenant",
+            "nb_vrf",
+            "bd_enforcement_enabled",
+            "dns_labels",
+            "ip_data_plane_learning_enabled",
+            "pc_enforcement_direction",
+            "pc_enforcement_preference",
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            "preferred_group_enabled",
+            "comments",
+            "tags",
+        )
 
 
 #

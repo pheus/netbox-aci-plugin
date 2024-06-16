@@ -19,6 +19,7 @@ from ..forms.tenant_networks import (
     ACIVRFBulkEditForm,
     ACIVRFFilterForm,
     ACIVRFForm,
+    ACIVRFImportForm,
 )
 from ..models.tenant_networks import (
     ACIVRF,
@@ -175,6 +176,13 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
         table.columns.hide("aci_vrf")
 
         return table
+
+
+class ACIVRFBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI VRF."""
+
+    queryset = ACIVRF.objects.all()
+    model_form = ACIVRFImportForm
 
 
 class ACIVRFBulkEditView(generic.BulkEditView):
