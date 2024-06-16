@@ -311,6 +311,7 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
         "description",
         "nb_tenant",
         "nb_vrf",
+        "dns_labels",
         "comments",
     )
 
