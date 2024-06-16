@@ -16,6 +16,7 @@ from ..forms.tenant_networks import (
     ACIBridgeDomainForm,
     ACIBridgeDomainSubnetFilterForm,
     ACIBridgeDomainSubnetForm,
+    ACIVRFBulkEditForm,
     ACIVRFFilterForm,
     ACIVRFForm,
 )
@@ -174,6 +175,23 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
         table.columns.hide("aci_vrf")
 
         return table
+
+
+class ACIVRFBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI VRF."""
+
+    queryset = ACIVRF.objects.all()
+    filterset = ACIVRFFilterSet
+    table = ACIVRFTable
+    form = ACIVRFBulkEditForm
+
+
+class ACIVRFBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI VRF."""
+
+    queryset = ACIVRF.objects.all()
+    filterset = ACIVRFFilterSet
+    table = ACIVRFTable
 
 
 #

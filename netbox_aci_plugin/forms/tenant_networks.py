@@ -5,7 +5,11 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from ipam.models import VRF, IPAddress
-from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
+from netbox.forms import (
+    NetBoxModelBulkEditForm,
+    NetBoxModelFilterSetForm,
+    NetBoxModelForm,
+)
 from tenancy.models import Tenant, TenantGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
 from utilities.forms.fields import (
@@ -29,6 +33,10 @@ from ..models.tenant_networks import (
     ACIBridgeDomainSubnet,
 )
 from ..models.tenants import ACITenant
+
+#
+# VRF forms
+#
 
 
 class ACIVRFForm(NetBoxModelForm):
@@ -177,6 +185,133 @@ class ACIVRFForm(NetBoxModelForm):
         )
 
 
+class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI VRF model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    nb_vrf = DynamicModelChoiceField(
+        queryset=VRF.objects.all(),
+        required=False,
+        label=_("NetBox VRF"),
+    )
+    bd_enforcement_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled Bridge Domain enforcement"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    dns_labels = forms.CharField(
+        required=False,
+        label=_("DNS labels"),
+    )
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled IP data plane learning"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    pc_enforcement_direction = forms.ChoiceField(
+        choices=VRFPCEnforcementDirectionChoices,
+        required=False,
+        label=_("Policy control enforcement direction"),
+    )
+    pc_enforcement_preference = forms.ChoiceField(
+        choices=VRFPCEnforcementPreferenceChoices,
+        required=False,
+        label=_("Policy control enforcement preference"),
+    )
+    pim_ipv4_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled PIM (multicast) IPv4"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    pim_ipv6_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled PIM (multicast) IPv6"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    preferred_group_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled preferred group"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    comments = CommentField()
+
+    model = ACIVRF
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "description",
+            "tags",
+            name=_("ACI VRF"),
+        ),
+        FieldSet(
+            "pc_enforcement_direction",
+            "pc_enforcement_preference",
+            "bd_enforcement_enabled",
+            "preferred_group_enabled",
+            name=_("Policy Control Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            name=_("Multicast Settings"),
+        ),
+        FieldSet(
+            "dns_labels",
+            name=_("Additional Settings"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+        FieldSet(
+            "nb_vrf",
+            name=_("NetBox Networking"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "nb_vrf",
+        "comments",
+    )
+
+
 class ACIVRFFilterForm(NetBoxModelFilterSetForm):
     """NetBox filter form for ACI VRF model."""
 
@@ -311,6 +446,11 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     tag = TagFilterField(ACIVRF)
+
+
+#
+# Bridge Domain forms
+#
 
 
 class ACIBridgeDomainForm(NetBoxModelForm):

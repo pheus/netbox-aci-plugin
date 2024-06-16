@@ -19,6 +19,8 @@ from .views.tenant_networks import (
     ACIBridgeDomainListView,
     ACIBridgeDomainSubnetEditView,
     ACIBridgeDomainSubnetListView,
+    ACIVRFBulkDeleteView,
+    ACIVRFBulkEditView,
     ACIVRFEditView,
     ACIVRFListView,
 )
@@ -131,6 +133,16 @@ urlpatterns: tuple = (
     # ACI VRF
     path("vrfs/", ACIVRFListView.as_view(), name="acivrf_list"),
     path("vrfs/add/", ACIVRFEditView.as_view(), name="acivrf_add"),
+    path(
+        "vrfs/delete/",
+        ACIVRFBulkDeleteView.as_view(),
+        name="acivrf_bulk_delete",
+    ),
+    path(
+        "vrfs/edit/",
+        ACIVRFBulkEditView.as_view(),
+        name="acivrf_bulk_edit",
+    ),
     path(
         "vrfs/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acivrf")),
