@@ -1624,13 +1624,14 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
     )
     nd_ra_enabled = forms.NullBooleanField(
         required=False,
-        label=_("NA RA enabled"),
+        label=_("ND RA enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
     )
     nd_ra_prefix_policy_name = forms.CharField(
         required=False,
+        label=_("ND RA prefix policy name"),
     )
     preferred_ip_address_enabled = forms.NullBooleanField(
         required=False,
