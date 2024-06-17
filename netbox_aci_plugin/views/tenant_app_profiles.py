@@ -15,6 +15,7 @@ from ..forms.tenant_app_profiles import (
     ACIAppProfileFilterForm,
     ACIAppProfileForm,
     ACIAppProfileImportForm,
+    ACIEndpointGroupBulkEditForm,
     ACIEndpointGroupFilterForm,
     ACIEndpointGroupForm,
 )
@@ -218,3 +219,20 @@ class ACIEndpointGroupDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+class ACIEndpointGroupBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.all()
+    filterset = ACIAppProfileFilterSet
+    table = ACIEndpointGroupTable
+    form = ACIEndpointGroupBulkEditForm
+
+
+class ACIEndpointGroupBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.all()
+    filterset = ACIEndpointGroupFilterSet
+    table = ACIEndpointGroupTable

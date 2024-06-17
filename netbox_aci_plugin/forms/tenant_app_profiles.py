@@ -11,7 +11,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
-from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
+from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
     CommentField,
     CSVModelChoiceField,
@@ -365,6 +365,121 @@ class ACIEndpointGroupForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+
+class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI Endpoint Group model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_app_profile = DynamicModelChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        required=False,
+        label=_("ACI Application Profile"),
+    )
+    aci_bridge_domain = DynamicModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        required=False,
+        label=_("ACI Bridge Domain"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    admin_shutdown = forms.NullBooleanField(
+        required=False,
+        label=_("Admin shutdown"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    flood_in_encap_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Flood in encapsulation enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    intra_epg_isolation_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Intra-EPG isolation enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    qos_class = forms.ChoiceField(
+        choices=add_blank_choice(EPGQualityOfServiceClassChoices),
+        required=False,
+        label=_("Quality of Service (QoS) class"),
+    )
+    custom_qos_policy_name = forms.CharField(
+        required=False,
+        label=_("Custom QoS policy name"),
+    )
+    preferred_group_member_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Preferred group member enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    proxy_arp_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Proxy ARP enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    comments = CommentField()
+
+    model = ACIEndpointGroup
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_app_profile",
+            "aci_bridge_domain",
+            "description",
+            "tags",
+            "admin_shutdown",
+            name=_("ACI Endpoint Group"),
+        ),
+        FieldSet(
+            "preferred_group_member_enabled",
+            "intra_epg_isolation_enabled",
+            name=_("Policy Enforcement Settings"),
+        ),
+        FieldSet(
+            "flood_in_encap_enabled",
+            "proxy_arp_enabled",
+            name=_("Endpoint Forwarding Settings"),
+        ),
+        FieldSet(
+            "qos_class",
+            "custom_qos_policy_name",
+            name=_("Quality of Service (QoS) Settings"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "custom_qos_policy_name",
+        "comments",
+    )
 
 
 class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
