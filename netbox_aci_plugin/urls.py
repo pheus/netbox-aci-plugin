@@ -22,6 +22,7 @@ from .views.tenant_networks import (
     ACIBridgeDomainListView,
     ACIBridgeDomainSubnetBulkDeleteView,
     ACIBridgeDomainSubnetBulkEditView,
+    ACIBridgeDomainSubnetBulkImportView,
     ACIBridgeDomainSubnetEditView,
     ACIBridgeDomainSubnetListView,
     ACIVRFBulkDeleteView,
@@ -156,6 +157,11 @@ urlpatterns: tuple = (
         "bridge-domain-subnets/edit/",
         ACIBridgeDomainSubnetBulkEditView.as_view(),
         name="acibridgedomainsubnet_bulk_edit",
+    ),
+    path(
+        "bridge-domain-subnets/import/",
+        ACIBridgeDomainSubnetBulkImportView.as_view(),
+        name="acibridgedomainsubnet_import",
     ),
     path(
         "bridge-domain-subnets/<int:pk>/",

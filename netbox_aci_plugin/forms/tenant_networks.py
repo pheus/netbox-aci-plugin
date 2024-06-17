@@ -1654,3 +1654,86 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     tag = TagFilterField(ACIBridgeDomainSubnet)
+
+
+class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACIBridgeDomainSubnet."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI VRF"),
+    )
+    aci_vrf = CSVModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI VRF"),
+        help_text=_("Parent ACI VRF of ACI Bridge Domain"),
+    )
+    aci_bridge_domain = CSVModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Bridge Domain"),
+        help_text=_("Assigned ACI Bridge Domain"),
+    )
+    gateway_ip_address = CSVModelChoiceField(
+        queryset=IPAddress.objects.all(),
+        to_field_name="address",
+        required=True,
+        label=_("Gateway IP address"),
+        help_text=_("Assigned IP Address (as gateway IP address)"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+
+    class Meta:
+        model = ACIBridgeDomainSubnet
+        fields = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "gateway_ip_address",
+            "description",
+            "nb_tenant",
+            "advertised_externally_enabled",
+            "igmp_querier_enabled",
+            "ip_data_plane_learning_enabled",
+            "no_default_gateway",
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            "preferred_ip_address_enabled",
+            "shared_enabled",
+            "virtual_ip_enabled",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+
+        super().__init__(data, *args, **kwargs)
+
+        # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
+        if data.get("aci_tenant") and data.get("aci_vrf"):
+            # Limit ACIVRF queryset by parent ACITenant
+            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
+            )
+            aci_vrf = self.fields["aci_vrf"].to_python(self.data["aci_vrf"])
+
+            # Limit ACIBridgeDomain queryset by parent ACIVRF
+            aci_bd_queryset = ACIBridgeDomain.objects.filter(
+                aci_vrf__id=aci_vrf.id,
+            )
+            self.fields["aci_bridge_domain"].queryset = aci_bd_queryset
