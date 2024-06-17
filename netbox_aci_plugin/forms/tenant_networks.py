@@ -1367,6 +1367,137 @@ class ACIBridgeDomainSubnetForm(NetBoxModelForm):
         )
 
 
+class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI Bridge Domain Subnet model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_bridge_domain = DynamicModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        required=False,
+        label=_("ACI Bridge Domain"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    advertised_externally_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Advertised externally enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    igmp_querier_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("IGMP querier enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("IP data plane learning enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    no_default_gateway = forms.NullBooleanField(
+        required=False,
+        label=_("No default SVI gateway"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    nd_ra_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("ND RA enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    nd_ra_prefix_policy_name = forms.CharField(
+        required=False,
+        label=_("ND RA prefix policy name"),
+    )
+    preferred_ip_address_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Preferred (Primary) IP address enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    shared_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Shared enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    virtual_ip_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Virtual IP enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    comments = CommentField()
+
+    model = ACIBridgeDomainSubnet
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_bridge_domain",
+            "gateway_ip_address",
+            "description",
+            "tags",
+            "preferred_ip_address_enabled",
+            "virtual_ip_enabled",
+            name=_("ACI Bridge Domain Subnet"),
+        ),
+        FieldSet(
+            "advertised_externally_enabled",
+            "shared_enabled",
+            name=_("Scope Settings"),
+        ),
+        FieldSet(
+            "igmp_querier_enabled",
+            "no_default_gateway",
+            name=_("Subnet Control Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            name=_("IPv6 Settings"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "nd_ra_prefix_policy_name",
+        "comments",
+    )
+
+
 class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
     """NetBox filter form for ACI Bridge Domain Subnet model."""
 

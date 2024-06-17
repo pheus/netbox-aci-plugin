@@ -16,6 +16,7 @@ from ..forms.tenant_networks import (
     ACIBridgeDomainFilterForm,
     ACIBridgeDomainForm,
     ACIBridgeDomainImportForm,
+    ACIBridgeDomainSubnetBulkEditForm,
     ACIBridgeDomainSubnetFilterForm,
     ACIBridgeDomainSubnetForm,
     ACIVRFBulkEditForm,
@@ -395,3 +396,20 @@ class ACIBridgeDomainSubnetDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+class ACIBridgeDomainSubnetBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.all()
+    filterset = ACIBridgeDomainSubnetFilterSet
+    table = ACIBridgeDomainSubnetTable
+    form = ACIBridgeDomainSubnetBulkEditForm
+
+
+class ACIBridgeDomainSubnetBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.all()
+    filterset = ACIBridgeDomainSubnetFilterSet
+    table = ACIBridgeDomainSubnetTable
