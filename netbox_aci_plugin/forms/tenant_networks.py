@@ -792,6 +792,14 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
     )
+    igmp_interface_policy_name = forms.CharField(
+        required=False,
+        label=_("IGMP interface policy name"),
+    )
+    igmp_snooping_policy_name = forms.CharField(
+        required=False,
+        label=_("IGMP snooping policy name"),
+    )
     ip_data_plane_learning_enabled = forms.NullBooleanField(
         required=False,
         label=_("IP data plane learning enabled"),
@@ -806,6 +814,10 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
     )
+    mac_address = forms.CharField(
+        required=False,
+        label=_("MAC address"),
+    )
     multi_destination_flooding = forms.ChoiceField(
         choices=add_blank_choice(BDMultiDestinationFloodingChoices),
         required=False,
@@ -817,6 +829,14 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+    )
+    pim_ipv4_destination_filter = forms.CharField(
+        required=False,
+        label=_("PIM destination filter"),
+    )
+    pim_ipv4_source_filter = forms.CharField(
+        required=False,
+        label=_("PIM source filter"),
     )
     pim_ipv6_enabled = forms.NullBooleanField(
         required=False,
@@ -846,6 +866,10 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         choices=add_blank_choice(BDUnknownUnicastChoices),
         required=False,
         label=_("Unknown unicast"),
+    )
+    virtual_mac_address = forms.CharField(
+        required=False,
+        label=_("Virtual MAC address"),
     )
     comments = CommentField()
 
@@ -904,6 +928,11 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         "description",
         "nb_tenant",
         "dhcp_labels",
+        "igmp_interface_policy_name",
+        "igmp_snooping_policy_name",
+        "pim_ipv4_destination_filter",
+        "pim_ipv4_source_filter",
+        "virtual_mac_address",
         "comments",
     )
 
