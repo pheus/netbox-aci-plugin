@@ -11,10 +11,14 @@ from ..filtersets.tenant_app_profiles import (
     ACIEndpointGroupFilterSet,
 )
 from ..forms.tenant_app_profiles import (
+    ACIAppProfileBulkEditForm,
     ACIAppProfileFilterForm,
     ACIAppProfileForm,
+    ACIAppProfileImportForm,
+    ACIEndpointGroupBulkEditForm,
     ACIEndpointGroupFilterForm,
     ACIEndpointGroupForm,
+    ACIEndpointGroupImportForm,
 )
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..tables.tenant_app_profiles import (
@@ -138,6 +142,30 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
         return table
 
 
+class ACIAppProfileBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI App Profile."""
+
+    queryset = ACIAppProfile.objects.all()
+    model_form = ACIAppProfileImportForm
+
+
+class ACIAppProfileBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI App Profile."""
+
+    queryset = ACIAppProfile.objects.all()
+    filterset = ACIAppProfileFilterForm
+    table = ACIAppProfileTable
+    form = ACIAppProfileBulkEditForm
+
+
+class ACIAppProfileBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI App Profile."""
+
+    queryset = ACIAppProfile.objects.all()
+    filterset = ACIAppProfileFilterSet
+    table = ACIAppProfileTable
+
+
 #
 # Endpoint Group views
 #
@@ -192,3 +220,27 @@ class ACIEndpointGroupDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+class ACIEndpointGroupBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.all()
+    model_form = ACIEndpointGroupImportForm
+
+
+class ACIEndpointGroupBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.all()
+    filterset = ACIAppProfileFilterSet
+    table = ACIEndpointGroupTable
+    form = ACIEndpointGroupBulkEditForm
+
+
+class ACIEndpointGroupBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.all()
+    filterset = ACIEndpointGroupFilterSet
+    table = ACIEndpointGroupTable

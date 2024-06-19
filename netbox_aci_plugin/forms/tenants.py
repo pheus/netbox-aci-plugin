@@ -4,10 +4,16 @@
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
+from netbox.forms import (
+    NetBoxModelBulkEditForm,
+    NetBoxModelFilterSetForm,
+    NetBoxModelForm,
+    NetBoxModelImportForm,
+)
 from tenancy.models import Tenant, TenantGroup
 from utilities.forms.fields import (
     CommentField,
+    CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     TagFilterField,
@@ -61,6 +67,46 @@ class ACITenantForm(NetBoxModelForm):
         )
 
 
+class ACITenantBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI Tenant model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    comments = CommentField()
+
+    model = ACITenant
+    fieldsets: tuple = (
+        FieldSet(
+            "name_alias",
+            "description",
+            name=_("ACI Tenant"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "comments",
+    )
+
+
 class ACITenantFilterForm(NetBoxModelFilterSetForm):
     """NetBox filter form for ACI Tenant model."""
 
@@ -107,3 +153,26 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
         label=_("Tenant"),
     )
     tag = TagFilterField(ACITenant)
+
+
+class ACITenantImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACITenant."""
+
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+
+    class Meta:
+        model = ACITenant
+        fields = (
+            "name",
+            "name_alias",
+            "description",
+            "nb_tenant",
+            "comments",
+            "tags",
+        )

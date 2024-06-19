@@ -5,11 +5,18 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from ipam.models import VRF, IPAddress
-from netbox.forms import NetBoxModelFilterSetForm, NetBoxModelForm
+from netbox.forms import (
+    NetBoxModelBulkEditForm,
+    NetBoxModelFilterSetForm,
+    NetBoxModelForm,
+    NetBoxModelImportForm,
+)
 from tenancy.models import Tenant, TenantGroup
-from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES
+from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
     CommentField,
+    CSVChoiceField,
+    CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     TagFilterField,
@@ -29,6 +36,10 @@ from ..models.tenant_networks import (
     ACIBridgeDomainSubnet,
 )
 from ..models.tenants import ACITenant
+
+#
+# VRF forms
+#
 
 
 class ACIVRFForm(NetBoxModelForm):
@@ -177,6 +188,134 @@ class ACIVRFForm(NetBoxModelForm):
         )
 
 
+class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI VRF model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    nb_vrf = DynamicModelChoiceField(
+        queryset=VRF.objects.all(),
+        required=False,
+        label=_("NetBox VRF"),
+    )
+    bd_enforcement_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled Bridge Domain enforcement"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    dns_labels = forms.CharField(
+        required=False,
+        label=_("DNS labels"),
+    )
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled IP data plane learning"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    pc_enforcement_direction = forms.ChoiceField(
+        choices=add_blank_choice(VRFPCEnforcementDirectionChoices),
+        required=False,
+        label=_("Policy control enforcement direction"),
+    )
+    pc_enforcement_preference = forms.ChoiceField(
+        choices=add_blank_choice(VRFPCEnforcementPreferenceChoices),
+        required=False,
+        label=_("Policy control enforcement preference"),
+    )
+    pim_ipv4_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled PIM (multicast) IPv4"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    pim_ipv6_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled PIM (multicast) IPv6"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    preferred_group_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Enabled preferred group"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    comments = CommentField()
+
+    model = ACIVRF
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "description",
+            "tags",
+            name=_("ACI VRF"),
+        ),
+        FieldSet(
+            "pc_enforcement_direction",
+            "pc_enforcement_preference",
+            "bd_enforcement_enabled",
+            "preferred_group_enabled",
+            name=_("Policy Control Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            name=_("Multicast Settings"),
+        ),
+        FieldSet(
+            "dns_labels",
+            name=_("Additional Settings"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+        FieldSet(
+            "nb_vrf",
+            name=_("NetBox Networking"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "nb_vrf",
+        "dns_labels",
+        "comments",
+    )
+
+
 class ACIVRFFilterForm(NetBoxModelFilterSetForm):
     """NetBox filter form for ACI VRF model."""
 
@@ -313,6 +452,70 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
     tag = TagFilterField(ACIVRF)
 
 
+class ACIVRFImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACIVRF."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Assigned ACI Tenant"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    nb_vrf = CSVModelChoiceField(
+        queryset=VRF.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox VRF"),
+        help_text=_("Assigned NetBox VRF"),
+    )
+    pc_enforcement_direction = CSVChoiceField(
+        choices=VRFPCEnforcementDirectionChoices,
+        required=True,
+        label=_("Policy control enforcement direction"),
+        help_text=_("Controls policy enforcement direction for VRF."),
+    )
+    pc_enforcement_preference = CSVChoiceField(
+        choices=VRFPCEnforcementPreferenceChoices,
+        required=True,
+        label=_("Policy control enforcement preference"),
+        help_text=_("Controls policy enforcement preference for VRF."),
+    )
+
+    class Meta:
+        model = ACIVRF
+        fields = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "description",
+            "nb_tenant",
+            "nb_vrf",
+            "bd_enforcement_enabled",
+            "dns_labels",
+            "ip_data_plane_learning_enabled",
+            "pc_enforcement_direction",
+            "pc_enforcement_preference",
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            "preferred_group_enabled",
+            "comments",
+            "tags",
+        )
+
+
+#
+# Bridge Domain forms
+#
+
+
 class ACIBridgeDomainForm(NetBoxModelForm):
     """NetBox form for ACI Bridge Domain model."""
 
@@ -392,7 +595,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
         required=False,
         label=_("Multi destination flooding"),
         help_text=_(
-            "Forwarding methof for L2 multicast, broadcast, and link layer "
+            "Forwarding method for L2 multicast, broadcast, and link layer "
             "traffic. Default is 'bd-flood'."
         ),
     )
@@ -532,6 +735,206 @@ class ACIBridgeDomainForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+
+class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI Bridge Domain model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_vrf = DynamicModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        required=False,
+        label=_("ACI VRF"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    advertise_host_routes_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Advertise host routes enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    arp_flooding_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("ARP flooding enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    clear_remote_mac_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Clear remote MAC entries enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    dhcp_labels = forms.CharField(
+        required=False,
+        label=_("DHCP labels"),
+    )
+    ep_move_detection_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("EP move detection enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    igmp_interface_policy_name = forms.CharField(
+        required=False,
+        label=_("IGMP interface policy name"),
+    )
+    igmp_snooping_policy_name = forms.CharField(
+        required=False,
+        label=_("IGMP snooping policy name"),
+    )
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("IP data plane learning enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    limit_ip_learn_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Limit IP learning to subnet enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    mac_address = forms.CharField(
+        required=False,
+        label=_("MAC address"),
+    )
+    multi_destination_flooding = forms.ChoiceField(
+        choices=add_blank_choice(BDMultiDestinationFloodingChoices),
+        required=False,
+        label=_("Multi destination flooding"),
+    )
+    pim_ipv4_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("PIM (multicast) IPv4 enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    pim_ipv4_destination_filter = forms.CharField(
+        required=False,
+        label=_("PIM destination filter"),
+    )
+    pim_ipv4_source_filter = forms.CharField(
+        required=False,
+        label=_("PIM source filter"),
+    )
+    pim_ipv6_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("PIM (multicast) IPv6 enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    unicast_routing_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Unicast routing enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    unknown_ipv4_multicast = forms.ChoiceField(
+        choices=add_blank_choice(BDUnknownMulticastChoices),
+        required=False,
+        label=_("Unknown IPv4 multicast"),
+    )
+    unknown_ipv6_multicast = forms.ChoiceField(
+        choices=add_blank_choice(BDUnknownMulticastChoices),
+        required=False,
+        label=_("Unknown IPv6 multicast"),
+    )
+    unknown_unicast = forms.ChoiceField(
+        choices=add_blank_choice(BDUnknownUnicastChoices),
+        required=False,
+        label=_("Unknown unicast"),
+    )
+    virtual_mac_address = forms.CharField(
+        required=False,
+        label=_("Virtual MAC address"),
+    )
+    comments = CommentField()
+
+    model = ACIBridgeDomain
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_vrf",
+            "description",
+            "tags",
+            name=_("ACI Bridge Domain"),
+        ),
+        FieldSet(
+            "unicast_routing_enabled",
+            "advertise_host_routes_enabled",
+            "ep_move_detection_enabled",
+            "mac_address",
+            "virtual_mac_address",
+            name=_("Routing Settings"),
+        ),
+        FieldSet(
+            "arp_flooding_enabled",
+            "unknown_unicast",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "multi_destination_flooding",
+            name=_("Forwarding Method Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            "limit_ip_learn_enabled",
+            "clear_remote_mac_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "pim_ipv4_enabled",
+            "pim_ipv6_enabled",
+            "igmp_interface_policy_name",
+            "igmp_snooping_policy_name",
+            "pim_ipv4_source_filter",
+            "pim_ipv4_destination_filter",
+            name=_("Multicast Settings"),
+        ),
+        FieldSet(
+            "dhcp_labels",
+            name=_("Additional Settings"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "dhcp_labels",
+        "igmp_interface_policy_name",
+        "igmp_snooping_policy_name",
+        "pim_ipv4_destination_filter",
+        "pim_ipv4_source_filter",
+        "virtual_mac_address",
+        "comments",
+    )
 
 
 class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
@@ -713,6 +1116,111 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
     tag = TagFilterField(ACIBridgeDomain)
 
 
+class ACIBridgeDomainImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACIBridgeDomain."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI VRF"),
+    )
+    aci_vrf = CSVModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI VRF"),
+        help_text=_("Assigned ACI VRF"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    multi_destination_flooding = CSVChoiceField(
+        choices=BDMultiDestinationFloodingChoices,
+        required=True,
+        label=_("Multi destination flooding"),
+        help_text=_(
+            "Forwarding method for L2 multicast, broadcast, and link layer "
+            "traffic."
+        ),
+    )
+    unknown_ipv4_multicast = CSVChoiceField(
+        choices=BDUnknownMulticastChoices,
+        required=True,
+        label=_("Unknown IPv4 multicast"),
+        help_text=_("Defines the IPv4 unknown multicast forwarding method."),
+    )
+    unknown_ipv6_multicast = CSVChoiceField(
+        choices=BDUnknownMulticastChoices,
+        required=True,
+        label=_("Unknown IPv6 multicast"),
+        help_text=_("Defines the IPv6 unknown multicast forwarding method."),
+    )
+    unknown_unicast = CSVChoiceField(
+        choices=BDUnknownUnicastChoices,
+        required=True,
+        label=_("Unknown unicast"),
+        help_text=_("Defines the layer 2 unknown unicast forwarding method."),
+    )
+
+    class Meta:
+        model = ACIBridgeDomain
+        fields = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_vrf",
+            "description",
+            "nb_tenant",
+            "advertise_host_routes_enabled",
+            "arp_flooding_enabled",
+            "clear_remote_mac_enabled",
+            "dhcp_labels",
+            "ep_move_detection_enabled",
+            "igmp_interface_policy_name",
+            "igmp_snooping_policy_name",
+            "ip_data_plane_learning_enabled",
+            "limit_ip_learn_enabled",
+            "mac_address",
+            "multi_destination_flooding",
+            "pim_ipv4_enabled",
+            "pim_ipv4_destination_filter",
+            "pim_ipv4_source_filter",
+            "pim_ipv6_enabled",
+            "unicast_routing_enabled",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "unknown_unicast",
+            "virtual_mac_address",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        # Limit ACIVRF queryset by parent ACITenant
+        if data.get("aci_tenant"):
+            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
+            )
+
+
+#
+# Bridge Domain Subnet forms
+#
+
+
 class ACIBridgeDomainSubnetForm(NetBoxModelForm):
     """NetBox form for ACI Bridge Domain Subnet model."""
 
@@ -890,6 +1398,137 @@ class ACIBridgeDomainSubnetForm(NetBoxModelForm):
         )
 
 
+class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for ACI Bridge Domain Subnet model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_bridge_domain = DynamicModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        required=False,
+        label=_("ACI Bridge Domain"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    advertised_externally_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Advertised externally enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    igmp_querier_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("IGMP querier enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    ip_data_plane_learning_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("IP data plane learning enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    no_default_gateway = forms.NullBooleanField(
+        required=False,
+        label=_("No default SVI gateway"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    nd_ra_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("ND RA enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    nd_ra_prefix_policy_name = forms.CharField(
+        required=False,
+        label=_("ND RA prefix policy name"),
+    )
+    preferred_ip_address_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Preferred (Primary) IP address enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    shared_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Shared enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    virtual_ip_enabled = forms.NullBooleanField(
+        required=False,
+        label=_("Virtual IP enabled"),
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+    )
+    comments = CommentField()
+
+    model = ACIBridgeDomainSubnet
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_bridge_domain",
+            "gateway_ip_address",
+            "description",
+            "tags",
+            "preferred_ip_address_enabled",
+            "virtual_ip_enabled",
+            name=_("ACI Bridge Domain Subnet"),
+        ),
+        FieldSet(
+            "advertised_externally_enabled",
+            "shared_enabled",
+            name=_("Scope Settings"),
+        ),
+        FieldSet(
+            "igmp_querier_enabled",
+            "no_default_gateway",
+            name=_("Subnet Control Settings"),
+        ),
+        FieldSet(
+            "ip_data_plane_learning_enabled",
+            name=_("Endpoint Learning Settings"),
+        ),
+        FieldSet(
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            name=_("IPv6 Settings"),
+        ),
+        FieldSet(
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "nd_ra_prefix_policy_name",
+        "comments",
+    )
+
+
 class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
     """NetBox filter form for ACI Bridge Domain Subnet model."""
 
@@ -1016,13 +1655,14 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
     )
     nd_ra_enabled = forms.NullBooleanField(
         required=False,
-        label=_("NA RA enabled"),
+        label=_("ND RA enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
     )
     nd_ra_prefix_policy_name = forms.CharField(
         required=False,
+        label=_("ND RA prefix policy name"),
     )
     preferred_ip_address_enabled = forms.NullBooleanField(
         required=False,
@@ -1046,3 +1686,88 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     tag = TagFilterField(ACIBridgeDomainSubnet)
+
+
+class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACIBridgeDomainSubnet."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI VRF"),
+    )
+    aci_vrf = CSVModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI VRF"),
+        help_text=_("Parent ACI VRF of ACI Bridge Domain"),
+    )
+    aci_bridge_domain = CSVModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Bridge Domain"),
+        help_text=_("Assigned ACI Bridge Domain"),
+    )
+    gateway_ip_address = CSVModelChoiceField(
+        queryset=IPAddress.objects.all(),
+        to_field_name="address",
+        required=True,
+        label=_("Gateway IP address"),
+        help_text=_("Assigned IP Address (as gateway IP address)"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+
+    class Meta:
+        model = ACIBridgeDomainSubnet
+        fields = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "gateway_ip_address",
+            "description",
+            "nb_tenant",
+            "advertised_externally_enabled",
+            "igmp_querier_enabled",
+            "ip_data_plane_learning_enabled",
+            "no_default_gateway",
+            "nd_ra_enabled",
+            "nd_ra_prefix_policy_name",
+            "preferred_ip_address_enabled",
+            "shared_enabled",
+            "virtual_ip_enabled",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
+        if data.get("aci_tenant") and data.get("aci_vrf"):
+            # Limit ACIVRF queryset by parent ACITenant
+            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
+            )
+            # Limit ACIBridgeDomain queryset by parent ACIVRF
+            aci_bd_queryset = ACIBridgeDomain.objects.filter(
+                aci_vrf__aci_tenant__name=data["aci_tenant"],
+                aci_vrf__name=data["aci_vrf"],
+            )
+            self.fields["aci_bridge_domain"].queryset = aci_bd_queryset

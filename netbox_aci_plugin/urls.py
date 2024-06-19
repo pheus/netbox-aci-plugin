@@ -6,25 +6,61 @@ from django.urls import include, path
 from utilities.urls import get_model_urls
 
 from .views.tenant_app_profiles import (
+    ACIAppProfileBulkDeleteView,
+    ACIAppProfileBulkEditView,
+    ACIAppProfileBulkImportView,
     ACIAppProfileEditView,
     ACIAppProfileListView,
+    ACIEndpointGroupBulkDeleteView,
+    ACIEndpointGroupBulkEditView,
+    ACIEndpointGroupBulkImportView,
     ACIEndpointGroupEditView,
     ACIEndpointGroupListView,
 )
 from .views.tenant_networks import (
+    ACIBridgeDomainBulkDeleteView,
+    ACIBridgeDomainBulkEditView,
+    ACIBridgeDomainBulkImportView,
     ACIBridgeDomainEditView,
     ACIBridgeDomainListView,
+    ACIBridgeDomainSubnetBulkDeleteView,
+    ACIBridgeDomainSubnetBulkEditView,
+    ACIBridgeDomainSubnetBulkImportView,
     ACIBridgeDomainSubnetEditView,
     ACIBridgeDomainSubnetListView,
+    ACIVRFBulkDeleteView,
+    ACIVRFBulkEditView,
+    ACIVRFBulkImportView,
     ACIVRFEditView,
     ACIVRFListView,
 )
-from .views.tenants import ACITenantEditView, ACITenantListView
+from .views.tenants import (
+    ACITenantBulkDeleteView,
+    ACITenantBulkEditView,
+    ACITenantBulkImportView,
+    ACITenantEditView,
+    ACITenantListView,
+)
 
 urlpatterns: tuple = (
     # ACI Tenants
     path("tenants/", ACITenantListView.as_view(), name="acitenant_list"),
     path("tenants/add/", ACITenantEditView.as_view(), name="acitenant_add"),
+    path(
+        "tenants/delete/",
+        ACITenantBulkDeleteView.as_view(),
+        name="acitenant_bulk_delete",
+    ),
+    path(
+        "tenants/edit/",
+        ACITenantBulkEditView.as_view(),
+        name="acitenant_bulk_edit",
+    ),
+    path(
+        "tenants/import/",
+        ACITenantBulkImportView.as_view(),
+        name="acitenant_import",
+    ),
     path(
         "tenants/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acitenant")),
@@ -39,6 +75,21 @@ urlpatterns: tuple = (
         "app-profiles/add/",
         ACIAppProfileEditView.as_view(),
         name="aciappprofile_add",
+    ),
+    path(
+        "app-profiles/delete/",
+        ACIAppProfileBulkDeleteView.as_view(),
+        name="aciappprofile_bulk_delete",
+    ),
+    path(
+        "app-profiles/edit/",
+        ACIAppProfileBulkEditView.as_view(),
+        name="aciappprofile_bulk_edit",
+    ),
+    path(
+        "app-profiles/import/",
+        ACIAppProfileBulkImportView.as_view(),
+        name="aciappprofile_import",
     ),
     path(
         "app-profiles/<int:pk>/",
@@ -56,6 +107,21 @@ urlpatterns: tuple = (
         name="aciendpointgroup_add",
     ),
     path(
+        "endpoint-groups/delete/",
+        ACIEndpointGroupBulkDeleteView.as_view(),
+        name="aciendpointgroup_bulk_delete",
+    ),
+    path(
+        "endpoint-groups/edit/",
+        ACIEndpointGroupBulkEditView.as_view(),
+        name="aciendpointgroup_bulk_edit",
+    ),
+    path(
+        "endpoint-groups/import/",
+        ACIEndpointGroupBulkImportView.as_view(),
+        name="aciendpointgroup_import",
+    ),
+    path(
         "endpoint-groups/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciendpointgroup")),
     ),
@@ -69,6 +135,21 @@ urlpatterns: tuple = (
         "bridge-domains/add/",
         ACIBridgeDomainEditView.as_view(),
         name="acibridgedomain_add",
+    ),
+    path(
+        "bridge-domains/delete/",
+        ACIBridgeDomainBulkDeleteView.as_view(),
+        name="acibridgedomain_bulk_delete",
+    ),
+    path(
+        "bridge-domains/edit/",
+        ACIBridgeDomainBulkEditView.as_view(),
+        name="acibridgedomain_bulk_edit",
+    ),
+    path(
+        "bridge-domains/import/",
+        ACIBridgeDomainBulkImportView.as_view(),
+        name="acibridgedomain_import",
     ),
     path(
         "bridge-domains/<int:pk>/",
@@ -86,12 +167,42 @@ urlpatterns: tuple = (
         name="acibridgedomainsubnet_add",
     ),
     path(
+        "bridge-domain-subnets/delete/",
+        ACIBridgeDomainSubnetBulkDeleteView.as_view(),
+        name="acibridgedomainsubnet_bulk_delete",
+    ),
+    path(
+        "bridge-domain-subnets/edit/",
+        ACIBridgeDomainSubnetBulkEditView.as_view(),
+        name="acibridgedomainsubnet_bulk_edit",
+    ),
+    path(
+        "bridge-domain-subnets/import/",
+        ACIBridgeDomainSubnetBulkImportView.as_view(),
+        name="acibridgedomainsubnet_import",
+    ),
+    path(
         "bridge-domain-subnets/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acibridgedomainsubnet")),
     ),
     # ACI VRF
     path("vrfs/", ACIVRFListView.as_view(), name="acivrf_list"),
     path("vrfs/add/", ACIVRFEditView.as_view(), name="acivrf_add"),
+    path(
+        "vrfs/delete/",
+        ACIVRFBulkDeleteView.as_view(),
+        name="acivrf_bulk_delete",
+    ),
+    path(
+        "vrfs/edit/",
+        ACIVRFBulkEditView.as_view(),
+        name="acivrf_bulk_edit",
+    ),
+    path(
+        "vrfs/import/",
+        ACIVRFBulkImportView.as_view(),
+        name="acivrf_import",
+    ),
     path(
         "vrfs/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acivrf")),

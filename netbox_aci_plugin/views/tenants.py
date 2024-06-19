@@ -8,7 +8,12 @@ from utilities.relations import get_related_models
 from utilities.views import ViewTab, register_model_view
 
 from ..filtersets.tenants import ACITenantFilterSet
-from ..forms.tenants import ACITenantFilterForm, ACITenantForm
+from ..forms.tenants import (
+    ACITenantBulkEditForm,
+    ACITenantFilterForm,
+    ACITenantForm,
+    ACITenantImportForm,
+)
 from ..models.tenant_app_profiles import ACIEndpointGroup
 from ..models.tenant_networks import ACIBridgeDomain
 from ..models.tenants import ACITenant
@@ -213,3 +218,27 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
         table.columns.hide("aci_tenant")
 
         return table
+
+
+class ACITenantBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI Tenant."""
+
+    queryset = ACITenant.objects.all()
+    model_form = ACITenantImportForm
+
+
+class ACITenantBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI Tenant."""
+
+    queryset = ACITenant.objects.all()
+    filterset = ACITenantFilterSet
+    table = ACITenantTable
+    form = ACITenantBulkEditForm
+
+
+class ACITenantBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI Tenant."""
+
+    queryset = ACITenant.objects.all()
+    filterset = ACITenantFilterSet
+    table = ACITenantTable

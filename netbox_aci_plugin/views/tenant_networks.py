@@ -12,12 +12,18 @@ from ..filtersets.tenant_networks import (
     ACIVRFFilterSet,
 )
 from ..forms.tenant_networks import (
+    ACIBridgeDomainBulkEditForm,
     ACIBridgeDomainFilterForm,
     ACIBridgeDomainForm,
+    ACIBridgeDomainImportForm,
+    ACIBridgeDomainSubnetBulkEditForm,
     ACIBridgeDomainSubnetFilterForm,
     ACIBridgeDomainSubnetForm,
+    ACIBridgeDomainSubnetImportForm,
+    ACIVRFBulkEditForm,
     ACIVRFFilterForm,
     ACIVRFForm,
+    ACIVRFImportForm,
 )
 from ..models.tenant_networks import (
     ACIVRF,
@@ -176,6 +182,30 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
         return table
 
 
+class ACIVRFBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI VRF."""
+
+    queryset = ACIVRF.objects.all()
+    model_form = ACIVRFImportForm
+
+
+class ACIVRFBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI VRF."""
+
+    queryset = ACIVRF.objects.all()
+    filterset = ACIVRFFilterSet
+    table = ACIVRFTable
+    form = ACIVRFBulkEditForm
+
+
+class ACIVRFBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI VRF."""
+
+    queryset = ACIVRF.objects.all()
+    filterset = ACIVRFFilterSet
+    table = ACIVRFTable
+
+
 #
 # Bridge Domain views
 #
@@ -289,6 +319,30 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
         return table
 
 
+class ACIBridgeDomainBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    model_form = ACIBridgeDomainImportForm
+
+
+class ACIBridgeDomainBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    filterset = ACIBridgeDomainFilterSet
+    table = ACIBridgeDomainTable
+    form = ACIBridgeDomainBulkEditForm
+
+
+class ACIBridgeDomainBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    filterset = ACIBridgeDomainFilterSet
+    table = ACIBridgeDomainTable
+
+
 #
 # Bridge Domain Subnet views
 #
@@ -343,3 +397,27 @@ class ACIBridgeDomainSubnetDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+class ACIBridgeDomainSubnetBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.all()
+    model_form = ACIBridgeDomainSubnetImportForm
+
+
+class ACIBridgeDomainSubnetBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.all()
+    filterset = ACIBridgeDomainSubnetFilterSet
+    table = ACIBridgeDomainSubnetTable
+    form = ACIBridgeDomainSubnetBulkEditForm
+
+
+class ACIBridgeDomainSubnetBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI BD Subnet."""
+
+    queryset = ACIBridgeDomainSubnet.objects.all()
+    filterset = ACIBridgeDomainSubnetFilterSet
+    table = ACIBridgeDomainSubnetTable
