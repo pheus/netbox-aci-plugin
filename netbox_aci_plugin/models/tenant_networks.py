@@ -350,7 +350,7 @@ class ACIBridgeDomain(NetBoxModel):
         ],
     )
     pim_ipv4_source_filter = models.CharField(
-        verbose_name=_("PIM destination filter"),
+        verbose_name=_("PIM source filter"),
         max_length=64,
         blank=True,
         validators=[
