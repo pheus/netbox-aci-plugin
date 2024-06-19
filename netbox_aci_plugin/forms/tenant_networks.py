@@ -1206,12 +1206,14 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
 
         super().__init__(data, *args, **kwargs)
 
-        if data:
-            # Limit ACIVRF queryset by parent ACITenant
-            if data.get("aci_tenant"):
-                self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
-                    aci_tenant__name=data["aci_tenant"]
-                )
+        if not data:
+            return
+
+        # Limit ACIVRF queryset by parent ACITenant
+        if data.get("aci_tenant"):
+            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
+            )
 
 
 #
