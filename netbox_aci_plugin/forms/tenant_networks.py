@@ -1754,6 +1754,9 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
 
         super().__init__(data, *args, **kwargs)
 
+        if not data:
+            return
+
         # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
         if data.get("aci_tenant") and data.get("aci_vrf"):
             # Limit ACIVRF queryset by parent ACITenant
