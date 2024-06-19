@@ -1765,10 +1765,9 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
             self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
                 aci_tenant__name=data["aci_tenant"]
             )
-            aci_vrf = self.fields["aci_vrf"].to_python(self.data["aci_vrf"])
-
             # Limit ACIBridgeDomain queryset by parent ACIVRF
             aci_bd_queryset = ACIBridgeDomain.objects.filter(
-                aci_vrf__id=aci_vrf.id,
+                aci_vrf__aci_tenant__name=data["aci_tenant"],
+                aci_vrf__name=data["aci_vrf"],
             )
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset
