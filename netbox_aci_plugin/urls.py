@@ -13,6 +13,7 @@ from .views.tenant_app_profiles import (
     ACIAppProfileListView,
     ACIEndpointGroupBulkDeleteView,
     ACIEndpointGroupBulkEditView,
+    ACIEndpointGroupBulkImportView,
     ACIEndpointGroupEditView,
     ACIEndpointGroupListView,
 )
@@ -114,6 +115,11 @@ urlpatterns: tuple = (
         "endpoint-groups/edit/",
         ACIEndpointGroupBulkEditView.as_view(),
         name="aciendpointgroup_bulk_edit",
+    ),
+    path(
+        "endpoint-groups/import/",
+        ACIEndpointGroupBulkImportView.as_view(),
+        name="aciendpointgroup_import",
     ),
     path(
         "endpoint-groups/<int:pk>/",

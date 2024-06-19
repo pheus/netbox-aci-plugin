@@ -14,6 +14,7 @@ from tenancy.models import Tenant, TenantGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
     CommentField,
+    CSVChoiceField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
@@ -616,3 +617,103 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     tag = TagFilterField(ACIEndpointGroup)
+
+
+class ACIEndpointGroupImportForm(NetBoxModelImportForm):
+    """NetBox import form for ACIEndpointGroup."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI Application Profile"),
+    )
+    aci_app_profile = CSVModelChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Application Profile"),
+        help_text=_("Assigned ACI Application Profile"),
+    )
+    aci_vrf = CSVModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI VRF"),
+        help_text=_("Parent ACI VRF of ACI Bridge Domain"),
+    )
+    aci_bridge_domain = CSVModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Bridge Domain"),
+        help_text=_("Assigned ACI Bridge Domain"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    qos_class = CSVChoiceField(
+        choices=EPGQualityOfServiceClassChoices,
+        required=True,
+        label=_("QoS class"),
+        help_text=_(
+            "Assignment of the ACI Quality-of-Service level for "
+            "traffic sourced in the EPG."
+        ),
+    )
+
+    class Meta:
+        model = ACIEndpointGroup
+        fields = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_app_profile",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "description",
+            "nb_tenant",
+            "admin_shutdown",
+            "custom_qos_policy_name",
+            "flood_in_encap_enabled",
+            "intra_epg_isolation_enabled",
+            "qos_class",
+            "preferred_group_member_enabled",
+            "proxy_arp_enabled",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        # Limit ACIEndpointGroup queryset by parent ACIAppProfile and ACITenant
+        if data.get("aci_tenant") and data.get("aci_app_profile"):
+            # Limit ACIAppProfile queryset by parent ACITenant
+            aci_appprofile_queryset = ACIAppProfile.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
+            )
+            self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
+
+        # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
+        if data.get("aci_tenant") and data.get("aci_vrf"):
+            # Limit ACIVRF queryset by parent ACITenant
+            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
+            )
+            # Limit ACIBridgeDomain queryset by parent ACIVRF
+            aci_bd_queryset = ACIBridgeDomain.objects.filter(
+                aci_vrf__aci_tenant__name=data["aci_tenant"],
+                aci_vrf__name=data["aci_vrf"],
+            )
+            self.fields["aci_bridge_domain"].queryset = aci_bd_queryset

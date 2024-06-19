@@ -18,6 +18,7 @@ from ..forms.tenant_app_profiles import (
     ACIEndpointGroupBulkEditForm,
     ACIEndpointGroupFilterForm,
     ACIEndpointGroupForm,
+    ACIEndpointGroupImportForm,
 )
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..tables.tenant_app_profiles import (
@@ -219,6 +220,13 @@ class ACIEndpointGroupDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+class ACIEndpointGroupBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.all()
+    model_form = ACIEndpointGroupImportForm
 
 
 class ACIEndpointGroupBulkEditView(generic.BulkEditView):
