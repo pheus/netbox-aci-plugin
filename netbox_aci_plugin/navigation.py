@@ -5,87 +5,81 @@
 from netbox.plugins import PluginMenu, PluginMenuButton, PluginMenuItem
 
 # ACI Tenant
-acitenant_buttons: tuple = (
-    PluginMenuButton(
-        link="plugins:netbox_aci_plugin:acitenant_add",
-        title="Add",
-        icon_class="mdi mdi-plus-thick",
-    ),
-)
 acitenant_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acitenant_list",
     link_text="Tenants",
-    buttons=acitenant_buttons,
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acitenant_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+        ),
+    ),
 )
 
 # ACI Application Profile
-aciappprofile_buttons: tuple = (
-    PluginMenuButton(
-        link="plugins:netbox_aci_plugin:aciappprofile_add",
-        title="Add",
-        icon_class="mdi mdi-plus-thick",
-    ),
-)
 aciappprofile_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:aciappprofile_list",
     link_text="Application Profiles",
-    buttons=aciappprofile_buttons,
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciappprofile_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+        ),
+    ),
 )
 
 # ACI Bridge Domain
-acibd_buttons: tuple = (
-    PluginMenuButton(
-        link="plugins:netbox_aci_plugin:acibridgedomain_add",
-        title="Add",
-        icon_class="mdi mdi-plus-thick",
-    ),
-)
 acibd_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acibridgedomain_list",
     link_text="Bridge Domains",
-    buttons=acibd_buttons,
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acibridgedomain_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+        ),
+    ),
 )
 
 # ACI Bridge Domain Subnet
-acibdsubnet_buttons: tuple = (
-    PluginMenuButton(
-        link="plugins:netbox_aci_plugin:acibridgedomainsubnet_add",
-        title="Add",
-        icon_class="mdi mdi-plus-thick",
-    ),
-)
 acibdsubnet_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acibridgedomainsubnet_list",
     link_text="Bridge Domain Subnets",
-    buttons=acibdsubnet_buttons,
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acibridgedomainsubnet_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+        ),
+    ),
 )
 
 # ACI Endpoint Group
-aciendpointgroup_buttons: tuple = (
-    PluginMenuButton(
-        link="plugins:netbox_aci_plugin:aciendpointgroup_add",
-        title="Add",
-        icon_class="mdi mdi-plus-thick",
-    ),
-)
 aciendpointgroup_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:aciendpointgroup_list",
     link_text="Endpoint Groups",
-    buttons=aciendpointgroup_buttons,
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciendpointgroup_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+        ),
+    ),
 )
 
 # ACI VRF
-acivrf_buttons: tuple = (
-    PluginMenuButton(
-        link="plugins:netbox_aci_plugin:acivrf_add",
-        title="Add",
-        icon_class="mdi mdi-plus-thick",
-    ),
-)
 acivrf_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acivrf_list",
     link_text="VRFs",
-    buttons=acivrf_buttons,
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acivrf_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+        ),
+    ),
 )
 
 # Plugin Menu Items
