@@ -51,6 +51,7 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("VRFs"),
         badge=lambda obj: obj.aci_vrfs.count(),
+        permission="netbox_aci_plugin.view_acivrf",
         weight=1000,
     )
     table = ACIVRFTable
@@ -72,6 +73,7 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("Bridge Domains"),
         badge=lambda obj: obj.aci_bridge_domains.count(),
+        permission="netbox_aci_plugin.view_acibridgedomain",
         weight=1000,
     )
     table = ACIBridgeDomainTable
@@ -95,6 +97,7 @@ class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("BD Subnets"),
         badge=lambda obj: obj.aci_bridge_domain_subnets.count(),
+        permission="netbox_aci_plugin.view_acibridgedomainsubnet",
         weight=1000,
     )
     table = ACIBridgeDomainSubnetTable

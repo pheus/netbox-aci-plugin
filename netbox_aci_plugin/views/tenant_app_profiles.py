@@ -39,6 +39,7 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("Application Profiles"),
         badge=lambda obj: obj.aci_app_profiles.count(),
+        permission="netbox_aci_plugin.view_aciappprofile",
         weight=1000,
     )
     table = ACIAppProfileTable
@@ -62,6 +63,7 @@ class ACIEndpointGroupChildrenView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("Endpoint Groups"),
         badge=lambda obj: obj.aci_endpoint_groups.count(),
+        permission="netbox_aci_plugin.view_aciendpointgroup",
         weight=1000,
     )
     table = ACIEndpointGroupTable

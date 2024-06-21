@@ -166,6 +166,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
         badge=lambda obj: ACITenantBridgeDomainView.child_model.objects.filter(
             aci_vrf__aci_tenant=obj.pk
         ).count(),
+        permission="netbox_aci_plugin.view_acibridgedomain",
         weight=1000,
     )
     template_name = "netbox_aci_plugin/acitenant_bridgedomains.html"
@@ -198,6 +199,7 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
         badge=lambda obj: ACIEndpointGroupChildrenView.child_model.objects.filter(
             aci_app_profile__aci_tenant=obj.pk
         ).count(),
+        permission="netbox_aci_plugin.view_aciendpointgroup",
         weight=1000,
     )
     template_name = "netbox_aci_plugin/acitenant_endpointgroups.html"
