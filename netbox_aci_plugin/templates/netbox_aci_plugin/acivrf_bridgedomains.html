@@ -3,9 +3,11 @@
 {% load i18n %}
 
 {% block extra_controls %}
-  {% with viewname=object|viewname:"" %}
-  <a href="{% url 'plugins:netbox_aci_plugin:acibridgedomain_add' %}?aci_vrf={{ object.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
-    <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add a Bridge Domain" %}
-  </a>
-  {% endwith %}
+  {% if perms.netbox_aci_plugin.add_acibridgedomain %}
+    {% with viewname=object|viewname:"" %}
+      <a href="{% url 'plugins:netbox_aci_plugin:acibridgedomain_add' %}?aci_vrf={{ object.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
+        <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add a Bridge Domain" %}
+      </a>
+    {% endwith %}
+  {% endif %}
 {% endblock %}

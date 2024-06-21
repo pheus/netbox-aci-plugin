@@ -3,9 +3,11 @@
 {% load i18n %}
 
 {% block extra_controls %}
-  {% with viewname=object|viewname:"" %}
-  <a href="{% url 'plugins:netbox_aci_plugin:aciappprofile_add' %}?aci_tenant={{ object.pk }}&nb_tenant={{ object.nb_tenant.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
-    <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add an Application Profile" %}
-  </a>
-  {% endwith %}
+  {% if perms.netbox_aci_plugin.add_aciappprofile %}
+    {% with viewname=object|viewname:"" %}
+      <a href="{% url 'plugins:netbox_aci_plugin:aciappprofile_add' %}?aci_tenant={{ object.pk }}&nb_tenant={{ object.nb_tenant.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
+        <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add an Application Profile" %}
+      </a>
+    {% endwith %}
+  {% endif %}
 {% endblock %}

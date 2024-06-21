@@ -8,16 +8,19 @@ from netbox.plugins import PluginMenu, PluginMenuButton, PluginMenuItem
 acitenant_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acitenant_list",
     link_text="Tenants",
+    permissions=["netbox_aci_plugin.view_acitenant"],
     buttons=(
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:acitenant_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acitenant"],
         ),
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:acitenant_import",
             title="Import",
             icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acitenant"],
         ),
     ),
 )
@@ -26,16 +29,19 @@ acitenant_item = PluginMenuItem(
 aciappprofile_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:aciappprofile_list",
     link_text="Application Profiles",
+    permissions=["netbox_aci_plugin.view_aciappprofile"],
     buttons=(
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:aciappprofile_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_aciappprofile"],
         ),
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:aciappprofile_import",
             title="Import",
             icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_aciappprofile"],
         ),
     ),
 )
@@ -44,16 +50,19 @@ aciappprofile_item = PluginMenuItem(
 acibd_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acibridgedomain_list",
     link_text="Bridge Domains",
+    permissions=["netbox_aci_plugin.view_acibridgedomain"],
     buttons=(
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:acibridgedomain_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acibridgedomain"],
         ),
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:acibridgedomain_import",
             title="Import",
             icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acibridgedomain"],
         ),
     ),
 )
@@ -62,16 +71,19 @@ acibd_item = PluginMenuItem(
 acibdsubnet_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acibridgedomainsubnet_list",
     link_text="Bridge Domain Subnets",
+    permissions=["netbox_aci_plugin.view_acibridgedomainsubnet"],
     buttons=(
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:acibridgedomainsubnet_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acibridgedomainsubnet"],
         ),
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:acibridgedomainsubnet_import",
             title="Import",
             icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acibridgedomainsubnet"],
         ),
     ),
 )
@@ -80,16 +92,19 @@ acibdsubnet_item = PluginMenuItem(
 aciendpointgroup_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:aciendpointgroup_list",
     link_text="Endpoint Groups",
+    permissions=["netbox_aci_plugin.view_aciendpointgroup"],
     buttons=(
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:aciendpointgroup_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_aciendpointgroup"],
         ),
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:aciendpointgroup_import",
             title="Import",
             icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_aciendpointgroup"],
         ),
     ),
 )
@@ -98,16 +113,19 @@ aciendpointgroup_item = PluginMenuItem(
 acivrf_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acivrf_list",
     link_text="VRFs",
+    permissions=["netbox_aci_plugin.view_acivrf"],
     buttons=(
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:acivrf_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acivrf"],
         ),
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:acivrf_import",
             title="Import",
             icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acivrf"],
         ),
     ),
 )

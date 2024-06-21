@@ -51,13 +51,14 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("VRFs"),
         badge=lambda obj: obj.aci_vrfs.count(),
+        permission="netbox_aci_plugin.view_acivrf",
         weight=1000,
     )
     table = ACIVRFTable
 
     def get_children(self, request, parent):
         """Return all objects of ACIVRF."""
-        return ACIVRF.objects.prefetch_related(
+        return ACIVRF.objects.restrict(request.user, "view").prefetch_related(
             "aci_tenant",
             "nb_tenant",
             "tags",
@@ -72,13 +73,16 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("Bridge Domains"),
         badge=lambda obj: obj.aci_bridge_domains.count(),
+        permission="netbox_aci_plugin.view_acibridgedomain",
         weight=1000,
     )
     table = ACIBridgeDomainTable
 
     def get_children(self, request, parent):
         """Return all objects of ACIBridgeDomain."""
-        return ACIBridgeDomain.objects.prefetch_related(
+        return ACIBridgeDomain.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
             "aci_vrf",
             "nb_tenant",
             "tags",
@@ -93,13 +97,16 @@ class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
     tab = ViewTab(
         label=_("BD Subnets"),
         badge=lambda obj: obj.aci_bridge_domain_subnets.count(),
+        permission="netbox_aci_plugin.view_acibridgedomainsubnet",
         weight=1000,
     )
     table = ACIBridgeDomainSubnetTable
 
     def get_children(self, request, parent):
         """Return all objects of ACIBridgeDomainSubnet."""
-        return ACIBridgeDomainSubnet.objects.prefetch_related(
+        return ACIBridgeDomainSubnet.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
             "aci_bridge_domain",
             "gateway_ip_address",
             "nb_tenant",

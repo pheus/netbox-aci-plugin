@@ -3,9 +3,11 @@
 {% load i18n %}
 
 {% block extra_controls %}
-  {% with viewname=object|viewname:"" %}
-  <a href="{% url 'plugins:netbox_aci_plugin:aciendpointgroup_add' %}?aci_bridge_domain={{ object.pk }}&nb_tenant={{ object.nb_tenant.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
-    <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add an EPG" %}
-  </a>
-  {% endwith %}
+  {% if perms.netbox_aci_plugin.add_aciendpointgroup %}
+    {% with viewname=object|viewname:"" %}
+      <a href="{% url 'plugins:netbox_aci_plugin:aciendpointgroup_add' %}?aci_bridge_domain={{ object.pk }}&nb_tenant={{ object.nb_tenant.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
+        <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add an EPG" %}
+      </a>
+    {% endwith %}
+  {% endif %}
 {% endblock %}
