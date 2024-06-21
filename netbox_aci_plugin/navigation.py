@@ -14,6 +14,11 @@ acitenant_item = PluginMenuItem(
             title="Add",
             icon_class="mdi mdi-plus-thick",
         ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acitenant_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+        ),
     ),
 )
 
@@ -26,6 +31,11 @@ aciappprofile_item = PluginMenuItem(
             link="plugins:netbox_aci_plugin:aciappprofile_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciappprofile_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
         ),
     ),
 )
@@ -40,6 +50,11 @@ acibd_item = PluginMenuItem(
             title="Add",
             icon_class="mdi mdi-plus-thick",
         ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acibridgedomain_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+        ),
     ),
 )
 
@@ -52,6 +67,11 @@ acibdsubnet_item = PluginMenuItem(
             link="plugins:netbox_aci_plugin:acibridgedomainsubnet_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acibridgedomainsubnet_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
         ),
     ),
 )
@@ -66,6 +86,11 @@ aciendpointgroup_item = PluginMenuItem(
             title="Add",
             icon_class="mdi mdi-plus-thick",
         ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciendpointgroup_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+        ),
     ),
 )
 
@@ -78,6 +103,11 @@ acivrf_item = PluginMenuItem(
             link="plugins:netbox_aci_plugin:acivrf_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acivrf_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
         ),
     ),
 )
