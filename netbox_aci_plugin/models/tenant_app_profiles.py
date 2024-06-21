@@ -52,7 +52,7 @@ class ACIAppProfile(NetBoxModel):
     nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.PROTECT,
-        related_name="+",
+        related_name="aci_app_profiles",
         verbose_name=_("NetBox tenant"),
         blank=True,
         null=True,
@@ -129,7 +129,7 @@ class ACIEndpointGroup(NetBoxModel):
     nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
         on_delete=models.PROTECT,
-        related_name="+",
+        related_name="aci_endpoint_groups",
         verbose_name=_("NetBox tenant"),
         blank=True,
         null=True,
