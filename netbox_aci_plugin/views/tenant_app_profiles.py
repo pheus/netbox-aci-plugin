@@ -45,7 +45,13 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIAppProfile."""
-        return ACIAppProfile.objects.all()
+        return ACIAppProfile.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
+            "aci_tenant",
+            "nb_tenant",
+            "tags",
+        )
 
 
 class ACIEndpointGroupChildrenView(generic.ObjectChildrenView):
@@ -62,7 +68,14 @@ class ACIEndpointGroupChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIEndpointGroup."""
-        return ACIEndpointGroup.objects.all()
+        return ACIEndpointGroup.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
+            "aci_app_profile",
+            "aci_bridge_domain",
+            "nb_tenant",
+            "tags",
+        )
 
 
 #

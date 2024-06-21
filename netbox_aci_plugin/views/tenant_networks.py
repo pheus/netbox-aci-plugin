@@ -57,7 +57,7 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIVRF."""
-        return ACIVRF.objects.prefetch_related(
+        return ACIVRF.objects.restrict(request.user, "view").prefetch_related(
             "aci_tenant",
             "nb_tenant",
             "tags",
@@ -78,7 +78,9 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIBridgeDomain."""
-        return ACIBridgeDomain.objects.prefetch_related(
+        return ACIBridgeDomain.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
             "aci_vrf",
             "nb_tenant",
             "tags",
@@ -99,7 +101,9 @@ class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIBridgeDomainSubnet."""
-        return ACIBridgeDomainSubnet.objects.prefetch_related(
+        return ACIBridgeDomainSubnet.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
             "aci_bridge_domain",
             "gateway_ip_address",
             "nb_tenant",
