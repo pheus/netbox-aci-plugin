@@ -13,7 +13,7 @@ body:
     attributes:
       label: NetBox ACI Plugin version
       description: What version of NetBox ACI Plugin are you currently running?
-      placeholder: v0.0.5
+      placeholder: v0.0.6
     validations:
       required: true
   - type: input
