@@ -45,6 +45,14 @@
                 {{ object.nb_tenant|linkify|placeholder }}
             </td>
           </tr>
+          <tr>
+            <th scope="row">{% trans "Preferred IP address enabled" %}</th>
+            <td>{% checkmark object.preferred_ip_address_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Virtual IP enabled" %}</th>
+            <td>{% checkmark object.virtual_ip_enabled %}</td>
+          </tr>
         </table>
       </div>
       <div class="card">
