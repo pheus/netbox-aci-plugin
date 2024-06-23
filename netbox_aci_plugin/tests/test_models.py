@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 from django.test import TestCase
 from ipam.models import VRF, IPAddress
 from tenancy.models import Tenant
@@ -477,6 +478,20 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
             name="ACIBDSubnetTest1", description="Invalid Description: ö"
         )
         self.assertRaises(ValidationError, subnet.full_clean)
+
+    def test_constraint_one_preferred_ip_address_per_bridge_domain(
+        self,
+    ) -> None:
+        """Test unique constraint of one preferred ip address per ACI BD."""
+        bd = ACIBridgeDomain.objects.get(name="BDTest1")
+        gateway_ip = IPAddress.objects.create(address="10.0.1.1/24")
+        subnet = ACIBridgeDomainSubnet(
+            name="ACIBDSubnetTest1",
+            aci_bridge_domain=bd,
+            gateway_ip_address=gateway_ip,
+            preferred_ip_address_enabled=True,
+        )
+        self.assertRaises(IntegrityError, subnet.save)
 
 
 class ACIEndpointGroupTestCase(TestCase):
