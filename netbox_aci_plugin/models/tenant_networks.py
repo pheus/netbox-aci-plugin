@@ -639,6 +639,17 @@ class ACIBridgeDomainSubnet(NetBoxModel):
             ("aci_bridge_domain", "name"),
             ("aci_bridge_domain", "gateway_ip_address"),
         )
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_bridge_domain",),
+                name="one_preferred_ip_address_per_bridge_domain",
+                condition=models.Q(preferred_ip_address_enabled=True),
+                violation_error_message=_(
+                    "ACI Bridge Domain with a preferred (primary) gateway IP "
+                    "address already exists."
+                ),
+            ),
+        ]
         verbose_name: str = _("ACI Bridge Domain Subnet")
 
     def __str__(self) -> str:
