@@ -636,9 +636,8 @@ class ACIBridgeDomainSubnet(NetBoxModel):
     class Meta:
         ordering: tuple = ("aci_bridge_domain", "name")
         unique_together: tuple = (
-            "aci_bridge_domain",
-            "name",
-            "gateway_ip_address",
+            ("aci_bridge_domain", "name"),
+            ("aci_bridge_domain", "gateway_ip_address"),
         )
         verbose_name: str = _("ACI Bridge Domain Subnet")
 
