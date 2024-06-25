@@ -59,6 +59,12 @@ class ACITenant(NetBoxModel):
     )
 
     class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("name",),
+                name="unique_aci_tenant_name",
+            ),
+        ]
         ordering: tuple = ("name",)
         verbose_name: str = _("ACI Tenant")
 
