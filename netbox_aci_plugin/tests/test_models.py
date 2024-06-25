@@ -479,9 +479,7 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
         )
         self.assertRaises(ValidationError, subnet.full_clean)
 
-    def test_constraint_one_preferred_ip_address_per_bridge_domain(
-        self,
-    ) -> None:
+    def test_constraint_unique_preferred_ip_per_bridge_domain(self) -> None:
         """Test unique constraint of one preferred ip address per ACI BD."""
         bd = ACIBridgeDomain.objects.get(name="BDTest1")
         gateway_ip = IPAddress.objects.create(address="10.0.1.1/24")

@@ -165,8 +165,13 @@ class ACIVRF(NetBoxModel):
     prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
 
     class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_tenant", "name"),
+                name="unique_aci_vrf_name_per_aci_tenant",
+            ),
+        ]
         ordering: tuple = ("aci_tenant", "name")
-        unique_together: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI VRF")
 
     def __str__(self) -> str:
@@ -446,8 +451,13 @@ class ACIBridgeDomain(NetBoxModel):
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIVRF",)
 
     class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_vrf", "name"),
+                name="unique_aci_bridge_domain_name_per_aci_vrf",
+            ),
+        ]
         ordering: tuple = ("aci_vrf", "name")
-        unique_together: tuple = ("aci_vrf", "name")
         verbose_name: str = _("ACI Bridge Domain")
 
     def __str__(self) -> str:
@@ -634,15 +644,18 @@ class ACIBridgeDomainSubnet(NetBoxModel):
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIBridgeDomain",)
 
     class Meta:
-        ordering: tuple = ("aci_bridge_domain", "name")
-        unique_together: tuple = (
-            ("aci_bridge_domain", "name"),
-            ("aci_bridge_domain", "gateway_ip_address"),
-        )
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
+                fields=("aci_bridge_domain", "name"),
+                name="unique_aci_bd_subnet_name_per_aci_bridge_domain",
+            ),
+            models.UniqueConstraint(
+                fields=("aci_bridge_domain", "gateway_ip_address"),
+                name="unique_aci_bd_subnet_gateway_ip_per_aci_bridge_domain",
+            ),
+            models.UniqueConstraint(
                 fields=("aci_bridge_domain",),
-                name="one_preferred_ip_address_per_bridge_domain",
+                name="unique_aci_bd_subnet_preferred_ip_per_bridge_domain",
                 condition=models.Q(preferred_ip_address_enabled=True),
                 violation_error_message=_(
                     "ACI Bridge Domain with a preferred (primary) gateway IP "
@@ -650,6 +663,7 @@ class ACIBridgeDomainSubnet(NetBoxModel):
                 ),
             ),
         ]
+        ordering: tuple = ("aci_bridge_domain", "name")
         verbose_name: str = _("ACI Bridge Domain Subnet")
 
     def __str__(self) -> str:
