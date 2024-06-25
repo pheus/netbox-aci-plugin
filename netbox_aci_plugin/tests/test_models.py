@@ -75,6 +75,11 @@ class ACITenantTestCase(TestCase):
         )
         self.assertRaises(ValidationError, tenant.full_clean)
 
+    def test_constraint_unique_aci_tenant_name(self) -> None:
+        """Test unique constraint of ACI Tenant name."""
+        tenant = ACITenant(name="ACITestTenant1")
+        self.assertRaises(IntegrityError, tenant.save)
+
 
 class ACIAppProfileTestCase(TestCase):
     """Test case for ACIAppProfile model."""
@@ -137,6 +142,14 @@ class ACIAppProfileTestCase(TestCase):
             name="ACIAppProfileTest1", description="Invalid Description: ö"
         )
         self.assertRaises(ValidationError, app_profile.full_clean)
+
+    def test_constraint_unique_aci_app_profile_name_per_aci_tenant(
+        self,
+    ) -> None:
+        """Test unique constraint of ACI AppProfile name per ACI Tenant."""
+        tenant = ACITenant.objects.get(name="ACITestTenant1")
+        app_profile = ACIAppProfile(name="AppProfileTest1", aci_tenant=tenant)
+        self.assertRaises(IntegrityError, app_profile.save)
 
 
 class ACIVRFTestCase(TestCase):
@@ -223,6 +236,12 @@ class ACIVRFTestCase(TestCase):
         """Test validation of ACI VRF description."""
         vrf = ACIVRF(name="ACIVRFTest1", description="Invalid Description: ö")
         self.assertRaises(ValidationError, vrf.full_clean)
+
+    def test_constraint_unique_aci_vrf_name_per_aci_tenant(self) -> None:
+        """Test unique constraint of ACI VRF name per ACI Tenant."""
+        tenant = ACITenant.objects.get(name="ACITestTenant1")
+        vrf = ACIVRF(name="VRFTest1", aci_tenant=tenant)
+        self.assertRaises(IntegrityError, vrf.save)
 
 
 class ACIBridgeDomainTestCase(TestCase):
@@ -361,6 +380,14 @@ class ACIBridgeDomainTestCase(TestCase):
         )
         self.assertRaises(ValidationError, bd.full_clean)
 
+    def test_constraint_unique_aci_bridge_domain_name_per_aci_vrf(
+        self,
+    ) -> None:
+        """Test unique constraint of ACI Bridge Domain name per ACI VRF."""
+        vrf = ACIVRF.objects.get(name="VRFTest1")
+        bd = ACIBridgeDomain(name="BDTest1", aci_vrf=vrf)
+        self.assertRaises(IntegrityError, bd.save)
+
 
 class ACIBridgeDomainSubnetTestCase(TestCase):
     """Test case for ACIBridgeDomainSubnet model."""
@@ -479,12 +506,23 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
         )
         self.assertRaises(ValidationError, subnet.full_clean)
 
-    def test_constraint_one_preferred_ip_address_per_bridge_domain(
+    def test_constraint_unique_aci_bd_subnet_name_per_aci_bridge_domain(
         self,
     ) -> None:
-        """Test unique constraint of one preferred ip address per ACI BD."""
+        """Test unique constraint of ACI BD Subnet name per ACI BD."""
         bd = ACIBridgeDomain.objects.get(name="BDTest1")
         gateway_ip = IPAddress.objects.create(address="10.0.1.1/24")
+        subnet = ACIBridgeDomainSubnet(
+            name="BDSubnetTest1",
+            aci_bridge_domain=bd,
+            gateway_ip_address=gateway_ip,
+        )
+        self.assertRaises(IntegrityError, subnet.save)
+
+    def test_constraint_unique_preferred_ip_per_bridge_domain(self) -> None:
+        """Test unique constraint of one preferred ip address per ACI BD."""
+        bd = ACIBridgeDomain.objects.get(name="BDTest1")
+        gateway_ip = IPAddress.objects.create(address="10.0.2.1/24")
         subnet = ACIBridgeDomainSubnet(
             name="ACIBDSubnetTest1",
             aci_bridge_domain=bd,
@@ -595,3 +633,14 @@ class ACIEndpointGroupTestCase(TestCase):
             name="ACIEPGTest1", description="Invalid Description: ö"
         )
         self.assertRaises(ValidationError, epg.full_clean)
+
+    def test_constraint_unique_aci_endpoint_group_name_per_aci_app_profile(
+        self,
+    ) -> None:
+        """Test unique constraint of ACI EPG name per ACI App Profile."""
+        app_profile = ACIAppProfile.objects.get(name="AppProfileTest1")
+        bd = ACIBridgeDomain.objects.get(name="BDTest1")
+        epg = ACIEndpointGroup(
+            name="EPGTest1", aci_app_profile=app_profile, aci_bridge_domain=bd
+        )
+        self.assertRaises(IntegrityError, epg.save)

@@ -70,8 +70,13 @@ class ACIAppProfile(NetBoxModel):
     prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
 
     class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_tenant", "name"),
+                name="unique_aci_app_profile_name_per_aci_tenant",
+            ),
+        ]
         ordering: tuple = ("aci_tenant", "name")
-        unique_together: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Application Profile")
 
     def __str__(self) -> str:
@@ -220,11 +225,13 @@ class ACIEndpointGroup(NetBoxModel):
     )
 
     class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_app_profile", "name"),
+                name="unique_endpoint_group_name_per_aci_app_profile",
+            ),
+        ]
         ordering: tuple = ("aci_app_profile", "name")
-        unique_together: tuple = (
-            "aci_app_profile",
-            "name",
-        )
         verbose_name: str = _("ACI Endpoint Group")
 
     def __str__(self) -> str:
