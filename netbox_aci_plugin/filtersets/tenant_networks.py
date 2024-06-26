@@ -112,13 +112,11 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
     """Filter set for ACI Bridge Domain model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_vrf__aci_tenant",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
     )
     aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_vrf__aci_tenant",
         queryset=ACITenant.objects.all(),
         to_field_name="id",
         label=_("ACI Tenant (ID)"),
@@ -175,6 +173,7 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
             "name",
             "name_alias",
             "description",
+            "aci_tenant",
             "aci_vrf",
             "nb_tenant",
             "advertise_host_routes_enabled",
@@ -223,13 +222,13 @@ class ACIBridgeDomainSubnetFilterSet(NetBoxModelFilterSet):
     """Filter set for ACI Bridge Domain Subnet model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_bridge_domain__aci_vrf__aci_tenant",
+        field_name="aci_bridge_domain__aci_tenant",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
     )
     aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_bridge_domain__aci_vrf__aci_tenant",
+        field_name="aci_bridge_domain__aci_tenant",
         queryset=ACITenant.objects.all(),
         to_field_name="id",
         label=_("ACI Tenant (ID)"),

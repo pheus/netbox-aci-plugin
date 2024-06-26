@@ -522,7 +522,6 @@ class ACIBridgeDomainForm(NetBoxModelForm):
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
         initial_params={"aci_vrfs": "$aci_vrf"},
-        required=False,
         label=_("ACI Tenant"),
     )
     aci_vrf = DynamicModelChoiceField(
@@ -710,6 +709,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
             "name",
             "name_alias",
             "description",
+            "aci_tenant",
             "aci_vrf",
             "nb_tenant",
             "advertise_host_routes_enabled",
@@ -749,6 +749,11 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         max_length=128,
         required=False,
         label=_("Description"),
+    )
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
@@ -878,6 +883,7 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_tenant",
             "aci_vrf",
             "description",
             "tags",
@@ -1124,7 +1130,7 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         to_field_name="name",
         required=True,
         label=_("ACI Tenant"),
-        help_text=_("Parent ACI Tenant of ACI VRF"),
+        help_text=_("Assigned ACI Tenant"),
     )
     aci_vrf = CSVModelChoiceField(
         queryset=ACIVRF.objects.all(),
@@ -1765,9 +1771,9 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
             self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
                 aci_tenant__name=data["aci_tenant"]
             )
-            # Limit ACIBridgeDomain queryset by parent ACIVRF
+            # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
             aci_bd_queryset = ACIBridgeDomain.objects.filter(
-                aci_vrf__aci_tenant__name=data["aci_tenant"],
+                aci_tenant__name=data["aci_tenant"],
                 aci_vrf__name=data["aci_vrf"],
             )
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset

@@ -59,6 +59,7 @@ class ACIVRFType(NetBoxObjectType):
 class ACIBridgeDomainType(NetBoxObjectType):
     """GraphQL type definition for ACIBridgeDomain model."""
 
+    aci_tenant: ACITenantType
     aci_vrf: ACIVRFType
     nb_tenant: Optional[TenantType]
     dhcp_labels: Optional[List[str]]

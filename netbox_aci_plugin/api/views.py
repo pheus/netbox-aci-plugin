@@ -71,6 +71,7 @@ class ACIBridgeDomainListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Bridge Domain instances."""
 
     queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_tenant",
         "aci_vrf",
         "nb_tenant",
         "tags",

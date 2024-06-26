@@ -83,6 +83,7 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
         return ACIBridgeDomain.objects.restrict(
             request.user, "view"
         ).prefetch_related(
+            "aci_tenant",
             "aci_vrf",
             "nb_tenant",
             "tags",
@@ -223,6 +224,7 @@ class ACIBridgeDomainView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_tenant",
         "aci_vrf",
         "nb_tenant",
         "tags",
@@ -244,6 +246,7 @@ class ACIBridgeDomainListView(generic.ObjectListView):
     """List view for listing all objects of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_tenant",
         "aci_vrf",
         "nb_tenant",
         "tags",
@@ -258,6 +261,7 @@ class ACIBridgeDomainEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_tenant",
         "aci_vrf",
         "nb_tenant",
         "tags",
@@ -270,6 +274,7 @@ class ACIBridgeDomainDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_tenant",
         "aci_vrf",
         "nb_tenant",
         "tags",

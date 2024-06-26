@@ -15,7 +15,6 @@ from ..forms.tenants import (
     ACITenantImportForm,
 )
 from ..models.tenant_app_profiles import ACIEndpointGroup
-from ..models.tenant_networks import ACIBridgeDomain
 from ..models.tenants import ACITenant
 from ..tables.tenants import ACITenantTable
 from .tenant_app_profiles import (
@@ -54,12 +53,6 @@ class ACITenantView(generic.ObjectView):
 
         # Get related models of directly referenced models
         related_sub_models: list[tuple] = [
-            (
-                ACIBridgeDomain.objects.restrict(request.user, "view").filter(
-                    aci_vrf__aci_tenant=instance
-                ),
-                "aci_tenant_id",
-            ),
             (
                 ACIEndpointGroup.objects.restrict(request.user, "view").filter(
                     aci_app_profile__aci_tenant=instance
@@ -161,14 +154,6 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
     """Children view of ACI Bridge Domain of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    tab = ViewTab(
-        label=_("Bridge Domains"),
-        badge=lambda obj: ACITenantBridgeDomainView.child_model.objects.filter(
-            aci_vrf__aci_tenant=obj.pk
-        ).count(),
-        permission="netbox_aci_plugin.view_acibridgedomain",
-        weight=1000,
-    )
     template_name = "netbox_aci_plugin/acitenant_bridgedomains.html"
 
     def get_children(self, request, parent):
@@ -176,7 +161,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
         return (
             super()
             .get_children(request, parent)
-            .filter(aci_vrf__aci_tenant=parent.pk)
+            .filter(aci_tenant_id=parent.pk)
         )
 
     def get_table(self, *args, **kwargs):
