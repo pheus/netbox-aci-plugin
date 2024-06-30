@@ -521,12 +521,11 @@ class ACIBridgeDomainForm(NetBoxModelForm):
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
-        initial_params={"aci_vrfs": "$aci_vrf"},
         label=_("ACI Tenant"),
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common": "$aci_tenant"},
         label=_("ACI VRF"),
     )
     nb_tenant_group = DynamicModelChoiceField(
@@ -735,6 +734,27 @@ class ACIBridgeDomainForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+    def clean(self):
+        """Cleaning and validation of ACI VRF Form."""
+
+        super().clean()
+
+        aci_tenant = self.cleaned_data.get("aci_tenant")
+        aci_vrf = self.cleaned_data.get("aci_vrf")
+
+        if (
+            not aci_tenant.id == aci_vrf.aci_tenant.id
+            and not aci_vrf.aci_tenant.name == "common"
+        ):
+            raise forms.ValidationError(
+                {
+                    "aci_vrf": _(
+                        "A VRF can only be assigned from the same ACI Tenant"
+                        " as the Bridge Domain or ACI Tenant 'common'."
+                    )
+                }
+            )
 
 
 class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):

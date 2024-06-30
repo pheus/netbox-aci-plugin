@@ -67,6 +67,11 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         choices=VRFPCEnforcementPreferenceChoices,
         null_value=None,
     )
+    present_in_aci_tenant_or_common = django_filters.ModelChoiceFilter(
+        queryset=ACITenant.objects.all(),
+        method="filter_present_in_aci_tenant_or_common",
+        label=_("ACI Tenant (ID)"),
+    )
 
     class Meta:
         model = ACIVRF
@@ -106,6 +111,16 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
+
+    def filter_present_in_aci_tenant_or_common(
+        self, queryset, name, aci_tenant
+    ):
+        """Return a QuerySet filtered by given ACI Tenant or 'common'."""
+        if aci_tenant is None:
+            return queryset.none
+        return queryset.filter(
+            Q(aci_tenant=aci_tenant) | Q(aci_tenant__name="common")
+        )
 
 
 class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
