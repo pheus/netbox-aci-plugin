@@ -164,6 +164,11 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         choices=BDMultiDestinationFloodingChoices,
         null_value=None,
     )
+    present_in_aci_tenant_or_common = django_filters.ModelChoiceFilter(
+        queryset=ACITenant.objects.all(),
+        method="filter_present_in_aci_tenant_or_common",
+        label=_("ACI Tenant (ID)"),
+    )
     unknown_ipv4_multicast = django_filters.MultipleChoiceFilter(
         choices=BDUnknownMulticastChoices,
         null_value=None,
@@ -231,6 +236,16 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
+
+    def filter_present_in_aci_tenant_or_common(
+        self, queryset, name, aci_tenant
+    ):
+        """Return a QuerySet filtered by given ACI Tenant or 'common'."""
+        if aci_tenant is None:
+            return queryset.none
+        return queryset.filter(
+            Q(aci_tenant=aci_tenant) | Q(aci_tenant__name="common")
+        )
 
 
 class ACIBridgeDomainSubnetFilterSet(NetBoxModelFilterSet):

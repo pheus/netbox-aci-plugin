@@ -237,7 +237,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common": "$aci_tenant"},
         initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
         required=False,
         label=_("ACI VRF"),
@@ -245,7 +245,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
     aci_bridge_domain = DynamicModelChoiceField(
         queryset=ACIBridgeDomain.objects.all(),
         query_params={
-            "aci_tenant_id": "$aci_tenant",
+            "present_in_aci_tenant_or_common": "$aci_tenant",
             "aci_vrf_id": "$aci_vrf",
         },
         label=_("ACI Bridge Domain"),
@@ -366,6 +366,29 @@ class ACIEndpointGroupForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+    def clean(self):
+        """Cleaning and validation of ACI Endpoint Group Form."""
+
+        super().clean()
+
+        aci_app_profile = self.cleaned_data.get("aci_app_profile")
+        aci_bridge_domain = self.cleaned_data.get("aci_bridge_domain")
+
+        if (
+            not aci_app_profile.aci_tenant.id
+            == aci_bridge_domain.aci_tenant.id
+            and not aci_bridge_domain.aci_tenant.name == "common"
+        ):
+            raise forms.ValidationError(
+                {
+                    "aci_bridge_domain": _(
+                        "A Bridge Domain can only be assigned from the same"
+                        " ACI Tenant as the Endpoint Group or ACI Tenant"
+                        " 'common'."
+                    )
+                }
+            )
 
 
 class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
