@@ -736,7 +736,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
         )
 
     def clean(self):
-        """Cleaning and validation of ACI VRF Form."""
+        """Cleaning and validation of ACI Bridge Domain Form."""
 
         super().clean()
 
