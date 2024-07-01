@@ -1159,6 +1159,11 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         label=_("ACI VRF"),
         help_text=_("Assigned ACI VRF"),
     )
+    is_aci_vrf_in_common = forms.BooleanField(
+        label=_("Is ACI VRF in 'common'"),
+        required=False,
+        help_text=_("Assigned ACI VRF is in ACI Tenant 'common'"),
+    )
     nb_tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
         to_field_name="name",
@@ -1203,6 +1208,7 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
             "aci_vrf",
             "description",
             "nb_tenant",
+            "is_aci_vrf_in_common",
             "advertise_host_routes_enabled",
             "arp_flooding_enabled",
             "clear_remote_mac_enabled",
@@ -1235,8 +1241,13 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         if not data:
             return
 
+        # Limit ACIVRF queryset by "common" ACITenant
+        if data.get("is_aci_vrf_in_common") == "true":
+            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                aci_tenant__name="common"
+            )
         # Limit ACIVRF queryset by parent ACITenant
-        if data.get("aci_tenant"):
+        elif data.get("aci_tenant"):
             self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
                 aci_tenant__name=data["aci_tenant"]
             )
