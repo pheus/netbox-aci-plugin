@@ -176,7 +176,10 @@ class ACIVRF(NetBoxModel):
 
     def __str__(self) -> str:
         """Return string representation of the instance."""
-        return self.name
+        if self.aci_tenant.name == "common":
+            return f"{self.name} ({self.aci_tenant.name})"
+        else:
+            return self.name
 
     def get_absolute_url(self) -> str:
         """Return the absolute URL of the instance."""
