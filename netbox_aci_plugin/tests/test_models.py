@@ -295,6 +295,7 @@ class ACIBridgeDomainTestCase(TestCase):
             name_alias=acibd_name_alias,
             description=acibd_description,
             comments=acibd_comments,
+            aci_tenant=aci_tenant,
             aci_vrf=aci_vrf,
             nb_tenant=nb_tenant,
             advertise_host_routes_enabled=acibd_advertise_host_routes_enabled,
@@ -380,12 +381,13 @@ class ACIBridgeDomainTestCase(TestCase):
         )
         self.assertRaises(ValidationError, bd.full_clean)
 
-    def test_constraint_unique_aci_bridge_domain_name_per_aci_vrf(
+    def test_constraint_unique_aci_bridge_domain_name_per_aci_tenant(
         self,
     ) -> None:
-        """Test unique constraint of ACI Bridge Domain name per ACI VRF."""
+        """Test unique constraint of ACI Bridge Domain name per ACI Tenant."""
+        tenant = ACITenant.objects.get(name="ACITestTenant1")
         vrf = ACIVRF.objects.get(name="VRFTest1")
-        bd = ACIBridgeDomain(name="BDTest1", aci_vrf=vrf)
+        bd = ACIBridgeDomain(name="BDTest1", aci_tenant=tenant, aci_vrf=vrf)
         self.assertRaises(IntegrityError, bd.save)
 
 
@@ -419,7 +421,7 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
             name=acivrf_name, aci_tenant=aci_tenant
         )
         aci_bridge_domain = ACIBridgeDomain.objects.create(
-            name=acibd_name, aci_vrf=aci_vrf
+            name=acibd_name, aci_tenant=aci_tenant, aci_vrf=aci_vrf
         )
         aci_bd_gateway = IPAddress.objects.create(
             address=acisnet_gateway_ip_address
@@ -563,7 +565,7 @@ class ACIEndpointGroupTestCase(TestCase):
             name=acivrf_name, aci_tenant=aci_tenant
         )
         aci_bd = ACIBridgeDomain.objects.create(
-            name=acibd_name, aci_vrf=aci_vrf
+            name=acibd_name, aci_tenant=aci_tenant, aci_vrf=aci_vrf
         )
         nb_tenant = Tenant.objects.create(name="NetBox Tenant")
 

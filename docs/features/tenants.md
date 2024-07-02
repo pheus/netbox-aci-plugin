@@ -103,6 +103,7 @@ The *ACIBridgeDomain* model has the following fields:
 *Required fields*:
 
 - **Name**: represent the Bridge Domain name in the ACI
+- **ACI Tenant**: a reference to the ACITenant model.
 - **ACI VRF**: a reference to the ACIVRF model.
 
 *Optional fields*:

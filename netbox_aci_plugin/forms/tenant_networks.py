@@ -521,13 +521,11 @@ class ACIBridgeDomainForm(NetBoxModelForm):
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
-        initial_params={"aci_vrfs": "$aci_vrf"},
-        required=False,
         label=_("ACI Tenant"),
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common": "$aci_tenant"},
         label=_("ACI VRF"),
     )
     nb_tenant_group = DynamicModelChoiceField(
@@ -710,6 +708,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
             "name",
             "name_alias",
             "description",
+            "aci_tenant",
             "aci_vrf",
             "nb_tenant",
             "advertise_host_routes_enabled",
@@ -736,6 +735,27 @@ class ACIBridgeDomainForm(NetBoxModelForm):
             "tags",
         )
 
+    def clean(self):
+        """Cleaning and validation of ACI Bridge Domain Form."""
+
+        super().clean()
+
+        aci_tenant = self.cleaned_data.get("aci_tenant")
+        aci_vrf = self.cleaned_data.get("aci_vrf")
+
+        if (
+            not aci_tenant.id == aci_vrf.aci_tenant.id
+            and not aci_vrf.aci_tenant.name == "common"
+        ):
+            raise forms.ValidationError(
+                {
+                    "aci_vrf": _(
+                        "A VRF can only be assigned from the same ACI Tenant"
+                        " as the Bridge Domain or ACI Tenant 'common'."
+                    )
+                }
+            )
+
 
 class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for ACI Bridge Domain model."""
@@ -749,6 +769,11 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         max_length=128,
         required=False,
         label=_("Description"),
+    )
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
@@ -878,6 +903,7 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_tenant",
             "aci_vrf",
             "description",
             "tags",
@@ -1124,7 +1150,7 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         to_field_name="name",
         required=True,
         label=_("ACI Tenant"),
-        help_text=_("Parent ACI Tenant of ACI VRF"),
+        help_text=_("Assigned ACI Tenant"),
     )
     aci_vrf = CSVModelChoiceField(
         queryset=ACIVRF.objects.all(),
@@ -1132,6 +1158,11 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         required=True,
         label=_("ACI VRF"),
         help_text=_("Assigned ACI VRF"),
+    )
+    is_aci_vrf_in_common = forms.BooleanField(
+        label=_("Is ACI VRF in 'common'"),
+        required=False,
+        help_text=_("Assigned ACI VRF is in ACI Tenant 'common'"),
     )
     nb_tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
@@ -1177,6 +1208,7 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
             "aci_vrf",
             "description",
             "nb_tenant",
+            "is_aci_vrf_in_common",
             "advertise_host_routes_enabled",
             "arp_flooding_enabled",
             "clear_remote_mac_enabled",
@@ -1209,8 +1241,13 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         if not data:
             return
 
+        # Limit ACIVRF queryset by "common" ACITenant
+        if data.get("is_aci_vrf_in_common") == "true":
+            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                aci_tenant__name="common"
+            )
         # Limit ACIVRF queryset by parent ACITenant
-        if data.get("aci_tenant"):
+        elif data.get("aci_tenant"):
             self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
                 aci_tenant__name=data["aci_tenant"]
             )
@@ -1765,9 +1802,9 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
             self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
                 aci_tenant__name=data["aci_tenant"]
             )
-            # Limit ACIBridgeDomain queryset by parent ACIVRF
+            # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
             aci_bd_queryset = ACIBridgeDomain.objects.filter(
-                aci_vrf__aci_tenant__name=data["aci_tenant"],
+                aci_tenant__name=data["aci_tenant"],
                 aci_vrf__name=data["aci_vrf"],
             )
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset

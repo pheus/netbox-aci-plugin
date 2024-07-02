@@ -144,6 +144,7 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:acibridgedomain-detail"
     )
+    aci_tenant = ACITenantSerializer(nested=True, required=True)
     aci_vrf = ACIVRFSerializer(nested=True, required=True)
     nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
@@ -156,6 +157,7 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
             "name",
             "name_alias",
             "description",
+            "aci_tenant",
             "aci_vrf",
             "nb_tenant",
             "advertise_host_routes_enabled",
@@ -191,6 +193,7 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
             "name",
             "name_alias",
             "description",
+            "aci_tenant",
             "aci_vrf",
             "nb_tenant",
         )

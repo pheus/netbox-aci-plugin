@@ -176,7 +176,10 @@ class ACIVRF(NetBoxModel):
 
     def __str__(self) -> str:
         """Return string representation of the instance."""
-        return self.name
+        if self.aci_tenant.name == "common":
+            return f"{self.name} ({self.aci_tenant.name})"
+        else:
+            return self.name
 
     def get_absolute_url(self) -> str:
         """Return the absolute URL of the instance."""
@@ -223,6 +226,12 @@ class ACIBridgeDomain(NetBoxModel):
             MaxLengthValidator(128),
             ACIPolicyDescriptionValidator,
         ],
+    )
+    aci_tenant = models.ForeignKey(
+        to=ACITenant,
+        on_delete=models.PROTECT,
+        related_name="aci_bridge_domains",
+        verbose_name=_("ACI Tenant"),
     )
     aci_vrf = models.ForeignKey(
         to=ACIVRF,
@@ -425,6 +434,7 @@ class ACIBridgeDomain(NetBoxModel):
 
     clone_fields: tuple = (
         "description",
+        "aci_tenant",
         "aci_vrf",
         "nb_tenant",
         "advertise_host_routes_enabled",
@@ -448,26 +458,27 @@ class ACIBridgeDomain(NetBoxModel):
         "unknown_unicast",
         "virtual_mac_address",
     )
-    prerequisite_models: tuple = ("netbox_aci_plugin.ACIVRF",)
+    prerequisite_models: tuple = (
+        "netbox_aci_plugin.ACITenant",
+        "netbox_aci_plugin.ACIVRF",
+    )
 
     class Meta:
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
-                fields=("aci_vrf", "name"),
-                name="unique_aci_bridge_domain_name_per_aci_vrf",
+                fields=("aci_tenant", "name"),
+                name="unique_aci_bridge_domain_name_per_aci_tenant",
             ),
         ]
-        ordering: tuple = ("aci_vrf", "name")
+        ordering: tuple = ("aci_tenant", "aci_vrf", "name")
         verbose_name: str = _("ACI Bridge Domain")
 
     def __str__(self) -> str:
         """Return string representation of the instance."""
-        return self.name
-
-    @property
-    def aci_tenant(self) -> ACITenant:
-        """Return the ACITenant instance of related ACIVRF."""
-        return self.aci_vrf.aci_tenant
+        if self.aci_tenant.name == "common":
+            return f"{self.name} ({self.aci_tenant.name})"
+        else:
+            return self.name
 
     def get_absolute_url(self) -> str:
         """Return the absolute URL of the instance."""
@@ -672,8 +683,8 @@ class ACIBridgeDomainSubnet(NetBoxModel):
 
     @property
     def aci_tenant(self) -> ACITenant:
-        """Return the ACITenant instance of related ACIBridgeDomain's ACIVRF."""
-        return self.aci_bridge_domain.aci_vrf.aci_tenant
+        """Return the ACITenant instance of related ACIBridgeDomain."""
+        return self.aci_bridge_domain.aci_tenant
 
     @property
     def aci_vrf(self) -> ACIVRF:

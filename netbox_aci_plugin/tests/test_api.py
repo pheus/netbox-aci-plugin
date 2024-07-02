@@ -290,6 +290,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     model = ACIBridgeDomain
     view_namespace: str = f"plugins-api:{app_name}"
     brief_fields: list[str] = [
+        "aci_tenant",
         "aci_vrf",
         "description",
         "display",
@@ -324,6 +325,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 name_alias="Testing",
                 description="First ACI Test",
                 comments="# ACI Test 1",
+                aci_tenant=aci_tenant1,
                 aci_vrf=aci_vrf1,
                 nb_tenant=nb_tenant1,
                 advertise_host_routes_enabled=False,
@@ -355,6 +357,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 name_alias="Testing",
                 description="Second ACI Test",
                 comments="# ACI Test 2",
+                aci_tenant=aci_tenant2,
                 aci_vrf=aci_vrf2,
                 nb_tenant=nb_tenant1,
             ),
@@ -363,6 +366,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 name_alias="Testing",
                 description="Third ACI Test",
                 comments="# ACI Test 3",
+                aci_tenant=aci_tenant1,
                 aci_vrf=aci_vrf1,
                 nb_tenant=nb_tenant2,
                 advertise_host_routes_enabled=True,
@@ -396,6 +400,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "name_alias": "Testing",
                 "description": "Forth ACI Test",
                 "comments": "# ACI Test 4",
+                "aci_tenant": aci_tenant2.id,
                 "aci_vrf": aci_vrf2.id,
                 "nb_tenant": nb_tenant1.id,
                 "advertise_host_routes_enabled": False,
@@ -424,6 +429,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "name_alias": "Testing",
                 "description": "Fifth ACI Test",
                 "comments": "# ACI Test 5",
+                "aci_tenant": aci_tenant1.id,
                 "aci_vrf": aci_vrf1.id,
                 "nb_tenant": nb_tenant2.id,
                 "advertise_host_routes_enabled": True,
@@ -493,10 +499,16 @@ class ACIBridgeDomainSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             nb_vrf=nb_vrf2,
         )
         aci_bd1 = ACIBridgeDomain.objects.create(
-            name="ACI-BD-API-1", aci_vrf=aci_vrf1, nb_tenant=nb_tenant1
+            name="ACI-BD-API-1",
+            aci_tenant=aci_tenant1,
+            aci_vrf=aci_vrf1,
+            nb_tenant=nb_tenant1,
         )
         aci_bd2 = ACIBridgeDomain.objects.create(
-            name="ACI-BD-API-2", aci_vrf=aci_vrf2, nb_tenant=nb_tenant2
+            name="ACI-BD-API-2",
+            aci_tenant=aci_tenant2,
+            aci_vrf=aci_vrf2,
+            nb_tenant=nb_tenant2,
         )
         gw_ip1 = IPAddress.objects.create(address="10.0.0.1/24", vrf=nb_vrf1)
         gw_ip2 = IPAddress.objects.create(address="10.0.1.1/24", vrf=nb_vrf1)
@@ -646,10 +658,16 @@ class ACIEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             nb_vrf=nb_vrf2,
         )
         aci_bd1 = ACIBridgeDomain.objects.create(
-            name="ACI-BD-API-1", aci_vrf=aci_vrf1, nb_tenant=nb_tenant1
+            name="ACI-BD-API-1",
+            aci_tenant=aci_tenant1,
+            aci_vrf=aci_vrf1,
+            nb_tenant=nb_tenant1,
         )
         aci_bd2 = ACIBridgeDomain.objects.create(
-            name="ACI-BD-API-2", aci_vrf=aci_vrf2, nb_tenant=nb_tenant2
+            name="ACI-BD-API-2",
+            aci_tenant=aci_tenant2,
+            aci_vrf=aci_vrf2,
+            nb_tenant=nb_tenant2,
         )
 
         aci_epgs: tuple = (

@@ -237,7 +237,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common": "$aci_tenant"},
         initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
         required=False,
         label=_("ACI VRF"),
@@ -245,7 +245,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
     aci_bridge_domain = DynamicModelChoiceField(
         queryset=ACIBridgeDomain.objects.all(),
         query_params={
-            "aci_tenant_id": "$aci_tenant",
+            "present_in_aci_tenant_or_common": "$aci_tenant",
             "aci_vrf_id": "$aci_vrf",
         },
         label=_("ACI Bridge Domain"),
@@ -366,6 +366,29 @@ class ACIEndpointGroupForm(NetBoxModelForm):
             "comments",
             "tags",
         )
+
+    def clean(self):
+        """Cleaning and validation of ACI Endpoint Group Form."""
+
+        super().clean()
+
+        aci_app_profile = self.cleaned_data.get("aci_app_profile")
+        aci_bridge_domain = self.cleaned_data.get("aci_bridge_domain")
+
+        if (
+            not aci_app_profile.aci_tenant.id
+            == aci_bridge_domain.aci_tenant.id
+            and not aci_bridge_domain.aci_tenant.name == "common"
+        ):
+            raise forms.ValidationError(
+                {
+                    "aci_bridge_domain": _(
+                        "A Bridge Domain can only be assigned from the same"
+                        " ACI Tenant as the Endpoint Group or ACI Tenant"
+                        " 'common'."
+                    )
+                }
+            )
 
 
 class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
@@ -636,19 +659,17 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
         label=_("ACI Application Profile"),
         help_text=_("Assigned ACI Application Profile"),
     )
-    aci_vrf = CSVModelChoiceField(
-        queryset=ACIVRF.objects.all(),
-        to_field_name="name",
-        required=True,
-        label=_("ACI VRF"),
-        help_text=_("Parent ACI VRF of ACI Bridge Domain"),
-    )
     aci_bridge_domain = CSVModelChoiceField(
         queryset=ACIBridgeDomain.objects.all(),
         to_field_name="name",
         required=True,
         label=_("ACI Bridge Domain"),
         help_text=_("Assigned ACI Bridge Domain"),
+    )
+    is_aci_bd_in_common = forms.BooleanField(
+        label=_("Is ACI Bridge Domain in 'common'"),
+        required=False,
+        help_text=_("Assigned ACI Bridge Domain is in ACI Tenant 'common'"),
     )
     nb_tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
@@ -674,10 +695,10 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
             "name_alias",
             "aci_tenant",
             "aci_app_profile",
-            "aci_vrf",
             "aci_bridge_domain",
             "description",
             "nb_tenant",
+            "is_aci_bd_in_common",
             "admin_shutdown",
             "custom_qos_policy_name",
             "flood_in_encap_enabled",
@@ -705,15 +726,16 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
             )
             self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
 
-        # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
-        if data.get("aci_tenant") and data.get("aci_vrf"):
-            # Limit ACIVRF queryset by parent ACITenant
-            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
-            )
-            # Limit ACIBridgeDomain queryset by parent ACIVRF
+        # Limit ACIBridgeDomain queryset by "common" ACITenant
+        if data.get("is_aci_bd_in_common") == "true":
             aci_bd_queryset = ACIBridgeDomain.objects.filter(
-                aci_vrf__aci_tenant__name=data["aci_tenant"],
-                aci_vrf__name=data["aci_vrf"],
+                aci_tenant__name="common"
+            )
+            self.fields["aci_bridge_domain"].queryset = aci_bd_queryset
+        # Limit ACIBridgeDomain queryset by ACITenant
+        elif data.get("aci_tenant") and data.get("aci_bridge_domain"):
+            # Limit ACIBridgeDomain queryset by parent ACITenant
+            aci_bd_queryset = ACIBridgeDomain.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
             )
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset

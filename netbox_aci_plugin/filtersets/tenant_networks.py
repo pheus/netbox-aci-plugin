@@ -67,6 +67,11 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         choices=VRFPCEnforcementPreferenceChoices,
         null_value=None,
     )
+    present_in_aci_tenant_or_common = django_filters.ModelChoiceFilter(
+        queryset=ACITenant.objects.all(),
+        method="filter_present_in_aci_tenant_or_common",
+        label=_("ACI Tenant (ID)"),
+    )
 
     class Meta:
         model = ACIVRF
@@ -107,18 +112,26 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         )
         return queryset.filter(queryset_filter)
 
+    def filter_present_in_aci_tenant_or_common(
+        self, queryset, name, aci_tenant
+    ):
+        """Return a QuerySet filtered by given ACI Tenant or 'common'."""
+        if aci_tenant is None:
+            return queryset.none
+        return queryset.filter(
+            Q(aci_tenant=aci_tenant) | Q(aci_tenant__name="common")
+        )
+
 
 class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
     """Filter set for ACI Bridge Domain model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_vrf__aci_tenant",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
     )
     aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_vrf__aci_tenant",
         queryset=ACITenant.objects.all(),
         to_field_name="id",
         label=_("ACI Tenant (ID)"),
@@ -151,6 +164,11 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         choices=BDMultiDestinationFloodingChoices,
         null_value=None,
     )
+    present_in_aci_tenant_or_common = django_filters.ModelChoiceFilter(
+        queryset=ACITenant.objects.all(),
+        method="filter_present_in_aci_tenant_or_common",
+        label=_("ACI Tenant (ID)"),
+    )
     unknown_ipv4_multicast = django_filters.MultipleChoiceFilter(
         choices=BDUnknownMulticastChoices,
         null_value=None,
@@ -175,6 +193,7 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
             "name",
             "name_alias",
             "description",
+            "aci_tenant",
             "aci_vrf",
             "nb_tenant",
             "advertise_host_routes_enabled",
@@ -218,18 +237,28 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         )
         return queryset.filter(queryset_filter)
 
+    def filter_present_in_aci_tenant_or_common(
+        self, queryset, name, aci_tenant
+    ):
+        """Return a QuerySet filtered by given ACI Tenant or 'common'."""
+        if aci_tenant is None:
+            return queryset.none
+        return queryset.filter(
+            Q(aci_tenant=aci_tenant) | Q(aci_tenant__name="common")
+        )
+
 
 class ACIBridgeDomainSubnetFilterSet(NetBoxModelFilterSet):
     """Filter set for ACI Bridge Domain Subnet model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_bridge_domain__aci_vrf__aci_tenant",
+        field_name="aci_bridge_domain__aci_tenant",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
     )
     aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_bridge_domain__aci_vrf__aci_tenant",
+        field_name="aci_bridge_domain__aci_tenant",
         queryset=ACITenant.objects.all(),
         to_field_name="id",
         label=_("ACI Tenant (ID)"),
