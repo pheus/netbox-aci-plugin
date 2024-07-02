@@ -659,13 +659,6 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
         label=_("ACI Application Profile"),
         help_text=_("Assigned ACI Application Profile"),
     )
-    aci_vrf = CSVModelChoiceField(
-        queryset=ACIVRF.objects.all(),
-        to_field_name="name",
-        required=True,
-        label=_("ACI VRF"),
-        help_text=_("Parent ACI VRF of ACI Bridge Domain"),
-    )
     aci_bridge_domain = CSVModelChoiceField(
         queryset=ACIBridgeDomain.objects.all(),
         to_field_name="name",
@@ -697,7 +690,6 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
             "name_alias",
             "aci_tenant",
             "aci_app_profile",
-            "aci_vrf",
             "aci_bridge_domain",
             "description",
             "nb_tenant",
@@ -728,15 +720,10 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
             )
             self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
 
-        # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
-        if data.get("aci_tenant") and data.get("aci_vrf"):
-            # Limit ACIVRF queryset by parent ACITenant
-            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
-            )
-            # Limit ACIBridgeDomain queryset by parent ACIVRF
+        # Limit ACIBridgeDomain queryset by ACITenant
+        if data.get("aci_tenant") and data.get("aci_bridge_domain"):
+            # Limit ACIBridgeDomain queryset by parent ACITenant
             aci_bd_queryset = ACIBridgeDomain.objects.filter(
-                aci_vrf__aci_tenant__name=data["aci_tenant"],
-                aci_vrf__name=data["aci_vrf"],
+                aci_tenant__name=data["aci_tenant"]
             )
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset
