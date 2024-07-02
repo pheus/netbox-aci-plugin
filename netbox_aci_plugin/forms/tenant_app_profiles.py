@@ -621,7 +621,7 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     qos_class = forms.ChoiceField(
-        choices=EPGQualityOfServiceClassChoices,
+        choices=add_blank_choice(EPGQualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
     )

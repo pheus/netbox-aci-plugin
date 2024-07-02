@@ -419,12 +419,12 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     pc_enforcement_direction = forms.ChoiceField(
-        choices=VRFPCEnforcementDirectionChoices,
+        choices=add_blank_choice(VRFPCEnforcementDirectionChoices),
         required=False,
         label=_("Policy control enforcement direction"),
     )
     pc_enforcement_preference = forms.ChoiceField(
-        choices=VRFPCEnforcementPreferenceChoices,
+        choices=add_blank_choice(VRFPCEnforcementPreferenceChoices),
         required=False,
         label=_("Policy control enforcement preference"),
     )
@@ -1099,7 +1099,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     multi_destination_flooding = forms.ChoiceField(
-        choices=BDMultiDestinationFloodingChoices,
+        choices=add_blank_choice(BDMultiDestinationFloodingChoices),
         required=False,
         label=_("Multi destination flooding"),
     )
@@ -1125,17 +1125,17 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     unknown_ipv4_multicast = forms.ChoiceField(
-        choices=BDUnknownMulticastChoices,
+        choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv4 multicast"),
     )
     unknown_ipv6_multicast = forms.ChoiceField(
-        choices=BDUnknownMulticastChoices,
+        choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv6 multicast"),
     )
     unknown_unicast = forms.ChoiceField(
-        choices=BDUnknownUnicastChoices,
+        choices=add_blank_choice(BDUnknownUnicastChoices),
         required=False,
         label=_("Unknown unicast"),
     )
