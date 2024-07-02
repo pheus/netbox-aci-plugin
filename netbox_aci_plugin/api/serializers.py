@@ -147,6 +147,12 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
     aci_tenant = ACITenantSerializer(nested=True, required=True)
     aci_vrf = ACIVRFSerializer(nested=True, required=True)
     nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+    mac_address = serializers.CharField(
+        required=False, default=None, allow_blank=True, allow_null=True
+    )
+    virtual_mac_address = serializers.CharField(
+        required=False, default=None, allow_blank=True, allow_null=True
+    )
 
     class Meta:
         model = ACIBridgeDomain
