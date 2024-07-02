@@ -224,6 +224,7 @@ class ACIBridgeDomainView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.prefetch_related(
+        "aci_bridge_domain_subnets",
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",

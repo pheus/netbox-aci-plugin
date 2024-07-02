@@ -12,6 +12,12 @@ from ..models.tenant_networks import (
     ACIBridgeDomainSubnet,
 )
 
+BRIDGEDOMAIN_SUBNETS = """
+{% for bd_subnet in value.all %}
+    <a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainsubnet' pk=bd_subnet.pk %}">{{ bd_subnet.gateway_ip_address }}</a>{% if not forloop.last %}<br />{% endif %}
+{% endfor %}
+"""
+
 
 class ACIVRFTable(NetBoxTable):
     """NetBox table for ACI VRF model."""
@@ -149,6 +155,11 @@ class ACIBridgeDomainTable(NetBoxTable):
     )
     unknown_unicast = columns.ChoiceFieldColumn(
         verbose_name=_("Unknown unicast"),
+    )
+    aci_bridge_domain_subnets = columns.TemplateColumn(
+        verbose_name=_("BD Subnets"),
+        orderable=False,
+        template_code=BRIDGEDOMAIN_SUBNETS,
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
