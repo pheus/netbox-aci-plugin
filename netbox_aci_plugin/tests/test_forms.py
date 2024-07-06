@@ -17,12 +17,12 @@ class ACITenantFormTestCase(TestCase):
     """Test case for ACITenant form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are\
-        allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are"
+        " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
-        allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
+        " allowed."
     )
 
     def test_invalid_aci_tenant_field_values(self) -> None:
@@ -63,12 +63,12 @@ class ACIAppProfileFormTestCase(TestCase):
     """Test case for ACIAppProfile form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are\
-        allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are"
+        " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
-        allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
+        " allowed."
     )
 
     def test_invalid_aci_app_profile_field_values(self) -> None:
@@ -110,12 +110,12 @@ class ACIVRFFormTestCase(TestCase):
     """Test case for ACIVRF form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are\
-        allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are"
+        " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
-        allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
+        " allowed."
     )
 
     def test_invalid_aci_vrf_field_values(self) -> None:
@@ -156,12 +156,12 @@ class ACIBridgeDomainFormTestCase(TestCase):
     """Test case for ACIBridgeDomain form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are\
-        allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are"
+        " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
-        allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
+        " allowed."
     )
 
     def test_invalid_aci_bridge_domain_field_values(self) -> None:
@@ -200,12 +200,12 @@ class ACIBridgeDomainSubnetFormTestCase(TestCase):
     """Test case for ACIBridgeDomainSubnet form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are\
-        allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are"
+        " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
-        allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
+        " allowed."
     )
 
     def test_invalid_aci_bridge_domain_subnet_field_values(self) -> None:
@@ -246,12 +246,12 @@ class ACIEndpointGroupFormTestCase(TestCase):
     """Test case for ACIEndpointGroup form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are\
-        allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are"
+        " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are\
-        allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
+        " allowed."
     )
 
     def test_invalid_aci_endpoint_group_field_values(self) -> None:
