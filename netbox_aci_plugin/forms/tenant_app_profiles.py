@@ -369,26 +369,32 @@ class ACIEndpointGroupForm(NetBoxModelForm):
 
     def clean(self):
         """Cleaning and validation of ACI Endpoint Group Form."""
-
         super().clean()
 
         aci_app_profile = self.cleaned_data.get("aci_app_profile")
         aci_bridge_domain = self.cleaned_data.get("aci_bridge_domain")
 
-        if (
-            not aci_app_profile.aci_tenant.id
-            == aci_bridge_domain.aci_tenant.id
-            and not aci_bridge_domain.aci_tenant.name == "common"
-        ):
-            raise forms.ValidationError(
-                {
-                    "aci_bridge_domain": _(
-                        "A Bridge Domain can only be assigned from the same"
-                        " ACI Tenant as the Endpoint Group or ACI Tenant"
-                        " 'common'."
-                    )
-                }
+        # Ensure aci_app_profile and aci_bridge_domain are present before validating
+        if aci_app_profile and aci_bridge_domain:
+            # Check if if the ACI Tenant IDs mismatch
+            aci_tenant_mismatch = (
+                aci_app_profile.aci_tenant.id
+                != aci_bridge_domain.aci_tenant.id
             )
+            # Check if the ACI Bridge Domain Tenant name is not 'common'
+            not_aci_tenant_common = (
+                aci_bridge_domain.aci_tenant.name != "common"
+            )
+            # Raise validation error if both conditions are met
+            if aci_tenant_mismatch and not_aci_tenant_common:
+                self.add_error(
+                    "aci_bridge_domain",
+                    _(
+                        "A Bridge Domain can only be assigned from the same "
+                        "ACI Tenant as the Endpoint Group or ACI Tenant"
+                        "'common'."
+                    ),
+                )
 
 
 class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
@@ -712,7 +718,6 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
 
     def __init__(self, data=None, *args, **kwargs) -> None:
         """Extend import data processing with enhanced query sets."""
-
         super().__init__(data, *args, **kwargs)
 
         if not data:

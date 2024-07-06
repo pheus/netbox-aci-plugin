@@ -737,24 +737,27 @@ class ACIBridgeDomainForm(NetBoxModelForm):
 
     def clean(self):
         """Cleaning and validation of ACI Bridge Domain Form."""
-
         super().clean()
 
         aci_tenant = self.cleaned_data.get("aci_tenant")
         aci_vrf = self.cleaned_data.get("aci_vrf")
 
-        if (
-            not aci_tenant.id == aci_vrf.aci_tenant.id
-            and not aci_vrf.aci_tenant.name == "common"
-        ):
-            raise forms.ValidationError(
-                {
-                    "aci_vrf": _(
-                        "A VRF can only be assigned from the same ACI Tenant"
-                        " as the Bridge Domain or ACI Tenant 'common'."
-                    )
-                }
-            )
+        # Ensure aci_tenant and aci_vrf are present before validating
+        if aci_tenant and aci_vrf:
+            # Check if the ACI Tenant IDs mismatch
+            aci_tenant_mismatch = aci_tenant.id != aci_vrf.aci_tenant.id
+            # Check if the ACI VRF Tenant name is not 'common'
+            not_aci_tenant_common = aci_vrf.aci_tenant.name != "common"
+
+            # Raise validation error if both conditions are met
+            if aci_tenant_mismatch and not_aci_tenant_common:
+                self.add_error(
+                    "aci_vrf",
+                    _(
+                        "A VRF can only be assigned from the same ACI Tenant "
+                        "as the Bridge Domain or ACI Tenant 'common'."
+                    ),
+                )
 
 
 class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
@@ -1235,7 +1238,6 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
 
     def __init__(self, data=None, *args, **kwargs) -> None:
         """Extend import data processing with enhanced query sets."""
-
         super().__init__(data, *args, **kwargs)
 
         if not data:
@@ -1790,7 +1792,6 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
 
     def __init__(self, data=None, *args, **kwargs) -> None:
         """Extend import data processing with enhanced query sets."""
-
         super().__init__(data, *args, **kwargs)
 
         if not data:
