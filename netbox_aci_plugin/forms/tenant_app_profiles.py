@@ -266,7 +266,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
         required=False,
         label=_("Admin state shutdown"),
         help_text=_(
-            "Wether the EPG is in shutdown mode removing all policy "
+            "Whether the EPG is in shutdown mode removing all policy "
             "configuration from all switches. Default is disabled."
         ),
     )

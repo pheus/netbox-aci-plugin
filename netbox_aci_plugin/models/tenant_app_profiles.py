@@ -143,7 +143,7 @@ class ACIEndpointGroup(NetBoxModel):
         verbose_name=_("admin state shutdown"),
         default=False,
         help_text=_(
-            "Wether the EPG is in shutdown mode removing all policy "
+            "Whether the EPG is in shutdown mode removing all policy "
             "configuration from all switches. Default is disabled."
         ),
     )
