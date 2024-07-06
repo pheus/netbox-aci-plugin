@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name =  "netbox-aci-plugin"
-version = "0.0.6"
+version = "0.0.7"
 authors = [
     {name = "Martin Hauser", email = "git@pheus.dev"},
 ]
@@ -33,7 +33,7 @@ test = [
     "isort",
     "pre-commit==3.7.1",
     "pytest==8.2.2",
-    "ruff",
+    "ruff==0.5.1",
     "yamllint",
 ]
 

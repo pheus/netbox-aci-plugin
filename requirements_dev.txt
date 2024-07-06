@@ -3,5 +3,5 @@ isort==5.13.2
 pip==24.1
 pre-commit==3.7.1
 pytest==8.2.2
-ruff==0.4.8
+ruff==0.5.1
 yamllint==1.35.1
