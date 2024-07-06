@@ -272,7 +272,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
     )
     flood_in_encap_enabled = forms.BooleanField(
         required=False,
-        label=_("Floot in encapsulation enabled"),
+        label=_("Flood in encapsulation enabled"),
         help_text=_(
             "Limits the flooding traffic to the encapsulation of the "
             "EPG. Default is disabled."
