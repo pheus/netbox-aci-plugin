@@ -102,7 +102,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         }
 
     def search(self, queryset, name, value):
-        """Return a QuerySet filtered by the models description."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         queryset_filter: Q = (
@@ -227,7 +227,7 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         }
 
     def search(self, queryset, name, value):
-        """Return a QuerySet filtered by the models description."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         queryset_filter: Q = (
@@ -329,7 +329,7 @@ class ACIBridgeDomainSubnetFilterSet(NetBoxModelFilterSet):
         )
 
     def search(self, queryset, name, value):
-        """Return a QuerySet filtered by the models description."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         queryset_filter: Q = (
