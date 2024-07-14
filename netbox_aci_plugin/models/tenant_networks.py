@@ -540,7 +540,7 @@ class ACIBridgeDomainSubnet(NetBoxModel):
     )
     aci_bridge_domain = models.ForeignKey(
         to=ACIBridgeDomain,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="aci_bridge_domain_subnets",
         verbose_name=_("ACI Bridge Domain"),
     )
