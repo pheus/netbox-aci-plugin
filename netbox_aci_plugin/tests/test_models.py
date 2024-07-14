@@ -45,7 +45,6 @@ class ACITenantTestCase(TestCase):
             comments=acitenant_comments,
             nb_tenant=nb_tenant,
         )
-        super().setUp()
 
     def test_create_aci_tenant(self) -> None:
         """Test type and values of created ACI Tenant."""
@@ -104,7 +103,6 @@ class ACIAppProfileTestCase(TestCase):
             aci_tenant=aci_tenant,
             nb_tenant=nb_tenant,
         )
-        super().setUp()
 
     def test_create_aci_app_profile(self) -> None:
         """Test type and values of created ACI Application Profile."""
@@ -197,7 +195,6 @@ class ACIVRFTestCase(TestCase):
             pim_ipv6_enabled=acivrf_pim_ipv6_enabled,
             preferred_group_enabled=acivrf_preferred_group_enabled,
         )
-        super().setUp()
 
     def test_create_aci_vrf(self) -> None:
         """Test type and values of created ACI VRF."""
@@ -319,7 +316,6 @@ class ACIBridgeDomainTestCase(TestCase):
             unknown_unicast=acibd_unknown_unicast,
             virtual_mac_address=acibd_virtual_mac_address,
         )
-        super().setUp()
 
     def test_create_aci_bridge_domain(self) -> None:
         """Test type and values of created ACI Bridge Domain."""
@@ -446,7 +442,6 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
             shared_enabled=acisnet_shared_enabled,
             virtual_ip_enabled=acisnet_virtual_ip_enabled,
         )
-        super().setUp()
 
     def test_create_aci_bridge_domain(self) -> None:
         """Test type and values of created ACI Bridge Domain."""
@@ -585,7 +580,6 @@ class ACIEndpointGroupTestCase(TestCase):
             preferred_group_member_enabled=aciepg_preferred_group_member_enabled,
             proxy_arp_enabled=aciepg_proxy_arp_enabled,
         )
-        super().setUp()
 
     def test_create_aci_endpoint_group(self) -> None:
         """Test type and values of created ACI Endpoint Group."""
