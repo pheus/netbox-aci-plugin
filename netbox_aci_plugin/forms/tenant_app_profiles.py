@@ -37,7 +37,6 @@ class ACIAppProfileForm(NetBoxModelForm):
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
-        query_params={"nb_tenant_id": "$nb_tenant"},
         label=_("ACI Tenant"),
     )
     nb_tenant_group = DynamicModelChoiceField(
@@ -164,7 +163,6 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
     )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        query_params={"nb_tenant_id": "$nb_tenant_id"},
         null_option="None",
         required=False,
         label=_("ACI Tenant"),
@@ -566,7 +564,6 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
     )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        query_params={"nb_tenant_id": "$nb_tenant_id"},
         null_option="None",
         required=False,
         label=_("ACI Tenant"),
