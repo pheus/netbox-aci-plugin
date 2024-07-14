@@ -60,24 +60,28 @@ class ACITenantTestCase(TestCase):
     def test_invalid_aci_tenant_name(self) -> None:
         """Test validation of ACI Tenant naming."""
         tenant = ACITenant(name="ACI Test Tenant 1")
-        self.assertRaises(ValidationError, tenant.full_clean)
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
 
     def test_invalid_aci_tenant_name_alias(self) -> None:
         """Test validation of ACI Tenant aliasing."""
         tenant = ACITenant(name="ACITestTenant1", name_alias="Invalid Alias")
-        self.assertRaises(ValidationError, tenant.full_clean)
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
 
     def test_invalid_aci_tenant_description(self) -> None:
         """Test validation of ACI Tenant description."""
         tenant = ACITenant(
             name="ACITestTenant1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, tenant.full_clean)
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
 
     def test_constraint_unique_aci_tenant_name(self) -> None:
         """Test unique constraint of ACI Tenant name."""
         tenant = ACITenant(name="ACITestTenant1")
-        self.assertRaises(IntegrityError, tenant.save)
+        with self.assertRaises(IntegrityError):
+            tenant.save()
 
 
 class ACIAppProfileTestCase(TestCase):
@@ -125,21 +129,24 @@ class ACIAppProfileTestCase(TestCase):
     def test_invalid_aci_app_profile_name(self) -> None:
         """Test validation of ACI AppProfile naming."""
         app_profile = ACIAppProfile(name="ACI App Profile Test 1")
-        self.assertRaises(ValidationError, app_profile.full_clean)
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
 
     def test_invalid_aci_app_profile_name_alias(self) -> None:
         """Test validation of ACI AppProfile aliasing."""
         app_profile = ACIAppProfile(
             name="ACIAppProfileTest1", name_alias="Invalid Alias"
         )
-        self.assertRaises(ValidationError, app_profile.full_clean)
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
 
     def test_invalid_aci_app_profile_description(self) -> None:
         """Test validation of ACI AppProfile description."""
         app_profile = ACIAppProfile(
             name="ACIAppProfileTest1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, app_profile.full_clean)
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
 
     def test_constraint_unique_aci_app_profile_name_per_aci_tenant(
         self,
@@ -147,7 +154,8 @@ class ACIAppProfileTestCase(TestCase):
         """Test unique constraint of ACI AppProfile name per ACI Tenant."""
         tenant = ACITenant.objects.get(name="ACITestTenant1")
         app_profile = ACIAppProfile(name="AppProfileTest1", aci_tenant=tenant)
-        self.assertRaises(IntegrityError, app_profile.save)
+        with self.assertRaises(IntegrityError):
+            app_profile.save()
 
 
 class ACIVRFTestCase(TestCase):
@@ -222,23 +230,27 @@ class ACIVRFTestCase(TestCase):
     def test_invalid_aci_vrf_name(self) -> None:
         """Test validation of ACI VRF naming."""
         vrf = ACIVRF(name="ACI VRF Test 1")
-        self.assertRaises(ValidationError, vrf.full_clean)
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
 
     def test_invalid_aci_vrf_name_alias(self) -> None:
         """Test validation of ACI VRF aliasing."""
         vrf = ACIVRF(name="ACIVRFTest1", name_alias="Invalid Alias")
-        self.assertRaises(ValidationError, vrf.full_clean)
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
 
     def test_invalid_aci_vrf_description(self) -> None:
         """Test validation of ACI VRF description."""
         vrf = ACIVRF(name="ACIVRFTest1", description="Invalid Description: ö")
-        self.assertRaises(ValidationError, vrf.full_clean)
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
 
     def test_constraint_unique_aci_vrf_name_per_aci_tenant(self) -> None:
         """Test unique constraint of ACI VRF name per ACI Tenant."""
         tenant = ACITenant.objects.get(name="ACITestTenant1")
         vrf = ACIVRF(name="VRFTest1", aci_tenant=tenant)
-        self.assertRaises(IntegrityError, vrf.save)
+        with self.assertRaises(IntegrityError):
+            vrf.save()
 
 
 class ACIBridgeDomainTestCase(TestCase):
@@ -363,19 +375,22 @@ class ACIBridgeDomainTestCase(TestCase):
     def test_invalid_aci_bridge_domain_name(self) -> None:
         """Test validation of ACI Bridge Domain naming."""
         bd = ACIBridgeDomain(name="ACI BD Test 1")
-        self.assertRaises(ValidationError, bd.full_clean)
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
 
     def test_invalid_aci_bridge_domain_name_alias(self) -> None:
         """Test validation of ACI Bridge Domain aliasing."""
         bd = ACIBridgeDomain(name="ACIBDTest1", name_alias="Invalid Alias")
-        self.assertRaises(ValidationError, bd.full_clean)
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
 
     def test_invalid_aci_bridge_domain_description(self) -> None:
         """Test validation of ACI Bridge Domain description."""
         bd = ACIBridgeDomain(
             name="ACIBDTest1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, bd.full_clean)
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
 
     def test_constraint_unique_aci_bridge_domain_name_per_aci_tenant(
         self,
@@ -384,7 +399,8 @@ class ACIBridgeDomainTestCase(TestCase):
         tenant = ACITenant.objects.get(name="ACITestTenant1")
         vrf = ACIVRF.objects.get(name="VRFTest1")
         bd = ACIBridgeDomain(name="BDTest1", aci_tenant=tenant, aci_vrf=vrf)
-        self.assertRaises(IntegrityError, bd.save)
+        with self.assertRaises(IntegrityError):
+            bd.save()
 
 
 class ACIBridgeDomainSubnetTestCase(TestCase):
@@ -487,21 +503,24 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
     def test_invalid_aci_bridge_domain_subnet_name(self) -> None:
         """Test validation of ACI Bridge Domain Subnet naming."""
         subnet = ACIBridgeDomainSubnet(name="ACI BDSubnet Test 1")
-        self.assertRaises(ValidationError, subnet.full_clean)
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
 
     def test_invalid_aci_bridge_domain_subnet_name_alias(self) -> None:
         """Test validation of ACI Bridge Domain Subnet aliasing."""
         subnet = ACIBridgeDomainSubnet(
             name="ACIBDSubnetTest1", name_alias="Invalid Alias"
         )
-        self.assertRaises(ValidationError, subnet.full_clean)
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
 
     def test_invalid_aci_bridge_domain_subnet_description(self) -> None:
         """Test validation of ACI Bridge Domain Subnet description."""
         subnet = ACIBridgeDomainSubnet(
             name="ACIBDSubnetTest1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, subnet.full_clean)
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
 
     def test_constraint_unique_aci_bd_subnet_name_per_aci_bridge_domain(
         self,
@@ -514,7 +533,8 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
             aci_bridge_domain=bd,
             gateway_ip_address=gateway_ip,
         )
-        self.assertRaises(IntegrityError, subnet.save)
+        with self.assertRaises(IntegrityError):
+            subnet.save()
 
     def test_constraint_unique_preferred_ip_per_bridge_domain(self) -> None:
         """Test unique constraint of one preferred ip address per ACI BD."""
@@ -526,7 +546,8 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
             gateway_ip_address=gateway_ip,
             preferred_ip_address_enabled=True,
         )
-        self.assertRaises(IntegrityError, subnet.save)
+        with self.assertRaises(IntegrityError):
+            subnet.save()
 
 
 class ACIEndpointGroupTestCase(TestCase):
@@ -616,19 +637,22 @@ class ACIEndpointGroupTestCase(TestCase):
     def test_invalid_aci_endpoint_group_name(self) -> None:
         """Test validation of ACI Endpoint Group naming."""
         epg = ACIEndpointGroup(name="ACI EPG Test 1")
-        self.assertRaises(ValidationError, epg.full_clean)
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
 
     def test_invalid_aci_endpoint_group_name_alias(self) -> None:
         """Test validation of ACI Endpoint Group aliasing."""
         epg = ACIEndpointGroup(name="ACIEPGTest1", name_alias="Invalid Alias")
-        self.assertRaises(ValidationError, epg.full_clean)
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
 
     def test_invalid_aci_endpoint_group_description(self) -> None:
         """Test validation of ACI Endpoint Group description."""
         epg = ACIEndpointGroup(
             name="ACIEPGTest1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, epg.full_clean)
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
 
     def test_constraint_unique_aci_endpoint_group_name_per_aci_app_profile(
         self,
@@ -639,4 +663,5 @@ class ACIEndpointGroupTestCase(TestCase):
         epg = ACIEndpointGroup(
             name="EPGTest1", aci_app_profile=app_profile, aci_bridge_domain=bd
         )
-        self.assertRaises(IntegrityError, epg.save)
+        with self.assertRaises(IntegrityError):
+            epg.save()
