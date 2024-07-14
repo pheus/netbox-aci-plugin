@@ -58,7 +58,7 @@ class ACIVRF(NetBoxModel):
     )
     nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="aci_vrfs",
         verbose_name=_("NetBox tenant"),
         blank=True,
@@ -66,7 +66,7 @@ class ACIVRF(NetBoxModel):
     )
     nb_vrf = models.ForeignKey(
         to="ipam.VRF",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="aci_vrfs",
         verbose_name=_("NetBox VRF"),
         blank=True,
@@ -241,7 +241,7 @@ class ACIBridgeDomain(NetBoxModel):
     )
     nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="aci_bridge_domains",
         verbose_name=_("NetBox tenant"),
         blank=True,
@@ -552,7 +552,7 @@ class ACIBridgeDomainSubnet(NetBoxModel):
     )
     nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="aci_bridge_domain_subnets",
         verbose_name=_("NetBox tenant"),
         blank=True,

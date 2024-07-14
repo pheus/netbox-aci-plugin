@@ -42,7 +42,7 @@ class ACITenant(NetBoxModel):
     )
     nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="aci_tenants",
         verbose_name=_("NetBox tenant"),
         blank=True,
