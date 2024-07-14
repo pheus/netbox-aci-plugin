@@ -376,7 +376,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
 
         # Ensure aci_app_profile and aci_bridge_domain are present before validating
         if aci_app_profile and aci_bridge_domain:
-            # Check if if the ACI Tenant IDs mismatch
+            # Check if the ACI Tenant IDs mismatch
             aci_tenant_mismatch = (
                 aci_app_profile.aci_tenant.id
                 != aci_bridge_domain.aci_tenant.id
