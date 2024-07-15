@@ -81,9 +81,26 @@ class ACITenantTestCase(TestCase):
         with self.assertRaises(ValidationError):
             tenant.full_clean()
 
+    def test_invalid_aci_tenant_name_length(self) -> None:
+        """Test validation of ACI Tenant name length."""
+        tenant = ACITenant(
+            name="T" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
+
     def test_invalid_aci_tenant_name_alias(self) -> None:
         """Test validation of ACI Tenant alias."""
         tenant = ACITenant(name="ACITestTenant1", name_alias="Invalid Alias")
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
+
+    def test_invalid_aci_tenant_name_alias_length(self) -> None:
+        """Test validation of ACI Tenant name alias length."""
+        tenant = ACITenant(
+            name="ACITestTenant1",
+            name_alias="T" * 65,  # Exceeding the maximum length of 64
+        )
         with self.assertRaises(ValidationError):
             tenant.full_clean()
 
@@ -91,6 +108,15 @@ class ACITenantTestCase(TestCase):
         """Test validation of ACI Tenant description."""
         tenant = ACITenant(
             name="ACITestTenant1", description="Invalid Description: ö"
+        )
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
+
+    def test_invalid_aci_tenant_description_length(self) -> None:
+        """Test validation of ACI Tenant description length."""
+        tenant = ACITenant(
+            name="ACITestTenant1",
+            description="T" * 129,  # Exceeding the maximum length of 128
         )
         with self.assertRaises(ValidationError):
             tenant.full_clean()
@@ -179,6 +205,14 @@ class ACIAppProfileTestCase(TestCase):
         with self.assertRaises(ValidationError):
             app_profile.full_clean()
 
+    def test_invalid_aci_app_profile_name_length(self) -> None:
+        """Test validation of ACI Application Profile name length."""
+        app_profile = ACIAppProfile(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
+
     def test_invalid_aci_app_profile_name_alias(self) -> None:
         """Test validation of ACI Application Profile aliasing."""
         app_profile = ACIAppProfile(
@@ -187,10 +221,28 @@ class ACIAppProfileTestCase(TestCase):
         with self.assertRaises(ValidationError):
             app_profile.full_clean()
 
+    def test_invalid_aci_app_profile_name_alias_length(self) -> None:
+        """Test validation of ACI Application Profile name alias length."""
+        app_profile = ACIAppProfile(
+            name="ACIAppProfileTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
+
     def test_invalid_aci_app_profile_description(self) -> None:
         """Test validation of ACI Application Profile description."""
         app_profile = ACIAppProfile(
             name="ACIAppProfileTest1", description="Invalid Description: ö"
+        )
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
+
+    def test_invalid_aci_app_profile_description_length(self) -> None:
+        """Test validation of ACI Application Profile description length."""
+        app_profile = ACIAppProfile(
+            name="ACIAppProfileTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
         )
         with self.assertRaises(ValidationError):
             app_profile.full_clean()
@@ -356,15 +408,41 @@ class ACIVRFTestCase(TestCase):
         with self.assertRaises(ValidationError):
             vrf.full_clean()
 
+    def test_invalid_aci_vrf_name_length(self) -> None:
+        """Test validation of ACI VRF name length."""
+        vrf = ACIVRF(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
+
     def test_invalid_aci_vrf_name_alias(self) -> None:
         """Test validation of ACI VRF aliasing."""
         vrf = ACIVRF(name="ACIVRFTest1", name_alias="Invalid Alias")
         with self.assertRaises(ValidationError):
             vrf.full_clean()
 
+    def test_invalid_aci_vrf_name_alias_length(self) -> None:
+        """Test validation of ACI VRF name alias length."""
+        vrf = ACIVRF(
+            name="ACIVRFTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
+
     def test_invalid_aci_vrf_description(self) -> None:
         """Test validation of ACI VRF description."""
         vrf = ACIVRF(name="ACIVRFTest1", description="Invalid Description: ö")
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
+
+    def test_invalid_aci_vrf_description_length(self) -> None:
+        """Test validation of ACI VRF description length."""
+        vrf = ACIVRF(
+            name="ACIVRFTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+        )
         with self.assertRaises(ValidationError):
             vrf.full_clean()
 
@@ -632,9 +710,26 @@ class ACIBridgeDomainTestCase(TestCase):
         with self.assertRaises(ValidationError):
             bd.full_clean()
 
+    def test_invalid_aci_bridge_domain_name_length(self) -> None:
+        """Test validation of ACI Bridge Domain name length."""
+        bd = ACIBridgeDomain(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
+
     def test_invalid_aci_bridge_domain_name_alias(self) -> None:
         """Test validation of ACI Bridge Domain aliasing."""
         bd = ACIBridgeDomain(name="ACIBDTest1", name_alias="Invalid Alias")
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
+
+    def test_invalid_aci_bridge_domain_name_alias_length(self) -> None:
+        """Test validation of ACI Bridge Domain name alias length."""
+        bd = ACIBridgeDomain(
+            name="ACIBDTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
         with self.assertRaises(ValidationError):
             bd.full_clean()
 
@@ -642,6 +737,15 @@ class ACIBridgeDomainTestCase(TestCase):
         """Test validation of ACI Bridge Domain description."""
         bd = ACIBridgeDomain(
             name="ACIBDTest1", description="Invalid Description: ö"
+        )
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
+
+    def test_invalid_aci_bridge_domain_description_length(self) -> None:
+        """Test validation of ACI Bridge Domain description length."""
+        bd = ACIBridgeDomain(
+            name="ACIBDTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
         )
         with self.assertRaises(ValidationError):
             bd.full_clean()
@@ -870,6 +974,14 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
         with self.assertRaises(ValidationError):
             subnet.full_clean()
 
+    def test_invalid_aci_bridge_domain_subnet_name_length(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet name length."""
+        subnet = ACIBridgeDomainSubnet(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
+
     def test_invalid_aci_bridge_domain_subnet_name_alias(self) -> None:
         """Test validation of ACI Bridge Domain Subnet aliasing."""
         subnet = ACIBridgeDomainSubnet(
@@ -878,10 +990,28 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
         with self.assertRaises(ValidationError):
             subnet.full_clean()
 
+    def test_invalid_aci_bridge_domain_subnet_name_alias_length(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet name alias length."""
+        subnet = ACIBridgeDomainSubnet(
+            name="ACIBDSubnetTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
+
     def test_invalid_aci_bridge_domain_subnet_description(self) -> None:
         """Test validation of ACI Bridge Domain Subnet description."""
         subnet = ACIBridgeDomainSubnet(
             name="ACIBDSubnetTest1", description="Invalid Description: ö"
+        )
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
+
+    def test_invalid_aci_bridge_domain_subnet_description_length(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet description length."""
+        subnet = ACIBridgeDomainSubnet(
+            name="ACIBDSubnetTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
         )
         with self.assertRaises(ValidationError):
             subnet.full_clean()
@@ -1088,9 +1218,26 @@ class ACIEndpointGroupTestCase(TestCase):
         with self.assertRaises(ValidationError):
             epg.full_clean()
 
+    def test_invalid_aci_endpoint_group_name_length(self) -> None:
+        """Test validation of ACI Endpoint Group name length."""
+        epg = ACIEndpointGroup(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
+
     def test_invalid_aci_endpoint_group_name_alias(self) -> None:
         """Test validation of ACI Endpoint Group aliasing."""
         epg = ACIEndpointGroup(name="ACIEPGTest1", name_alias="Invalid Alias")
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
+
+    def test_invalid_aci_endpoint_group_name_alias_length(self) -> None:
+        """Test validation of ACI Endpoint Group name alias length."""
+        epg = ACIEndpointGroup(
+            name="ACIEPGTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
         with self.assertRaises(ValidationError):
             epg.full_clean()
 
@@ -1098,6 +1245,15 @@ class ACIEndpointGroupTestCase(TestCase):
         """Test validation of ACI Endpoint Group description."""
         epg = ACIEndpointGroup(
             name="ACIEPGTest1", description="Invalid Description: ö"
+        )
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
+
+    def test_invalid_aci_endpoint_group_description_length(self) -> None:
+        """Test validation of ACI Endpoint Group description length."""
+        epg = ACIEndpointGroup(
+            name="ACIEPGTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
         )
         with self.assertRaises(ValidationError):
             epg.full_clean()
