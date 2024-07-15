@@ -123,9 +123,9 @@ class ACITenantTestCase(TestCase):
 
     def test_constraint_unique_aci_tenant_name(self) -> None:
         """Test unique constraint of ACI Tenant name."""
-        tenant = ACITenant(name=self.aci_tenant_name)
+        duplicate_tenant = ACITenant(name=self.aci_tenant_name)
         with self.assertRaises(IntegrityError):
-            tenant.save()
+            duplicate_tenant.save()
 
 
 class ACIAppProfileTestCase(TestCase):
@@ -252,11 +252,11 @@ class ACIAppProfileTestCase(TestCase):
     ) -> None:
         """Test unique constraint of ACI AppProfile name per ACI Tenant."""
         tenant = ACITenant.objects.get(name=self.aci_tenant_name)
-        app_profile = ACIAppProfile(
+        duplicate_app_profile = ACIAppProfile(
             name=self.aci_app_profile_name, aci_tenant=tenant
         )
         with self.assertRaises(IntegrityError):
-            app_profile.save()
+            duplicate_app_profile.save()
 
 
 class ACIVRFTestCase(TestCase):
@@ -449,9 +449,9 @@ class ACIVRFTestCase(TestCase):
     def test_constraint_unique_aci_vrf_name_per_aci_tenant(self) -> None:
         """Test unique constraint of ACI VRF name per ACI Tenant."""
         tenant = ACITenant.objects.get(name=self.aci_tenant_name)
-        vrf = ACIVRF(name=self.aci_vrf_name, aci_tenant=tenant)
+        duplicate_vrf = ACIVRF(name=self.aci_vrf_name, aci_tenant=tenant)
         with self.assertRaises(IntegrityError):
-            vrf.save()
+            duplicate_vrf.save()
 
 
 class ACIBridgeDomainTestCase(TestCase):
@@ -756,11 +756,11 @@ class ACIBridgeDomainTestCase(TestCase):
         """Test unique constraint of ACI Bridge Domain name per ACI Tenant."""
         tenant = ACITenant.objects.get(name=self.aci_tenant_name)
         vrf = ACIVRF.objects.get(name=self.aci_vrf_name)
-        bd = ACIBridgeDomain(
+        duplicate_bd = ACIBridgeDomain(
             name=self.aci_bd_name, aci_tenant=tenant, aci_vrf=vrf
         )
         with self.assertRaises(IntegrityError):
-            bd.save()
+            duplicate_bd.save()
 
 
 class ACIBridgeDomainSubnetTestCase(TestCase):
@@ -1022,26 +1022,26 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
         """Test unique constraint of ACI BD Subnet name per ACI BD."""
         bd = ACIBridgeDomain.objects.get(name=self.aci_bd_name)
         gateway_ip = IPAddress.objects.create(address="10.0.1.1/24")
-        subnet = ACIBridgeDomainSubnet(
+        duplicate_subnet = ACIBridgeDomainSubnet(
             name=self.aci_bd_subnet_name,
             aci_bridge_domain=bd,
             gateway_ip_address=gateway_ip,
         )
         with self.assertRaises(IntegrityError):
-            subnet.save()
+            duplicate_subnet.save()
 
     def test_constraint_unique_preferred_ip_per_bridge_domain(self) -> None:
         """Test unique constraint of one preferred ip address per ACI BD."""
         bd = ACIBridgeDomain.objects.get(name=self.aci_bd_name)
         gateway_ip = IPAddress.objects.create(address="10.0.2.1/24")
-        subnet = ACIBridgeDomainSubnet(
+        second_preferred_ip_subnet = ACIBridgeDomainSubnet(
             name="ACIBDSubnetTest1",
             aci_bridge_domain=bd,
             gateway_ip_address=gateway_ip,
             preferred_ip_address_enabled=True,
         )
         with self.assertRaises(IntegrityError):
-            subnet.save()
+            second_preferred_ip_subnet.save()
 
 
 class ACIEndpointGroupTestCase(TestCase):
@@ -1264,10 +1264,10 @@ class ACIEndpointGroupTestCase(TestCase):
         """Test unique constraint of ACI EPG name per ACI App Profile."""
         app_profile = ACIAppProfile.objects.get(name=self.aci_app_profile_name)
         bd = ACIBridgeDomain.objects.get(name=self.aci_bd_name)
-        epg = ACIEndpointGroup(
+        duplicate_epg = ACIEndpointGroup(
             name=self.aci_epg_name,
             aci_app_profile=app_profile,
             aci_bridge_domain=bd,
         )
         with self.assertRaises(IntegrityError):
-            epg.save()
+            duplicate_epg.save()
