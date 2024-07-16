@@ -28,621 +28,1311 @@ from ..models.tenants import ACITenant
 class ACITenantTestCase(TestCase):
     """Test case for ACITenant model."""
 
-    def setUp(self) -> None:
-        """Set up an ACI Tenant for testing."""
-        acitenant_name = "ACITestTenant1"
-        acitenant_name_alias = "TestingTenant"
-        acitenant_description = "Tenant for NetBox ACI Plugin testing"
-        acitenant_comments = """
-        Tenant for NetBox ACI Plugin testing.
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACITenant model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_tenant_alias = "ACITestTenantAlias"
+        cls.aci_tenant_description = "ACI Test Tenant for NetBox ACI Plugin"
+        cls.aci_tenant_comments = """
+        ACI Tenant for NetBox ACI Plugin testing.
         """
-        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
+        cls.nb_tenant_name = "NetBoxTestTenant"
 
-        self.aci_tenant = ACITenant.objects.create(
-            name=acitenant_name,
-            name_alias=acitenant_name_alias,
-            description=acitenant_description,
-            comments=acitenant_comments,
-            nb_tenant=nb_tenant,
+        # Create objects
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.aci_tenant = ACITenant.objects.create(
+            name=cls.aci_tenant_name,
+            name_alias=cls.aci_tenant_alias,
+            description=cls.aci_tenant_description,
+            comments=cls.aci_tenant_comments,
+            nb_tenant=cls.nb_tenant,
         )
-        super().setUp()
 
-    def test_create_aci_tenant(self) -> None:
-        """Test type and values of created ACI Tenant."""
+    def test_aci_tenant_instance(self) -> None:
+        """Test type of created ACI Tenant."""
         self.assertTrue(isinstance(self.aci_tenant, ACITenant))
+
+    def test_aci_tenant_str_return_value(self) -> None:
+        """Test string value of created ACI Tenant."""
         self.assertEqual(self.aci_tenant.__str__(), self.aci_tenant.name)
-        self.assertEqual(self.aci_tenant.name_alias, "TestingTenant")
+
+    def test_aci_tenant_name_alias(self) -> None:
+        """Test alias of ACI Tenant."""
+        self.assertEqual(self.aci_tenant.name_alias, self.aci_tenant_alias)
+
+    def test_aci_tenant_description(self) -> None:
+        """Test description of ACI Tenant."""
         self.assertEqual(
-            self.aci_tenant.description, "Tenant for NetBox ACI Plugin testing"
+            self.aci_tenant.description, self.aci_tenant_description
         )
+
+    def test_aci_tenant_nb_tenant_instance(self) -> None:
+        """Test the Netbox tenant associated with ACI Tenant."""
         self.assertTrue(isinstance(self.aci_tenant.nb_tenant, Tenant))
-        self.assertEqual(self.aci_tenant.nb_tenant.name, "NetBox Tenant")
+
+    def test_aci_tenant_nb_tenant_name(self) -> None:
+        """Test the Netbox tenant name associated with ACI Tenant."""
+        self.assertEqual(self.aci_tenant.nb_tenant.name, self.nb_tenant_name)
 
     def test_invalid_aci_tenant_name(self) -> None:
         """Test validation of ACI Tenant naming."""
         tenant = ACITenant(name="ACI Test Tenant 1")
-        self.assertRaises(ValidationError, tenant.full_clean)
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
+
+    def test_invalid_aci_tenant_name_length(self) -> None:
+        """Test validation of ACI Tenant name length."""
+        tenant = ACITenant(
+            name="T" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
 
     def test_invalid_aci_tenant_name_alias(self) -> None:
-        """Test validation of ACI Tenant aliasing."""
+        """Test validation of ACI Tenant alias."""
         tenant = ACITenant(name="ACITestTenant1", name_alias="Invalid Alias")
-        self.assertRaises(ValidationError, tenant.full_clean)
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
+
+    def test_invalid_aci_tenant_name_alias_length(self) -> None:
+        """Test validation of ACI Tenant name alias length."""
+        tenant = ACITenant(
+            name="ACITestTenant1",
+            name_alias="T" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
 
     def test_invalid_aci_tenant_description(self) -> None:
         """Test validation of ACI Tenant description."""
         tenant = ACITenant(
             name="ACITestTenant1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, tenant.full_clean)
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
+
+    def test_invalid_aci_tenant_description_length(self) -> None:
+        """Test validation of ACI Tenant description length."""
+        tenant = ACITenant(
+            name="ACITestTenant1",
+            description="T" * 129,  # Exceeding the maximum length of 128
+        )
+        with self.assertRaises(ValidationError):
+            tenant.full_clean()
 
     def test_constraint_unique_aci_tenant_name(self) -> None:
         """Test unique constraint of ACI Tenant name."""
-        tenant = ACITenant(name="ACITestTenant1")
-        self.assertRaises(IntegrityError, tenant.save)
+        duplicate_tenant = ACITenant(name=self.aci_tenant_name)
+        with self.assertRaises(IntegrityError):
+            duplicate_tenant.save()
 
 
 class ACIAppProfileTestCase(TestCase):
     """Test case for ACIAppProfile model."""
 
-    def setUp(self) -> None:
-        """Set up an ACI AppProfile for testing."""
-        acitenant_name = "ACITestTenant1"
-        aciappprofile_name = "AppProfileTest1"
-        aciappprofile_name_alias = "TestingAppProfile"
-        aciappprofile_description = "AppProfile for NetBox ACI Plugin testing"
-        aciappprofile_comments = """
-        AppProfile for NetBox ACI Plugin testing.
-        """
-        aci_tenant = ACITenant.objects.create(name=acitenant_name)
-        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
-
-        self.aci_app_profile = ACIAppProfile.objects.create(
-            name=aciappprofile_name,
-            name_alias=aciappprofile_name_alias,
-            description=aciappprofile_description,
-            comments=aciappprofile_comments,
-            aci_tenant=aci_tenant,
-            nb_tenant=nb_tenant,
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIAppProfile model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_app_profile_name = "ACITestAppProfile"
+        cls.aci_app_profile_alias = "ACITestAppProfileAlias"
+        cls.aci_app_profile_description = (
+            "ACI Test Application Profile for NetBox ACI Plugin"
         )
-        super().setUp()
+        cls.aci_app_profile_comments = """
+        ACI Application Profile for NetBox ACI Plugin testing.
+        """
+        cls.nb_tenant_name = "NetBoxTestTenant"
 
-    def test_create_aci_app_profile(self) -> None:
-        """Test type and values of created ACI Application Profile."""
+        # Create objects
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.aci_app_profile = ACIAppProfile.objects.create(
+            name=cls.aci_app_profile_name,
+            name_alias=cls.aci_app_profile_alias,
+            description=cls.aci_app_profile_description,
+            comments=cls.aci_app_profile_comments,
+            aci_tenant=cls.aci_tenant,
+            nb_tenant=cls.nb_tenant,
+        )
+
+    def test_aci_app_profile_instance(self) -> None:
+        """Test type of created ACI Application Profile."""
         self.assertTrue(isinstance(self.aci_app_profile, ACIAppProfile))
+
+    def test_aci_app_profile_str(self) -> None:
+        """Test string value of created ACI Application Profile."""
         self.assertEqual(
             self.aci_app_profile.__str__(), self.aci_app_profile.name
         )
-        self.assertEqual(self.aci_app_profile.name_alias, "TestingAppProfile")
+
+    def test_aci_app_profile_alias(self) -> None:
+        """Test alias of ACI Application Profile."""
         self.assertEqual(
-            self.aci_app_profile.description,
-            "AppProfile for NetBox ACI Plugin testing",
+            self.aci_app_profile.name_alias, self.aci_app_profile_alias
         )
+
+    def test_aci_app_profile_description(self) -> None:
+        """Test description of ACI Application Profile."""
+        self.assertEqual(
+            self.aci_app_profile.description, self.aci_app_profile_description
+        )
+
+    def test_aci_app_profile_aci_tenant_instance(self) -> None:
+        """Test the ACI Tenant instance associated with ACI App Profile."""
         self.assertTrue(isinstance(self.aci_app_profile.aci_tenant, ACITenant))
+
+    def test_aci_app_profile_aci_tenant_name(self) -> None:
+        """Test the ACI Tenant name associated with ACI Application Profile."""
         self.assertEqual(
-            self.aci_app_profile.aci_tenant.name, "ACITestTenant1"
+            self.aci_app_profile.aci_tenant.name, self.aci_tenant_name
         )
+
+    def test_aci_app_profile_nb_tenant_instance(self) -> None:
+        """Test the Netbox tenant associated with ACI Application Profile."""
         self.assertTrue(isinstance(self.aci_app_profile.nb_tenant, Tenant))
-        self.assertEqual(self.aci_app_profile.nb_tenant.name, "NetBox Tenant")
+
+    def test_aci_app_profile_nb_tenant_name(self) -> None:
+        """Test the Netbox tenant name associated with ACI App Profile."""
+        self.assertEqual(
+            self.aci_app_profile.nb_tenant.name, self.nb_tenant_name
+        )
 
     def test_invalid_aci_app_profile_name(self) -> None:
-        """Test validation of ACI AppProfile naming."""
+        """Test validation of ACI Application Profile naming."""
         app_profile = ACIAppProfile(name="ACI App Profile Test 1")
-        self.assertRaises(ValidationError, app_profile.full_clean)
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
+
+    def test_invalid_aci_app_profile_name_length(self) -> None:
+        """Test validation of ACI Application Profile name length."""
+        app_profile = ACIAppProfile(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
 
     def test_invalid_aci_app_profile_name_alias(self) -> None:
-        """Test validation of ACI AppProfile aliasing."""
+        """Test validation of ACI Application Profile aliasing."""
         app_profile = ACIAppProfile(
             name="ACIAppProfileTest1", name_alias="Invalid Alias"
         )
-        self.assertRaises(ValidationError, app_profile.full_clean)
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
+
+    def test_invalid_aci_app_profile_name_alias_length(self) -> None:
+        """Test validation of ACI Application Profile name alias length."""
+        app_profile = ACIAppProfile(
+            name="ACIAppProfileTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
 
     def test_invalid_aci_app_profile_description(self) -> None:
-        """Test validation of ACI AppProfile description."""
+        """Test validation of ACI Application Profile description."""
         app_profile = ACIAppProfile(
             name="ACIAppProfileTest1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, app_profile.full_clean)
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
+
+    def test_invalid_aci_app_profile_description_length(self) -> None:
+        """Test validation of ACI Application Profile description length."""
+        app_profile = ACIAppProfile(
+            name="ACIAppProfileTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+        )
+        with self.assertRaises(ValidationError):
+            app_profile.full_clean()
 
     def test_constraint_unique_aci_app_profile_name_per_aci_tenant(
         self,
     ) -> None:
         """Test unique constraint of ACI AppProfile name per ACI Tenant."""
-        tenant = ACITenant.objects.get(name="ACITestTenant1")
-        app_profile = ACIAppProfile(name="AppProfileTest1", aci_tenant=tenant)
-        self.assertRaises(IntegrityError, app_profile.save)
+        tenant = ACITenant.objects.get(name=self.aci_tenant_name)
+        duplicate_app_profile = ACIAppProfile(
+            name=self.aci_app_profile_name, aci_tenant=tenant
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_app_profile.save()
 
 
 class ACIVRFTestCase(TestCase):
     """Test case for ACIVRF model."""
 
-    def setUp(self) -> None:
-        """Set up an ACI VRF for testing."""
-        acitenant_name = "ACITestTenant1"
-        acivrf_name = "VRFTest1"
-        acivrf_name_alias = "TestingVRF"
-        acivrf_description = "VRF for NetBox ACI Plugin testing"
-        acivrf_comments = """
-        VRF for NetBox ACI Plugin testing.
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIVRF model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_vrf_name = "ACITestVRF"
+        cls.aci_vrf_alias = "ACITestVRFAlias"
+        cls.aci_vrf_description = "ACI Test VRF for NetBox ACI Plugin"
+        cls.aci_vrf_comments = """
+        ACI VRF for NetBox ACI Plugin testing.
         """
-        acivrf_bd_enforcement_enabled = False
-        acivrf_dns_labels = ["DNS1", "DNS2"]
-        acivrf_ip_dp_learning_enabled = False
-        acivrf_pc_enforcement_direction = (
+        cls.aci_vrf_bd_enforcement_enabled = False
+        cls.aci_vrf_dns_labels = ["DNS1", "DNS2"]
+        cls.aci_vrf_ip_dp_learning_enabled = False
+        cls.aci_vrf_pc_enforcement_direction = (
             VRFPCEnforcementDirectionChoices.DIR_EGRESS
         )
-        acivrf_pc_enforcement_preference = (
+        cls.aci_vrf_pc_enforcement_preference = (
             VRFPCEnforcementPreferenceChoices.PREF_UNENFORCED
         )
-        acivrf_pim_ipv4_enabled = False
-        acivrf_pim_ipv6_enabled = False
-        acivrf_preferred_group_enabled = True
-        aci_tenant = ACITenant.objects.create(name=acitenant_name)
-        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
-        nb_vrf = VRF.objects.create(name="NetBox-VRF", tenant=nb_tenant)
+        cls.aci_vrf_pim_ipv4_enabled = False
+        cls.aci_vrf_pim_ipv6_enabled = False
+        cls.aci_vrf_preferred_group_enabled = True
+        cls.nb_tenant_name = "NetBoxTestTenant"
+        cls.nb_vrf_name = "NetBoxTestVRF"
 
-        self.aci_vrf = ACIVRF.objects.create(
-            name=acivrf_name,
-            name_alias=acivrf_name_alias,
-            description=acivrf_description,
-            comments=acivrf_comments,
-            aci_tenant=aci_tenant,
-            nb_tenant=nb_tenant,
-            nb_vrf=nb_vrf,
-            bd_enforcement_enabled=acivrf_bd_enforcement_enabled,
-            dns_labels=acivrf_dns_labels,
-            ip_data_plane_learning_enabled=acivrf_ip_dp_learning_enabled,
-            pc_enforcement_direction=acivrf_pc_enforcement_direction,
-            pc_enforcement_preference=acivrf_pc_enforcement_preference,
-            pim_ipv4_enabled=acivrf_pim_ipv4_enabled,
-            pim_ipv6_enabled=acivrf_pim_ipv6_enabled,
-            preferred_group_enabled=acivrf_preferred_group_enabled,
+        # Create objects
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.nb_vrf = VRF.objects.create(
+            name=cls.nb_vrf_name, tenant=cls.nb_tenant
         )
-        super().setUp()
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.aci_vrf = ACIVRF.objects.create(
+            name=cls.aci_vrf_name,
+            name_alias=cls.aci_vrf_alias,
+            description=cls.aci_vrf_description,
+            comments=cls.aci_vrf_comments,
+            aci_tenant=cls.aci_tenant,
+            nb_tenant=cls.nb_tenant,
+            nb_vrf=cls.nb_vrf,
+            bd_enforcement_enabled=cls.aci_vrf_bd_enforcement_enabled,
+            dns_labels=cls.aci_vrf_dns_labels,
+            ip_data_plane_learning_enabled=cls.aci_vrf_ip_dp_learning_enabled,
+            pc_enforcement_direction=cls.aci_vrf_pc_enforcement_direction,
+            pc_enforcement_preference=cls.aci_vrf_pc_enforcement_preference,
+            pim_ipv4_enabled=cls.aci_vrf_pim_ipv4_enabled,
+            pim_ipv6_enabled=cls.aci_vrf_pim_ipv6_enabled,
+            preferred_group_enabled=cls.aci_vrf_preferred_group_enabled,
+        )
 
-    def test_create_aci_vrf(self) -> None:
-        """Test type and values of created ACI VRF."""
+    def test_aci_vrf_instance(self) -> None:
+        """Test type of created ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf, ACIVRF))
+
+    def test_aci_vrf_str(self) -> None:
+        """Test string value of created ACI VRF."""
         self.assertEqual(self.aci_vrf.__str__(), self.aci_vrf.name)
-        self.assertEqual(self.aci_vrf.name_alias, "TestingVRF")
-        self.assertEqual(
-            self.aci_vrf.description, "VRF for NetBox ACI Plugin testing"
-        )
+
+    def test_aci_vrf_alias(self) -> None:
+        """Test alias of ACI VRF."""
+        self.assertEqual(self.aci_vrf.name_alias, self.aci_vrf_alias)
+
+    def test_aci_vrf_description(self) -> None:
+        """Test description of ACI VRF."""
+        self.assertEqual(self.aci_vrf.description, self.aci_vrf_description)
+
+    def test_aci_vrf_aci_tenant_instance(self) -> None:
+        """Test the ACI Tenant instance associated with ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf.aci_tenant, ACITenant))
-        self.assertEqual(self.aci_vrf.aci_tenant.name, "ACITestTenant1")
+
+    def test_aci_vrf_aci_tenant_name(self) -> None:
+        """Test the ACI Tenant name associated with ACI VRF."""
+        self.assertEqual(self.aci_vrf.aci_tenant.name, self.aci_tenant_name)
+
+    def test_aci_vrf_nb_tenant_instance(self) -> None:
+        """Test the Netbox Tenant instance associated with ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf.nb_tenant, Tenant))
-        self.assertEqual(self.aci_vrf.nb_tenant.name, "NetBox Tenant")
+
+    def test_aci_vrf_nb_tenant_name(self) -> None:
+        """Test the Netbox tenant name associated with ACI VRF."""
+        self.assertEqual(self.aci_vrf.nb_tenant.name, self.nb_tenant_name)
+
+    def test_aci_vrf_nb_vrf_instance(self) -> None:
+        """Test the Netbox VRF instance associated with ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf.nb_vrf, VRF))
-        self.assertEqual(self.aci_vrf.nb_vrf.name, "NetBox-VRF")
-        self.assertEqual(self.aci_vrf.bd_enforcement_enabled, False)
-        self.assertEqual(self.aci_vrf.dns_labels, ["DNS1", "DNS2"])
-        self.assertEqual(self.aci_vrf.ip_data_plane_learning_enabled, False)
-        self.assertEqual(self.aci_vrf.pc_enforcement_direction, "egress")
-        self.assertEqual(self.aci_vrf.pc_enforcement_preference, "unenforced")
-        self.assertEqual(self.aci_vrf.pim_ipv4_enabled, False)
-        self.assertEqual(self.aci_vrf.pim_ipv6_enabled, False)
-        self.assertEqual(self.aci_vrf.preferred_group_enabled, True)
+
+    def test_aci_vrf_nb_vrf_name(self) -> None:
+        """Test the Netbox VRF name associated with ACI VRF."""
+        self.assertEqual(self.aci_vrf.nb_vrf.name, self.nb_vrf_name)
+
+    def test_aci_vrf_bd_enforcement_enabled(self) -> None:
+        """Test the 'Bridge Domain enforcement enabled' option of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.bd_enforcement_enabled,
+            self.aci_vrf.bd_enforcement_enabled,
+        )
+
+    def test_aci_vrf_dns_labels(self) -> None:
+        """Test the 'DNS labels' option of ACI VRF."""
+        self.assertEqual(self.aci_vrf.dns_labels, self.aci_vrf_dns_labels)
+
+    def test_aci_vrf_ip_data_plane_learning_enabled(self) -> None:
+        """Test the 'IP data plane learning enabled' option of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.ip_data_plane_learning_enabled,
+            self.aci_vrf_ip_dp_learning_enabled,
+        )
+
+    def test_aci_vrf_pc_enforcement_direction(self) -> None:
+        """Test the 'PC enforcement direction' option of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.pc_enforcement_direction,
+            self.aci_vrf_pc_enforcement_direction,
+        )
+
+    def test_aci_vrf_pc_enforcement_preference(self) -> None:
+        """Test the 'PC enforcement preference' option of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.pc_enforcement_preference,
+            self.aci_vrf_pc_enforcement_preference,
+        )
+
+    def test_aci_vrf_pim_ipv4_enabled(self) -> None:
+        """Test the 'PIM IPv4 enabled' option of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.pim_ipv4_enabled, self.aci_vrf_pim_ipv4_enabled
+        )
+
+    def test_aci_vrf_pim_ipv6_enabled(self) -> None:
+        """Test the 'PIM IPv6 enabled' option of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.pim_ipv6_enabled, self.aci_vrf_pim_ipv6_enabled
+        )
+
+    def test_aci_vrf_preferred_group_enabled(self) -> None:
+        """Test the 'preferred group enabled' option of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.preferred_group_enabled,
+            self.aci_vrf_preferred_group_enabled,
+        )
+
+    def test_aci_vrf_get_pc_enforcement_direction_color(self) -> None:
+        """Test the 'get_pc_enforcement_direction_color' method of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.get_pc_enforcement_direction_color(),
+            VRFPCEnforcementDirectionChoices.colors.get(
+                VRFPCEnforcementDirectionChoices.DIR_EGRESS
+            ),
+        )
+
+    def test_aci_vrf_get_pc_enforcement_preference_color(self) -> None:
+        """Test the 'get_pc_enforcement_preference_color' method of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.get_pc_enforcement_preference_color(),
+            VRFPCEnforcementPreferenceChoices.colors.get(
+                VRFPCEnforcementPreferenceChoices.PREF_UNENFORCED
+            ),
+        )
 
     def test_invalid_aci_vrf_name(self) -> None:
         """Test validation of ACI VRF naming."""
         vrf = ACIVRF(name="ACI VRF Test 1")
-        self.assertRaises(ValidationError, vrf.full_clean)
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
+
+    def test_invalid_aci_vrf_name_length(self) -> None:
+        """Test validation of ACI VRF name length."""
+        vrf = ACIVRF(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
 
     def test_invalid_aci_vrf_name_alias(self) -> None:
         """Test validation of ACI VRF aliasing."""
         vrf = ACIVRF(name="ACIVRFTest1", name_alias="Invalid Alias")
-        self.assertRaises(ValidationError, vrf.full_clean)
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
+
+    def test_invalid_aci_vrf_name_alias_length(self) -> None:
+        """Test validation of ACI VRF name alias length."""
+        vrf = ACIVRF(
+            name="ACIVRFTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
 
     def test_invalid_aci_vrf_description(self) -> None:
         """Test validation of ACI VRF description."""
         vrf = ACIVRF(name="ACIVRFTest1", description="Invalid Description: ö")
-        self.assertRaises(ValidationError, vrf.full_clean)
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
+
+    def test_invalid_aci_vrf_description_length(self) -> None:
+        """Test validation of ACI VRF description length."""
+        vrf = ACIVRF(
+            name="ACIVRFTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+        )
+        with self.assertRaises(ValidationError):
+            vrf.full_clean()
 
     def test_constraint_unique_aci_vrf_name_per_aci_tenant(self) -> None:
         """Test unique constraint of ACI VRF name per ACI Tenant."""
-        tenant = ACITenant.objects.get(name="ACITestTenant1")
-        vrf = ACIVRF(name="VRFTest1", aci_tenant=tenant)
-        self.assertRaises(IntegrityError, vrf.save)
+        tenant = ACITenant.objects.get(name=self.aci_tenant_name)
+        duplicate_vrf = ACIVRF(name=self.aci_vrf_name, aci_tenant=tenant)
+        with self.assertRaises(IntegrityError):
+            duplicate_vrf.save()
 
 
 class ACIBridgeDomainTestCase(TestCase):
     """Test case for ACIBridgeDomain model."""
 
-    def setUp(self) -> None:
-        """Set up an ACI Bridge Domain for testing."""
-        acitenant_name = "ACITestTenant1"
-        acivrf_name = "VRFTest1"
-        acibd_name = "BDTest1"
-        acibd_name_alias = "TestingBD"
-        acibd_description = "BD for NetBox ACI Plugin testing"
-        acibd_comments = """
-        BD for NetBox ACI Plugin testing.
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIBridgeDomain model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_vrf_name = "ACITestVRF"
+        cls.aci_bd_name = "ACITestBD"
+        cls.aci_bd_alias = "ACITestBDAlias"
+        cls.aci_bd_description = "ACI Test Bridge Domain for NetBox ACI Plugin"
+        cls.aci_bd_comments = """
+        ACI Bridge Domain for NetBox ACI Plugin testing.
         """
-        acibd_advertise_host_routes_enabled = False
-        acibd_arp_flooding_enabled = True
-        acibd_clear_remote_mac_enabled = True
-        acibd_dhcp_labels = ["DHCP1", "DHCP2"]
-        acibd_ep_move_detection_enabled = True
-        acibd_igmp_interface_policy_name = "IGMPInterfacePolicy1"
-        acibd_igmp_snooping_policy_name = "IGMPSnoopingPolicy1"
-        acibd_ip_dp_learning_enabled = True
-        acibd_limit_ip_learn_enabled = True
-        acibd_mac_address = "00:11:22:33:44:55"
-        acibd_multi_destination_flooding = (
+        cls.aci_bd_advertise_host_routes_enabled = False
+        cls.aci_bd_arp_flooding_enabled = True
+        cls.aci_bd_clear_remote_mac_enabled = True
+        cls.aci_bd_dhcp_labels = ["DHCP1", "DHCP2"]
+        cls.aci_bd_ep_move_detection_enabled = True
+        cls.aci_bd_igmp_interface_policy_name = "IGMPInterfacePolicy1"
+        cls.aci_bd_igmp_snooping_policy_name = "IGMPSnoopingPolicy1"
+        cls.aci_bd_ip_dp_learning_enabled = True
+        cls.aci_bd_limit_ip_learn_enabled = True
+        cls.aci_bd_mac_address = "00:11:22:33:44:55"
+        cls.aci_bd_multi_destination_flooding = (
             BDMultiDestinationFloodingChoices.FLOOD_BD
         )
-        acibd_pim_ipv4_enabled = False
-        acibd_pim_ipv4_destination_filter = "PIMDestinationFilter1"
-        acibd_pim_ipv4_source_filter = "PIMSourceFilter1"
-        acibd_pim_ipv6_enabled = False
-        acibd_unicast_routing_enabled = True
-        acibd_unknown_ipv4_multicast = (
+        cls.aci_bd_pim_ipv4_enabled = False
+        cls.aci_bd_pim_ipv4_destination_filter = "PIMDestinationFilter1"
+        cls.aci_bd_pim_ipv4_source_filter = "PIMSourceFilter1"
+        cls.aci_bd_pim_ipv6_enabled = False
+        cls.aci_bd_unicast_routing_enabled = True
+        cls.aci_bd_unknown_ipv4_multicast = (
             BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD
         )
-        acibd_unknown_ipv6_multicast = (
+        cls.aci_bd_unknown_ipv6_multicast = (
             BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD
         )
-        acibd_unknown_unicast = BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY
-        acibd_virtual_mac_address = "00:11:22:33:44:55"
+        cls.aci_bd_unknown_unicast = BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY
+        cls.aci_bd_virtual_mac_address = "00:11:22:33:44:55"
 
-        aci_tenant = ACITenant.objects.create(name=acitenant_name)
-        aci_vrf = ACIVRF.objects.create(
-            name=acivrf_name, aci_tenant=aci_tenant
+        cls.nb_tenant_name = "NetBoxTestTenant"
+
+        # Create objects
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.aci_vrf = ACIVRF.objects.create(
+            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
         )
-        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
-
-        self.aci_bd = ACIBridgeDomain.objects.create(
-            name=acibd_name,
-            name_alias=acibd_name_alias,
-            description=acibd_description,
-            comments=acibd_comments,
-            aci_tenant=aci_tenant,
-            aci_vrf=aci_vrf,
-            nb_tenant=nb_tenant,
-            advertise_host_routes_enabled=acibd_advertise_host_routes_enabled,
-            arp_flooding_enabled=acibd_arp_flooding_enabled,
-            clear_remote_mac_enabled=acibd_clear_remote_mac_enabled,
-            dhcp_labels=acibd_dhcp_labels,
-            ep_move_detection_enabled=acibd_ep_move_detection_enabled,
-            igmp_interface_policy_name=acibd_igmp_interface_policy_name,
-            igmp_snooping_policy_name=acibd_igmp_snooping_policy_name,
-            ip_data_plane_learning_enabled=acibd_ip_dp_learning_enabled,
-            limit_ip_learn_enabled=acibd_limit_ip_learn_enabled,
-            mac_address=acibd_mac_address,
-            multi_destination_flooding=acibd_multi_destination_flooding,
-            pim_ipv4_enabled=acibd_pim_ipv4_enabled,
-            pim_ipv4_destination_filter=acibd_pim_ipv4_destination_filter,
-            pim_ipv4_source_filter=acibd_pim_ipv4_source_filter,
-            pim_ipv6_enabled=acibd_pim_ipv6_enabled,
-            unicast_routing_enabled=acibd_unicast_routing_enabled,
-            unknown_ipv4_multicast=acibd_unknown_ipv4_multicast,
-            unknown_ipv6_multicast=acibd_unknown_ipv6_multicast,
-            unknown_unicast=acibd_unknown_unicast,
-            virtual_mac_address=acibd_virtual_mac_address,
+        cls.aci_bd = ACIBridgeDomain.objects.create(
+            name=cls.aci_bd_name,
+            name_alias=cls.aci_bd_alias,
+            description=cls.aci_bd_description,
+            comments=cls.aci_bd_comments,
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+            nb_tenant=cls.nb_tenant,
+            advertise_host_routes_enabled=(
+                cls.aci_bd_advertise_host_routes_enabled
+            ),
+            arp_flooding_enabled=cls.aci_bd_arp_flooding_enabled,
+            clear_remote_mac_enabled=cls.aci_bd_clear_remote_mac_enabled,
+            dhcp_labels=cls.aci_bd_dhcp_labels,
+            ep_move_detection_enabled=cls.aci_bd_ep_move_detection_enabled,
+            igmp_interface_policy_name=cls.aci_bd_igmp_interface_policy_name,
+            igmp_snooping_policy_name=cls.aci_bd_igmp_snooping_policy_name,
+            ip_data_plane_learning_enabled=cls.aci_bd_ip_dp_learning_enabled,
+            limit_ip_learn_enabled=cls.aci_bd_limit_ip_learn_enabled,
+            mac_address=cls.aci_bd_mac_address,
+            multi_destination_flooding=cls.aci_bd_multi_destination_flooding,
+            pim_ipv4_enabled=cls.aci_bd_pim_ipv4_enabled,
+            pim_ipv4_destination_filter=cls.aci_bd_pim_ipv4_destination_filter,
+            pim_ipv4_source_filter=cls.aci_bd_pim_ipv4_source_filter,
+            pim_ipv6_enabled=cls.aci_bd_pim_ipv6_enabled,
+            unicast_routing_enabled=cls.aci_bd_unicast_routing_enabled,
+            unknown_ipv4_multicast=cls.aci_bd_unknown_ipv4_multicast,
+            unknown_ipv6_multicast=cls.aci_bd_unknown_ipv6_multicast,
+            unknown_unicast=cls.aci_bd_unknown_unicast,
+            virtual_mac_address=cls.aci_bd_virtual_mac_address,
         )
-        super().setUp()
 
-    def test_create_aci_bridge_domain(self) -> None:
-        """Test type and values of created ACI Bridge Domain."""
+    def test_aci_bd_type(self) -> None:
+        """Test type of ACI Bridge Domain."""
         self.assertTrue(isinstance(self.aci_bd, ACIBridgeDomain))
+
+    def test_aci_bd_name(self) -> None:
+        """Test string value of created ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.__str__(), self.aci_bd.name)
-        self.assertEqual(self.aci_bd.name_alias, "TestingBD")
-        self.assertEqual(
-            self.aci_bd.description, "BD for NetBox ACI Plugin testing"
-        )
+
+    def test_aci_bd_name_alias(self) -> None:
+        """Test alias of created ACI Bridge Domain."""
+        self.assertEqual(self.aci_bd.name_alias, self.aci_bd_alias)
+
+    def test_aci_bd_description(self) -> None:
+        """Test description of created ACI Bridge Domain."""
+        self.assertEqual(self.aci_bd.description, self.aci_bd_description)
+
+    def test_aci_bd_aci_tenant_type(self) -> None:
+        """Test the ACI Tenant instance associated with ACI Bridge Domain."""
         self.assertTrue(isinstance(self.aci_bd.aci_tenant, ACITenant))
-        self.assertEqual(self.aci_bd.aci_tenant.name, "ACITestTenant1")
+
+    def test_aci_bd_aci_tenant_name(self) -> None:
+        """Test the ACI Tenant name associated with ACI Bridge Domain."""
+        self.assertEqual(self.aci_bd.aci_tenant.name, self.aci_tenant_name)
+
+    def test_aci_bd_aci_vrf_type(self) -> None:
+        """Test the ACI VRF instance associated with ACI Bridge Domain."""
         self.assertTrue(isinstance(self.aci_bd.aci_vrf, ACIVRF))
-        self.assertEqual(self.aci_bd.aci_vrf.name, "VRFTest1")
+
+    def test_aci_bd_aci_vrf_name(self) -> None:
+        """Test the ACI VRF name associated with ACI Bridge Domain."""
+        self.assertEqual(self.aci_bd.aci_vrf.name, self.aci_vrf_name)
+
+    def test_aci_bd_nb_tenant_type(self) -> None:
+        """Test the NetBox tenant instance associated with ACI BD."""
         self.assertTrue(isinstance(self.aci_bd.nb_tenant, Tenant))
-        self.assertEqual(self.aci_bd.nb_tenant.name, "NetBox Tenant")
-        self.assertEqual(self.aci_bd.advertise_host_routes_enabled, False)
-        self.assertEqual(self.aci_bd.arp_flooding_enabled, True)
-        self.assertEqual(self.aci_bd.clear_remote_mac_enabled, True)
-        self.assertEqual(self.aci_bd.dhcp_labels, ["DHCP1", "DHCP2"])
-        self.assertEqual(self.aci_bd.ep_move_detection_enabled, True)
+
+    def test_aci_bd_nb_tenant_name(self) -> None:
+        """Test the NetBox tenant name associated with ACI Bridge Domain."""
+        self.assertEqual(self.aci_bd.nb_tenant.name, self.nb_tenant_name)
+
+    def test_aci_bd_advertise_host_routes_enabled(self) -> None:
+        """Test the 'advertise host routes enabled' option of ACI BD."""
         self.assertEqual(
-            self.aci_bd.igmp_interface_policy_name, "IGMPInterfacePolicy1"
+            self.aci_bd.advertise_host_routes_enabled,
+            self.aci_bd_advertise_host_routes_enabled,
         )
+
+    def test_aci_bd_arp_flooding_enabled(self) -> None:
+        """Test the 'ARP flooding enabled' option of ACI Bridge Domain."""
         self.assertEqual(
-            self.aci_bd.igmp_snooping_policy_name, "IGMPSnoopingPolicy1"
+            self.aci_bd.arp_flooding_enabled, self.aci_bd_arp_flooding_enabled
         )
-        self.assertEqual(self.aci_bd.ip_data_plane_learning_enabled, True)
-        self.assertEqual(self.aci_bd.limit_ip_learn_enabled, True)
-        self.assertEqual(self.aci_bd.mac_address, "00:11:22:33:44:55")
-        self.assertEqual(self.aci_bd.multi_destination_flooding, "bd-flood")
-        self.assertEqual(self.aci_bd.pim_ipv4_enabled, False)
+
+    def test_aci_bd_clear_remote_mac_enabled(self) -> None:
+        """Test the 'clear remote MAC enabled' option of ACI BD."""
         self.assertEqual(
-            self.aci_bd.pim_ipv4_destination_filter, "PIMDestinationFilter1"
+            self.aci_bd.clear_remote_mac_enabled,
+            self.aci_bd_clear_remote_mac_enabled,
         )
+
+    def test_aci_bd_dhcp_labels(self) -> None:
+        """Test the 'DHCP labels' option of ACI Bridge Domain."""
+        self.assertEqual(self.aci_bd.dhcp_labels, self.aci_bd_dhcp_labels)
+
+    def test_aci_bd_ep_move_detection_enabled(self) -> None:
+        """Test the 'EP move detection enabled' option of ACI BD."""
         self.assertEqual(
-            self.aci_bd.pim_ipv4_source_filter, "PIMSourceFilter1"
+            self.aci_bd.ep_move_detection_enabled,
+            self.aci_bd_ep_move_detection_enabled,
         )
-        self.assertEqual(self.aci_bd.pim_ipv6_enabled, False)
-        self.assertEqual(self.aci_bd.unicast_routing_enabled, True)
-        self.assertEqual(self.aci_bd.unknown_ipv4_multicast, "flood")
-        self.assertEqual(self.aci_bd.unknown_ipv6_multicast, "flood")
-        self.assertEqual(self.aci_bd.unknown_unicast, "proxy")
-        self.assertEqual(self.aci_bd.virtual_mac_address, "00:11:22:33:44:55")
+
+    def test_aci_bd_igmp_interface_policy_name(self) -> None:
+        """Test the 'IGMP interface policy name' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.igmp_interface_policy_name,
+            self.aci_bd_igmp_interface_policy_name,
+        )
+
+    def test_aci_bd_igmp_snooping_policy_name(self) -> None:
+        """Test the 'IGMP snooping policy name' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.igmp_snooping_policy_name,
+            self.aci_bd_igmp_snooping_policy_name,
+        )
+
+    def test_aci_bd_ip_data_plane_learning_enabled(self) -> None:
+        """Test the 'IP data-plane learning enabled' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.ip_data_plane_learning_enabled,
+            self.aci_bd_ip_dp_learning_enabled,
+        )
+
+    def test_aci_bd_limit_ip_learn_enabled(self) -> None:
+        """Test the 'limit IP learn enabled' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.limit_ip_learn_enabled,
+            self.aci_bd_limit_ip_learn_enabled,
+        )
+
+    def test_aci_bd_mac_address(self) -> None:
+        """Test ACI Bridge Domain's MAC address."""
+        self.assertEqual(self.aci_bd.mac_address, self.aci_bd_mac_address)
+
+    def test_aci_bd_multi_destination_flooding(self) -> None:
+        """Test the 'multi-destination flooding' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.multi_destination_flooding,
+            self.aci_bd_multi_destination_flooding,
+        )
+
+    def test_aci_bd_pim_ipv4_enabled(self) -> None:
+        """Test the 'PIM IPv4 enabled' option of ACI Bridge Domain."""
+        self.assertEqual(
+            self.aci_bd.pim_ipv4_enabled, self.aci_bd_pim_ipv4_enabled
+        )
+
+    def test_aci_bd_pim_ipv4_destination_filter(self) -> None:
+        """Test the 'PIM IPv4 destination filter' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.pim_ipv4_destination_filter,
+            self.aci_bd_pim_ipv4_destination_filter,
+        )
+
+    def test_aci_bd_pim_ipv4_source_filter(self) -> None:
+        """Test the 'PIM IPv4 source filter' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.pim_ipv4_source_filter,
+            self.aci_bd_pim_ipv4_source_filter,
+        )
+
+    def test_aci_bd_pim_ipv6_enabled(self) -> None:
+        """Test the 'PIM IPv6 enabled' option of ACI Bridge Domain."""
+        self.assertEqual(
+            self.aci_bd.pim_ipv6_enabled, self.aci_bd_pim_ipv6_enabled
+        )
+
+    def test_aci_bd_unicast_routing_enabled(self) -> None:
+        """Test the 'unicast routing enabled' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.unicast_routing_enabled,
+            self.aci_bd_unicast_routing_enabled,
+        )
+
+    def test_aci_bd_unknown_ipv4_multicast(self) -> None:
+        """Test the 'unknown IPv4 multicast' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.unknown_ipv4_multicast,
+            self.aci_bd_unknown_ipv4_multicast,
+        )
+
+    def test_aci_bd_unknown_ipv6_multicast(self) -> None:
+        """Test the 'unknown IPv6 multicast' option of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.unknown_ipv6_multicast,
+            self.aci_bd_unknown_ipv6_multicast,
+        )
+
+    def test_aci_bd_unknown_unicast(self) -> None:
+        """Test the 'unknown unicast' option of ACI Bridge Domain."""
+        self.assertEqual(
+            self.aci_bd.unknown_unicast, self.aci_bd_unknown_unicast
+        )
+
+    def test_aci_bd_virtual_mac_address(self) -> None:
+        """Test ACI Bridge Domain's virtual MAC address."""
+        self.assertEqual(
+            self.aci_bd.virtual_mac_address, self.aci_bd_virtual_mac_address
+        )
+
+    def test_aci_bridge_domain_get_multi_destination_flooding_color(
+        self,
+    ) -> None:
+        """Test the 'get_multi_destination_flooding_color' method of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.get_multi_destination_flooding_color(),
+            BDMultiDestinationFloodingChoices.colors.get(
+                BDMultiDestinationFloodingChoices.FLOOD_BD
+            ),
+        )
+
+    def test_aci_bridge_domain_get_unknown_ipv4_multicast_color(self) -> None:
+        """Test the 'get_unknown_ipv4_multicast_color' method of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.get_unknown_ipv4_multicast_color(),
+            BDUnknownMulticastChoices.colors.get(
+                BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD
+            ),
+        )
+
+    def test_aci_bridge_domain_get_unknown_ipv6_multicast_color(self) -> None:
+        """Test the 'get_unknown_ipv6_multicast_color' method of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.get_unknown_ipv6_multicast_color(),
+            BDUnknownMulticastChoices.colors.get(
+                BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD
+            ),
+        )
+
+    def test_aci_bridge_domain_get_unknown_unicast_color(self) -> None:
+        """Test the 'get_unknown_unicast_color' method of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.get_unknown_unicast_color(),
+            BDUnknownUnicastChoices.colors.get(
+                BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY
+            ),
+        )
 
     def test_invalid_aci_bridge_domain_name(self) -> None:
         """Test validation of ACI Bridge Domain naming."""
         bd = ACIBridgeDomain(name="ACI BD Test 1")
-        self.assertRaises(ValidationError, bd.full_clean)
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
+
+    def test_invalid_aci_bridge_domain_name_length(self) -> None:
+        """Test validation of ACI Bridge Domain name length."""
+        bd = ACIBridgeDomain(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
 
     def test_invalid_aci_bridge_domain_name_alias(self) -> None:
         """Test validation of ACI Bridge Domain aliasing."""
         bd = ACIBridgeDomain(name="ACIBDTest1", name_alias="Invalid Alias")
-        self.assertRaises(ValidationError, bd.full_clean)
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
+
+    def test_invalid_aci_bridge_domain_name_alias_length(self) -> None:
+        """Test validation of ACI Bridge Domain name alias length."""
+        bd = ACIBridgeDomain(
+            name="ACIBDTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
 
     def test_invalid_aci_bridge_domain_description(self) -> None:
         """Test validation of ACI Bridge Domain description."""
         bd = ACIBridgeDomain(
             name="ACIBDTest1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, bd.full_clean)
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
+
+    def test_invalid_aci_bridge_domain_description_length(self) -> None:
+        """Test validation of ACI Bridge Domain description length."""
+        bd = ACIBridgeDomain(
+            name="ACIBDTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+        )
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
 
     def test_constraint_unique_aci_bridge_domain_name_per_aci_tenant(
         self,
     ) -> None:
         """Test unique constraint of ACI Bridge Domain name per ACI Tenant."""
-        tenant = ACITenant.objects.get(name="ACITestTenant1")
-        vrf = ACIVRF.objects.get(name="VRFTest1")
-        bd = ACIBridgeDomain(name="BDTest1", aci_tenant=tenant, aci_vrf=vrf)
-        self.assertRaises(IntegrityError, bd.save)
+        tenant = ACITenant.objects.get(name=self.aci_tenant_name)
+        vrf = ACIVRF.objects.get(name=self.aci_vrf_name)
+        duplicate_bd = ACIBridgeDomain(
+            name=self.aci_bd_name, aci_tenant=tenant, aci_vrf=vrf
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_bd.save()
 
 
 class ACIBridgeDomainSubnetTestCase(TestCase):
     """Test case for ACIBridgeDomainSubnet model."""
 
-    def setUp(self) -> None:
-        """Set up an ACI Bridge Domain Subnet for testing."""
-        acitenant_name = "ACITestTenant1"
-        acivrf_name = "VRFTest1"
-        acibd_name = "BDTest1"
-        acisnet_name = "BDSubnetTest1"
-        acisnet_name_alias = "TestingBDSubnet"
-        acisnet_description = "BDSubnet for NetBox ACI Plugin testing"
-        acisnet_comments = """
-        BDSubnet for NetBox ACI Plugin testing.
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIBridgeDomainSubnet model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_vrf_name = "ACITestVRF"
+        cls.aci_bd_name = "ACITestBD"
+        cls.aci_bd_subnet_name = "ACITestBDSubnet"
+        cls.aci_bd_subnet_alias = "ACITestBDSubnetAlias"
+        cls.aci_bd_subnet_description = (
+            "ACI Test Bridge Domain Subnet for NetBox ACI Plugin"
+        )
+        cls.aci_bd_subnet_comments = """
+        ACI Bridge Domain Subnet for NetBox ACI Plugin testing.
         """
-        acisnet_gateway_ip_address = "10.0.0.1/24"
-        acisnet_advertised_externally_enabled = False
-        acisnet_igmp_querier_enabled = True
-        acisnet_ip_dp_learning_enabled = True
-        acisnet_no_default_gateway = False
-        acisnet_nd_ra_enabled = True
-        acisnet_nd_ra_prefix_policy_name = "NDRAPolicy1"
-        acisnet_preferred_ip_address_enabled = True
-        acisnet_shared_enabled = False
-        acisnet_virtual_ip_enabled = False
+        cls.aci_bd_subnet_gateway_ip_address = "10.0.0.1/24"
+        cls.aci_bd_subnet_advertised_externally_enabled = False
+        cls.aci_bd_subnet_igmp_querier_enabled = True
+        cls.aci_bd_subnet_ip_dp_learning_enabled = True
+        cls.aci_bd_subnet_no_default_gateway = False
+        cls.aci_bd_subnet_nd_ra_enabled = True
+        cls.aci_bd_subnet_nd_ra_prefix_policy_name = "NDRAPolicy1"
+        cls.aci_bd_subnet_preferred_ip_address_enabled = True
+        cls.aci_bd_subnet_shared_enabled = False
+        cls.aci_bd_subnet_virtual_ip_enabled = False
+        cls.nb_tenant_name = "NetBoxTestTenant"
 
-        aci_tenant = ACITenant.objects.create(name=acitenant_name)
-        aci_vrf = ACIVRF.objects.create(
-            name=acivrf_name, aci_tenant=aci_tenant
+        # Create objects
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.gateway_ip_address = IPAddress.objects.create(
+            address=cls.aci_bd_subnet_gateway_ip_address,
         )
-        aci_bridge_domain = ACIBridgeDomain.objects.create(
-            name=acibd_name, aci_tenant=aci_tenant, aci_vrf=aci_vrf
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.aci_vrf = ACIVRF.objects.create(
+            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
         )
-        aci_bd_gateway = IPAddress.objects.create(
-            address=acisnet_gateway_ip_address
+        cls.aci_bd = ACIBridgeDomain.objects.create(
+            name=cls.aci_bd_name,
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
         )
-        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
+        cls.aci_bd_subnet = ACIBridgeDomainSubnet.objects.create(
+            name=cls.aci_bd_subnet_name,
+            name_alias=cls.aci_bd_subnet_alias,
+            description=cls.aci_bd_subnet_description,
+            comments=cls.aci_bd_subnet_comments,
+            aci_bridge_domain=cls.aci_bd,
+            gateway_ip_address=cls.gateway_ip_address,
+            nb_tenant=cls.nb_tenant,
+            advertised_externally_enabled=(
+                cls.aci_bd_subnet_advertised_externally_enabled
+            ),
+            igmp_querier_enabled=cls.aci_bd_subnet_igmp_querier_enabled,
+            ip_data_plane_learning_enabled=(
+                cls.aci_bd_subnet_ip_dp_learning_enabled
+            ),
+            no_default_gateway=cls.aci_bd_subnet_no_default_gateway,
+            nd_ra_enabled=cls.aci_bd_subnet_nd_ra_enabled,
+            nd_ra_prefix_policy_name=(
+                cls.aci_bd_subnet_nd_ra_prefix_policy_name
+            ),
+            preferred_ip_address_enabled=(
+                cls.aci_bd_subnet_preferred_ip_address_enabled
+            ),
+            shared_enabled=cls.aci_bd_subnet_shared_enabled,
+            virtual_ip_enabled=cls.aci_bd_subnet_virtual_ip_enabled,
+        )
 
-        self.aci_bd_subnet = ACIBridgeDomainSubnet.objects.create(
-            name=acisnet_name,
-            name_alias=acisnet_name_alias,
-            description=acisnet_description,
-            comments=acisnet_comments,
-            aci_bridge_domain=aci_bridge_domain,
-            gateway_ip_address=aci_bd_gateway,
-            nb_tenant=nb_tenant,
-            advertised_externally_enabled=acisnet_advertised_externally_enabled,
-            igmp_querier_enabled=acisnet_igmp_querier_enabled,
-            ip_data_plane_learning_enabled=acisnet_ip_dp_learning_enabled,
-            no_default_gateway=acisnet_no_default_gateway,
-            nd_ra_enabled=acisnet_nd_ra_enabled,
-            nd_ra_prefix_policy_name=acisnet_nd_ra_prefix_policy_name,
-            preferred_ip_address_enabled=acisnet_preferred_ip_address_enabled,
-            shared_enabled=acisnet_shared_enabled,
-            virtual_ip_enabled=acisnet_virtual_ip_enabled,
-        )
-        super().setUp()
-
-    def test_create_aci_bridge_domain(self) -> None:
-        """Test type and values of created ACI Bridge Domain."""
+    def test_aci_bd_subnet_instance(self) -> None:
+        """Test instance of created ACI Bridge Domain Subnet."""
         self.assertTrue(isinstance(self.aci_bd_subnet, ACIBridgeDomainSubnet))
+
+    def test_aci_bd_subnet_str(self) -> None:
+        """Test string representation of ACI Bridge Domain Subnet."""
         self.assertEqual(self.aci_bd_subnet.__str__(), self.aci_bd_subnet.name)
-        self.assertEqual(self.aci_bd_subnet.name_alias, "TestingBDSubnet")
+
+    def test_aci_bd_subnet_name_alias(self) -> None:
+        """Test ACI Bridge Domain Subnet name alias."""
         self.assertEqual(
-            self.aci_bd_subnet.description,
-            "BDSubnet for NetBox ACI Plugin testing",
+            self.aci_bd_subnet.name_alias, self.aci_bd_subnet_alias
         )
+
+    def test_aci_bd_subnet_description(self) -> None:
+        """Test ACI Bridge Domain Subnet description."""
+        self.assertEqual(
+            self.aci_bd_subnet.description, self.aci_bd_subnet_description
+        )
+
+    def test_aci_bd_subnet_aci_tenant_instance(self) -> None:
+        """Test ACI Tenant instance in ACI Bridge Domain Subnet."""
         self.assertTrue(isinstance(self.aci_bd_subnet.aci_tenant, ACITenant))
-        self.assertEqual(self.aci_bd_subnet.aci_tenant.name, "ACITestTenant1")
+
+    def test_aci_bd_subnet_aci_tenant_name(self) -> None:
+        """Test ACI Tenant name of ACI Bridge Domain Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.aci_tenant.name, self.aci_tenant_name
+        )
+
+    def test_aci_bd_subnet_aci_vrf_instance(self) -> None:
+        """Test ACI VRF instance in ACI Bridge Domain Subnet."""
         self.assertTrue(isinstance(self.aci_bd_subnet.aci_vrf, ACIVRF))
-        self.assertEqual(self.aci_bd_subnet.aci_vrf.name, "VRFTest1")
+
+    def test_aci_bd_subnet_aci_vrf_name(self) -> None:
+        """Test ACI VRF name in ACI Bridge Domain Subnet."""
+        self.assertEqual(self.aci_bd_subnet.aci_vrf.name, self.aci_vrf_name)
+
+    def test_aci_bd_subnet_aci_bridge_domain_instance(self) -> None:
+        """Test ACI Bridge Domain instance in ACI Bridge Domain Subnet."""
         self.assertTrue(
             isinstance(self.aci_bd_subnet.aci_bridge_domain, ACIBridgeDomain)
         )
-        self.assertEqual(self.aci_bd_subnet.aci_bridge_domain.name, "BDTest1")
+
+    def test_aci_bd_subnet_aci_bridge_domain_name(self) -> None:
+        """Test ACI Bridge Domain name of ACI Bridge Domain Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.aci_bridge_domain.name, self.aci_bd_name
+        )
+
+    def test_aci_bd_subnet_gateway_ip_address_instance(self) -> None:
+        """Test gateway IP address instance associated with ACI BD Subnet."""
         self.assertTrue(
             isinstance(self.aci_bd_subnet.gateway_ip_address, IPAddress)
         )
+
+    def test_aci_bd_subnet_gateway_ip_address(self) -> None:
+        """Test gateway IP address of ACI Bridge Domain Subnet."""
         self.assertEqual(
-            self.aci_bd_subnet.gateway_ip_address.address, "10.0.0.1/24"
+            self.aci_bd_subnet.gateway_ip_address.address,
+            self.aci_bd_subnet_gateway_ip_address,
         )
+
+    def test_aci_bd_subnet_nb_tenant_instance(self) -> None:
+        """Test NetBox tenant instance in ACI Bridge Domain Subnet."""
         self.assertTrue(isinstance(self.aci_bd_subnet.nb_tenant, Tenant))
-        self.assertEqual(self.aci_bd_subnet.nb_tenant.name, "NetBox Tenant")
+
+    def test_aci_bd_subnet_nb_tenant_name(self) -> None:
+        """Test NetBox tenant name of ACI Bridge Domain Subnet."""
         self.assertEqual(
-            self.aci_bd_subnet.advertised_externally_enabled, False
+            self.aci_bd_subnet.nb_tenant.name, self.nb_tenant_name
         )
-        self.assertEqual(self.aci_bd_subnet.igmp_querier_enabled, True)
+
+    def test_aci_bd_subnet_advertised_externally_enabled(self) -> None:
+        """Test 'advertised externally enabled' option in ACI BD Subnet."""
         self.assertEqual(
-            self.aci_bd_subnet.ip_data_plane_learning_enabled, True
+            self.aci_bd_subnet.advertised_externally_enabled,
+            self.aci_bd_subnet_advertised_externally_enabled,
         )
-        self.assertEqual(self.aci_bd_subnet.no_default_gateway, False)
-        self.assertEqual(self.aci_bd_subnet.nd_ra_enabled, True)
+
+    def test_aci_bd_subnet_igmp_querier_enabled(self) -> None:
+        """Test 'IGMP querier enabled' option in ACI Bridge Domain Subnet."""
         self.assertEqual(
-            self.aci_bd_subnet.nd_ra_prefix_policy_name, "NDRAPolicy1"
+            self.aci_bd_subnet.igmp_querier_enabled,
+            self.aci_bd_subnet_igmp_querier_enabled,
         )
-        self.assertEqual(self.aci_bd_subnet.preferred_ip_address_enabled, True)
-        self.assertEqual(self.aci_bd_subnet.shared_enabled, False)
-        self.assertEqual(self.aci_bd_subnet.virtual_ip_enabled, False)
+
+    def test_aci_bd_subnet_ip_data_plane_learning_enabled(self) -> None:
+        """Test 'IP data plane learning enabled' option in ACI BD Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.ip_data_plane_learning_enabled,
+            self.aci_bd_subnet_ip_dp_learning_enabled,
+        )
+
+    def test_aci_bd_subnet_no_default_gateway(self) -> None:
+        """Test 'no default gateway' option in ACI Bridge Domain Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.no_default_gateway,
+            self.aci_bd_subnet_no_default_gateway,
+        )
+
+    def test_aci_bd_subnet_nd_ra_enabled(self) -> None:
+        """Test 'ND RA enabled' option in ACI Bridge Domain Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.nd_ra_enabled, self.aci_bd_subnet_nd_ra_enabled
+        )
+
+    def test_aci_bd_subnet_nd_ra_prefix_policy_name(self) -> None:
+        """Test 'ND RA prefix policy name' in ACI Bridge Domain Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.nd_ra_prefix_policy_name,
+            self.aci_bd_subnet_nd_ra_prefix_policy_name,
+        )
+
+    def test_aci_bd_subnet_preferred_ip_address_enabled(self) -> None:
+        """Test 'preferred IP address enabled' option in ACI BD Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.preferred_ip_address_enabled,
+            self.aci_bd_subnet_preferred_ip_address_enabled,
+        )
+
+    def test_aci_bd_subnet_shared_enabled(self) -> None:
+        """Test 'shared enabled' option in ACI Bridge Domain Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.shared_enabled,
+            self.aci_bd_subnet_shared_enabled,
+        )
+
+    def test_aci_bd_subnet_virtual_ip_enabled(self) -> None:
+        """Test 'virtual IP enabled' option in ACI Bridge Domain Subnet."""
+        self.assertEqual(
+            self.aci_bd_subnet.virtual_ip_enabled,
+            self.aci_bd_subnet_virtual_ip_enabled,
+        )
 
     def test_invalid_aci_bridge_domain_subnet_name(self) -> None:
         """Test validation of ACI Bridge Domain Subnet naming."""
         subnet = ACIBridgeDomainSubnet(name="ACI BDSubnet Test 1")
-        self.assertRaises(ValidationError, subnet.full_clean)
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
+
+    def test_invalid_aci_bridge_domain_subnet_name_length(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet name length."""
+        subnet = ACIBridgeDomainSubnet(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
 
     def test_invalid_aci_bridge_domain_subnet_name_alias(self) -> None:
         """Test validation of ACI Bridge Domain Subnet aliasing."""
         subnet = ACIBridgeDomainSubnet(
             name="ACIBDSubnetTest1", name_alias="Invalid Alias"
         )
-        self.assertRaises(ValidationError, subnet.full_clean)
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
+
+    def test_invalid_aci_bridge_domain_subnet_name_alias_length(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet name alias length."""
+        subnet = ACIBridgeDomainSubnet(
+            name="ACIBDSubnetTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
 
     def test_invalid_aci_bridge_domain_subnet_description(self) -> None:
         """Test validation of ACI Bridge Domain Subnet description."""
         subnet = ACIBridgeDomainSubnet(
             name="ACIBDSubnetTest1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, subnet.full_clean)
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
+
+    def test_invalid_aci_bridge_domain_subnet_description_length(self) -> None:
+        """Test validation of ACI Bridge Domain Subnet description length."""
+        subnet = ACIBridgeDomainSubnet(
+            name="ACIBDSubnetTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+        )
+        with self.assertRaises(ValidationError):
+            subnet.full_clean()
 
     def test_constraint_unique_aci_bd_subnet_name_per_aci_bridge_domain(
         self,
     ) -> None:
         """Test unique constraint of ACI BD Subnet name per ACI BD."""
-        bd = ACIBridgeDomain.objects.get(name="BDTest1")
+        bd = ACIBridgeDomain.objects.get(name=self.aci_bd_name)
         gateway_ip = IPAddress.objects.create(address="10.0.1.1/24")
-        subnet = ACIBridgeDomainSubnet(
-            name="BDSubnetTest1",
+        duplicate_subnet = ACIBridgeDomainSubnet(
+            name=self.aci_bd_subnet_name,
             aci_bridge_domain=bd,
             gateway_ip_address=gateway_ip,
         )
-        self.assertRaises(IntegrityError, subnet.save)
+        with self.assertRaises(IntegrityError):
+            duplicate_subnet.save()
 
     def test_constraint_unique_preferred_ip_per_bridge_domain(self) -> None:
         """Test unique constraint of one preferred ip address per ACI BD."""
-        bd = ACIBridgeDomain.objects.get(name="BDTest1")
+        bd = ACIBridgeDomain.objects.get(name=self.aci_bd_name)
         gateway_ip = IPAddress.objects.create(address="10.0.2.1/24")
-        subnet = ACIBridgeDomainSubnet(
+        second_preferred_ip_subnet = ACIBridgeDomainSubnet(
             name="ACIBDSubnetTest1",
             aci_bridge_domain=bd,
             gateway_ip_address=gateway_ip,
             preferred_ip_address_enabled=True,
         )
-        self.assertRaises(IntegrityError, subnet.save)
+        with self.assertRaises(IntegrityError):
+            second_preferred_ip_subnet.save()
 
 
 class ACIEndpointGroupTestCase(TestCase):
     """Test case for ACIEndpointGroup model."""
 
-    def setUp(self) -> None:
-        """Set up an ACI Endpoint Group for testing."""
-        acitenant_name = "ACITestTenant1"
-        aciappprofile_name = "AppProfileTest1"
-        acivrf_name = "VRFTest1"
-        acibd_name = "BDTest1"
-        aciepg_name = "EPGTest1"
-        aciepg_name_alias = "TestingEPG"
-        aciepg_description = "EPG for NetBox ACI Plugin testing"
-        aciepg_comments = """
-        EPG for NetBox ACI Plugin testing.
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIBridgeDomainSubnet model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_app_profile_name = "ACITestAppProfile"
+        cls.aci_vrf_name = "ACITestVRF"
+        cls.aci_bd_name = "ACITestBD"
+        cls.aci_epg_name = "ACITestEPG"
+        cls.aci_epg_alias = "ACITestEPGAlias"
+        cls.aci_epg_description = (
+            "ACI Test Endpoint Group for NetBox ACI Plugin"
+        )
+        cls.aci_epg_comments = """
+        ACI Endpoint Group for NetBox ACI Plugin testing.
         """
-        aciepg_admin_shutdown = False
-        aciepg_custom_qos_policy_name = "CustomQoSPolicy1"
-        aciepg_flood_in_encap_enabled = False
-        aciepg_intra_epg_isolation_enabled = False
-        aciepg_qos_class = EPGQualityOfServiceClassChoices.CLASS_LEVEL_3
-        aciepg_preferred_group_member_enabled = False
-        aciepg_proxy_arp_enabled = False
+        cls.aci_epg_admin_shutdown = False
+        cls.aci_epg_custom_qos_policy_name = "CustomQoSPolicy1"
+        cls.aci_epg_flood_in_encap_enabled = False
+        cls.aci_epg_intra_epg_isolation_enabled = False
+        cls.aci_epg_qos_class = EPGQualityOfServiceClassChoices.CLASS_LEVEL_3
+        cls.aci_epg_preferred_group_member_enabled = False
+        cls.aci_epg_proxy_arp_enabled = False
+        cls.nb_tenant_name = "NetBoxTestTenant"
 
-        aci_tenant = ACITenant.objects.create(name=acitenant_name)
-        aci_app_profile = ACIAppProfile.objects.create(
-            name=aciappprofile_name, aci_tenant=aci_tenant
+        # Create objects
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.aci_app_profile = ACIAppProfile.objects.create(
+            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
         )
-        aci_vrf = ACIVRF.objects.create(
-            name=acivrf_name, aci_tenant=aci_tenant
+        cls.aci_vrf = ACIVRF.objects.create(
+            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
         )
-        aci_bd = ACIBridgeDomain.objects.create(
-            name=acibd_name, aci_tenant=aci_tenant, aci_vrf=aci_vrf
+        cls.aci_bd = ACIBridgeDomain.objects.create(
+            name=cls.aci_bd_name,
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
         )
-        nb_tenant = Tenant.objects.create(name="NetBox Tenant")
+        cls.aci_epg = ACIEndpointGroup.objects.create(
+            name=cls.aci_epg_name,
+            name_alias=cls.aci_epg_alias,
+            description=cls.aci_epg_description,
+            comments=cls.aci_epg_comments,
+            aci_app_profile=cls.aci_app_profile,
+            aci_bridge_domain=cls.aci_bd,
+            nb_tenant=cls.nb_tenant,
+            admin_shutdown=cls.aci_epg_admin_shutdown,
+            custom_qos_policy_name=cls.aci_epg_custom_qos_policy_name,
+            flood_in_encap_enabled=cls.aci_epg_flood_in_encap_enabled,
+            intra_epg_isolation_enabled=(
+                cls.aci_epg_intra_epg_isolation_enabled
+            ),
+            qos_class=cls.aci_epg_qos_class,
+            preferred_group_member_enabled=(
+                cls.aci_epg_preferred_group_member_enabled
+            ),
+            proxy_arp_enabled=cls.aci_epg_proxy_arp_enabled,
+        )
 
-        self.aci_epg = ACIEndpointGroup.objects.create(
-            name=aciepg_name,
-            name_alias=aciepg_name_alias,
-            description=aciepg_description,
-            comments=aciepg_comments,
-            aci_app_profile=aci_app_profile,
-            aci_bridge_domain=aci_bd,
-            nb_tenant=nb_tenant,
-            admin_shutdown=aciepg_admin_shutdown,
-            custom_qos_policy_name=aciepg_custom_qos_policy_name,
-            flood_in_encap_enabled=aciepg_flood_in_encap_enabled,
-            intra_epg_isolation_enabled=aciepg_intra_epg_isolation_enabled,
-            qos_class=aciepg_qos_class,
-            preferred_group_member_enabled=aciepg_preferred_group_member_enabled,
-            proxy_arp_enabled=aciepg_proxy_arp_enabled,
-        )
-        super().setUp()
-
-    def test_create_aci_endpoint_group(self) -> None:
-        """Test type and values of created ACI Endpoint Group."""
+    def test_create_aci_endpoint_group_instance(self) -> None:
+        """Test type of created ACI Endpoint Group."""
         self.assertTrue(isinstance(self.aci_epg, ACIEndpointGroup))
+
+    def test_aci_endpoint_group_str(self) -> None:
+        """Test string representation of ACI Endpoint Group."""
         self.assertEqual(self.aci_epg.__str__(), self.aci_epg.name)
-        self.assertEqual(self.aci_epg.name_alias, "TestingEPG")
-        self.assertEqual(
-            self.aci_epg.description, "EPG for NetBox ACI Plugin testing"
-        )
+
+    def test_aci_endpoint_group_name_alias(self) -> None:
+        """Test name alias of ACI Endpoint Group."""
+        self.assertEqual(self.aci_epg.name_alias, self.aci_epg_alias)
+
+    def test_aci_endpoint_group_description(self) -> None:
+        """Test description of ACI Endpoint Group."""
+        self.assertEqual(self.aci_epg.description, self.aci_epg_description)
+
+    def test_aci_endpoint_group_aci_tenant_instance(self) -> None:
+        """Test the ACI Tenant instance associated with ACI EPG."""
         self.assertTrue(isinstance(self.aci_epg.aci_tenant, ACITenant))
-        self.assertEqual(self.aci_epg.aci_tenant.name, "ACITestTenant1")
+
+    def test_aci_endpoint_group_aci_tenant_name(self) -> None:
+        """Test the ACI Tenant name associated with ACI EPG."""
+        self.assertEqual(self.aci_epg.aci_tenant.name, self.aci_tenant_name)
+
+    def test_aci_endpoint_group_aci_app_profile_instance(self) -> None:
+        """Test the ACI App Profile instance associated with ACI EPG."""
         self.assertTrue(
             isinstance(self.aci_epg.aci_app_profile, ACIAppProfile)
         )
-        self.assertEqual(self.aci_epg.aci_app_profile.name, "AppProfileTest1")
+
+    def test_aci_endpoint_group_aci_app_profile_name(self) -> None:
+        """Test the ACI App Profile name associated with ACI EPG."""
+        self.assertEqual(
+            self.aci_epg.aci_app_profile.name, self.aci_app_profile_name
+        )
+
+    def test_aci_endpoint_group_aci_vrf_instance(self) -> None:
+        """Test the ACI VRF instance associated with ACI EPG."""
         self.assertTrue(isinstance(self.aci_epg.aci_vrf, ACIVRF))
-        self.assertEqual(self.aci_epg.aci_vrf.name, "VRFTest1")
+
+    def test_aci_endpoint_group_aci_vrf_name(self) -> None:
+        """Test the ACI VRF name associated with ACI EPG."""
+        self.assertEqual(self.aci_epg.aci_vrf.name, self.aci_vrf_name)
+
+    def test_aci_endpoint_group_aci_bridge_domain_instance(self) -> None:
+        """Test the ACI Bridge Domain instance associated with ACI EPG."""
         self.assertTrue(
             isinstance(self.aci_epg.aci_bridge_domain, ACIBridgeDomain)
         )
-        self.assertEqual(self.aci_epg.aci_bridge_domain.name, "BDTest1")
+
+    def test_aci_endpoint_group_aci_bridge_domain_name(self) -> None:
+        """Test the ACI Bridge Domain name associated with ACI EPG."""
+        self.assertEqual(self.aci_epg.aci_bridge_domain.name, self.aci_bd_name)
+
+    def test_aci_endpoint_group_nb_tenant_instance(self) -> None:
+        """Test the NetBox tenant instance associated with ACI EPG."""
         self.assertTrue(isinstance(self.aci_epg.nb_tenant, Tenant))
-        self.assertEqual(self.aci_epg.nb_tenant.name, "NetBox Tenant")
-        self.assertEqual(self.aci_epg.admin_shutdown, False)
+
+    def test_aci_endpoint_group_nb_tenant_name(self) -> None:
+        """Test the NetBox tenant name associated with ACI EPG."""
+        self.assertEqual(self.aci_epg.nb_tenant.name, self.nb_tenant_name)
+
+    def test_aci_endpoint_group_admin_shutdown(self) -> None:
+        """Test 'admin shutdown' option of ACI Endpoint Group."""
         self.assertEqual(
-            self.aci_epg.custom_qos_policy_name, "CustomQoSPolicy1"
+            self.aci_epg.admin_shutdown, self.aci_epg_admin_shutdown
         )
-        self.assertEqual(self.aci_epg.flood_in_encap_enabled, False)
-        self.assertEqual(self.aci_epg.intra_epg_isolation_enabled, False)
-        self.assertEqual(self.aci_epg.qos_class, "level3")
-        self.assertEqual(self.aci_epg.preferred_group_member_enabled, False)
-        self.assertEqual(self.aci_epg.proxy_arp_enabled, False)
+
+    def test_aci_endpoint_group_custom_qos_policy_name(self) -> None:
+        """Test 'custom QOS policy name' of ACI Endpoint Group."""
+        self.assertEqual(
+            self.aci_epg.custom_qos_policy_name,
+            self.aci_epg_custom_qos_policy_name,
+        )
+
+    def test_aci_endpoint_group_flood_in_encap_enabled(self) -> None:
+        """Test 'flood in encap enabled' option of ACI Endpoint Group."""
+        self.assertEqual(
+            self.aci_epg.flood_in_encap_enabled,
+            self.aci_epg_flood_in_encap_enabled,
+        )
+
+    def test_aci_endpoint_group_intra_epg_isolation_enabled(self) -> None:
+        """Test 'intra EPG isolation enabled' option of ACI Endpoint Group."""
+        self.assertEqual(
+            self.aci_epg.intra_epg_isolation_enabled,
+            self.aci_epg_intra_epg_isolation_enabled,
+        )
+
+    def test_aci_endpoint_group_qos_class(self) -> None:
+        """Test 'QoS class' of ACI Endpoint Group."""
+        self.assertEqual(self.aci_epg.qos_class, self.aci_epg_qos_class)
+
+    def test_aci_endpoint_group_preferred_group_member_enabled(self) -> None:
+        """Test 'preferred group member enabled' option of ACI EPG."""
+        self.assertEqual(
+            self.aci_epg.preferred_group_member_enabled,
+            self.aci_epg_preferred_group_member_enabled,
+        )
+
+    def test_aci_endpoint_group_proxy_arp_enabled(self) -> None:
+        """Test 'proxy ARP enabled' option of ACI Endpoint Group."""
+        self.assertEqual(
+            self.aci_epg.proxy_arp_enabled, self.aci_epg_proxy_arp_enabled
+        )
+
+    def test_aci_endpoint_group_get_qos_class_color(self) -> None:
+        """Test the 'get_qos_class_color' method of ACI Endpoint Group."""
+        self.assertEqual(
+            self.aci_epg.get_qos_class_color(),
+            EPGQualityOfServiceClassChoices.colors.get(
+                EPGQualityOfServiceClassChoices.CLASS_LEVEL_3
+            ),
+        )
 
     def test_invalid_aci_endpoint_group_name(self) -> None:
         """Test validation of ACI Endpoint Group naming."""
         epg = ACIEndpointGroup(name="ACI EPG Test 1")
-        self.assertRaises(ValidationError, epg.full_clean)
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
+
+    def test_invalid_aci_endpoint_group_name_length(self) -> None:
+        """Test validation of ACI Endpoint Group name length."""
+        epg = ACIEndpointGroup(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
 
     def test_invalid_aci_endpoint_group_name_alias(self) -> None:
         """Test validation of ACI Endpoint Group aliasing."""
         epg = ACIEndpointGroup(name="ACIEPGTest1", name_alias="Invalid Alias")
-        self.assertRaises(ValidationError, epg.full_clean)
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
+
+    def test_invalid_aci_endpoint_group_name_alias_length(self) -> None:
+        """Test validation of ACI Endpoint Group name alias length."""
+        epg = ACIEndpointGroup(
+            name="ACIEPGTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
 
     def test_invalid_aci_endpoint_group_description(self) -> None:
         """Test validation of ACI Endpoint Group description."""
         epg = ACIEndpointGroup(
             name="ACIEPGTest1", description="Invalid Description: ö"
         )
-        self.assertRaises(ValidationError, epg.full_clean)
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
+
+    def test_invalid_aci_endpoint_group_description_length(self) -> None:
+        """Test validation of ACI Endpoint Group description length."""
+        epg = ACIEndpointGroup(
+            name="ACIEPGTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+        )
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
 
     def test_constraint_unique_aci_endpoint_group_name_per_aci_app_profile(
         self,
     ) -> None:
         """Test unique constraint of ACI EPG name per ACI App Profile."""
-        app_profile = ACIAppProfile.objects.get(name="AppProfileTest1")
-        bd = ACIBridgeDomain.objects.get(name="BDTest1")
-        epg = ACIEndpointGroup(
-            name="EPGTest1", aci_app_profile=app_profile, aci_bridge_domain=bd
+        app_profile = ACIAppProfile.objects.get(name=self.aci_app_profile_name)
+        bd = ACIBridgeDomain.objects.get(name=self.aci_bd_name)
+        duplicate_epg = ACIEndpointGroup(
+            name=self.aci_epg_name,
+            aci_app_profile=app_profile,
+            aci_bridge_domain=bd,
         )
-        self.assertRaises(IntegrityError, epg.save)
+        with self.assertRaises(IntegrityError):
+            duplicate_epg.save()
