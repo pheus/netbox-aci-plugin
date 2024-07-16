@@ -254,6 +254,6 @@ class ACIEndpointGroup(NetBoxModel):
             "plugins:netbox_aci_plugin:aciendpointgroup", args=[self.pk]
         )
 
-    def get_qos_class_color(self):
+    def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return EPGQualityOfServiceClassChoices.colors.get(self.qos_class)

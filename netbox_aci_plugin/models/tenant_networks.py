@@ -185,13 +185,13 @@ class ACIVRF(NetBoxModel):
         """Return the absolute URL of the instance."""
         return reverse("plugins:netbox_aci_plugin:acivrf", args=[self.pk])
 
-    def get_pc_enforcement_direction_color(self):
+    def get_pc_enforcement_direction_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return VRFPCEnforcementDirectionChoices.colors.get(
             self.pc_enforcement_direction
         )
 
-    def get_pc_enforcement_preference_color(self):
+    def get_pc_enforcement_preference_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return VRFPCEnforcementPreferenceChoices.colors.get(
             self.pc_enforcement_preference
@@ -486,25 +486,25 @@ class ACIBridgeDomain(NetBoxModel):
             "plugins:netbox_aci_plugin:acibridgedomain", args=[self.pk]
         )
 
-    def get_multi_destination_flooding_color(self):
+    def get_multi_destination_flooding_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return BDMultiDestinationFloodingChoices.colors.get(
             self.multi_destination_flooding
         )
 
-    def get_unknown_ipv4_multicast_color(self):
+    def get_unknown_ipv4_multicast_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return BDUnknownMulticastChoices.colors.get(
             self.unknown_ipv4_multicast
         )
 
-    def get_unknown_ipv6_multicast_color(self):
+    def get_unknown_ipv6_multicast_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return BDUnknownMulticastChoices.colors.get(
             self.unknown_ipv6_multicast
         )
 
-    def get_unknown_unicast_color(self):
+    def get_unknown_unicast_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return BDUnknownUnicastChoices.colors.get(self.unknown_unicast)
 
