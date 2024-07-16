@@ -402,6 +402,24 @@ class ACIVRFTestCase(TestCase):
             self.aci_vrf_preferred_group_enabled,
         )
 
+    def test_aci_vrf_get_pc_enforcement_direction_color(self) -> None:
+        """Test the 'get_pc_enforcement_direction_color' method of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.get_pc_enforcement_direction_color(),
+            VRFPCEnforcementDirectionChoices.colors.get(
+                VRFPCEnforcementDirectionChoices.DIR_EGRESS
+            ),
+        )
+
+    def test_aci_vrf_get_pc_enforcement_preference_color(self) -> None:
+        """Test the 'get_pc_enforcement_preference_color' method of ACI VRF."""
+        self.assertEqual(
+            self.aci_vrf.get_pc_enforcement_preference_color(),
+            VRFPCEnforcementPreferenceChoices.colors.get(
+                VRFPCEnforcementPreferenceChoices.PREF_UNENFORCED
+            ),
+        )
+
     def test_invalid_aci_vrf_name(self) -> None:
         """Test validation of ACI VRF naming."""
         vrf = ACIVRF(name="ACI VRF Test 1")
@@ -702,6 +720,44 @@ class ACIBridgeDomainTestCase(TestCase):
         """Test ACI Bridge Domain's virtual MAC address."""
         self.assertEqual(
             self.aci_bd.virtual_mac_address, self.aci_bd_virtual_mac_address
+        )
+
+    def test_aci_bridge_domain_get_multi_destination_flooding_color(
+        self,
+    ) -> None:
+        """Test the 'get_multi_destination_flooding_color' method of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.get_multi_destination_flooding_color(),
+            BDMultiDestinationFloodingChoices.colors.get(
+                BDMultiDestinationFloodingChoices.FLOOD_BD
+            ),
+        )
+
+    def test_aci_bridge_domain_get_unknown_ipv4_multicast_color(self) -> None:
+        """Test the 'get_unknown_ipv4_multicast_color' method of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.get_unknown_ipv4_multicast_color(),
+            BDUnknownMulticastChoices.colors.get(
+                BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD
+            ),
+        )
+
+    def test_aci_bridge_domain_get_unknown_ipv6_multicast_color(self) -> None:
+        """Test the 'get_unknown_ipv6_multicast_color' method of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.get_unknown_ipv6_multicast_color(),
+            BDUnknownMulticastChoices.colors.get(
+                BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD
+            ),
+        )
+
+    def test_aci_bridge_domain_get_unknown_unicast_color(self) -> None:
+        """Test the 'get_unknown_unicast_color' method of ACI BD."""
+        self.assertEqual(
+            self.aci_bd.get_unknown_unicast_color(),
+            BDUnknownUnicastChoices.colors.get(
+                BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY
+            ),
         )
 
     def test_invalid_aci_bridge_domain_name(self) -> None:
@@ -1210,6 +1266,15 @@ class ACIEndpointGroupTestCase(TestCase):
         """Test 'proxy ARP enabled' option of ACI Endpoint Group."""
         self.assertEqual(
             self.aci_epg.proxy_arp_enabled, self.aci_epg_proxy_arp_enabled
+        )
+
+    def test_aci_endpoint_group_get_qos_class_color(self) -> None:
+        """Test the 'get_qos_class_color' method of ACI Endpoint Group."""
+        self.assertEqual(
+            self.aci_epg.get_qos_class_color(),
+            EPGQualityOfServiceClassChoices.colors.get(
+                EPGQualityOfServiceClassChoices.CLASS_LEVEL_3
+            ),
         )
 
     def test_invalid_aci_endpoint_group_name(self) -> None:
