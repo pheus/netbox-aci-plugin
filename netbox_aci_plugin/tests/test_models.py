@@ -806,6 +806,40 @@ class ACIBridgeDomainTestCase(TestCase):
         with self.assertRaises(ValidationError):
             bd.full_clean()
 
+    def test_valid_aci_bridge_domain_aci_vrf_assignment_form_tenant_common(
+        self,
+    ) -> None:
+        """Test valid assignment of ACI VRF from ACI Tenant 'common'."""
+        tenant_common = ACITenant.objects.get_or_create(name="common")[0]
+        vrf_common = ACIVRF.objects.create(
+            name="common_vrf", aci_tenant=tenant_common
+        )
+        bd = ACIBridgeDomain(
+            name="ACIBDTest1",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_common,
+        )
+        bd.full_clean()
+        bd.save()
+        self.assertEqual(bd.aci_vrf, vrf_common)
+
+    def test_invalid_aci_bridge_domain_aci_vrf_assignment_from_tenant_other(
+        self,
+    ) -> None:
+        """Test invalid assignment of ACI VRF from ACI Tenant 'other'."""
+        tenant_other = ACITenant.objects.get_or_create(name="other")[0]
+        vrf_other = ACIVRF.objects.create(
+            name="other_vrf", aci_tenant=tenant_other
+        )
+        bd = ACIBridgeDomain(
+            name="ACIBDTest1",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_other,
+        )
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
+            bd.save()
+
     def test_constraint_unique_aci_bridge_domain_name_per_aci_tenant(
         self,
     ) -> None:
@@ -1322,6 +1356,46 @@ class ACIEndpointGroupTestCase(TestCase):
         )
         with self.assertRaises(ValidationError):
             epg.full_clean()
+
+    def test_valid_aci_endpoint_group_aci_bd_assignment_form_tenant_common(
+        self,
+    ) -> None:
+        """Test valid assignment of ACI BD from ACI Tenant 'common'."""
+        tenant_common = ACITenant.objects.get_or_create(name="common")[0]
+        vrf_common = ACIVRF.objects.create(
+            name="common_vrf", aci_tenant=tenant_common
+        )
+        bd_common = ACIBridgeDomain.objects.create(
+            name="common_bd", aci_tenant=tenant_common, aci_vrf=vrf_common
+        )
+        epg = ACIEndpointGroup.objects.create(
+            name="ACIEPGTest1",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=bd_common,
+        )
+        epg.full_clean()
+        epg.save()
+        self.assertEqual(epg.aci_bridge_domain, bd_common)
+
+    def test_invalid_aci_endpoint_group_aci_bd_assignment_from_tenant_other(
+        self,
+    ) -> None:
+        """Test invalid assignment of ACI BD from ACI Tenant 'other'."""
+        tenant_other = ACITenant.objects.get_or_create(name="other")[0]
+        vrf_other = ACIVRF.objects.create(
+            name="other_vrf", aci_tenant=tenant_other
+        )
+        bd_other = ACIBridgeDomain.objects.create(
+            name="other_bd", aci_tenant=tenant_other, aci_vrf=vrf_other
+        )
+        epg = ACIEndpointGroup(
+            name="ACIEPGTest1",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=bd_other,
+        )
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
+            epg.save()
 
     def test_constraint_unique_aci_endpoint_group_name_per_aci_app_profile(
         self,

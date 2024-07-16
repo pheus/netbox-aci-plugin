@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.urls import reverse
@@ -237,6 +238,22 @@ class ACIEndpointGroup(NetBoxModel):
     def __str__(self) -> str:
         """Return string representation of the instance."""
         return self.name
+
+    def save(self, *args, **kwargs):
+        """Saves the current instance to the database."""
+        # Ensure the assigned ACIBrideDomain belongs to either the same
+        # ACITenant as the ACIAppProfile or to the special ACITenant 'common'.
+        if (
+            self.aci_bridge_domain.aci_tenant
+            != self.aci_app_profile.aci_tenant
+            and self.aci_bridge_domain.aci_tenant.name != "common"
+        ):
+            raise ValidationError(
+                "Assigned ACIBridgeDomain have to belong to the same ACITenant"
+                "as the ACIAppProfile or to the special ACITenant 'common'."
+            )
+
+        super().save(*args, **kwargs)
 
     @property
     def aci_tenant(self) -> ACITenant:

@@ -752,8 +752,9 @@ class ACIBridgeDomainForm(NetBoxModelForm):
                 self.add_error(
                     "aci_vrf",
                     _(
-                        "A VRF can only be assigned from the same ACI Tenant "
-                        "as the Bridge Domain or ACI Tenant 'common'."
+                        "A VRF can only be assigned belonging to the same ACI "
+                        "Tenant as the Bridge Domain or to the special ACI "
+                        "Tenant 'common'."
                     ),
                 )
 

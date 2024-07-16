@@ -388,9 +388,9 @@ class ACIEndpointGroupForm(NetBoxModelForm):
                 self.add_error(
                     "aci_bridge_domain",
                     _(
-                        "A Bridge Domain can only be assigned from the same "
-                        "ACI Tenant as the Endpoint Group or ACI Tenant"
-                        "'common'."
+                        "A Bridge Domain can only be assigned belonging to "
+                        "same ACI Tenant as the Application Profile or to the "
+                        "special ACI Tenant 'common'."
                     ),
                 )
 

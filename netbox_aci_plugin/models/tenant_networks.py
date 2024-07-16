@@ -4,6 +4,7 @@
 
 from dcim.fields import MACAddressField
 from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.urls import reverse
@@ -479,6 +480,21 @@ class ACIBridgeDomain(NetBoxModel):
             return f"{self.name} ({self.aci_tenant.name})"
         else:
             return self.name
+
+    def save(self, *args, **kwargs):
+        """Saves the current instance to the database."""
+        # Ensure the assigned ACIVRF belongs to either the same ACITenant as
+        # the ACIBridgeDomain or to the special ACITenant 'common'.
+        if (
+            self.aci_vrf.aci_tenant != self.aci_tenant
+            and self.aci_vrf.aci_tenant.name != "common"
+        ):
+            raise ValidationError(
+                "Assigned ACIVRF have to belong to the same ACITenant as the"
+                "ACIBridgeDomain or to the special ACITenant 'common'."
+            )
+
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self) -> str:
         """Return the absolute URL of the instance."""
