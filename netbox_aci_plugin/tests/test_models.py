@@ -49,29 +49,29 @@ class ACITenantTestCase(TestCase):
             nb_tenant=cls.nb_tenant,
         )
 
-    def test_aci_tenant_instance(self):
+    def test_aci_tenant_instance(self) -> None:
         """Test type of created ACI Tenant."""
         self.assertTrue(isinstance(self.aci_tenant, ACITenant))
 
-    def test_aci_tenant_str_return_value(self):
+    def test_aci_tenant_str_return_value(self) -> None:
         """Test string value of created ACI Tenant."""
         self.assertEqual(self.aci_tenant.__str__(), self.aci_tenant.name)
 
-    def test_aci_tenant_name_alias(self):
+    def test_aci_tenant_name_alias(self) -> None:
         """Test alias of ACI Tenant."""
         self.assertEqual(self.aci_tenant.name_alias, self.aci_tenant_alias)
 
-    def test_aci_tenant_description(self):
+    def test_aci_tenant_description(self) -> None:
         """Test description of ACI Tenant."""
         self.assertEqual(
             self.aci_tenant.description, self.aci_tenant_description
         )
 
-    def test_aci_tenant_nb_tenant_instance(self):
+    def test_aci_tenant_nb_tenant_instance(self) -> None:
         """Test the Netbox tenant associated with ACI Tenant."""
         self.assertTrue(isinstance(self.aci_tenant.nb_tenant, Tenant))
 
-    def test_aci_tenant_nb_tenant_name(self):
+    def test_aci_tenant_nb_tenant_name(self) -> None:
         """Test the Netbox tenant name associated with ACI Tenant."""
         self.assertEqual(self.aci_tenant.nb_tenant.name, self.nb_tenant_name)
 
@@ -351,51 +351,51 @@ class ACIVRFTestCase(TestCase):
         """Test the Netbox VRF name associated with ACI VRF."""
         self.assertEqual(self.aci_vrf.nb_vrf.name, self.nb_vrf_name)
 
-    def test_aci_vrf_bd_enforcement_enabled(self):
+    def test_aci_vrf_bd_enforcement_enabled(self) -> None:
         """Test the 'Bridge Domain enforcement enabled' option of ACI VRF."""
         self.assertEqual(
             self.aci_vrf.bd_enforcement_enabled,
             self.aci_vrf.bd_enforcement_enabled,
         )
 
-    def test_aci_vrf_dns_labels(self):
+    def test_aci_vrf_dns_labels(self) -> None:
         """Test the 'DNS labels' option of ACI VRF."""
         self.assertEqual(self.aci_vrf.dns_labels, self.aci_vrf_dns_labels)
 
-    def test_aci_vrf_ip_data_plane_learning_enabled(self):
+    def test_aci_vrf_ip_data_plane_learning_enabled(self) -> None:
         """Test the 'IP data plane learning enabled' option of ACI VRF."""
         self.assertEqual(
             self.aci_vrf.ip_data_plane_learning_enabled,
             self.aci_vrf_ip_dp_learning_enabled,
         )
 
-    def test_aci_vrf_pc_enforcement_direction(self):
+    def test_aci_vrf_pc_enforcement_direction(self) -> None:
         """Test the 'PC enforcement direction' option of ACI VRF."""
         self.assertEqual(
             self.aci_vrf.pc_enforcement_direction,
             self.aci_vrf_pc_enforcement_direction,
         )
 
-    def test_aci_vrf_pc_enforcement_preference(self):
+    def test_aci_vrf_pc_enforcement_preference(self) -> None:
         """Test the 'PC enforcement preference' option of ACI VRF."""
         self.assertEqual(
             self.aci_vrf.pc_enforcement_preference,
             self.aci_vrf_pc_enforcement_preference,
         )
 
-    def test_aci_vrf_pim_ipv4_enabled(self):
+    def test_aci_vrf_pim_ipv4_enabled(self) -> None:
         """Test the 'PIM IPv4 enabled' option of ACI VRF."""
         self.assertEqual(
             self.aci_vrf.pim_ipv4_enabled, self.aci_vrf_pim_ipv4_enabled
         )
 
-    def test_aci_vrf_pim_ipv6_enabled(self):
+    def test_aci_vrf_pim_ipv6_enabled(self) -> None:
         """Test the 'PIM IPv6 enabled' option of ACI VRF."""
         self.assertEqual(
             self.aci_vrf.pim_ipv6_enabled, self.aci_vrf_pim_ipv6_enabled
         )
 
-    def test_aci_vrf_preferred_group_enabled(self):
+    def test_aci_vrf_preferred_group_enabled(self) -> None:
         """Test the 'preferred group enabled' option of ACI VRF."""
         self.assertEqual(
             self.aci_vrf.preferred_group_enabled,
@@ -577,146 +577,146 @@ class ACIBridgeDomainTestCase(TestCase):
         """Test the ACI Tenant name associated with ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.aci_tenant.name, self.aci_tenant_name)
 
-    def test_aci_bd_aci_vrf_type(self):
+    def test_aci_bd_aci_vrf_type(self) -> None:
         """Test the ACI VRF instance associated with ACI Bridge Domain."""
         self.assertTrue(isinstance(self.aci_bd.aci_vrf, ACIVRF))
 
-    def test_aci_bd_aci_vrf_name(self):
+    def test_aci_bd_aci_vrf_name(self) -> None:
         """Test the ACI VRF name associated with ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.aci_vrf.name, self.aci_vrf_name)
 
-    def test_aci_bd_nb_tenant_type(self):
+    def test_aci_bd_nb_tenant_type(self) -> None:
         """Test the NetBox tenant instance associated with ACI BD."""
         self.assertTrue(isinstance(self.aci_bd.nb_tenant, Tenant))
 
-    def test_aci_bd_nb_tenant_name(self):
+    def test_aci_bd_nb_tenant_name(self) -> None:
         """Test the NetBox tenant name associated with ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.nb_tenant.name, self.nb_tenant_name)
 
-    def test_aci_bd_advertise_host_routes_enabled(self):
+    def test_aci_bd_advertise_host_routes_enabled(self) -> None:
         """Test the 'advertise host routes enabled' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.advertise_host_routes_enabled,
             self.aci_bd_advertise_host_routes_enabled,
         )
 
-    def test_aci_bd_arp_flooding_enabled(self):
+    def test_aci_bd_arp_flooding_enabled(self) -> None:
         """Test the 'ARP flooding enabled' option of ACI Bridge Domain."""
         self.assertEqual(
             self.aci_bd.arp_flooding_enabled, self.aci_bd_arp_flooding_enabled
         )
 
-    def test_aci_bd_clear_remote_mac_enabled(self):
+    def test_aci_bd_clear_remote_mac_enabled(self) -> None:
         """Test the 'clear remote MAC enabled' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.clear_remote_mac_enabled,
             self.aci_bd_clear_remote_mac_enabled,
         )
 
-    def test_aci_bd_dhcp_labels(self):
+    def test_aci_bd_dhcp_labels(self) -> None:
         """Test the 'DHCP labels' option of ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.dhcp_labels, self.aci_bd_dhcp_labels)
 
-    def test_aci_bd_ep_move_detection_enabled(self):
+    def test_aci_bd_ep_move_detection_enabled(self) -> None:
         """Test the 'EP move detection enabled' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.ep_move_detection_enabled,
             self.aci_bd_ep_move_detection_enabled,
         )
 
-    def test_aci_bd_igmp_interface_policy_name(self):
+    def test_aci_bd_igmp_interface_policy_name(self) -> None:
         """Test the 'IGMP interface policy name' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.igmp_interface_policy_name,
             self.aci_bd_igmp_interface_policy_name,
         )
 
-    def test_aci_bd_igmp_snooping_policy_name(self):
+    def test_aci_bd_igmp_snooping_policy_name(self) -> None:
         """Test the 'IGMP snooping policy name' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.igmp_snooping_policy_name,
             self.aci_bd_igmp_snooping_policy_name,
         )
 
-    def test_aci_bd_ip_data_plane_learning_enabled(self):
+    def test_aci_bd_ip_data_plane_learning_enabled(self) -> None:
         """Test the 'IP data-plane learning enabled' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.ip_data_plane_learning_enabled,
             self.aci_bd_ip_dp_learning_enabled,
         )
 
-    def test_aci_bd_limit_ip_learn_enabled(self):
+    def test_aci_bd_limit_ip_learn_enabled(self) -> None:
         """Test the 'limit IP learn enabled' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.limit_ip_learn_enabled,
             self.aci_bd_limit_ip_learn_enabled,
         )
 
-    def test_aci_bd_mac_address(self):
+    def test_aci_bd_mac_address(self) -> None:
         """Test ACI Bridge Domain's MAC address."""
         self.assertEqual(self.aci_bd.mac_address, self.aci_bd_mac_address)
 
-    def test_aci_bd_multi_destination_flooding(self):
+    def test_aci_bd_multi_destination_flooding(self) -> None:
         """Test the 'multi-destination flooding' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.multi_destination_flooding,
             self.aci_bd_multi_destination_flooding,
         )
 
-    def test_aci_bd_pim_ipv4_enabled(self):
+    def test_aci_bd_pim_ipv4_enabled(self) -> None:
         """Test the 'PIM IPv4 enabled' option of ACI Bridge Domain."""
         self.assertEqual(
             self.aci_bd.pim_ipv4_enabled, self.aci_bd_pim_ipv4_enabled
         )
 
-    def test_aci_bd_pim_ipv4_destination_filter(self):
+    def test_aci_bd_pim_ipv4_destination_filter(self) -> None:
         """Test the 'PIM IPv4 destination filter' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.pim_ipv4_destination_filter,
             self.aci_bd_pim_ipv4_destination_filter,
         )
 
-    def test_aci_bd_pim_ipv4_source_filter(self):
+    def test_aci_bd_pim_ipv4_source_filter(self) -> None:
         """Test the 'PIM IPv4 source filter' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.pim_ipv4_source_filter,
             self.aci_bd_pim_ipv4_source_filter,
         )
 
-    def test_aci_bd_pim_ipv6_enabled(self):
+    def test_aci_bd_pim_ipv6_enabled(self) -> None:
         """Test the 'PIM IPv6 enabled' option of ACI Bridge Domain."""
         self.assertEqual(
             self.aci_bd.pim_ipv6_enabled, self.aci_bd_pim_ipv6_enabled
         )
 
-    def test_aci_bd_unicast_routing_enabled(self):
+    def test_aci_bd_unicast_routing_enabled(self) -> None:
         """Test the 'unicast routing enabled' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.unicast_routing_enabled,
             self.aci_bd_unicast_routing_enabled,
         )
 
-    def test_aci_bd_unknown_ipv4_multicast(self):
+    def test_aci_bd_unknown_ipv4_multicast(self) -> None:
         """Test the 'unknown IPv4 multicast' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.unknown_ipv4_multicast,
             self.aci_bd_unknown_ipv4_multicast,
         )
 
-    def test_aci_bd_unknown_ipv6_multicast(self):
+    def test_aci_bd_unknown_ipv6_multicast(self) -> None:
         """Test the 'unknown IPv6 multicast' option of ACI BD."""
         self.assertEqual(
             self.aci_bd.unknown_ipv6_multicast,
             self.aci_bd_unknown_ipv6_multicast,
         )
 
-    def test_aci_bd_unknown_unicast(self):
+    def test_aci_bd_unknown_unicast(self) -> None:
         """Test the 'unknown unicast' option of ACI Bridge Domain."""
         self.assertEqual(
             self.aci_bd.unknown_unicast, self.aci_bd_unknown_unicast
         )
 
-    def test_aci_bd_virtual_mac_address(self):
+    def test_aci_bd_virtual_mac_address(self) -> None:
         """Test ACI Bridge Domain's virtual MAC address."""
         self.assertEqual(
             self.aci_bd.virtual_mac_address, self.aci_bd_virtual_mac_address
