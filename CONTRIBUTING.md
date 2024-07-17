@@ -3,7 +3,9 @@
 Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.
 
-We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
+We love your input!
+We want to make contributing to this project as easy and
+transparent as possible, whether it's:
 
 - Reporting a bug
 - Discussing the current state of the code
@@ -15,9 +17,13 @@ We love your input! We want to make contributing to this project as easy and tra
 
 * Register for a free [GitHub account](https://github.com/signup) if you haven't already.
 * You can use [GitHub Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) for formatting text and adding images.
-* To help mitigate notification spam, please avoid "bumping" issues with no activity. (To vote an issue up or down, use a :thumbsup: or :thumbsdown: reaction.)
-* Please avoid pinging members with `@` unless they've previously expressed interest or involvement with that particular issue.
-* Familiarize yourself with [this list of discussion anti-patterns](https://github.com/bradfitz/issue-tracker-behaviors) and make every effort to avoid them.
+* To help mitigate notification spam, please avoid "bumping" issues with no
+  activity.
+  (To vote an issue up or down, use a :thumbsup: or :thumbsdown: reaction.)
+* Please avoid pinging members with `@` unless they've previously expressed
+  interest or involvement with that particular issue.
+* Familiarize yourself with [this list of discussion anti-patterns](https://github.com/bradfitz/issue-tracker-behaviors)
+  and make every effort to avoid them.
 
 ## Types of Contributions
 
@@ -49,7 +55,8 @@ articles, and such.
 
 ### Submit Feedback
 
-The best way to send feedback is to file an issue at https://github.com/pheus/netbox-aci-plugin/issues.
+The best way to send feedback is to file an issue at
+https://github.com/pheus/netbox-aci-plugin/issues.
 
 If you are proposing a feature:
 
@@ -60,7 +67,8 @@ If you are proposing a feature:
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `netbox-aci-plugin` for local development.
+Ready to contribute?
+Here's how to set up `netbox-aci-plugin` for local development.
 
 1. Fork the `netbox-aci-plugin` repo on GitHub.
 2. Clone your fork locally
@@ -69,19 +77,28 @@ Ready to contribute? Here's how to set up `netbox-aci-plugin` for local developm
     $ git clone git@github.com:your_name_here/netbox-aci-plugin.git
     ```
 
-3. Activate the NetBox virtual environment (see the NetBox documentation under [Setting up a Development Environment](https://docs.netbox.dev/en/stable/development/getting-started/)):
+3. Activate the NetBox virtual environment (see the NetBox documentation under
+   [Setting up a Development Environment](https://docs.netbox.dev/en/stable/development/getting-started/)):
 
     ```
     $ source ~/.venv/netbox/bin/activate
     ```
 
-4. Add the plugin to NetBox virtual environment in Develop mode (see [Plugins Development](https://docs.netbox.dev/en/stable/plugins/development/)):
+4. Add the plugin to NetBox virtual environment in Develop mode
+   (see [Plugins Development](https://docs.netbox.dev/en/stable/plugins/development/)):
 
-    To ease development, it is recommended to go ahead and install the plugin at this point using setuptools' develop mode. This will create symbolic links within your Python environment to the plugin development directory. Call setup.py from the plugin's root directory with the develop argument (instead of install):
+    To ease development, it is recommended to go ahead and install the plugin
+    at this point using setuptools' develop mode.
+   This will create symbolic
+    links within your Python environment to the plugin development directory.
+    Call `pip` from the plugin's root directory with the `-e` (editable) flag:
 
     ```
-    $ python setup.py develop
+    $ pip3 install -e .
     ```
+
+    More information on editable builds can be found at
+    [Editable installs for pyproject.toml ](https://peps.python.org/pep-0660/).
 
 5. Create a branch for local development:
 
@@ -109,13 +126,16 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.md.
-3. The pull request should work for Python 3.9, 3.10, 3.11 and 3.12. Check
+3. The pull request should work for Python 3.10, 3.11 and 3.12.
+   Check
    https://github.com/pheus/netbox-aci-plugin/actions
    and make sure that the tests pass for all supported Python versions.
-
 
 ## Deploying
 
 A reminder for the maintainers on how to deploy.
-Make sure all your changes are committed (including an entry in CHANGELOG.md) and that all tests pass.
-Then in the GitHub project go to `Releases` and create a new release with a new tag.  This will automatically upload the release to pypi:
+Make sure all your changes are committed (including an entry in CHANGELOG.md)
+and that all tests pass.
+Then in the GitHub project go to `Releases` and create a new release with a new
+tag.
+This will automatically upload the release to pypi.
