@@ -14,16 +14,22 @@
 * Enforce unique ACI Tenant name (following ACI policy model)
 * Add ACI Tenant field to ACI Bridge Domain
 * Remove ACI VRF requirement from ACI Endpoint Group import
-* Allow ACI Bridge Domain assigning an ACI VRF from the same or from the special "common" ACI Tenant
-* Allow ACI Bridge Domain from special "common" ACI Tenant to be assigned to the ACI Endpoint Group
-* Add ACI BD Subnets (Gateway IP addresses) column to ACI Bridge Domain table in list view
+* Allow ACI Bridge Domain assigning an ACI VRF from the same or from the
+  special "common" ACI Tenant
+* Allow ACI Bridge Domain from special "common" ACI Tenant to be assigned to
+  the ACI Endpoint Group
+* Add ACI BD Subnets (Gateway IP addresses) column to ACI Bridge Domain table
+  in list view
 
 ### Bug Fixes
 
-* Add preferred IP address and virtual IP address to ACI Bridge Domain Subnet template
+* Add preferred IP address and virtual IP address to ACI Bridge Domain Subnet
+  template
 * Fix unique ACI Bridge Domain Subnet name per ACI Bridge Domain
-* Add type declaration for MAC Address and Virtual MAC Address of ACI Bridge Domain to API serializer
-* Add blank choices to FilterForms of ACI Bridge Domain, ACI Endpoint Group and ACI VRF
+* Add type declaration to API serializer for MAC Address and Virtual MAC
+  Address of ACI Bridge Domain
+* Add blank choices to FilterForms of ACI Bridge Domain, ACI Endpoint Group and
+  ACI VRF
 * Fix multiple typos in comments, help texts and labels
 
 ## 0.0.6 (2024-06-21)
@@ -50,7 +56,8 @@
 ### Bug Fixes
 
 * Fix typo in ACI Bridge Domain Subnet form for NetBox VRF
-* Filter Bridge Domain choices based on ACI Tenant and/or ACI VRF in ACI Bridge Domain Subnet form
+* Filter Bridge Domain choices based on ACI Tenant and/or ACI VRF in ACI Bridge
+  Domain Subnet form
 * Fix typo in ChildrenView registration
 * Use the relevant model class for the tag filter
 
