@@ -6,6 +6,27 @@
 
 ---
 
+## 0.0.8 (2024-07-17)
+
+### Enhancements
+
+* Rename plugin's verbose name to "ACI" for simplicity and better user
+  experience
+* Allow referenced NetBox tenants to be deleted without raising a
+  ProtectedError
+* Enable cascade deletion of ACI Bridge Domain Subnets when the parent ACI
+  Bridge Domain gets deleted
+* Enhance tests for the models ACITenant, ACIVRF, ACIBridgeDomain,
+  ACIBridgeDomainSubnet, ACIAppProfile, ACIEndpointGroup
+* Ensure ACI Bridge Domain assigned ACI VRF belongs to the same ACI Tenant or
+  to the special ACI Tenant 'common' on the model level
+* Enforce ACI Endpoint Group assigned ACI Bridge Domain belongs to the same
+  ACI Tenant or the special ACI Tenant 'common' on the model level
+
+### Bug Fixes
+
+* Remove NetBox tenant filtering in the ACI object forms
+
 ## 0.0.7 (2024-07-07)
 
 ### Enhancements
