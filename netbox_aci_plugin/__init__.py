@@ -12,7 +12,7 @@ class ACIConfig(PluginConfig):
     """NetBox ACI Plugin specific configuration."""
 
     name = "netbox_aci_plugin"
-    verbose_name = "NetBox ACI Plugin"
+    verbose_name = "ACI"
     description = "NetBox plugin for documenting Cisco ACI specific objects."
     version = __version__
     author = __author__
