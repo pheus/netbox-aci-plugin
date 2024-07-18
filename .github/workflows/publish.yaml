@@ -69,6 +69,37 @@ jobs:
             exit 1
           fi
 
+  github-release:
+    name: Prepare GitHub release 🚀
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - check-version
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🧩
+        uses: actions/checkout@v4
+      - name: Extract version from git tag and set as env variable 📝
+        run: |
+          TAG=$(git describe HEAD --tags --abbrev=0 | sed 's/^v//')
+          echo "PACKAGE_VERSION=$TAG" >> $GITHUB_ENV
+      - name: Download all the dists 📦
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Prepare new release 🚀
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ${{ github.workspace }}/CHANGELOG.md
+          draft: true
+          files: |
+            dist/netbox_aci_plugin-${{ env.PACKAGE_VERSION }}-py3-none-any.whl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   publish-to-pypi:
     name: Publish distribution 📦 to PyPI
     if: startsWith(github.ref, 'refs/tags/')  # only publish on tag pushes
