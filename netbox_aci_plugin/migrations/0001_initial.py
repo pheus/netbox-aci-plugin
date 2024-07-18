@@ -4,6 +4,19 @@ import taggit.managers
 import utilities.json
 from django.db import migrations, models
 
+from netbox_aci_plugin import ACIConfig
+
+
+def create_default_aci_tenants(apps, schema_editor) -> None:
+    """Creates default ACI tenants if they do not already exist."""
+    # The ACITenant model cannot be imported directly as it may be a newer
+    # version than this migration expects.
+    aci_tenant = apps.get_model(ACIConfig.name, "ACITenant")
+    default_aci_tenants = ["common", "infra", "mgmt"]
+    for aci_default_tenant in default_aci_tenants:
+        if not aci_tenant.objects.filter(name=aci_default_tenant).exists():
+            aci_tenant.objects.create(name=aci_default_tenant)
+
 
 class Migration(migrations.Migration):
     initial = True
@@ -112,4 +125,5 @@ class Migration(migrations.Migration):
                 fields=("name",), name="unique_aci_tenant_name"
             ),
         ),
+        migrations.RunPython(create_default_aci_tenants),
     ]
