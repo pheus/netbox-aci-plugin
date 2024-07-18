@@ -57,8 +57,9 @@ PLUGINS_CONFIG = {
 
 ## Status
 
-This project has just started.
-Database migrations will be added once the main models have been defined.
+This project has just started and provides a minimal set of ACI object features.
+It may contain bugs and it is missing features.
+At the current stage, the plugin should be used in testing environment only.
 
 ## Release notes
 
