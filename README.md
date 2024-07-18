@@ -44,11 +44,14 @@ Enable the plugin in `/opt/netbox/netbox/netbox/configuration.py`,
 
 ```python
 PLUGINS = [
-    'netbox-aci-plugin'
+    'netbox_aci_plugin'
 ]
 
 PLUGINS_CONFIG = {
-    "netbox-aci-plugin": {},
+    "netbox_aci_plugin": {
+        # create default ACI Tenants "common", "infra", "mgmt" during migration
+        "create_default_aci_tenants": True,
+    },
 }
 ```
 

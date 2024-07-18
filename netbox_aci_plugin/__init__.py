@@ -20,6 +20,9 @@ class ACIConfig(PluginConfig):
     base_url = "aci"
     min_version = "4.0.0"
     max_version = "4.0.99"
+    default_settings = {
+        "create_default_aci_tenants": True,
+    }
 
 
 config = ACIConfig
