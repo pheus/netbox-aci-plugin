@@ -37,11 +37,43 @@ jobs:
           name: python-package-distributions
           path: dist/
 
+  check-version:
+    name: Check project versioning 🏷️
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🧩
+        uses: actions/checkout@v4
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          cache: "pip"
+      - name: Extract version from pyproject.toml and set as env variable 📝
+        run: |
+          PYPROJECT_VERSION=$(python -c "import tomllib; \
+            f = open('pyproject.toml', 'rb'); data = tomllib.load(f); \
+            print(data['project']['version']); f.close()")
+          echo "PACKAGE_VERSION=$PYPROJECT_VERSION" >> $GITHUB_ENV
+        shell: bash
+      - name: Check if project version matches the git tag 🏷️
+        run: |
+          TAG=$(git describe HEAD --tags --abbrev=0 | sed 's/^v//')
+          echo "Tag (without 'v'): $TAG"
+          echo "Package version: $PACKAGE_VERSION"
+          if [[ "$TAG" != "$PACKAGE_VERSION" ]]; then
+            echo "Error: Tag does not match the package version."
+            exit 1
+          fi
+
   publish-to-pypi:
     name: Publish distribution 📦 to PyPI
     if: startsWith(github.ref, 'refs/tags/')  # only publish on tag pushes
     needs:
-      - build
+      - check-version
     runs-on: ubuntu-latest
     environment:
       name: pypi
