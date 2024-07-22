@@ -1,5 +1,5 @@
 ---
-name: ci
+name: Deploy docs 📚 to GitHub pages
 
 on:
   push:
@@ -10,18 +10,19 @@ permissions:
   contents: write
 
 jobs:
-
   deploy:
-    name: Deploy docs
+    name: Build and deploy docs 📚
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5.1.0
+      - name: Checkout repository 🧩
+        uses: actions/checkout@v4
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - name: Install pypa/build
+          cache: "pip"
+      - name: Install MKDocs and plugins 📚
         run: >-
           pip install
           mkdocs-material
@@ -30,6 +31,7 @@ jobs:
           mkdocstrings
           mkdocstrings-python-legacy
           mkdocs-include-markdown-plugin
-      - name: Deploy docs to GitHub pages
-        run: mkdocs gh-deploy --force
+      - name: Deploy docs to GitHub pages 📚
+        run: |
+          mkdocs gh-deploy --force
 ...

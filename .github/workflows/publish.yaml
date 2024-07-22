@@ -1,0 +1,123 @@
+---
+# see:
+# https://packaging.python.org/en/latest/guides/\
+# publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
+name: Publish Python 🐍 distribution 📦
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Build distribution 📦
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🧩
+        uses: actions/checkout@v4
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          cache: "pip"
+      - name: Install pypa/build 🏗️
+        run: |
+          python -m pip install build --user
+      - name: Build a binary wheel and a source tarball 📦
+        run: |
+          python -m build
+      - name: Store the distribution packages 📦
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  check-version:
+    name: Check project versioning 🏷️
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🧩
+        uses: actions/checkout@v4
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+          cache: "pip"
+      - name: Extract version from pyproject.toml and set as env variable 📝
+        run: |
+          PYPROJECT_VERSION=$(python -c "import tomllib; \
+            f = open('pyproject.toml', 'rb'); data = tomllib.load(f); \
+            print(data['project']['version']); f.close()")
+          echo "PACKAGE_VERSION=$PYPROJECT_VERSION" >> $GITHUB_ENV
+        shell: bash
+      - name: Check if project version matches the git tag 🏷️
+        run: |
+          TAG=$(git describe HEAD --tags --abbrev=0 | sed 's/^v//')
+          echo "Tag (without 'v'): $TAG"
+          echo "Package version: $PACKAGE_VERSION"
+          if [[ "$TAG" != "$PACKAGE_VERSION" ]]; then
+            echo "Error: Tag does not match the package version."
+            exit 1
+          fi
+
+  github-release:
+    name: Prepare GitHub release 🚀
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - check-version
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository 🧩
+        uses: actions/checkout@v4
+      - name: Extract version from git tag and set as env variable 📝
+        run: |
+          TAG=$(git describe HEAD --tags --abbrev=0 | sed 's/^v//')
+          echo "PACKAGE_VERSION=$TAG" >> $GITHUB_ENV
+      - name: Download all the dists 📦
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Prepare new release 🚀
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ${{ github.workspace }}/CHANGELOG.md
+          draft: true
+          files: |
+            dist/netbox_aci_plugin-${{ env.PACKAGE_VERSION }}-py3-none-any.whl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-to-pypi:
+    name: Publish distribution 📦 to PyPI
+    if: startsWith(github.ref, 'refs/tags/')  # only publish on tag pushes
+    needs:
+      - check-version
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/netbox-aci-plugin
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+      - name: Download all the dists 📦
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Publish to PyPI 🐍
+        uses: pypa/gh-action-pypi-publish@release/v1
+...
