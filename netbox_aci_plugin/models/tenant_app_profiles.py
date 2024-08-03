@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
 
-from ..choices import EPGQualityOfServiceClassChoices
+from ..choices import QualityOfServiceClassChoices
 from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
 from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
@@ -180,8 +180,8 @@ class ACIEndpointGroup(NetBoxModel):
     qos_class = models.CharField(
         verbose_name=_("QoS class"),
         max_length=11,
-        default=EPGQualityOfServiceClassChoices.CLASS_UNSPECIFIED,
-        choices=EPGQualityOfServiceClassChoices,
+        default=QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
+        choices=QualityOfServiceClassChoices,
         help_text=_(
             "Assignment of the ACI Quality-of-Service level for "
             "traffic sourced in the EPG. Default is 'unspecified'."
@@ -273,4 +273,4 @@ class ACIEndpointGroup(NetBoxModel):
 
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
-        return EPGQualityOfServiceClassChoices.colors.get(self.qos_class)
+        return QualityOfServiceClassChoices.colors.get(self.qos_class)

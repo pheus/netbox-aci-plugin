@@ -12,7 +12,7 @@ from ..choices import (
     BDMultiDestinationFloodingChoices,
     BDUnknownMulticastChoices,
     BDUnknownUnicastChoices,
-    EPGQualityOfServiceClassChoices,
+    QualityOfServiceClassChoices,
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
@@ -1156,7 +1156,7 @@ class ACIEndpointGroupTestCase(TestCase):
         cls.aci_epg_custom_qos_policy_name = "CustomQoSPolicy1"
         cls.aci_epg_flood_in_encap_enabled = False
         cls.aci_epg_intra_epg_isolation_enabled = False
-        cls.aci_epg_qos_class = EPGQualityOfServiceClassChoices.CLASS_LEVEL_3
+        cls.aci_epg_qos_class = QualityOfServiceClassChoices.CLASS_LEVEL_3
         cls.aci_epg_preferred_group_member_enabled = False
         cls.aci_epg_proxy_arp_enabled = False
         cls.nb_tenant_name = "NetBoxTestTenant"
@@ -1306,8 +1306,8 @@ class ACIEndpointGroupTestCase(TestCase):
         """Test the 'get_qos_class_color' method of ACI Endpoint Group."""
         self.assertEqual(
             self.aci_epg.get_qos_class_color(),
-            EPGQualityOfServiceClassChoices.colors.get(
-                EPGQualityOfServiceClassChoices.CLASS_LEVEL_3
+            QualityOfServiceClassChoices.colors.get(
+                QualityOfServiceClassChoices.CLASS_LEVEL_3
             ),
         )
 

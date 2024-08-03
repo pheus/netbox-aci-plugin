@@ -52,12 +52,12 @@ class BDUnknownUnicastChoices(ChoiceSet):
 
 
 #
-# Endpoint Group
+# Quality of Service (QoS)
 #
 
 
-class EPGQualityOfServiceClassChoices(ChoiceSet):
-    """Choice set of Endpoint Group QoS class."""
+class QualityOfServiceClassChoices(ChoiceSet):
+    """Choice set of Quality of Service (QoS) classes."""
 
     # default "unspecified"
     CLASS_UNSPECIFIED = "unspecified"

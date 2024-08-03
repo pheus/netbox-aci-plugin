@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
 
-from ..choices import EPGQualityOfServiceClassChoices
+from ..choices import QualityOfServiceClassChoices
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
@@ -119,7 +119,7 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("NetBox tenant (ID)"),
     )
     qos_class = django_filters.MultipleChoiceFilter(
-        choices=EPGQualityOfServiceClassChoices,
+        choices=QualityOfServiceClassChoices,
         null_value=None,
     )
 

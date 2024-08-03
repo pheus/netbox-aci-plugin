@@ -22,7 +22,7 @@ from utilities.forms.fields import (
 )
 from utilities.forms.rendering import FieldSet
 
-from ..choices import EPGQualityOfServiceClassChoices
+from ..choices import QualityOfServiceClassChoices
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
@@ -285,7 +285,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
         ),
     )
     qos_class = forms.ChoiceField(
-        choices=EPGQualityOfServiceClassChoices,
+        choices=QualityOfServiceClassChoices,
         required=False,
         label=_("QoS class"),
         help_text=_(
@@ -445,7 +445,7 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         ),
     )
     qos_class = forms.ChoiceField(
-        choices=add_blank_choice(EPGQualityOfServiceClassChoices),
+        choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
     )
@@ -624,7 +624,7 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
     )
     qos_class = forms.ChoiceField(
-        choices=add_blank_choice(EPGQualityOfServiceClassChoices),
+        choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
     )
@@ -682,7 +682,7 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
         help_text=_("Assigned NetBox Tenant"),
     )
     qos_class = CSVChoiceField(
-        choices=EPGQualityOfServiceClassChoices,
+        choices=QualityOfServiceClassChoices,
         required=True,
         label=_("QoS class"),
         help_text=_(
