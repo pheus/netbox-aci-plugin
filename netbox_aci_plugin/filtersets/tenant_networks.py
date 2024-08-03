@@ -6,6 +6,8 @@ import django_filters
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from ipam.models import VRF, IPAddress
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
@@ -67,9 +69,9 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         choices=VRFPCEnforcementPreferenceChoices,
         null_value=None,
     )
-    present_in_aci_tenant_or_common = django_filters.ModelChoiceFilter(
+    present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
         queryset=ACITenant.objects.all(),
-        method="filter_present_in_aci_tenant_or_common",
+        method="filter_present_in_aci_tenant_or_common_id",
         label=_("ACI Tenant (ID)"),
     )
 
@@ -112,14 +114,15 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         )
         return queryset.filter(queryset_filter)
 
-    def filter_present_in_aci_tenant_or_common(
-        self, queryset, name, aci_tenant
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_present_in_aci_tenant_or_common_id(
+        self, queryset, name, aci_tenant_id
     ):
         """Return a QuerySet filtered by given ACI Tenant or 'common'."""
-        if aci_tenant is None:
+        if aci_tenant_id is None:
             return queryset.none
         return queryset.filter(
-            Q(aci_tenant=aci_tenant) | Q(aci_tenant__name="common")
+            Q(aci_tenant=aci_tenant_id) | Q(aci_tenant__name="common")
         )
 
 
@@ -164,9 +167,9 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         choices=BDMultiDestinationFloodingChoices,
         null_value=None,
     )
-    present_in_aci_tenant_or_common = django_filters.ModelChoiceFilter(
+    present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
         queryset=ACITenant.objects.all(),
-        method="filter_present_in_aci_tenant_or_common",
+        method="filter_present_in_aci_tenant_or_common_id",
         label=_("ACI Tenant (ID)"),
     )
     unknown_ipv4_multicast = django_filters.MultipleChoiceFilter(
@@ -237,14 +240,15 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         )
         return queryset.filter(queryset_filter)
 
-    def filter_present_in_aci_tenant_or_common(
-        self, queryset, name, aci_tenant
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_present_in_aci_tenant_or_common_id(
+        self, queryset, name, aci_tenant_id
     ):
         """Return a QuerySet filtered by given ACI Tenant or 'common'."""
-        if aci_tenant is None:
+        if aci_tenant_id is None:
             return queryset.none
         return queryset.filter(
-            Q(aci_tenant=aci_tenant) | Q(aci_tenant__name="common")
+            Q(aci_tenant=aci_tenant_id) | Q(aci_tenant__name="common")
         )
 
 

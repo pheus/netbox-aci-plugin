@@ -523,7 +523,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"present_in_aci_tenant_or_common": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
         label=_("ACI VRF"),
     )
     nb_tenant_group = DynamicModelChoiceField(

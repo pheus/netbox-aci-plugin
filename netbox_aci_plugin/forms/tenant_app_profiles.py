@@ -235,7 +235,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"present_in_aci_tenant_or_common": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
         initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
         required=False,
         label=_("ACI VRF"),
@@ -243,7 +243,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
     aci_bridge_domain = DynamicModelChoiceField(
         queryset=ACIBridgeDomain.objects.all(),
         query_params={
-            "present_in_aci_tenant_or_common": "$aci_tenant",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
             "aci_vrf_id": "$aci_vrf",
         },
         label=_("ACI Bridge Domain"),
