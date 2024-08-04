@@ -68,11 +68,11 @@ class ACITenantTestCase(TestCase):
         )
 
     def test_aci_tenant_nb_tenant_instance(self) -> None:
-        """Test the Netbox tenant associated with ACI Tenant."""
+        """Test the NetBox tenant associated with ACI Tenant."""
         self.assertTrue(isinstance(self.aci_tenant.nb_tenant, Tenant))
 
     def test_aci_tenant_nb_tenant_name(self) -> None:
-        """Test the Netbox tenant name associated with ACI Tenant."""
+        """Test the NetBox tenant name associated with ACI Tenant."""
         self.assertEqual(self.aci_tenant.nb_tenant.name, self.nb_tenant_name)
 
     def test_invalid_aci_tenant_name(self) -> None:
@@ -190,11 +190,11 @@ class ACIAppProfileTestCase(TestCase):
         )
 
     def test_aci_app_profile_nb_tenant_instance(self) -> None:
-        """Test the Netbox tenant associated with ACI Application Profile."""
+        """Test the NetBox tenant associated with ACI Application Profile."""
         self.assertTrue(isinstance(self.aci_app_profile.nb_tenant, Tenant))
 
     def test_aci_app_profile_nb_tenant_name(self) -> None:
-        """Test the Netbox tenant name associated with ACI App Profile."""
+        """Test the NetBox tenant name associated with ACI App Profile."""
         self.assertEqual(
             self.aci_app_profile.nb_tenant.name, self.nb_tenant_name
         )
@@ -336,19 +336,19 @@ class ACIVRFTestCase(TestCase):
         self.assertEqual(self.aci_vrf.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_vrf_nb_tenant_instance(self) -> None:
-        """Test the Netbox Tenant instance associated with ACI VRF."""
+        """Test the NetBox Tenant instance associated with ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf.nb_tenant, Tenant))
 
     def test_aci_vrf_nb_tenant_name(self) -> None:
-        """Test the Netbox tenant name associated with ACI VRF."""
+        """Test the NetBox tenant name associated with ACI VRF."""
         self.assertEqual(self.aci_vrf.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_vrf_nb_vrf_instance(self) -> None:
-        """Test the Netbox VRF instance associated with ACI VRF."""
+        """Test the NetBox VRF instance associated with ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf.nb_vrf, VRF))
 
     def test_aci_vrf_nb_vrf_name(self) -> None:
-        """Test the Netbox VRF name associated with ACI VRF."""
+        """Test the NetBox VRF name associated with ACI VRF."""
         self.assertEqual(self.aci_vrf.nb_vrf.name, self.nb_vrf_name)
 
     def test_aci_vrf_bd_enforcement_enabled(self) -> None:
