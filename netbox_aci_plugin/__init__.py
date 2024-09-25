@@ -19,7 +19,7 @@ class ACIConfig(PluginConfig):
     author_email = __email__
     base_url = "aci"
     min_version = "4.0.0"
-    max_version = "4.0.99"
+    max_version = "4.1.99"
     default_settings = {
         "create_default_aci_tenants": True,
     }
