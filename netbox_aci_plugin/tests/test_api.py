@@ -110,6 +110,7 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "nb_tenant",
         "url",
     ]
+    user_permissions = ("netbox_aci_plugin.view_acitenant",)
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -187,6 +188,7 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "nb_vrf",
         "url",
     ]
+    user_permissions = ("netbox_aci_plugin.view_acitenant",)
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -300,6 +302,10 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "nb_tenant",
         "url",
     ]
+    user_permissions = (
+        "netbox_aci_plugin.view_acitenant",
+        "netbox_aci_plugin.view_acivrf",
+    )
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -472,6 +478,12 @@ class ACIBridgeDomainSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "nb_tenant",
         "url",
     ]
+    user_permissions = (
+        "netbox_aci_plugin.view_acitenant",
+        "netbox_aci_plugin.view_acivrf",
+        "netbox_aci_plugin.view_acibridgedomain",
+        "ipam.view_ipaddress",
+    )
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -623,6 +635,12 @@ class ACIEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "nb_tenant",
         "url",
     ]
+    user_permissions = (
+        "netbox_aci_plugin.view_acitenant",
+        "netbox_aci_plugin.view_aciappprofile",
+        "netbox_aci_plugin.view_acivrf",
+        "netbox_aci_plugin.view_acibridgedomain",
+    )
 
     @classmethod
     def setUpTestData(cls) -> None:

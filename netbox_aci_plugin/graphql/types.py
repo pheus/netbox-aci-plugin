@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import List, Optional
+from typing import Annotated, List, Optional
 
+import strawberry
 import strawberry_django
 from ipam.graphql.types import IPAddressType, VRFType
 from netbox.graphql.types import NetBoxObjectType
@@ -30,7 +31,10 @@ from .filters import (
 class ACITenantType(NetBoxObjectType):
     """GraphQL type definition for ACITenant model."""
 
-    nb_tenant: Optional[TenantType]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
 
 
 @strawberry_django.type(
@@ -39,17 +43,27 @@ class ACITenantType(NetBoxObjectType):
 class ACIAppProfileType(NetBoxObjectType):
     """GraphQL type definition for ACIAppProfile model."""
 
-    aci_tenant: ACITenantType
-    nb_tenant: Optional[TenantType]
+    aci_tenant: Annotated[
+        "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
 
 
 @strawberry_django.type(ACIVRF, fields="__all__", filters=ACIVRFFilter)
 class ACIVRFType(NetBoxObjectType):
     """GraphQL type definition for ACIVRF model."""
 
-    aci_tenant: ACITenantType
-    nb_tenant: Optional[TenantType]
-    nb_vrf: Optional[VRFType]
+    aci_tenant: Annotated[
+        "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
+    nb_vrf: Annotated["VRFType", strawberry.lazy("ipam.graphql.types")] | None
     dns_labels: Optional[List[str]]
 
 
@@ -59,9 +73,16 @@ class ACIVRFType(NetBoxObjectType):
 class ACIBridgeDomainType(NetBoxObjectType):
     """GraphQL type definition for ACIBridgeDomain model."""
 
-    aci_tenant: ACITenantType
-    aci_vrf: ACIVRFType
-    nb_tenant: Optional[TenantType]
+    aci_tenant: Annotated[
+        "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_vrf: Annotated[
+        "ACIVRFType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
     dhcp_labels: Optional[List[str]]
     mac_address: Optional[str]
     virtual_mac_address: Optional[str]
@@ -75,9 +96,17 @@ class ACIBridgeDomainType(NetBoxObjectType):
 class ACIBridgeDomainSubnetType(NetBoxObjectType):
     """GraphQL type definition for ACIBridgeDomainSubnet model."""
 
-    aci_bridge_domain: ACIBridgeDomainType
-    gateway_ip_address: IPAddressType
-    nb_tenant: Optional[TenantType]
+    aci_bridge_domain: Annotated[
+        "ACIBridgeDomainType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    gateway_ip_address: Annotated[
+        "IPAddressType", strawberry.lazy("ipam.graphql.types")
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
 
 
 @strawberry_django.type(
@@ -88,6 +117,14 @@ class ACIBridgeDomainSubnetType(NetBoxObjectType):
 class ACIEndpointGroupType(NetBoxObjectType):
     """GraphQL type definition for ACIEndpointGroup model."""
 
-    aci_app_profile: ACIAppProfileType
-    aci_bridge_domain: ACIBridgeDomainType
-    nb_tenant: Optional[TenantType]
+    aci_app_profile: Annotated[
+        "ACIAppProfileType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_bridge_domain: Annotated[
+        "ACIBridgeDomainType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )

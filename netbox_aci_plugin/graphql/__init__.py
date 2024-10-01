@@ -1,3 +1,3 @@
-from .schema import schema
+from .schema import NetBoxACIQuery
 
-__all__ = ["schema"]
+schema = [NetBoxACIQuery]
