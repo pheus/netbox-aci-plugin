@@ -6,6 +6,27 @@
 
 ---
 
+## 0.0.9 (2024-10-08)
+
+### Breaking Changes
+
+* Requires NetBox version 4.1.0 or higher
+
+### Enhancements
+
+* Add database migration for ACITenant
+* Allow creation of default ACI Tenants (`common`, `infra`, `mgmt`) during migration
+* Add database migrations for ACIVRF, ACIBridgeDomain, ACIBridgeDomainSubnet
+* Add database migrations for ACIAppProfile, ACIEndpointGroup
+* Provide a plugin configuration option to disable the creation of the default ACI Tenants
+* Add support for GraphQL extended permissions in NetBox v4.0.10 and v4.0.11
+* Add NetBox v4.1 compatibility
+
+### Bug Fixes
+
+* Fix OpenAPI schema generation warning for 'present_in_aci_tenant_or_common' filter
+* Include `_id` suffix for filter `present_in_aci_tenant_or_common`
+
 ## 0.0.8 (2024-07-17)
 
 ### Enhancements

@@ -2,7 +2,7 @@
 
 __author__ = """Martin Hauser"""
 __email__ = "git@pheus.dev"
-__version__ = "0.0.8"
+__version__ = "0.0.9"
 
 
 from netbox.plugins import PluginConfig
@@ -12,13 +12,13 @@ class ACIConfig(PluginConfig):
     """NetBox ACI Plugin specific configuration."""
 
     name = "netbox_aci_plugin"
-    verbose_name = "ACI"
+    verbose_name = "NetBox ACI"
     description = "NetBox plugin for documenting Cisco ACI specific objects."
     version = __version__
     author = __author__
     author_email = __email__
     base_url = "aci"
-    min_version = "4.0.0"
+    min_version = "4.1.0"
     max_version = "4.1.99"
     default_settings = {
         "create_default_aci_tenants": True,
