@@ -6,6 +6,16 @@ from django.utils.translation import gettext_lazy as _
 from utilities.choices import ChoiceSet
 
 #
+# Choice utilities
+#
+
+
+def add_custom_choice(choices) -> tuple:
+    """Add a custom choice to the end of a ChoiceSet."""
+    return tuple(choices) + ((None, _("custom")),)
+
+
+#
 # Bridge Domain
 #
 
