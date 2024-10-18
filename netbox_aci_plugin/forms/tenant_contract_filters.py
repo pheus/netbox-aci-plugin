@@ -43,6 +43,7 @@ from ..validators import (
     validate_contract_filter_ip_protocol,
     validate_contract_filter_port,
 )
+from .widgets.misc import TextInputWithOptions
 
 #
 # Contract Filter forms
@@ -625,6 +626,9 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
             "IP protocol is TCP or UDP. "
             "(Valid values 1-65535). Default is 'unspecified'."
         ),
+        widget=TextInputWithOptions(
+            options=ContractFilterPortChoices,
+        ),
     )
     destination_to_port = forms.CharField(
         required=False,
@@ -633,6 +637,9 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
             "Set the end of the destination port range, when the "
             "IP protocol is TCP or UDP. "
             "(Valid values 1-65535). Default is 'unspecified'."
+        ),
+        widget=TextInputWithOptions(
+            options=ContractFilterPortChoices,
         ),
     )
     ether_type = forms.ChoiceField(
@@ -657,6 +664,9 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
             "Set the Layer 3 IP protocol (for ether type 'IP'). "
             "(Valid values 1-255)."
         ),
+        widget=TextInputWithOptions(
+            options=ContractFilterIPProtocolChoices,
+        ),
     )
     match_dscp = forms.ChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
@@ -678,6 +688,9 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
             "IP protocol is TCP or UDP. "
             "(Valid values 1-65535). Default is 'unspecified'."
         ),
+        widget=TextInputWithOptions(
+            options=ContractFilterPortChoices,
+        ),
     )
     source_to_port = forms.CharField(
         required=False,
@@ -686,6 +699,9 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
             "Set the end of the source port range, when the "
             "IP protocol is TCP or UDP. "
             "(Valid values 1-65535). Default is 'unspecified'."
+        ),
+        widget=TextInputWithOptions(
+            options=ContractFilterPortChoices,
         ),
     )
     stateful_enabled = forms.NullBooleanField(
