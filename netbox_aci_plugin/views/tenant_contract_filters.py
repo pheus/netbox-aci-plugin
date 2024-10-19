@@ -2,21 +2,61 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
-from utilities.views import register_model_view
+from utilities.views import ViewTab, register_model_view
 
-from ..filtersets.tenant_contract_filters import ACIContractFilterFilterSet
+from ..filtersets.tenant_contract_filters import (
+    ACIContractFilterEntryFilterSet,
+    ACIContractFilterFilterSet,
+)
 from ..forms.tenant_contract_filters import (
     ACIContractFilterBulkEditForm,
+    ACIContractFilterEntryBulkEditForm,
+    ACIContractFilterEntryFilterForm,
+    ACIContractFilterEntryForm,
+    ACIContractFilterEntryImportForm,
     ACIContractFilterFilterForm,
     ACIContractFilterForm,
     ACIContractFilterImportForm,
 )
-from ..models.tenant_contract_filters import ACIContractFilter
+from ..models.tenant_contract_filters import (
+    ACIContractFilter,
+    ACIContractFilterEntry,
+)
 from ..tables.tenant_contract_filters import (
     ACIContractFilterEntryReducedTable,
+    ACIContractFilterEntryTable,
     ACIContractFilterTable,
 )
+
+#
+# Base children views
+#
+
+
+class ACIContractFilterEntryChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI Contract Filter Entry."""
+
+    child_model = ACIContractFilterEntry
+    filterset = ACIContractFilterEntryFilterSet
+    tab = ViewTab(
+        label=_("Filter Entries"),
+        badge=lambda obj: obj.aci_contract_filter_entries.count(),
+        permission="netbox_aci_plugin.view_acicontractfilterentry",
+        weight=1000,
+    )
+    table = ACIContractFilterEntryTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIContractFilterEntry."""
+        return ACIContractFilterEntry.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
+            "aci_contract_filter",
+            "tags",
+        )
+
 
 #
 # Contract Filter views
@@ -81,6 +121,35 @@ class ACIContractFilterDeleteView(generic.ObjectDeleteView):
     )
 
 
+@register_model_view(
+    ACIContractFilter, "contractfilterentries", path="entries"
+)
+class ACIContractFilterContractFilterEntryView(
+    ACIContractFilterEntryChildrenView
+):
+    """Children view of ACI Contract Filter Entry of ACI Contract Filter."""
+
+    queryset = ACIContractFilter.objects.all()
+    template_name = "netbox_aci_plugin/acicontractfilter_entries.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_contract_filter=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACIContractFilter colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIContractFilter column
+        table.columns.hide("aci_contract_filter")
+
+        return table
+
+
 class ACIContractFilterBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACIContractFilter."""
 
@@ -103,3 +172,75 @@ class ACIContractFilterBulkDeleteView(generic.BulkDeleteView):
     queryset = ACIContractFilter.objects.all()
     filterset = ACIContractFilterFilterSet
     table = ACIContractFilterTable
+
+
+#
+# Contract Filter Entry views
+#
+
+
+@register_model_view(ACIContractFilterEntry)
+class ACIContractFilterEntryView(generic.ObjectView):
+    """Detail view for displaying a single object of ACIContractFilterEntry."""
+
+    queryset = ACIContractFilterEntry.objects.prefetch_related(
+        "aci_contract_filter",
+        "tags",
+    )
+
+
+class ACIContractFilterEntryListView(generic.ObjectListView):
+    """List view for listing all objects of ACIContractFilterEntry."""
+
+    queryset = ACIContractFilterEntry.objects.prefetch_related(
+        "aci_contract_filter",
+        "tags",
+    )
+    filterset = ACIContractFilterEntryFilterSet
+    filterset_form = ACIContractFilterEntryFilterForm
+    table = ACIContractFilterEntryTable
+
+
+@register_model_view(ACIContractFilterEntry, "edit")
+class ACIContractFilterEntryEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACIContractFilterEntry."""
+
+    queryset = ACIContractFilterEntry.objects.prefetch_related(
+        "aci_contract_filter",
+        "tags",
+    )
+    form = ACIContractFilterEntryForm
+
+
+@register_model_view(ACIContractFilterEntry, "delete")
+class ACIContractFilterEntryDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACIContractFilterEntry."""
+
+    queryset = ACIContractFilterEntry.objects.prefetch_related(
+        "aci_contract_filter",
+        "tags",
+    )
+
+
+class ACIContractFilterEntryBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of Filter Entry."""
+
+    queryset = ACIContractFilterEntry.objects.all()
+    model_form = ACIContractFilterEntryImportForm
+
+
+class ACIContractFilterEntryBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of Filter Entry."""
+
+    queryset = ACIContractFilterEntry.objects.all()
+    filterset = ACIContractFilterEntryFilterSet
+    table = ACIContractFilterEntryTable
+    form = ACIContractFilterEntryBulkEditForm
+
+
+class ACIContractFilterEntryBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of Filter Entry."""
+
+    queryset = ACIContractFilterEntry.objects.all()
+    filterset = ACIContractFilterEntryFilterSet
+    table = ACIContractFilterEntryTable
