@@ -17,6 +17,13 @@ from .views.tenant_app_profiles import (
     ACIEndpointGroupEditView,
     ACIEndpointGroupListView,
 )
+from .views.tenant_contract_filters import (
+    ACIContractFilterBulkDeleteView,
+    ACIContractFilterBulkEditView,
+    ACIContractFilterBulkImportView,
+    ACIContractFilterEditView,
+    ACIContractFilterListView,
+)
 from .views.tenant_networks import (
     ACIBridgeDomainBulkDeleteView,
     ACIBridgeDomainBulkEditView,
@@ -206,5 +213,35 @@ urlpatterns: tuple = (
     path(
         "vrfs/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acivrf")),
+    ),
+    # ACI Contract Filter
+    path(
+        "contract-filters/",
+        ACIContractFilterListView.as_view(),
+        name="acicontractfilter_list",
+    ),
+    path(
+        "contract-filters/add/",
+        ACIContractFilterEditView.as_view(),
+        name="acicontractfilter_add",
+    ),
+    path(
+        "contract-filters/delete/",
+        ACIContractFilterBulkDeleteView.as_view(),
+        name="acicontractfilter_bulk_delete",
+    ),
+    path(
+        "contract-filters/edit/",
+        ACIContractFilterBulkEditView.as_view(),
+        name="acicontractfilter_bulk_edit",
+    ),
+    path(
+        "contract-filters/import/",
+        ACIContractFilterBulkImportView.as_view(),
+        name="acicontractfilter_import",
+    ),
+    path(
+        "contract-filters/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acicontractfilter")),
     ),
 )
