@@ -14,7 +14,7 @@ class PluginTest(TestCase):
     config_name: str = "ACIConfig"
     menu_group_count: int = 1
     menu_name: str = "ACI"
-    menu_tenant_item_count = 7
+    menu_tenant_item_count = 8
 
     def test_configuration(self) -> None:
         """Test for plugin configuration in NetBox."""
