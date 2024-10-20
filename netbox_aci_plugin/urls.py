@@ -22,6 +22,11 @@ from .views.tenant_contract_filters import (
     ACIContractFilterBulkEditView,
     ACIContractFilterBulkImportView,
     ACIContractFilterEditView,
+    ACIContractFilterEntryBulkDeleteView,
+    ACIContractFilterEntryBulkEditView,
+    ACIContractFilterEntryBulkImportView,
+    ACIContractFilterEntryEditView,
+    ACIContractFilterEntryListView,
     ACIContractFilterListView,
 )
 from .views.tenant_networks import (
@@ -243,5 +248,35 @@ urlpatterns: tuple = (
     path(
         "contract-filters/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acicontractfilter")),
+    ),
+    # ACI Contract Filter Entry
+    path(
+        "contract-filter-entries/",
+        ACIContractFilterEntryListView.as_view(),
+        name="acicontractfilterentry_list",
+    ),
+    path(
+        "contract-filter-entries/add/",
+        ACIContractFilterEntryEditView.as_view(),
+        name="acicontractfilterentry_add",
+    ),
+    path(
+        "contract-filter-entries/delete/",
+        ACIContractFilterEntryBulkDeleteView.as_view(),
+        name="acicontractfilterentry_bulk_delete",
+    ),
+    path(
+        "contract-filter-entries/edit/",
+        ACIContractFilterEntryBulkEditView.as_view(),
+        name="acicontractfilterentry_bulk_edit",
+    ),
+    path(
+        "contract-filter-entries/import/",
+        ACIContractFilterEntryBulkImportView.as_view(),
+        name="acicontractfilterentry_import",
+    ),
+    path(
+        "contract-filter-entries/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acicontractfilterentry")),
     ),
 )
