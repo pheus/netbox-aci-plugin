@@ -1,0 +1,126 @@
+
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load helpers %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acicontractfilterentry_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acicontractfilterentry_list' %}?aci_contract_filter_id={{ object.aci_contract_filter.pk }}">{{ object.aci_contract_filter }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h2 class="card-header">{% trans "ACI Contract Filter Entry" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ACI Tenant" %}</th>
+            <td>{{ object.aci_tenant|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ACI Contract Filter" %}</th>
+            <td>{{ object.aci_contract_filter|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Name Alias" %}</th>
+            <td>{{ object.name_alias|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Description" %}</th>
+            <td>{{ object.description|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="card-header">{% trans "Ethernet" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Ether Type" %}</th>
+            <td>{{ object.get_ether_type_display|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="card-header">{% trans "Address Resolution Protocol" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ARP Flags" %}</th>
+            <td>{{ object.get_arp_opc_display|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="card-header">{% trans "IP Protocol" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "IP Protocol" %}</th>
+            <td>{{ object.get_ip_protocol_display|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Match DSCP" %}</th>
+            <td>{{ object.get_match_dscp_display|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Match only fragments" %}</th>
+            <td>{% checkmark object.match_only_fragments_enabled %}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="card-header">{% trans "ICMP" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ICMPv4 Type" %}</th>
+            <td>{{ object.get_icmp_v4_type_display|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ICMPv6 Type" %}</th>
+            <td>{{ object.get_icmp_v6_type_display|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="card-header">{% trans "TCP/UDP Port range" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Source Port from" %}</th>
+            <td>{{ object.get_source_from_port_display|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Source Port to" %}</th>
+            <td>{{ object.get_source_to_port_display|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Destination Port from" %}</th>
+            <td>{{ object.get_destination_from_port_display|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Destination Port to" %}</th>
+            <td>{{ object.get_destination_to_port_display|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="card-header">{% trans "TCP settings" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Stateful" %}</th>
+            <td>{% checkmark object.stateful_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Rules" %}</th>
+            <td>{{ object.get_tcp_rules_display|join:", "|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}
