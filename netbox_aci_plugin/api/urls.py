@@ -16,5 +16,6 @@ router.register(
 )
 router.register("endpointgroups", views.ACIEndpointGroupListViewSet)
 router.register("vrfs", views.ACIVRFListViewSet)
+router.register("contract-filters", views.ACIContractFilterListViewSet)
 
 urlpatterns = router.urls
