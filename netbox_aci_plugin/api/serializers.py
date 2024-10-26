@@ -8,6 +8,7 @@ from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
+from ..models.tenant_contract_filters import ACIContractFilter
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -303,5 +304,43 @@ class ACIEndpointGroupSerializer(NetBoxModelSerializer):
             "description",
             "aci_app_profile",
             "aci_bridge_domain",
+            "nb_tenant",
+        )
+
+
+class ACIContractFilterSerializer(NetBoxModelSerializer):
+    """Serializer for ACI Contract Filter model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:acicontractfilter-detail"
+    )
+    aci_tenant = ACITenantSerializer(nested=True, required=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+
+    class Meta:
+        model = ACIContractFilter
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_tenant",
+            "nb_tenant",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_tenant",
             "nb_tenant",
         )
