@@ -8,7 +8,10 @@ from ..filtersets.tenant_app_profiles import (
     ACIAppProfileFilterSet,
     ACIEndpointGroupFilterSet,
 )
-from ..filtersets.tenant_contract_filters import ACIContractFilterFilterSet
+from ..filtersets.tenant_contract_filters import (
+    ACIContractFilterEntryFilterSet,
+    ACIContractFilterFilterSet,
+)
 from ..filtersets.tenant_networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
@@ -16,7 +19,10 @@ from ..filtersets.tenant_networks import (
 )
 from ..filtersets.tenants import ACITenantFilterSet
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
-from ..models.tenant_contract_filters import ACIContractFilter
+from ..models.tenant_contract_filters import (
+    ACIContractFilter,
+    ACIContractFilterEntry,
+)
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -27,6 +33,7 @@ from .serializers import (
     ACIAppProfileSerializer,
     ACIBridgeDomainSerializer,
     ACIBridgeDomainSubnetSerializer,
+    ACIContractFilterEntrySerializer,
     ACIContractFilterSerializer,
     ACIEndpointGroupSerializer,
     ACITenantSerializer,
@@ -119,3 +126,14 @@ class ACIContractFilterListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIContractFilterSerializer
     filterset_class = ACIContractFilterFilterSet
+
+
+class ACIContractFilterEntryListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Contract Filter Entry instances."""
+
+    queryset = ACIContractFilterEntry.objects.prefetch_related(
+        "aci_contract_filter",
+        "tags",
+    )
+    serializer_class = ACIContractFilterEntrySerializer
+    filterset_class = ACIContractFilterEntryFilterSet
