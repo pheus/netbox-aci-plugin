@@ -11,7 +11,10 @@ from ..filtersets.tenant_app_profiles import (
     ACIAppProfileFilterSet,
     ACIEndpointGroupFilterSet,
 )
-from ..filtersets.tenant_contract_filters import ACIContractFilterFilterSet
+from ..filtersets.tenant_contract_filters import (
+    ACIContractFilterEntryFilterSet,
+    ACIContractFilterFilterSet,
+)
 from ..filtersets.tenant_networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
@@ -19,7 +22,10 @@ from ..filtersets.tenant_networks import (
 )
 from ..filtersets.tenants import ACITenantFilterSet
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
-from ..models.tenant_contract_filters import ACIContractFilter
+from ..models.tenant_contract_filters import (
+    ACIContractFilter,
+    ACIContractFilterEntry,
+)
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -82,5 +88,13 @@ class ACIEndpointGroupFilter(BaseFilterMixin):
 @autotype_decorator(ACIContractFilterFilterSet)
 class ACIContractFilterFilter(BaseFilterMixin):
     """GraphQL filter definition for Contract Filter model."""
+
+    pass
+
+
+@strawberry_django.filter(ACIContractFilterEntry, lookups=True)
+@autotype_decorator(ACIContractFilterEntryFilterSet)
+class ACIContractFilterEntryFilter(BaseFilterMixin):
+    """GraphQL filter definition for Contract Filter Entry model."""
 
     pass

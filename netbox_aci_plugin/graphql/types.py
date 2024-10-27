@@ -11,7 +11,10 @@ from netbox.graphql.types import NetBoxObjectType
 from tenancy.graphql.types import TenantType
 
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
-from ..models.tenant_contract_filters import ACIContractFilter
+from ..models.tenant_contract_filters import (
+    ACIContractFilter,
+    ACIContractFilterEntry,
+)
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -22,6 +25,7 @@ from .filters import (
     ACIAppProfileFilter,
     ACIBridgeDomainFilter,
     ACIBridgeDomainSubnetFilter,
+    ACIContractFilterEntryFilter,
     ACIContractFilterFilter,
     ACIEndpointGroupFilter,
     ACITenantFilter,
@@ -147,3 +151,17 @@ class ACIContractFilterType(NetBoxObjectType):
         Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
         | None
     )
+
+
+@strawberry_django.type(
+    ACIContractFilterEntry,
+    fields="__all__",
+    filters=ACIContractFilterEntryFilter,
+)
+class ACIContractFilterEntryType(NetBoxObjectType):
+    """GraphQL type definition for ACIContractFilterEntry model."""
+
+    aci_contract_filter: Annotated[
+        "ACIContractFilterType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
