@@ -10,6 +10,7 @@ from utilities.testing import APITestCase, APIViewTestCases
 
 from ..api.urls import app_name
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
+from ..models.tenant_contract_filters import ACIContractFilter
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -765,5 +766,82 @@ class ACIEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "qos_class": "level2",
                 "preferred_group_member_enabled": False,
                 "proxy_arp_enabled": True,
+            },
+        ]
+
+
+class ACIContractFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
+    """API view test case for ACI Contract Filter."""
+
+    model = ACIContractFilter
+    view_namespace: str = f"plugins-api:{app_name}"
+    brief_fields: list[str] = [
+        "aci_tenant",
+        "description",
+        "display",
+        "id",
+        "name",
+        "name_alias",
+        "nb_tenant",
+        "url",
+    ]
+    user_permissions = ("netbox_aci_plugin.view_acitenant",)
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up ACI Contract Filter for API view testing."""
+        nb_tenant1 = Tenant.objects.create(
+            name="NetBox Tenant API 1", slug="netbox-tenant-api-1"
+        )
+        nb_tenant2 = Tenant.objects.create(
+            name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
+        )
+        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
+        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+
+        aci_contract_filters = (
+            ACIContractFilter(
+                name="ACIContractFilterTestAPI1",
+                name_alias="Testing",
+                description="First ACI Test",
+                comments="# ACI Test 1",
+                aci_tenant=aci_tenant1,
+                nb_tenant=nb_tenant1,
+            ),
+            ACIContractFilter(
+                name="ACIContractFilterTestAPI2",
+                name_alias="Testing",
+                description="Second ACI Test",
+                comments="# ACI Test 2",
+                aci_tenant=aci_tenant2,
+                nb_tenant=nb_tenant1,
+            ),
+            ACIContractFilter(
+                name="ACIContractFilterTestAPI3",
+                name_alias="Testing",
+                description="Third ACI Test",
+                comments="# ACI Test 3",
+                aci_tenant=aci_tenant1,
+                nb_tenant=nb_tenant2,
+            ),
+        )
+        ACIContractFilter.objects.bulk_create(aci_contract_filters)
+
+        cls.create_data: list[dict] = [
+            {
+                "name": "ACIContractFilterTestAPI4",
+                "name_alias": "Testing",
+                "description": "Forth ACI Test",
+                "comments": "# ACI Test 4",
+                "aci_tenant": aci_tenant2.id,
+                "nb_tenant": nb_tenant1.id,
+            },
+            {
+                "name": "ACIContractFilterTestAPI5",
+                "name_alias": "Testing",
+                "description": "Fifth ACI Test",
+                "comments": "# ACI Test 5",
+                "aci_tenant": aci_tenant1.id,
+                "nb_tenant": nb_tenant2.id,
             },
         ]
