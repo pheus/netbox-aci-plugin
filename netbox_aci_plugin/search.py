@@ -5,6 +5,7 @@
 from netbox.search import SearchIndex, register_search
 
 from .models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
+from .models.tenant_contract_filters import ACIContractFilter
 from .models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -131,5 +132,25 @@ class ACIEndpointGroupIndex(SearchIndex):
         "description",
         "aci_app_profile",
         "aci_bridge_domain",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIContractFilterIndex(SearchIndex):
+    """NetBox search definition for ACI Contract Filter model."""
+
+    model = ACIContractFilter
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_tenant",
         "nb_tenant",
     )
