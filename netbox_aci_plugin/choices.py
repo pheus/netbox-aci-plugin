@@ -225,11 +225,11 @@ class ContractFilterTCPRulesChoices(ChoiceSet):
 
     CHOICES = (
         (TCP_UNSPECIFIED, _("unspecified")),
-        (TCP_ACK, _("Acknowledgment")),
-        (TCP_ESTABLISHED, _("Established")),
-        (TCP_FINISH, _("Finish")),
-        (TCP_RESET, _("Reset")),
-        (TCP_SYN, _("Synchronize")),
+        (TCP_ACK, _("acknowledgment")),
+        (TCP_ESTABLISHED, _("established")),
+        (TCP_FINISH, _("finish")),
+        (TCP_RESET, _("reset")),
+        (TCP_SYN, _("synchronize")),
     )
 
 
