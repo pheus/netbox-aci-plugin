@@ -8,9 +8,10 @@ flowchart TD
     TN([Tenant])
     AP(Application Profile)
     EPG(Endpoint Group)
+    VRF(VRF)
     BD(Bridge Domain)
     SN(Subnet)
-    VRF(VRF)
+    FT(Filter)
     subgraph graphTN [Tenant]
         TN
     end
@@ -25,6 +26,11 @@ flowchart TD
             BD -->|1:n| SN
         end
         BD -.->|1:n| VRF
+    end
+    subgraph graphCT [Contract]
+        subgraph graphFT [Filter]
+            TN -->|1:n| FT
+        end
     end
     EPG -->|n:1| BD
 ```
@@ -271,3 +277,27 @@ The *ACIEndpointGroup* model has the following fields:
   (default is *false*)
 - **Comments**: a text field for additional notes
 - **Tags**: a list of NetBox tags
+
+## Contract Filter
+
+A *Contract Filter* in the ACI policy model represents a filter that contains
+multiple filter entries defining the type of traffic that is allowed or denied.
+Each Contract Filter is associated with a *Tenant*.
+
+The *ACIContractFilter* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represent the Contract Filter name in the ACI.
+- **ACI Tenant**: a reference to the `ACITenant` model.
+
+*Optional fields*:
+
+- **Name Alias**: an alias for the name of the filter in the ACI.
+- **Description**: a brief description of the filter.
+- **ACI Tenant**: a reference to the `ACITenant` model, associating the filter
+  with a specific tenant.
+- **NetBox Tenant**: a reference to the NetBox tenant model, linking the filter
+  to a NetBox tenant.
+- **Comments**: a text field for additional notes or comments.
+- **Tags**: a list of NetBox tags.
