@@ -239,7 +239,7 @@ class ACIEndpointGroup(NetBoxModel):
         """Return string representation of the instance."""
         return self.name
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> None:
         """Saves the current instance to the database."""
         # Ensure the assigned ACIBrideDomain belongs to either the same
         # ACITenant as the ACIAppProfile or to the special ACITenant 'common'.
