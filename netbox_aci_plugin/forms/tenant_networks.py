@@ -305,7 +305,7 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
             name=_("NetBox Networking"),
         ),
     )
-    nullable_fields = (
+    nullable_fields: tuple = (
         "name_alias",
         "description",
         "nb_tenant",
@@ -489,7 +489,7 @@ class ACIVRFImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = ACIVRF
-        fields = (
+        fields: tuple = (
             "name",
             "name_alias",
             "aci_tenant",
@@ -733,7 +733,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
             "tags",
         )
 
-    def clean(self):
+    def clean(self) -> None:
         """Cleaning and validation of ACI Bridge Domain Form."""
         super().clean()
 
@@ -951,7 +951,7 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
             name=_("NetBox Tenancy"),
         ),
     )
-    nullable_fields = (
+    nullable_fields: tuple = (
         "name_alias",
         "description",
         "nb_tenant",
@@ -1202,7 +1202,7 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = ACIBridgeDomain
-        fields = (
+        fields: tuple = (
             "name",
             "name_alias",
             "aci_tenant",
@@ -1557,7 +1557,7 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
             name=_("NetBox Tenancy"),
         ),
     )
-    nullable_fields = (
+    nullable_fields: tuple = (
         "name_alias",
         "description",
         "nb_tenant",
@@ -1765,7 +1765,7 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = ACIBridgeDomainSubnet
-        fields = (
+        fields: tuple = (
             "name",
             "name_alias",
             "aci_tenant",

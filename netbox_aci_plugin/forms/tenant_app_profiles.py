@@ -120,7 +120,7 @@ class ACIAppProfileBulkEditForm(NetBoxModelBulkEditForm):
             name=_("NetBox Tenancy"),
         ),
     )
-    nullable_fields = (
+    nullable_fields: tuple = (
         "name_alias",
         "description",
         "nb_tenant",
@@ -203,7 +203,7 @@ class ACIAppProfileImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = ACIAppProfile
-        fields = (
+        fields: tuple = (
             "name",
             "name_alias",
             "aci_tenant",
@@ -501,7 +501,7 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
             name=_("NetBox Tenancy"),
         ),
     )
-    nullable_fields = (
+    nullable_fields: tuple = (
         "name_alias",
         "description",
         "nb_tenant",
@@ -693,7 +693,7 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = ACIEndpointGroup
-        fields = (
+        fields: tuple = (
             "name",
             "name_alias",
             "aci_tenant",
