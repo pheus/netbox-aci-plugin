@@ -425,24 +425,24 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     )
     admin_shutdown = forms.NullBooleanField(
         required=False,
-        label=_("Admin shutdown"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Admin shutdown"),
     )
     flood_in_encap_enabled = forms.NullBooleanField(
         required=False,
-        label=_("Flood in encapsulation enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Flood in encapsulation enabled"),
     )
     intra_epg_isolation_enabled = forms.NullBooleanField(
         required=False,
-        label=_("Intra-EPG isolation enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Intra-EPG isolation enabled"),
     )
     qos_class = forms.ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
@@ -455,17 +455,17 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     )
     preferred_group_member_enabled = forms.NullBooleanField(
         required=False,
-        label=_("Preferred group member enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Preferred group member enabled"),
     )
     proxy_arp_enabled = forms.NullBooleanField(
         required=False,
-        label=_("Proxy ARP enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Proxy ARP enabled"),
     )
     comments = CommentField()
 
@@ -604,24 +604,24 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
     )
     admin_shutdown = forms.NullBooleanField(
         required=False,
-        label=_("Admin shutdown"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Admin shutdown"),
     )
     flood_in_encap_enabled = forms.NullBooleanField(
         required=False,
-        label=_("Flood in encapsulation enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Flood in encapsulation enabled"),
     )
     intra_epg_isolation_enabled = forms.NullBooleanField(
         required=False,
-        label=_("Intra-EPG isolation enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Intra-EPG isolation enabled"),
     )
     qos_class = forms.ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
@@ -630,17 +630,17 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
     )
     preferred_group_member_enabled = forms.NullBooleanField(
         required=False,
-        label=_("Preferred group member enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Preferred group member enabled"),
     )
     proxy_arp_enabled = forms.NullBooleanField(
         required=False,
-        label=_("Proxy ARP enabled"),
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
+        label=_("Proxy ARP enabled"),
     )
     tag = TagFilterField(ACIEndpointGroup)
 
