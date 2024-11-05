@@ -10,6 +10,8 @@ from .types import (
     ACIAppProfileType,
     ACIBridgeDomainSubnetType,
     ACIBridgeDomainType,
+    ACIContractFilterEntryType,
+    ACIContractFilterType,
     ACIEndpointGroupType,
     ACITenantType,
     ACIVRFType,
@@ -45,5 +47,17 @@ class NetBoxACIQuery:
 
     aci_endpoint_group: ACIEndpointGroupType = strawberry_django.field()
     aci_endpoint_group_list: List[ACIEndpointGroupType] = (
+        strawberry_django.field()
+    )
+
+    aci_contract_filter: ACIContractFilterType = strawberry_django.field()
+    aci_contract_filter_list: List[ACIContractFilterType] = (
+        strawberry_django.field()
+    )
+
+    aci_contract_filter_entry: ACIContractFilterEntryType = (
+        strawberry_django.field()
+    )
+    aci_contract_filter_entry_list: List[ACIContractFilterEntryType] = (
         strawberry_django.field()
     )
