@@ -5,6 +5,15 @@
 * First release on PyPI.
 
 ---
+## 0.0.10 (unreleased)
+
+### Enhancements
+
+* Add the ACI Contract Filter model, forms and views
+* Add the model, views and forms for the Entries in the ACI Contract Filter
+* Move the Bridge Domain Subnet addition control to the Subnet table header
+
+### Bug Fixes
 
 ## 0.0.9 (2024-10-08)
 
