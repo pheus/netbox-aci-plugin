@@ -140,7 +140,7 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
     template_name = "netbox_aci_plugin/aciappprofile_endpointgroups.html"
 
     def get_children(self, request, parent):
-        """Return all children objects for current parent object."""
+        """Return all children objects to the current parent object."""
         return (
             super()
             .get_children(request, parent)
@@ -148,7 +148,7 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACIAppProfile colum hidden."""
+        """Return the table with ACIAppProfile colum hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIAppProfile column

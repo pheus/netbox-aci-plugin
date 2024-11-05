@@ -175,7 +175,7 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
     template_name = "netbox_aci_plugin/acivrf_bridgedomains.html"
 
     def get_children(self, request, parent):
-        """Return all children objects for current parent object."""
+        """Return all children objects to the current parent object."""
         return super().get_children(request, parent).filter(aci_vrf=parent.pk)
 
     def get_table(self, *args, **kwargs):
@@ -290,7 +290,7 @@ class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
     template_name = "netbox_aci_plugin/acibridgedomain_subnets.html"
 
     def get_children(self, request, parent):
-        """Return all children objects for current parent object."""
+        """Return all children objects to the current parent object."""
         return (
             super()
             .get_children(request, parent)
@@ -315,7 +315,7 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
     template_name = "netbox_aci_plugin/acibridgedomain_endpointgroups.html"
 
     def get_children(self, request, parent):
-        """Return all children objects for current parent object."""
+        """Return all children objects to the current parent object."""
         return (
             super()
             .get_children(request, parent)

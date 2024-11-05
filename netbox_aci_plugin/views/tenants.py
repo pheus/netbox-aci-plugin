@@ -107,7 +107,7 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
     template_name = "netbox_aci_plugin/acitenant_appprofiles.html"
 
     def get_children(self, request, parent):
-        """Return all ACIAppProfile objects for current ACITenant."""
+        """Return all ACIAppProfile objects for the current ACITenant."""
         return (
             super()
             .get_children(request, parent)
@@ -115,7 +115,7 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACITenant colum hidden."""
+        """Return the table with ACITenant colum hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -140,7 +140,7 @@ class ACITenantVRFView(ACIVRFChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACITenant colum hidden."""
+        """Return the table with ACITenant colum hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -157,7 +157,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
     template_name = "netbox_aci_plugin/acitenant_bridgedomains.html"
 
     def get_children(self, request, parent):
-        """Return all children objects for current parent object."""
+        """Return all children objects to the current parent object."""
         return (
             super()
             .get_children(request, parent)
@@ -165,7 +165,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACITenant colum hidden."""
+        """Return the table with ACITenant colum hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -190,7 +190,7 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
     template_name = "netbox_aci_plugin/acitenant_endpointgroups.html"
 
     def get_children(self, request, parent):
-        """Return all children objects for current parent object."""
+        """Return all children objects to the current parent object."""
         return (
             super()
             .get_children(request, parent)
@@ -198,7 +198,7 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACITenant colum hidden."""
+        """Return the table with ACITenant colum hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
