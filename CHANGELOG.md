@@ -60,12 +60,12 @@
   special "common" ACI Tenant
 * Allow ACI Bridge Domain from special "common" ACI Tenant to be assigned to
   the ACI Endpoint Group
-* Add ACI BD Subnets (Gateway IP addresses) column to ACI Bridge Domain table
-  in list view
+* Add the ACI BD Subnets (Gateway IP addresses) column to the ACI Bridge Domain
+  table in the list view
 
 ### Bug Fixes
 
-* Add preferred IP address and virtual IP address to ACI Bridge Domain Subnet
+* Add a preferred IP address and virtual IP address to ACI Bridge Domain Subnet
   template
 * Fix unique ACI Bridge Domain Subnet name per ACI Bridge Domain
 * Add type declaration to API serializer for MAC Address and Virtual MAC
@@ -92,7 +92,7 @@
 
 ### Enhancements
 
-* Add ACI Endpoint Group model and views
+* Add the ACI Endpoint Group model and views
 * Prefill NetBox tenant while adding a new element through a ChildrenView
 
 ### Bug Fixes
@@ -107,7 +107,7 @@
 
 ### Enhancements
 
-* Add ACI Bridge Domain Subnet model and views
+* Add an ACI Bridge Domain Subnet model and views
 * Add ACI Bridge Domain tab to ACI Tenant
 * Rename `alias` to `name_alias` following the ACI policy model
 * Change related name of ACI VRF for ACI Bridge Domain to `aci_bridge_domains`
@@ -122,14 +122,14 @@
 
 ### Enhancements
 
-* Add ACI Bridge Domain model and views
+* Add the ACI Bridge Domain model and views
 * Allow certain model fields to be cloned
 
 ## 0.0.2 (2024-05-19)
 
 ### Enhancements
 
-* Add ACI Application Profile model and views
+* Add the ACI Application Profile model and views
 * Add ACI VRF model and views
 * Add ACI Application Profile tab view to ACITenant
 
