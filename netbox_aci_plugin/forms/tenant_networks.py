@@ -1263,7 +1263,7 @@ class ACIBridgeDomainSubnetForm(NetBoxModelForm):
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
-        initial_params={"aci_vrfs": "$aci_vrf"},
+        initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
         required=False,
         label=_("ACI Tenant"),
     )
@@ -1354,16 +1354,16 @@ class ACIBridgeDomainSubnetForm(NetBoxModelForm):
         ),
     )
     shared_enabled = forms.BooleanField(
-        label=_("Shared enabled"),
         required=False,
+        label=_("Shared enabled"),
         help_text=_(
             "Controls communication to the shared VRF (inter-VRF route "
             "leaking). Default is disabled."
         ),
     )
     virtual_ip_enabled = forms.BooleanField(
-        label=_("Virtual IP enabled"),
         required=False,
+        label=_("Virtual IP enabled"),
         help_text=_(
             "Treat the gateway IP as virtual IP. Default is disabled."
         ),
