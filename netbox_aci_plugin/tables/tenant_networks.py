@@ -228,9 +228,11 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
         linkify=True,
     )
     aci_tenant = tables.Column(
+        verbose_name=_("ACI Tenant"),
         linkify=True,
     )
     aci_vrf = tables.Column(
+        verbose_name=_("ACI VRF"),
         linkify=True,
     )
     aci_bridge_domain = tables.Column(
