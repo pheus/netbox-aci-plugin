@@ -48,7 +48,7 @@ class ACITenantView(generic.ObjectView):
                 ),
                 f"{field}_id",
             )
-            for model, field in get_related_models(ACITenant)
+            for model, field in get_related_models(ACITenant, ordered=False)
         ]
 
         # Get related models of directly referenced models
@@ -61,8 +61,14 @@ class ACITenantView(generic.ObjectView):
             ),
         ]
 
+        # Combine the lists and sort the combined list by the model's name
+        sorted_related_models = sorted(
+            related_models + related_sub_models,
+            key=lambda x: x[0].model._meta.verbose_name.lower(),
+        )
+
         return {
-            "related_models": related_models + related_sub_models,
+            "related_models": sorted_related_models,
         }
 
 
