@@ -51,6 +51,11 @@ class ACIContractFilterFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("NetBox tenant (ID)"),
     )
+    present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
+        queryset=ACITenant.objects.all(),
+        method="filter_present_in_aci_tenant_or_common_id",
+        label=_("ACI Tenant (ID)"),
+    )
 
     class Meta:
         model = ACIContractFilter
