@@ -481,6 +481,23 @@ class ACIBridgeDomain(NetBoxModel):
         else:
             return self.name
 
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+        super().clean()
+
+        # Validate the assigned ACIVRF belongs to either the same ACITenant as
+        # the ACIBridgeDomain or to the special ACITenant 'common'
+        if (
+            self.aci_vrf.aci_tenant != self.aci_tenant
+            and self.aci_vrf.aci_tenant.name != "common"
+        ):
+            raise ValidationError(
+                _(
+                    "Assigned ACIVRF have to belong to the same ACITenant as "
+                    "the ACIBridgeDomain or to the special ACITenant 'common'."
+                )
+            )
+
     def save(self, *args, **kwargs) -> None:
         """Saves the current instance to the database."""
         # Ensure the assigned ACIVRF belongs to either the same ACITenant as

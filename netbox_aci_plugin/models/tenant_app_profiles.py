@@ -239,6 +239,25 @@ class ACIEndpointGroup(NetBoxModel):
         """Return string representation of the instance."""
         return self.name
 
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+        super().clean()
+
+        # Validate the assigned ACIBrideDomain belongs to either the same
+        # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
+        if (
+            self.aci_bridge_domain.aci_tenant
+            != self.aci_app_profile.aci_tenant
+            and self.aci_bridge_domain.aci_tenant.name != "common"
+        ):
+            raise ValidationError(
+                _(
+                    "Assigned ACIBridgeDomain have to belong to the same "
+                    "ACITenant as the ACIAppProfile or to the special "
+                    "ACITenant 'common'."
+                )
+            )
+
     def save(self, *args, **kwargs) -> None:
         """Saves the current instance to the database."""
         # Ensure the assigned ACIBrideDomain belongs to either the same
