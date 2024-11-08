@@ -323,6 +323,8 @@ class ACIContractFilterEntry(NetBoxModel):
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
+        super().clean()
+
         validation_errors = {}
 
         # Allowable IP ether types
