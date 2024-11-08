@@ -242,15 +242,18 @@ class ACIEndpointGroup(NetBoxModel):
     def save(self, *args, **kwargs) -> None:
         """Saves the current instance to the database."""
         # Ensure the assigned ACIBrideDomain belongs to either the same
-        # ACITenant as the ACIAppProfile or to the special ACITenant 'common'.
+        # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
         if (
             self.aci_bridge_domain.aci_tenant
             != self.aci_app_profile.aci_tenant
             and self.aci_bridge_domain.aci_tenant.name != "common"
         ):
             raise ValidationError(
-                "Assigned ACIBridgeDomain have to belong to the same ACITenant"
-                "as the ACIAppProfile or to the special ACITenant 'common'."
+                _(
+                    "Assigned ACIBridgeDomain have to belong to the same "
+                    "ACITenant as the ACIAppProfile or to the special "
+                    "ACITenant 'common'."
+                )
             )
 
         super().save(*args, **kwargs)
