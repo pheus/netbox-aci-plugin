@@ -66,6 +66,10 @@ class ACIContractFilterEntryTable(NetBoxTable):
         verbose_name=_("Alias"),
         linkify=True,
     )
+    aci_tenant = tables.Column(
+        verbose_name=_("ACI Tenant"),
+        linkify=True,
+    )
     aci_contract_filter = tables.Column(
         verbose_name=_("Filter"),
         linkify=True,
@@ -119,6 +123,7 @@ class ACIContractFilterEntryTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "aci_tenant",
             "aci_contract_filter",
             "description",
             "arp_opc",
@@ -140,6 +145,7 @@ class ACIContractFilterEntryTable(NetBoxTable):
         default_columns: tuple = (
             "name",
             "name_alias",
+            "aci_tenant",
             "aci_contract_filter",
             "ether_type",
             "arp_opc",
