@@ -32,8 +32,8 @@ from ..models.tenants import ACITenant
 #
 
 
-class ACIAppProfileForm(NetBoxModelForm):
-    """NetBox form for ACI Application Profile model."""
+class ACIAppProfileEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI Application Profile model."""
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -83,7 +83,7 @@ class ACIAppProfileForm(NetBoxModelForm):
 
 
 class ACIAppProfileBulkEditForm(NetBoxModelBulkEditForm):
-    """NetBox bulk edit form for ACI Application Profile model."""
+    """NetBox bulk edit form for the ACI Application Profile model."""
 
     name_alias = forms.CharField(
         max_length=64,
@@ -129,7 +129,7 @@ class ACIAppProfileBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for ACI Application Profile model."""
+    """NetBox filter form for the ACI Application Profile model."""
 
     model = ACIAppProfile
     fieldsets: tuple = (
@@ -184,7 +184,7 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
 
 
 class ACIAppProfileImportForm(NetBoxModelImportForm):
-    """NetBox import form for ACI Application Profile."""
+    """NetBox import form for the ACI Application Profile model."""
 
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -219,8 +219,8 @@ class ACIAppProfileImportForm(NetBoxModelImportForm):
 #
 
 
-class ACIEndpointGroupForm(NetBoxModelForm):
-    """NetBox form for ACI Endpoint Group model."""
+class ACIEndpointGroupEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI Endpoint Group model."""
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -396,7 +396,7 @@ class ACIEndpointGroupForm(NetBoxModelForm):
 
 
 class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
-    """NetBox bulk edit form for ACI Endpoint Group model."""
+    """NetBox bulk edit form for the ACI Endpoint Group model."""
 
     name_alias = forms.CharField(
         max_length=64,
@@ -511,7 +511,7 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for ACI Endpoint Group model."""
+    """NetBox filter form for the ACI Endpoint Group model."""
 
     model = ACIEndpointGroup
     fieldsets: tuple = (
@@ -646,7 +646,7 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
 
 
 class ACIEndpointGroupImportForm(NetBoxModelImportForm):
-    """NetBox import form for ACIEndpointGroup."""
+    """NetBox import form for the ACI Endpoint Group model."""
 
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),

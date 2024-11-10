@@ -12,12 +12,12 @@ from ..filtersets.tenant_contract_filters import (
 )
 from ..forms.tenant_contract_filters import (
     ACIContractFilterBulkEditForm,
+    ACIContractFilterEditForm,
     ACIContractFilterEntryBulkEditForm,
+    ACIContractFilterEntryEditForm,
     ACIContractFilterEntryFilterForm,
-    ACIContractFilterEntryForm,
     ACIContractFilterEntryImportForm,
     ACIContractFilterFilterForm,
-    ACIContractFilterForm,
     ACIContractFilterImportForm,
 )
 from ..models.tenant_contract_filters import (
@@ -107,7 +107,7 @@ class ACIContractFilterEditView(generic.ObjectEditView):
         "nb_tenant",
         "tags",
     )
-    form = ACIContractFilterForm
+    form = ACIContractFilterEditForm
 
 
 @register_model_view(ACIContractFilter, "delete")
@@ -209,7 +209,7 @@ class ACIContractFilterEntryEditView(generic.ObjectEditView):
         "aci_contract_filter",
         "tags",
     )
-    form = ACIContractFilterEntryForm
+    form = ACIContractFilterEntryEditForm
 
 
 @register_model_view(ACIContractFilterEntry, "delete")

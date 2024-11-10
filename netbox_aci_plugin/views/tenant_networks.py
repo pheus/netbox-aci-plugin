@@ -13,16 +13,16 @@ from ..filtersets.tenant_networks import (
 )
 from ..forms.tenant_networks import (
     ACIBridgeDomainBulkEditForm,
+    ACIBridgeDomainEditForm,
     ACIBridgeDomainFilterForm,
-    ACIBridgeDomainForm,
     ACIBridgeDomainImportForm,
     ACIBridgeDomainSubnetBulkEditForm,
+    ACIBridgeDomainSubnetEditForm,
     ACIBridgeDomainSubnetFilterForm,
-    ACIBridgeDomainSubnetForm,
     ACIBridgeDomainSubnetImportForm,
     ACIVRFBulkEditForm,
+    ACIVRFEditForm,
     ACIVRFFilterForm,
-    ACIVRFForm,
     ACIVRFImportForm,
 )
 from ..models.tenant_networks import (
@@ -153,7 +153,7 @@ class ACIVRFEditView(generic.ObjectEditView):
         "nb_tenant",
         "tags",
     )
-    form = ACIVRFForm
+    form = ACIVRFEditForm
 
 
 @register_model_view(ACIVRF, "delete")
@@ -267,7 +267,7 @@ class ACIBridgeDomainEditView(generic.ObjectEditView):
         "nb_tenant",
         "tags",
     )
-    form = ACIBridgeDomainForm
+    form = ACIBridgeDomainEditForm
 
 
 @register_model_view(ACIBridgeDomain, "delete")
@@ -397,7 +397,7 @@ class ACIBridgeDomainSubnetEditView(generic.ObjectEditView):
         "nb_tenant",
         "tags",
     )
-    form = ACIBridgeDomainSubnetForm
+    form = ACIBridgeDomainSubnetEditForm
 
 
 @register_model_view(ACIBridgeDomainSubnet, "delete")

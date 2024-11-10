@@ -10,8 +10,8 @@ from utilities.views import ViewTab, register_model_view
 from ..filtersets.tenants import ACITenantFilterSet
 from ..forms.tenants import (
     ACITenantBulkEditForm,
+    ACITenantEditForm,
     ACITenantFilterForm,
-    ACITenantForm,
     ACITenantImportForm,
 )
 from ..models.tenant_app_profiles import ACIEndpointGroup
@@ -92,7 +92,7 @@ class ACITenantEditView(generic.ObjectEditView):
         "nb_tenant",
         "tags",
     )
-    form = ACITenantForm
+    form = ACITenantEditForm
 
 
 @register_model_view(ACITenant, "delete")

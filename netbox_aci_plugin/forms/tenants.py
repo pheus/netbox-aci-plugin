@@ -23,8 +23,8 @@ from utilities.forms.rendering import FieldSet
 from ..models.tenants import ACITenant
 
 
-class ACITenantForm(NetBoxModelForm):
-    """NetBox form for ACI Tenant model."""
+class ACITenantEditForm(NetBoxModelForm):
+    """NetBox edit form for ACI Tenant model."""
 
     nb_tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
@@ -108,7 +108,7 @@ class ACITenantBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACITenantFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for ACI Tenant model."""
+    """NetBox filter form for the ACI Tenant model."""
 
     model = ACITenant
     fieldsets: tuple = (

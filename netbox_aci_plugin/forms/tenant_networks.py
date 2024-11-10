@@ -42,8 +42,8 @@ from ..models.tenants import ACITenant
 #
 
 
-class ACIVRFForm(NetBoxModelForm):
-    """NetBox form for ACI VRF model."""
+class ACIVRFEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI VRF model."""
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -188,7 +188,7 @@ class ACIVRFForm(NetBoxModelForm):
 
 
 class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
-    """NetBox bulk edit form for ACI VRF model."""
+    """NetBox bulk edit form for the ACI VRF model."""
 
     name_alias = forms.CharField(
         max_length=64,
@@ -316,7 +316,7 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIVRFFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for ACI VRF model."""
+    """NetBox filter form for the ACI VRF model."""
 
     model = ACIVRF
     fieldsets: tuple = (
@@ -451,7 +451,7 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
 
 
 class ACIVRFImportForm(NetBoxModelImportForm):
-    """NetBox import form for ACIVRF."""
+    """NetBox import form for the ACI VRF model."""
 
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -514,8 +514,8 @@ class ACIVRFImportForm(NetBoxModelImportForm):
 #
 
 
-class ACIBridgeDomainForm(NetBoxModelForm):
-    """NetBox form for ACI Bridge Domain model."""
+class ACIBridgeDomainEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI Bridge Domain model."""
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -760,7 +760,7 @@ class ACIBridgeDomainForm(NetBoxModelForm):
 
 
 class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
-    """NetBox bulk edit form for ACI Bridge Domain model."""
+    """NetBox bulk edit form for the ACI Bridge Domain model."""
 
     name_alias = forms.CharField(
         max_length=64,
@@ -966,7 +966,7 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for ACI Bridge Domain model."""
+    """NetBox filter form for the ACI Bridge Domain model."""
 
     model = ACIBridgeDomain
     fieldsets: tuple = (
@@ -1144,7 +1144,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
 
 
 class ACIBridgeDomainImportForm(NetBoxModelImportForm):
-    """NetBox import form for ACIBridgeDomain."""
+    """NetBox import form for the ACI Bridge Domain model."""
 
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -1258,8 +1258,8 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
 #
 
 
-class ACIBridgeDomainSubnetForm(NetBoxModelForm):
-    """NetBox form for ACI Bridge Domain Subnet model."""
+class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI Bridge Domain Subnet model."""
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -1567,7 +1567,7 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for ACI Bridge Domain Subnet model."""
+    """NetBox filter form for the ACI Bridge Domain Subnet model."""
 
     model = ACIBridgeDomainSubnet
     fieldsets: tuple = (
@@ -1725,7 +1725,7 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
 
 
 class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
-    """NetBox import form for ACIBridgeDomainSubnet."""
+    """NetBox import form for the ACI Bridge Domain Subnet model."""
 
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),

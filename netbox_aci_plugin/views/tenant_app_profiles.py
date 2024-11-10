@@ -12,12 +12,12 @@ from ..filtersets.tenant_app_profiles import (
 )
 from ..forms.tenant_app_profiles import (
     ACIAppProfileBulkEditForm,
+    ACIAppProfileEditForm,
     ACIAppProfileFilterForm,
-    ACIAppProfileForm,
     ACIAppProfileImportForm,
     ACIEndpointGroupBulkEditForm,
+    ACIEndpointGroupEditForm,
     ACIEndpointGroupFilterForm,
-    ACIEndpointGroupForm,
     ACIEndpointGroupImportForm,
 )
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
@@ -118,7 +118,7 @@ class ACIAppProfileEditView(generic.ObjectEditView):
         "nb_tenant",
         "tags",
     )
-    form = ACIAppProfileForm
+    form = ACIAppProfileEditForm
 
 
 @register_model_view(ACIAppProfile, "delete")
@@ -222,7 +222,7 @@ class ACIEndpointGroupEditView(generic.ObjectEditView):
         "nb_tenant",
         "tags",
     )
-    form = ACIEndpointGroupForm
+    form = ACIEndpointGroupEditForm
 
 
 @register_model_view(ACIEndpointGroup, "delete")

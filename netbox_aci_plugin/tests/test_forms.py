@@ -4,17 +4,20 @@
 
 from django.test import TestCase
 
-from ..forms.tenant_app_profiles import ACIAppProfileForm, ACIEndpointGroupForm
+from ..forms.tenant_app_profiles import (
+    ACIAppProfileEditForm,
+    ACIEndpointGroupEditForm,
+)
 from ..forms.tenant_contract_filters import (
-    ACIContractFilterEntryForm,
-    ACIContractFilterForm,
+    ACIContractFilterEditForm,
+    ACIContractFilterEntryEditForm,
 )
 from ..forms.tenant_networks import (
-    ACIBridgeDomainForm,
-    ACIBridgeDomainSubnetForm,
-    ACIVRFForm,
+    ACIBridgeDomainEditForm,
+    ACIBridgeDomainSubnetEditForm,
+    ACIVRFEditForm,
 )
-from ..forms.tenants import ACITenantForm
+from ..forms.tenants import ACITenantEditForm
 
 
 class ACITenantFormTestCase(TestCase):
@@ -31,7 +34,7 @@ class ACITenantFormTestCase(TestCase):
 
     def test_invalid_aci_tenant_field_values(self) -> None:
         """Test validation of invalid ACI Tenant field values."""
-        aci_tenant_form = ACITenantForm(
+        aci_tenant_form = ACITenantEditForm(
             data={
                 "name": "ACI Test Tenant 1",
                 "name_alias": "ACI Test Tenant Alias 1",
@@ -51,7 +54,7 @@ class ACITenantFormTestCase(TestCase):
 
     def test_valid_aci_tenant_field_values(self) -> None:
         """Test validation of valid ACI Tenant field values."""
-        aci_tenant_form = ACITenantForm(
+        aci_tenant_form = ACITenantEditForm(
             data={
                 "name": "ACITestTenant1",
                 "name_alias": "TestingTenant",
@@ -77,7 +80,7 @@ class ACIAppProfileFormTestCase(TestCase):
 
     def test_invalid_aci_app_profile_field_values(self) -> None:
         """Test validation of invalid ACI AppProfile field values."""
-        aci_app_profile_form = ACIAppProfileForm(
+        aci_app_profile_form = ACIAppProfileEditForm(
             data={
                 "name": "ACI App Profile Test 1",
                 "name_alias": "ACI Test Alias 1",
@@ -98,7 +101,7 @@ class ACIAppProfileFormTestCase(TestCase):
 
     def test_valid_aci_app_profile_field_values(self) -> None:
         """Test validation of valid ACI AppProfile field values."""
-        aci_app_profile_form = ACIAppProfileForm(
+        aci_app_profile_form = ACIAppProfileEditForm(
             data={
                 "name": "ACIAppProfile1",
                 "name_alias": "Testing",
@@ -124,7 +127,7 @@ class ACIVRFFormTestCase(TestCase):
 
     def test_invalid_aci_vrf_field_values(self) -> None:
         """Test validation of invalid ACI VRF field values."""
-        aci_vrf_form = ACIVRFForm(
+        aci_vrf_form = ACIVRFEditForm(
             data={
                 "name": "ACI VRF Test 1",
                 "name_alias": "ACI Test Alias 1",
@@ -144,7 +147,7 @@ class ACIVRFFormTestCase(TestCase):
 
     def test_valid_aci_vrf_field_values(self) -> None:
         """Test validation of valid ACI VRF field values."""
-        aci_vrf_form = ACIVRFForm(
+        aci_vrf_form = ACIVRFEditForm(
             data={
                 "name": "ACIVRF1",
                 "name_alias": "Testing",
@@ -170,7 +173,7 @@ class ACIBridgeDomainFormTestCase(TestCase):
 
     def test_invalid_aci_bridge_domain_field_values(self) -> None:
         """Test validation of invalid ACI Bridge Domain field values."""
-        aci_bd_form = ACIBridgeDomainForm(
+        aci_bd_form = ACIBridgeDomainEditForm(
             data={
                 "name": "ACI BD Test 1",
                 "name_alias": "ACI Test Alias 1",
@@ -188,7 +191,7 @@ class ACIBridgeDomainFormTestCase(TestCase):
 
     def test_valid_aci_bridge_domain_field_values(self) -> None:
         """Test validation of valid ACI Bridge Domain field values."""
-        aci_bd_form = ACIBridgeDomainForm(
+        aci_bd_form = ACIBridgeDomainEditForm(
             data={
                 "name": "ACIBD1",
                 "name_alias": "Testing",
@@ -214,7 +217,7 @@ class ACIBridgeDomainSubnetFormTestCase(TestCase):
 
     def test_invalid_aci_bridge_domain_subnet_field_values(self) -> None:
         """Test validation of invalid ACI Bridge Domain Subnet field values."""
-        aci_bd_subnet_form = ACIBridgeDomainSubnetForm(
+        aci_bd_subnet_form = ACIBridgeDomainSubnetEditForm(
             data={
                 "name": "ACI BDSubnet Test 1",
                 "name_alias": "ACI Test Alias 1",
@@ -234,7 +237,7 @@ class ACIBridgeDomainSubnetFormTestCase(TestCase):
 
     def test_valid_aci_bridge_domain_subnet_field_values(self) -> None:
         """Test validation of valid ACI Bridge Domain Subnet field values."""
-        aci_bd_subnet_form = ACIBridgeDomainSubnetForm(
+        aci_bd_subnet_form = ACIBridgeDomainSubnetEditForm(
             data={
                 "name": "ACIBDSubnet1",
                 "name_alias": "Testing",
@@ -260,7 +263,7 @@ class ACIEndpointGroupFormTestCase(TestCase):
 
     def test_invalid_aci_endpoint_group_field_values(self) -> None:
         """Test validation of invalid ACI Endpoint Group field values."""
-        aci_epg_form = ACIEndpointGroupForm(
+        aci_epg_form = ACIEndpointGroupEditForm(
             data={
                 "name": "ACI Endpoint Group Test 1",
                 "name_alias": "ACI Test Alias 1",
@@ -280,7 +283,7 @@ class ACIEndpointGroupFormTestCase(TestCase):
 
     def test_valid_aci_endpoint_group_field_values(self) -> None:
         """Test validation of valid ACI Endpoint Group field values."""
-        aci_epg_form = ACIEndpointGroupForm(
+        aci_epg_form = ACIEndpointGroupEditForm(
             data={
                 "name": "ACIEndpointGroup1",
                 "name_alias": "Testing",
@@ -306,7 +309,7 @@ class ACIContractFilterFormTestCase(TestCase):
 
     def test_invalid_aci_contract_filter_field_values(self) -> None:
         """Test validation of invalid ACI Contract Filter field values."""
-        aci_contract_filter = ACIContractFilterForm(
+        aci_contract_filter = ACIContractFilterEditForm(
             data={
                 "name": "ACI Contract Filter Test 1",
                 "name_alias": "ACI Test Alias 1",
@@ -326,7 +329,7 @@ class ACIContractFilterFormTestCase(TestCase):
 
     def test_valid_aci_contract_filter_field_values(self) -> None:
         """Test validation of valid ACI Contract Filter field values."""
-        aci_contract_filter = ACIContractFilterForm(
+        aci_contract_filter = ACIContractFilterEditForm(
             data={
                 "name": "ACIContractFilter1",
                 "name_alias": "Testing",
@@ -352,7 +355,7 @@ class ACIContractFilterEntryFormTestCase(TestCase):
 
     def test_invalid_aci_contract_filter_entry_field_values(self) -> None:
         """Test validation of invalid Contract Filter Entry field values."""
-        aci_contract_filter_entry = ACIContractFilterEntryForm(
+        aci_contract_filter_entry = ACIContractFilterEntryEditForm(
             data={
                 "name": "ACI Contract Filter Entry Test 1",
                 "name_alias": "ACI Test Alias 1",
@@ -373,7 +376,7 @@ class ACIContractFilterEntryFormTestCase(TestCase):
 
     def test_valid_aci_contract_filter_entry_field_values(self) -> None:
         """Test validation of valid Contract Filter Entry field values."""
-        aci_contract_filter_entry = ACIContractFilterEntryForm(
+        aci_contract_filter_entry = ACIContractFilterEntryEditForm(
             data={
                 "name": "ACIContractFilterEntry1",
                 "name_alias": "Testing",

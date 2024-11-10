@@ -50,8 +50,8 @@ from .widgets.misc import TextInputWithOptions
 #
 
 
-class ACIContractFilterForm(NetBoxModelForm):
-    """NetBox form for ACI Contract Filter model."""
+class ACIContractFilterEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI Contract Filter model."""
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -101,7 +101,7 @@ class ACIContractFilterForm(NetBoxModelForm):
 
 
 class ACIContractFilterBulkEditForm(NetBoxModelBulkEditForm):
-    """NetBox bulk edit form for ACI Contract Filter model."""
+    """NetBox bulk edit form for the ACI Contract Filter model."""
 
     name_alias = forms.CharField(
         max_length=64,
@@ -149,7 +149,7 @@ class ACIContractFilterBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIContractFilterFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for ACI Contract Filter model."""
+    """NetBox filter form for the ACI Contract Filter model."""
 
     model = ACIContractFilter
     fieldsets: tuple = (
@@ -204,7 +204,7 @@ class ACIContractFilterFilterForm(NetBoxModelFilterSetForm):
 
 
 class ACIContractFilterImportForm(NetBoxModelImportForm):
-    """NetBox import form for ACI Contract Filter."""
+    """NetBox import form for the ACI Contract Filter model."""
 
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -239,8 +239,8 @@ class ACIContractFilterImportForm(NetBoxModelImportForm):
 #
 
 
-class ACIContractFilterEntryForm(NetBoxModelForm):
-    """NetBox form for ACI Contract Filter Entry model."""
+class ACIContractFilterEntryEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI Contract Filter Entry model."""
 
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
@@ -526,7 +526,7 @@ class ACIContractFilterEntryForm(NetBoxModelForm):
         )
 
     def __init__(self, *args, **kwargs) -> None:
-        """Initialize ACI Contract Filter Entry form."""
+        """Initialize the ACI Contract Filter Entry form."""
 
         # Initialize fields with custom values
         instance = kwargs.get("instance")
@@ -561,7 +561,7 @@ class ACIContractFilterEntryForm(NetBoxModelForm):
         super().__init__(*args, **kwargs)
 
     def clean(self) -> None:
-        """Validate form fields for ACI Contract Filter Entry form."""
+        """Validate form fields for the ACI Contract Filter Entry form."""
         super().clean()
 
         # Validate IP protocol
@@ -604,7 +604,7 @@ class ACIContractFilterEntryForm(NetBoxModelForm):
 
 
 class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
-    """NetBox bulk edit form for ACI Contract Filter Entry model."""
+    """NetBox bulk edit form for the ACI Contract Filter Entry model."""
 
     name_alias = forms.CharField(
         max_length=64,
@@ -789,7 +789,7 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for ACI Contract Filter model."""
+    """NetBox filter form for the ACI Contract Filter model."""
 
     model = ACIContractFilterEntry
     fieldsets: tuple = (
@@ -981,7 +981,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
 
 
 class ACIContractFilterEntryImportForm(NetBoxModelImportForm):
-    """NetBox import form for ACI Contract Filter Entry."""
+    """NetBox import form for the ACI Contract Filter Entry model."""
 
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
