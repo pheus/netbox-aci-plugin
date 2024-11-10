@@ -23,13 +23,13 @@ class PluginTest(TestCase):
         )
 
     def test_menu(self) -> None:
-        """Test for main menu entry of plugin in NetBox UI."""
+        """Test for the main menu entry of the plugin in NetBox UI."""
         menu_plugin_reg = registry["plugins"]["menus"][0]
         self.assertIsInstance(menu_plugin_reg, PluginMenu)
         self.assertEqual(menu_plugin_reg.label, self.menu_name)
 
     def test_menu_items(self) -> None:
-        """Test for sub menu entries of plugin in NetBox UI."""
+        """Test for submenu entries of the plugin in NetBox UI."""
         menu_plugin_reg_groups = registry["plugins"]["menus"][0].groups
         self.assertEqual(len(menu_plugin_reg_groups), self.menu_group_count)
         self.assertEqual(menu_plugin_reg_groups[0].label, "Tenant")

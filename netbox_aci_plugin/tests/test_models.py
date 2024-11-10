@@ -276,7 +276,7 @@ class ACIVRFTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        """Set up test data for ACIVRF model."""
+        """Set up test data for the ACIVRF model."""
         cls.aci_tenant_name = "ACITestTenant"
         cls.aci_vrf_name = "ACITestVRF"
         cls.aci_vrf_alias = "ACITestVRFAlias"
@@ -774,7 +774,11 @@ class ACIBridgeDomainTestCase(TestCase):
 
     def test_invalid_aci_bridge_domain_name(self) -> None:
         """Test validation of ACI Bridge Domain naming."""
-        bd = ACIBridgeDomain(name="ACI BD Test 1")
+        bd = ACIBridgeDomain(
+            name="ACI BD Test 1",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
+        )
         with self.assertRaises(ValidationError):
             bd.full_clean()
 
@@ -782,13 +786,20 @@ class ACIBridgeDomainTestCase(TestCase):
         """Test validation of ACI Bridge Domain name length."""
         bd = ACIBridgeDomain(
             name="A" * 65,  # Exceeding the maximum length of 64
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
         )
         with self.assertRaises(ValidationError):
             bd.full_clean()
 
     def test_invalid_aci_bridge_domain_name_alias(self) -> None:
         """Test validation of ACI Bridge Domain aliasing."""
-        bd = ACIBridgeDomain(name="ACIBDTest1", name_alias="Invalid Alias")
+        bd = ACIBridgeDomain(
+            name="ACIBDTest1",
+            name_alias="Invalid Alias",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
+        )
         with self.assertRaises(ValidationError):
             bd.full_clean()
 
@@ -797,6 +808,8 @@ class ACIBridgeDomainTestCase(TestCase):
         bd = ACIBridgeDomain(
             name="ACIBDTest1",
             name_alias="A" * 65,  # Exceeding the maximum length of 64
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
         )
         with self.assertRaises(ValidationError):
             bd.full_clean()
@@ -804,7 +817,10 @@ class ACIBridgeDomainTestCase(TestCase):
     def test_invalid_aci_bridge_domain_description(self) -> None:
         """Test validation of ACI Bridge Domain description."""
         bd = ACIBridgeDomain(
-            name="ACIBDTest1", description="Invalid Description: ö"
+            name="ACIBDTest1",
+            description="Invalid Description: ö",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
         )
         with self.assertRaises(ValidationError):
             bd.full_clean()
@@ -814,6 +830,8 @@ class ACIBridgeDomainTestCase(TestCase):
         bd = ACIBridgeDomain(
             name="ACIBDTest1",
             description="A" * 129,  # Exceeding the maximum length of 128
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
         )
         with self.assertRaises(ValidationError):
             bd.full_clean()
@@ -1050,7 +1068,7 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
         )
 
     def test_aci_bd_subnet_preferred_ip_address_enabled(self) -> None:
-        """Test 'preferred IP address enabled' option in ACI BD Subnet."""
+        """Test the 'preferred IP address enabled' option in ACI BD Subnet."""
         self.assertEqual(
             self.aci_bd_subnet.preferred_ip_address_enabled,
             self.aci_bd_subnet_preferred_ip_address_enabled,
@@ -1325,7 +1343,11 @@ class ACIEndpointGroupTestCase(TestCase):
 
     def test_invalid_aci_endpoint_group_name(self) -> None:
         """Test validation of ACI Endpoint Group naming."""
-        epg = ACIEndpointGroup(name="ACI EPG Test 1")
+        epg = ACIEndpointGroup(
+            name="ACI EPG Test 1",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
         with self.assertRaises(ValidationError):
             epg.full_clean()
 
@@ -1333,13 +1355,20 @@ class ACIEndpointGroupTestCase(TestCase):
         """Test validation of ACI Endpoint Group name length."""
         epg = ACIEndpointGroup(
             name="A" * 65,  # Exceeding the maximum length of 64
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
         )
         with self.assertRaises(ValidationError):
             epg.full_clean()
 
     def test_invalid_aci_endpoint_group_name_alias(self) -> None:
         """Test validation of ACI Endpoint Group aliasing."""
-        epg = ACIEndpointGroup(name="ACIEPGTest1", name_alias="Invalid Alias")
+        epg = ACIEndpointGroup(
+            name="ACIEPGTest1",
+            name_alias="Invalid Alias",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
         with self.assertRaises(ValidationError):
             epg.full_clean()
 
@@ -1348,6 +1377,8 @@ class ACIEndpointGroupTestCase(TestCase):
         epg = ACIEndpointGroup(
             name="ACIEPGTest1",
             name_alias="A" * 65,  # Exceeding the maximum length of 64
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
         )
         with self.assertRaises(ValidationError):
             epg.full_clean()
@@ -1355,7 +1386,10 @@ class ACIEndpointGroupTestCase(TestCase):
     def test_invalid_aci_endpoint_group_description(self) -> None:
         """Test validation of ACI Endpoint Group description."""
         epg = ACIEndpointGroup(
-            name="ACIEPGTest1", description="Invalid Description: ö"
+            name="ACIEPGTest1",
+            description="Invalid Description: ö",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
         )
         with self.assertRaises(ValidationError):
             epg.full_clean()
@@ -1365,6 +1399,8 @@ class ACIEndpointGroupTestCase(TestCase):
         epg = ACIEndpointGroup(
             name="ACIEPGTest1",
             description="A" * 129,  # Exceeding the maximum length of 128
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
         )
         with self.assertRaises(ValidationError):
             epg.full_clean()

@@ -18,6 +18,9 @@ from ..forms.tenant_networks import (
     ACIVRFEditForm,
 )
 from ..forms.tenants import ACITenantEditForm
+from ..models.tenant_app_profiles import ACIAppProfile
+from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
+from ..models.tenants import ACITenant
 
 
 class ACITenantFormTestCase(TestCase):
@@ -171,6 +174,14 @@ class ACIBridgeDomainFormTestCase(TestCase):
         " allowed."
     )
 
+    @classmethod
+    def setUp(cls):
+        """Set up required objects for ACIBridgeDomainForm tests."""
+        cls.aci_tenant = ACITenant.objects.create(name="ACITestTenant")
+        cls.aci_vrf = ACIVRF.objects.create(
+            name="ACITestVRF", aci_tenant=cls.aci_tenant
+        )
+
     def test_invalid_aci_bridge_domain_field_values(self) -> None:
         """Test validation of invalid ACI Bridge Domain field values."""
         aci_bd_form = ACIBridgeDomainEditForm(
@@ -178,6 +189,8 @@ class ACIBridgeDomainFormTestCase(TestCase):
                 "name": "ACI BD Test 1",
                 "name_alias": "ACI Test Alias 1",
                 "description": "Invalid Description: ö",
+                "aci_tenant": self.aci_tenant,
+                "aci_vrf": self.aci_vrf,
             }
         )
         self.assertEqual(aci_bd_form.errors["name"], [self.name_error_message])
@@ -196,6 +209,8 @@ class ACIBridgeDomainFormTestCase(TestCase):
                 "name": "ACIBD1",
                 "name_alias": "Testing",
                 "description": "BD for NetBox ACI Plugin",
+                "aci_tenant": self.aci_tenant,
+                "aci_vrf": self.aci_vrf,
             }
         )
         self.assertEqual(aci_bd_form.errors.get("name"), None)
@@ -261,6 +276,22 @@ class ACIEndpointGroupFormTestCase(TestCase):
         " allowed."
     )
 
+    @classmethod
+    def setUp(cls):
+        """Set up required objects for ACIBridgeDomainForm tests."""
+        cls.aci_tenant = ACITenant.objects.create(name="ACITestTenant")
+        cls.aci_vrf = ACIVRF.objects.create(
+            name="ACITestVRF", aci_tenant=cls.aci_tenant
+        )
+        cls.aci_bd = ACIBridgeDomain.objects.create(
+            name="ACITestBridgeDomain",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+        )
+        cls.aci_app_profile = ACIAppProfile.objects.create(
+            name="ACITestAppProfile", aci_tenant=cls.aci_tenant
+        )
+
     def test_invalid_aci_endpoint_group_field_values(self) -> None:
         """Test validation of invalid ACI Endpoint Group field values."""
         aci_epg_form = ACIEndpointGroupEditForm(
@@ -268,6 +299,8 @@ class ACIEndpointGroupFormTestCase(TestCase):
                 "name": "ACI Endpoint Group Test 1",
                 "name_alias": "ACI Test Alias 1",
                 "description": "Invalid Description: ö",
+                "aci_app_profile": self.aci_app_profile,
+                "aci_bridge_domain": self.aci_bd,
             }
         )
         self.assertEqual(
@@ -288,6 +321,8 @@ class ACIEndpointGroupFormTestCase(TestCase):
                 "name": "ACIEndpointGroup1",
                 "name_alias": "Testing",
                 "description": "EPG for NetBox ACI Plugin",
+                "aci_app_profile": self.aci_app_profile,
+                "aci_bridge_domain": self.aci_bd,
             }
         )
         self.assertEqual(aci_epg_form.errors.get("name"), None)
