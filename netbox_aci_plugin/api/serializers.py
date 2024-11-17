@@ -12,6 +12,7 @@ from ..models.tenant_contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
+from ..models.tenant_contracts import ACIContract
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -397,4 +398,46 @@ class ACIContractFilterEntrySerializer(NetBoxModelSerializer):
             "name_alias",
             "description",
             "aci_contract_filter",
+        )
+
+
+class ACIContractSerializer(NetBoxModelSerializer):
+    """Serializer for the ACI Contract model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:acicontract-detail"
+    )
+    aci_tenant = ACITenantSerializer(nested=True, required=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+
+    class Meta:
+        model = ACIContract
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_tenant",
+            "nb_tenant",
+            "qos_class",
+            "scope",
+            "target_dscp",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_tenant",
+            "nb_tenant",
+            "scope",
         )
