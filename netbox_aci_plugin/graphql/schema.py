@@ -12,6 +12,7 @@ from .types import (
     ACIBridgeDomainType,
     ACIContractFilterEntryType,
     ACIContractFilterType,
+    ACIContractType,
     ACIEndpointGroupType,
     ACITenantType,
     ACIVRFType,
@@ -61,3 +62,6 @@ class NetBoxACIQuery:
     aci_contract_filter_entry_list: List[ACIContractFilterEntryType] = (
         strawberry_django.field()
     )
+
+    aci_contract: ACIContractType = strawberry_django.field()
+    aci_contract_list: List[ACIContractType] = strawberry_django.field()

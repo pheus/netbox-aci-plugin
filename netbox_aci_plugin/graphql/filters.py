@@ -15,6 +15,7 @@ from ..filtersets.tenant_contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
 )
+from ..filtersets.tenant_contracts import ACIContractFilterSet
 from ..filtersets.tenant_networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
@@ -26,6 +27,7 @@ from ..models.tenant_contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
+from ..models.tenant_contracts import ACIContract
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -37,7 +39,7 @@ from ..models.tenants import ACITenant
 @strawberry_django.filter(ACITenant, lookups=True)
 @autotype_decorator(ACITenantFilterSet)
 class ACITenantFilter(BaseFilterMixin):
-    """GraphQL filter definition for ACITenant model."""
+    """GraphQL filter definition for the ACITenant model."""
 
     pass
 
@@ -45,7 +47,7 @@ class ACITenantFilter(BaseFilterMixin):
 @strawberry_django.filter(ACIAppProfile, lookups=True)
 @autotype_decorator(ACIAppProfileFilterSet)
 class ACIAppProfileFilter(BaseFilterMixin):
-    """GraphQL filter definition for ACIAppProfile model."""
+    """GraphQL filter definition for the ACIAppProfile model."""
 
     pass
 
@@ -53,7 +55,7 @@ class ACIAppProfileFilter(BaseFilterMixin):
 @strawberry_django.filter(ACIVRF, lookups=True)
 @autotype_decorator(ACIVRFFilterSet)
 class ACIVRFFilter(BaseFilterMixin):
-    """GraphQL filter definition for ACIVRF model."""
+    """GraphQL filter definition for the ACIVRF model."""
 
     dns_labels: Optional[list[str]]
 
@@ -61,7 +63,7 @@ class ACIVRFFilter(BaseFilterMixin):
 @strawberry_django.filter(ACIBridgeDomain, lookups=True)
 @autotype_decorator(ACIBridgeDomainFilterSet)
 class ACIBridgeDomainFilter(BaseFilterMixin):
-    """GraphQL filter definition for Bridge Domain model."""
+    """GraphQL filter definition for the Bridge Domain model."""
 
     dhcp_labels: Optional[list[str]]
     mac_address: Optional[str]
@@ -71,7 +73,7 @@ class ACIBridgeDomainFilter(BaseFilterMixin):
 @strawberry_django.filter(ACIBridgeDomainSubnet, lookups=True)
 @autotype_decorator(ACIBridgeDomainSubnetFilterSet)
 class ACIBridgeDomainSubnetFilter(BaseFilterMixin):
-    """GraphQL filter definition for Bridge Domain Subnet model."""
+    """GraphQL filter definition for the Bridge Domain Subnet model."""
 
     pass
 
@@ -79,7 +81,7 @@ class ACIBridgeDomainSubnetFilter(BaseFilterMixin):
 @strawberry_django.filter(ACIEndpointGroup, lookups=True)
 @autotype_decorator(ACIEndpointGroupFilterSet)
 class ACIEndpointGroupFilter(BaseFilterMixin):
-    """GraphQL filter definition for Endpoint Group model."""
+    """GraphQL filter definition for the Endpoint Group model."""
 
     pass
 
@@ -87,7 +89,7 @@ class ACIEndpointGroupFilter(BaseFilterMixin):
 @strawberry_django.filter(ACIContractFilter, lookups=True)
 @autotype_decorator(ACIContractFilterFilterSet)
 class ACIContractFilterFilter(BaseFilterMixin):
-    """GraphQL filter definition for Contract Filter model."""
+    """GraphQL filter definition for the Contract Filter model."""
 
     pass
 
@@ -95,6 +97,14 @@ class ACIContractFilterFilter(BaseFilterMixin):
 @strawberry_django.filter(ACIContractFilterEntry, lookups=True)
 @autotype_decorator(ACIContractFilterEntryFilterSet)
 class ACIContractFilterEntryFilter(BaseFilterMixin):
-    """GraphQL filter definition for Contract Filter Entry model."""
+    """GraphQL filter definition for the Contract Filter Entry model."""
+
+    pass
+
+
+@strawberry_django.filter(ACIContract, lookups=True)
+@autotype_decorator(ACIContractFilterSet)
+class ACIContractFilter(BaseFilterMixin):
+    """GraphQL filter definition for the Contract model."""
 
     pass
