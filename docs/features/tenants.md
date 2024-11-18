@@ -304,14 +304,13 @@ The *ACIContractFilter* model has the following fields:
 *Required fields*:
 
 - **Name**: represent the Contract Filter name in the ACI.
-- **ACI Tenant**: a reference to the `ACITenant` model.
+- **ACI Tenant**: a reference to the `ACITenant` model, associating the filter
+  with a specific tenant.
 
 *Optional fields*:
 
 - **Name Alias**: an alias for the name of the filter in the ACI.
 - **Description**: a brief description of the filter.
-- **ACI Tenant**: a reference to the `ACITenant` model, associating the filter
-  with a specific tenant.
 - **NetBox Tenant**: a reference to the NetBox tenant model, linking the filter
   to a NetBox tenant.
 - **Comments**: a text field for additional notes or comments.
