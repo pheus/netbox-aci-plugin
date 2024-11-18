@@ -11,6 +11,7 @@ flowchart TD
     VRF(VRF)
     BD(Bridge Domain)
     SN(Subnet)
+    CT(Contract)
     FT(Filter)
     FTE(Filter Entry)
     subgraph graphTN [Tenant]
@@ -29,6 +30,9 @@ flowchart TD
         TN -->|1:n| VRF
     end
     subgraph graphCT [Contract]
+        subgraph graphCTS [Contract]
+            TN -->|1:n| CT
+        end
         subgraph graphFT [Filter]
             TN -->|1:n| FT
             FT -->|1:n| FTE
@@ -407,4 +411,49 @@ The *ACIContractFilterEntry* model has the following fields:
   `est` (established), `fin` (finish), `rst` (reset), `syn` (synchronize).
   (default is *unspecified*)
 - **Comments**: A text field for additional notes or comments.
+- **Tags**: a list of NetBox tags.
+
+## Contract
+
+A *Contract* defines a set of policies that govern how traffic is permitted or
+denied between endpoints.
+Contracts consist of one or more associated *Contract Subjects* that define the
+exact *Contract Filters* for allowed or denied traffic.
+
+Each Contract is associated with an *ACI Tenant* and is used to manage the
+communication between *Consumers* and *Providers*.
+
+The *ACIContract* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represent the Contract name in the ACI.
+- **ACI Tenant**: a reference to the `ACITenant` model, associating the
+  contract with a specific tenant.
+
+*Optional fields*:
+
+- **Name Alias**: an alias for the name of the contract in the ACI.
+- **Description**: a brief description of the contract.
+- **NetBox Tenant**: a reference to the NetBox tenant model, linking the
+  contract to a NetBox tenant.
+- **QoS class**: specifies the priority handling, Quality of Service (QoS), for
+  traffic between Consumer and Provider within the fabric.
+  Values: `unspecified` (unspecified), `level1` (level 1), `level2` (level 2),
+  `level3` (level 3), `level4` (level 4), `level5` (level 5),
+  `level6` (level 6).
+  (default is *unspecified*)
+- **Scope**: defines the extent within which the contract is applicable.
+  Values: `context` (VRF), `application-profile` (Application Profile),
+  `tenant` (Tenant), `global` (Global).
+  (default is *context*)
+- **Target DSCP**: rewrites the DSCP (Differentiated Services Code Point) value
+  of the incoming traffic to the specified value.
+  Values: `unspecified` (unspecified), `AF11` (AF11), `AF12` (AF12),
+  `AF13` (AF13), `AF21` (AF21), `AF22` (AF22), `AF23` (AF23), `AF31` (AF31),
+  `AF32` (AF32), `AF33` (AF33), `AF41` (AF41), `AF42` (AF42), `AF43` (AF43),
+  `CS0` (CS0), `CS1` (CS1), `CS2` (CS2), `CS3` (CS3) `CS4` (CS4), `CS5` (CS5),
+  `CS6` (CS6), `CS7` (CS7), `EF` (Expedited Forwarding), `VA`, (Voice Admit).
+  (default is *unspecified*)
+- **Comments**: a text field for additional notes or comments.
 - **Tags**: a list of NetBox tags.
