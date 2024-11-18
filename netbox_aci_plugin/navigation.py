@@ -172,6 +172,28 @@ acicontractfilterentry_item = PluginMenuItem(
     ),
 )
 
+# ACI Contract
+acicontract_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acicontract_list",
+    link_text="Contract",
+    permissions=["netbox_aci_plugin.view_acicontract"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acicontract_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acicontract"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acicontract_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acicontract"],
+        ),
+    ),
+)
+
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -187,6 +209,7 @@ menu = PluginMenu(
                 acivrf_item,
                 acicontractfilter_item,
                 acicontractfilterentry_item,
+                acicontract_item,
             ),
         ),
     ),

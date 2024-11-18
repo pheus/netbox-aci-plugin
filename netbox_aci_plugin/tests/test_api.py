@@ -14,6 +14,7 @@ from ..models.tenant_contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
+from ..models.tenant_contracts import ACIContract
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -26,7 +27,7 @@ class AppTest(APITestCase):
     """API test case for NetBox ACI plugin."""
 
     def test_root(self) -> None:
-        """Test API root access of plugin."""
+        """Test API root access of the plugin."""
         url = reverse("plugins-api:netbox_aci_plugin-api:api-root")
         response = self.client.get(f"{url}?format=api", **self.header)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -982,5 +983,98 @@ class ACIContractFilterEntryAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "destination_to_port": "unspecified",
                 "stateful_enabled": False,
                 "tcp_rules": ["unspecified"],
+            },
+        ]
+
+
+class ACIContractAPIViewTestCase(APIViewTestCases.APIViewTestCase):
+    """API view test case for ACI Contract."""
+
+    model = ACIContract
+    view_namespace: str = f"plugins-api:{app_name}"
+    brief_fields: list[str] = [
+        "aci_tenant",
+        "description",
+        "display",
+        "id",
+        "name",
+        "name_alias",
+        "nb_tenant",
+        "scope",
+        "url",
+    ]
+    user_permissions = ("netbox_aci_plugin.view_acitenant",)
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up ACI Contract for API view testing."""
+        nb_tenant1 = Tenant.objects.create(
+            name="NetBox Tenant API 1", slug="netbox-tenant-api-1"
+        )
+        nb_tenant2 = Tenant.objects.create(
+            name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
+        )
+        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
+        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+
+        aci_contracts = (
+            ACIContract(
+                name="ACIContractTestAPI1",
+                name_alias="Testing",
+                description="First ACI Test",
+                comments="# ACI Test 1",
+                aci_tenant=aci_tenant1,
+                nb_tenant=nb_tenant1,
+                qos_class="unspecified",
+                scope="global",
+                target_dscp="unspecified",
+            ),
+            ACIContract(
+                name="ACIContractTestAPI2",
+                name_alias="Testing",
+                description="Second ACI Test",
+                comments="# ACI Test 2",
+                aci_tenant=aci_tenant2,
+                nb_tenant=nb_tenant1,
+                qos_class="level3",
+                scope="tenant",
+                target_dscp="EF",
+            ),
+            ACIContract(
+                name="ACIContractTestAPI3",
+                name_alias="Testing",
+                description="Third ACI Test",
+                comments="# ACI Test 3",
+                aci_tenant=aci_tenant1,
+                nb_tenant=nb_tenant2,
+                qos_class="level6",
+                scope="context",
+                target_dscp="CS3",
+            ),
+        )
+        ACIContract.objects.bulk_create(aci_contracts)
+
+        cls.create_data: list[dict] = [
+            {
+                "name": "ACIContractTestAPI4",
+                "name_alias": "Testing",
+                "description": "Forth ACI Test",
+                "comments": "# ACI Test 4",
+                "aci_tenant": aci_tenant2.id,
+                "nb_tenant": nb_tenant1.id,
+                "qos_class": "level1",
+                "scope": "global",
+                "target_dscp": "unspecified",
+            },
+            {
+                "name": "ACIContractTestAPI5",
+                "name_alias": "Testing",
+                "description": "Fifth ACI Test",
+                "comments": "# ACI Test 5",
+                "aci_tenant": aci_tenant1.id,
+                "nb_tenant": nb_tenant2.id,
+                "qos_class": "level2",
+                "scope": "context",
+                "target_dscp": "VA",
             },
         ]

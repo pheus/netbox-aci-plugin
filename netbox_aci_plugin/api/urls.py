@@ -20,5 +20,6 @@ router.register("contract-filters", views.ACIContractFilterListViewSet)
 router.register(
     "contract-filter-entries", views.ACIContractFilterEntryListViewSet
 )
+router.register("contracts", views.ACIContractListViewSet)
 
 urlpatterns = router.urls

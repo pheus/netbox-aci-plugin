@@ -234,6 +234,28 @@ class ContractFilterTCPRulesChoices(ChoiceSet):
 
 
 #
+# Contract
+#
+
+
+class ContractScopeChoices(ChoiceSet):
+    """Choice set of Contract scopes."""
+
+    # default "context"
+    SCOPE_VRF = "context"
+    SCOPE_APP_PROFILE = "application-profile"
+    SCOPE_TENANT = "tenant"
+    SCOPE_GLOBAL = "global"
+
+    CHOICES = (
+        (SCOPE_VRF, _("VRF (Context)"), "blue"),
+        (SCOPE_APP_PROFILE, _("Application Profile"), "green"),
+        (SCOPE_TENANT, _("Tenant"), "orange"),
+        (SCOPE_GLOBAL, _("Global"), "red"),
+    )
+
+
+#
 # Quality of Service (QoS)
 #
 
