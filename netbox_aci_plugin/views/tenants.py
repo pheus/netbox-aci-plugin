@@ -21,6 +21,7 @@ from .tenant_app_profiles import (
     ACIAppProfileChildrenView,
     ACIEndpointGroupChildrenView,
 )
+from .tenant_contracts import ACIContractChildrenView
 from .tenant_networks import ACIBridgeDomainChildrenView, ACIVRFChildrenView
 
 #
@@ -201,6 +202,31 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
             super()
             .get_children(request, parent)
             .filter(aci_app_profile__aci_tenant=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACITenant colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column
+        table.columns.hide("aci_tenant")
+
+        return table
+
+
+@register_model_view(ACITenant, "contracts", path="contracts")
+class ACITenantContractView(ACIContractChildrenView):
+    """Children view of ACI Application Profile of ACI Tenant."""
+
+    queryset = ACITenant.objects.all()
+    template_name = "netbox_aci_plugin/acitenant_contracts.html"
+
+    def get_children(self, request, parent):
+        """Return all ACIContract objects for the current ACITenant."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_tenant_id=parent.pk)
         )
 
     def get_table(self, *args, **kwargs):
