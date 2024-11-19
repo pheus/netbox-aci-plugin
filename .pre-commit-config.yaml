@@ -5,7 +5,7 @@ ci:
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.6.0"
+    rev: "v5.0.0"
     hooks:
       - id: check-merge-conflict
       - id: check-symlinks
@@ -28,7 +28,7 @@ repos:
         exclude: ^.devcontainer/
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.6.9"
+    rev: "v0.7.4"
     hooks:
       # Run the linter.
       - id: ruff
@@ -36,14 +36,14 @@ repos:
       # Run the formatter.
       - id: ruff-format
 
-  - repo: https://github.com/adrienverge/yamllint.git
+  - repo: https://github.com/adrienverge/yamllint
     rev: "v1.35.1"
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
 
   - repo: https://github.com/mgedmin/check-manifest
-    rev: "0.49"
+    rev: "0.50"
     hooks:
       - id: check-manifest
         stages: [manual]
