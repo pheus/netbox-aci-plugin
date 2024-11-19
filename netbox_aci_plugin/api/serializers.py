@@ -22,7 +22,7 @@ from ..models.tenants import ACITenant
 
 
 class ACITenantSerializer(NetBoxModelSerializer):
-    """Serializer for ACI Tenant model."""
+    """Serializer for the ACI Tenant model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:acitenant-detail"
@@ -57,7 +57,7 @@ class ACITenantSerializer(NetBoxModelSerializer):
 
 
 class ACIAppProfileSerializer(NetBoxModelSerializer):
-    """Serializer for ACI Application Profile model."""
+    """Serializer for the ACI Application Profile model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:aciappprofile-detail"
@@ -95,7 +95,7 @@ class ACIAppProfileSerializer(NetBoxModelSerializer):
 
 
 class ACIVRFSerializer(NetBoxModelSerializer):
-    """Serializer for ACI VRF model."""
+    """Serializer for the ACI VRF model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:acivrf-detail"
@@ -144,7 +144,7 @@ class ACIVRFSerializer(NetBoxModelSerializer):
 
 
 class ACIBridgeDomainSerializer(NetBoxModelSerializer):
-    """Serializer for ACI Bridge Domain model."""
+    """Serializer for the ACI Bridge Domain model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:acibridgedomain-detail"
@@ -211,7 +211,7 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
 
 
 class ACIBridgeDomainSubnetSerializer(NetBoxModelSerializer):
-    """Serializer for ACI Bridge Domain Subnet model."""
+    """Serializer for the ACI Bridge Domain Subnet model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name=(
@@ -264,7 +264,7 @@ class ACIBridgeDomainSubnetSerializer(NetBoxModelSerializer):
 
 
 class ACIEndpointGroupSerializer(NetBoxModelSerializer):
-    """Serializer for ACI Endpoint Group model."""
+    """Serializer for the ACI Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:aciendpointgroup-detail"
@@ -313,7 +313,7 @@ class ACIEndpointGroupSerializer(NetBoxModelSerializer):
 
 
 class ACIContractFilterSerializer(NetBoxModelSerializer):
-    """Serializer for ACI Contract Filter model."""
+    """Serializer for the ACI Contract Filter model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:acicontractfilter-detail"
@@ -351,7 +351,7 @@ class ACIContractFilterSerializer(NetBoxModelSerializer):
 
 
 class ACIContractFilterEntrySerializer(NetBoxModelSerializer):
-    """Serializer for ACI Contract Filter Entry model."""
+    """Serializer for the ACI Contract Filter Entry model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:"

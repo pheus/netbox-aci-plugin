@@ -15,7 +15,7 @@ from ..models.tenants import ACITenant
 
 
 class ACIAppProfileFilterSet(NetBoxModelFilterSet):
-    """Filter set for ACI Application Profile model."""
+    """Filter set for the ACI Application Profile model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         queryset=ACITenant.objects.all(),
@@ -62,7 +62,7 @@ class ACIAppProfileFilterSet(NetBoxModelFilterSet):
 
 
 class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
-    """Filter set for ACI Endpoint Group model."""
+    """Filter set for the ACI Endpoint Group model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_app_profile__aci_tenant",

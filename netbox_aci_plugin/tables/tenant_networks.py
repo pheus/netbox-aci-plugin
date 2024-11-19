@@ -22,7 +22,7 @@ BRIDGEDOMAIN_SUBNETS = """
 
 
 class ACIVRFTable(NetBoxTable):
-    """NetBox table for ACI VRF model."""
+    """NetBox table for the ACI VRF model."""
 
     name = tables.Column(
         verbose_name=_("ACI VRF"),
@@ -99,7 +99,7 @@ class ACIVRFTable(NetBoxTable):
 
 
 class ACIBridgeDomainTable(NetBoxTable):
-    """NetBox table for ACI Bridge Domain model."""
+    """NetBox table for the ACI Bridge Domain model."""
 
     name = tables.Column(
         verbose_name=_("Bridge Domain"),
@@ -213,7 +213,7 @@ class ACIBridgeDomainTable(NetBoxTable):
 
 
 class ACIBridgeDomainSubnetTable(NetBoxTable):
-    """NetBox table for ACI Bridge Domain Subnet model."""
+    """NetBox table for the ACI Bridge Domain Subnet model."""
 
     name = tables.Column(
         verbose_name=_("Subnet Name"),
@@ -309,7 +309,7 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
 
 
 class ACIBridgeDomainSubnetReducedTable(NetBoxTable):
-    """Reduced NetBox table for ACI Bridge Domain Subnet model."""
+    """Reduced NetBox table for the ACI Bridge Domain Subnet model."""
 
     name = tables.Column(
         verbose_name=_("Subnet Name"),

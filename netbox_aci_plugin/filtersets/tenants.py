@@ -12,7 +12,7 @@ from ..models.tenants import ACITenant
 
 
 class ACITenantFilterSet(NetBoxModelFilterSet):
-    """Filter set for ACI Tenant model."""
+    """Filter set for the ACI Tenant model."""
 
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
         queryset=Tenant.objects.all(),

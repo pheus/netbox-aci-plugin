@@ -20,7 +20,7 @@ from .models.tenants import ACITenant
 
 @register_search
 class ACITenantIndex(SearchIndex):
-    """NetBox search definition for ACI Tenant model."""
+    """NetBox search definition for the ACI Tenant model."""
 
     model = ACITenant
 
@@ -39,7 +39,7 @@ class ACITenantIndex(SearchIndex):
 
 @register_search
 class ACIAppProfileIndex(SearchIndex):
-    """NetBox search definition for ACI Application Profile model."""
+    """NetBox search definition for the ACI Application Profile model."""
 
     model = ACIAppProfile
 
@@ -59,7 +59,7 @@ class ACIAppProfileIndex(SearchIndex):
 
 @register_search
 class ACIVRFIndex(SearchIndex):
-    """NetBox search definition for ACI VRF model."""
+    """NetBox search definition for the ACI VRF model."""
 
     model = ACIVRF
 
@@ -80,7 +80,7 @@ class ACIVRFIndex(SearchIndex):
 
 @register_search
 class ACIBridgeDomainIndex(SearchIndex):
-    """NetBox search definition for ACI Bridge Domain model."""
+    """NetBox search definition for the ACI Bridge Domain model."""
 
     model = ACIBridgeDomain
 
@@ -100,7 +100,7 @@ class ACIBridgeDomainIndex(SearchIndex):
 
 @register_search
 class ACIBridgeDomainSubnetIndex(SearchIndex):
-    """NetBox search definition for ACI Bridge Domain Subnet model."""
+    """NetBox search definition for the ACI Bridge Domain Subnet model."""
 
     model = ACIBridgeDomainSubnet
 
@@ -121,7 +121,7 @@ class ACIBridgeDomainSubnetIndex(SearchIndex):
 
 @register_search
 class ACIEndpointGroupIndex(SearchIndex):
-    """NetBox search definition for ACI Endpoint Group model."""
+    """NetBox search definition for the ACI Endpoint Group model."""
 
     model = ACIEndpointGroup
 
@@ -142,7 +142,7 @@ class ACIEndpointGroupIndex(SearchIndex):
 
 @register_search
 class ACIContractFilterIndex(SearchIndex):
-    """NetBox search definition for ACI Contract Filter model."""
+    """NetBox search definition for the ACI Contract Filter model."""
 
     model = ACIContractFilter
 
@@ -162,7 +162,7 @@ class ACIContractFilterIndex(SearchIndex):
 
 @register_search
 class ACIContractFilterEntryIndex(SearchIndex):
-    """NetBox search definition for ACI Contract Filter Entry model."""
+    """NetBox search definition for the ACI Contract Filter Entry model."""
 
     model = ACIContractFilterEntry
 

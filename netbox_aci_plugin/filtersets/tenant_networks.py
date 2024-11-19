@@ -29,7 +29,7 @@ from ..models.tenants import ACITenant
 
 
 class ACIVRFFilterSet(NetBoxModelFilterSet):
-    """Filter set for ACI VRF model."""
+    """Filter set for the ACI VRF model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         queryset=ACITenant.objects.all(),
@@ -127,7 +127,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
 
 
 class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
-    """Filter set for ACI Bridge Domain model."""
+    """Filter set for the ACI Bridge Domain model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         queryset=ACITenant.objects.all(),
@@ -253,7 +253,7 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
 
 
 class ACIBridgeDomainSubnetFilterSet(NetBoxModelFilterSet):
-    """Filter set for ACI Bridge Domain Subnet model."""
+    """Filter set for the ACI Bridge Domain Subnet model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_bridge_domain__aci_tenant",

@@ -10,7 +10,7 @@ from ..models.tenants import ACITenant
 
 
 class ACITenantTable(NetBoxTable):
-    """NetBox table for ACI Tenant model."""
+    """NetBox table for the ACI Tenant model."""
 
     name = tables.Column(
         verbose_name=_("ACI Tenant"),

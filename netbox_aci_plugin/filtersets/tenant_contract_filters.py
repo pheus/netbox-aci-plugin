@@ -29,7 +29,7 @@ from ..models.tenants import ACITenant
 
 
 class ACIContractFilterFilterSet(NetBoxModelFilterSet):
-    """Filter set for ACI Contract Filter model."""
+    """Filter set for the ACI Contract Filter model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         queryset=ACITenant.objects.all(),
@@ -92,7 +92,7 @@ class ACIContractFilterFilterSet(NetBoxModelFilterSet):
 
 
 class ACIContractFilterEntryFilterSet(NetBoxModelFilterSet):
-    """Filter set for ACI Contract Filter Entry model."""
+    """Filter set for the ACI Contract Filter Entry model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_contract_filter__aci_tenant",

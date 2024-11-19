@@ -279,12 +279,12 @@ class ACIEndpointGroup(NetBoxModel):
 
     @property
     def aci_tenant(self) -> ACITenant:
-        """Return the ACITenant instance of related ACIAppProfile."""
+        """Return the ACITenant instance of the related ACIAppProfile."""
         return self.aci_app_profile.aci_tenant
 
     @property
     def aci_vrf(self) -> ACIVRF:
-        """Return the ACIVRF instance of related ACIBridgeDomain."""
+        """Return the ACIVRF instance of the related ACIBridgeDomain."""
         return self.aci_bridge_domain.aci_vrf
 
     def get_absolute_url(self) -> str:

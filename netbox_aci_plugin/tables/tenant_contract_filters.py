@@ -13,7 +13,7 @@ from ..models.tenant_contract_filters import (
 
 
 class ACIContractFilterTable(NetBoxTable):
-    """NetBox table for ACI Contract Filter model."""
+    """NetBox table for the ACI Contract Filter model."""
 
     name = tables.Column(
         verbose_name=_("Contract Filter"),
@@ -56,7 +56,7 @@ class ACIContractFilterTable(NetBoxTable):
 
 
 class ACIContractFilterEntryTable(NetBoxTable):
-    """NetBox table for ACI Contract Filter Entry model."""
+    """NetBox table for the ACI Contract Filter Entry model."""
 
     name = tables.Column(
         verbose_name=_("Entry"),
@@ -161,7 +161,7 @@ class ACIContractFilterEntryTable(NetBoxTable):
 
 
 class ACIContractFilterEntryReducedTable(NetBoxTable):
-    """Reduced NetBox table for ACI Contract Filter Entry model."""
+    """Reduced NetBox table for the ACI Contract Filter Entry model."""
 
     name = tables.Column(
         verbose_name=_("Entry"),

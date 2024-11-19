@@ -10,7 +10,7 @@ from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 
 
 class ACIAppProfileTable(NetBoxTable):
-    """NetBox table for ACI Application Profile model."""
+    """NetBox table for the ACI Application Profile model."""
 
     name = tables.Column(
         verbose_name=_("Application Profile"),
@@ -53,7 +53,7 @@ class ACIAppProfileTable(NetBoxTable):
 
 
 class ACIEndpointGroupTable(NetBoxTable):
-    """NetBox table for ACI Endpoint Group model."""
+    """NetBox table for the ACI Endpoint Group model."""
 
     name = tables.Column(
         verbose_name=_("Endpoint Group"),
