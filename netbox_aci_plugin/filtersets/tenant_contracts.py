@@ -15,7 +15,7 @@ from ..choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ..models.tenant_contracts import ACIContract
+from ..models.tenant_contracts import ACIContract, ACIContractSubject
 from ..models.tenants import ACITenant
 
 
@@ -98,3 +98,104 @@ class ACIContractFilterSet(NetBoxModelFilterSet):
         return queryset.filter(
             Q(aci_tenant=aci_tenant_id) | Q(aci_tenant__name="common")
         )
+
+
+class ACIContractSubjectFilterSet(NetBoxModelFilterSet):
+    """Filter set for the ACI Contract Subject model."""
+
+    aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant (name)"),
+    )
+    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant (ID)"),
+    )
+    aci_contract = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIContract.objects.all(),
+        to_field_name="name",
+        label=_("ACI Contract (name)"),
+    )
+    aci_contract_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIContract.objects.all(),
+        to_field_name="id",
+        label=_("ACI Contract (ID)"),
+    )
+    nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        label=_("NetBox tenant (name)"),
+    )
+    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=Tenant.objects.all(),
+        to_field_name="id",
+        label=_("NetBox tenant (ID)"),
+    )
+    qos_class = django_filters.MultipleChoiceFilter(
+        choices=QualityOfServiceClassChoices,
+        null_value=None,
+        label=_("QoS class"),
+    )
+    qos_class_cons_to_prov = django_filters.MultipleChoiceFilter(
+        choices=QualityOfServiceClassChoices,
+        null_value=None,
+        label=_("QoS class (consumer to provider)"),
+    )
+    qos_class_prov_to_cons = django_filters.MultipleChoiceFilter(
+        choices=QualityOfServiceClassChoices,
+        null_value=None,
+        label=_("QoS class (provider to consumer)"),
+    )
+    target_dscp = django_filters.MultipleChoiceFilter(
+        choices=QualityOfServiceDSCPChoices,
+        null_value=None,
+        label=_("Target DSCP"),
+    )
+    target_dscp_cons_to_prov = django_filters.MultipleChoiceFilter(
+        choices=QualityOfServiceDSCPChoices,
+        null_value=None,
+        label=_("Target DSCP (consumer to provider)"),
+    )
+    target_dscp_prov_to_cons = django_filters.MultipleChoiceFilter(
+        choices=QualityOfServiceDSCPChoices,
+        null_value=None,
+        label=_("Target DSCP (provider to consumer)"),
+    )
+
+    class Meta:
+        model = ACIContractSubject
+        fields: tuple = (
+            "id",
+            "name",
+            "name_alias",
+            "description",
+            "aci_contract",
+            "nb_tenant",
+            "apply_both_directions_enabled",
+            "qos_class",
+            "qos_class_cons_to_prov",
+            "qos_class_prov_to_cons",
+            "reverse_filter_ports_enabled",
+            "service_graph_name",
+            "service_graph_name_cons_to_prov",
+            "service_graph_name_prov_to_cons",
+            "target_dscp",
+            "target_dscp_cons_to_prov",
+            "target_dscp_prov_to_cons",
+        )
+
+    def search(self, queryset, name, value):
+        """Return a QuerySet filtered by the model's description."""
+        if not value.strip():
+            return queryset
+        queryset_filter: Q = (
+            Q(name__icontains=value)
+            | Q(name_alias__icontains=value)
+            | Q(description__icontains=value)
+            | Q(aci_contract__name__icontains=value)
+        )
+        return queryset.filter(queryset_filter)
