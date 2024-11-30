@@ -14,7 +14,7 @@ from ..models.tenant_contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenant_contracts import ACIContract
+from ..models.tenant_contracts import ACIContract, ACIContractSubject
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -1078,3 +1078,124 @@ class ACIContractAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "target_dscp": "VA",
             },
         ]
+
+
+class ACIContractSubjectAPIViewTestCase(APIViewTestCases.APIViewTestCase):
+    """API view test case for ACI Contract Subject."""
+
+    model = ACIContractSubject
+    view_namespace: str = f"plugins-api:{app_name}"
+    brief_fields: list[str] = [
+        "aci_contract",
+        "description",
+        "display",
+        "id",
+        "name",
+        "name_alias",
+        "nb_tenant",
+        "url",
+    ]
+    user_permissions = ("netbox_aci_plugin.view_acicontract",)
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up ACI Contract Subject for API view testing."""
+        nb_tenant1 = Tenant.objects.create(
+            name="NetBox Tenant API 1", slug="netbox-tenant-api-1"
+        )
+        nb_tenant2 = Tenant.objects.create(
+            name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
+        )
+        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
+        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_contract1 = ACIContract.objects.create(
+            name="ACIContractTestAPI1",
+            aci_tenant=aci_tenant1,
+            nb_tenant=nb_tenant1,
+            qos_class="unspecified",
+            scope="context",
+            target_dscp="unspecified",
+        )
+        aci_contract2 = ACIContract.objects.create(
+            name="ACIContractTestAPI2",
+            aci_tenant=aci_tenant2,
+            nb_tenant=nb_tenant2,
+            qos_class="level1",
+            scope="tenant",
+            target_dscp="unspecified",
+        )
+
+        aci_contract_subjects = (
+            ACIContractSubject(
+                name="ACIContractSubjectTestAPI1",
+                name_alias="Testing",
+                description="First ACI Test",
+                comments="# ACI Test 1",
+                aci_contract=aci_contract1,
+                nb_tenant=nb_tenant1,
+                apply_both_directions_enabled=True,
+                qos_class="unspecified",
+                reverse_filter_ports_enabled=True,
+                service_graph_name="ServiceGraph1",
+                target_dscp="unspecified",
+            ),
+            ACIContractSubject(
+                name="ACIContractSubjectTestAPI2",
+                name_alias="Testing",
+                description="Second ACI Test",
+                comments="# ACI Test 2",
+                aci_contract=aci_contract2,
+                nb_tenant=nb_tenant1,
+                apply_both_directions_enabled=True,
+                qos_class="level3",
+                reverse_filter_ports_enabled=True,
+                service_graph_name="ServiceGraph2",
+                target_dscp="EF",
+            ),
+            ACIContractSubject(
+                name="ACIContractSubjectTestAPI3",
+                name_alias="Testing",
+                description="Third ACI Test",
+                comments="# ACI Test 3",
+                aci_contract=aci_contract1,
+                nb_tenant=nb_tenant2,
+                apply_both_directions_enabled=True,
+                qos_class="level6",
+                reverse_filter_ports_enabled=True,
+                service_graph_name="ServiceGraph3",
+                target_dscp="CS3",
+            ),
+        )
+        ACIContractSubject.objects.bulk_create(aci_contract_subjects)
+
+        cls.create_data: list[dict] = [
+            {
+                "name": "ACIContractSubjectTestAPI4",
+                "name_alias": "Testing",
+                "description": "Forth ACI Test",
+                "comments": "# ACI Test 4",
+                "aci_contract": aci_contract1.id,
+                "nb_tenant": nb_tenant1.id,
+                "apply_both_directions_enabled": True,
+                "qos_class": "level1",
+                "reverse_filter_ports_enabled": True,
+                "service_graph_name": "ServiceGraph4",
+                "target_dscp": "unspecified",
+            },
+            {
+                "name": "ACIContractSubjectTestAPI5",
+                "name_alias": "Testing",
+                "description": "Fifth ACI Test",
+                "comments": "# ACI Test 5",
+                "aci_contract": aci_contract2.id,
+                "nb_tenant": nb_tenant2.id,
+                "apply_both_directions_enabled": True,
+                "qos_class": "level2",
+                "reverse_filter_ports_enabled": True,
+                "service_graph_name": "ServiceGraph4",
+                "target_dscp": "VA",
+            },
+        ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }

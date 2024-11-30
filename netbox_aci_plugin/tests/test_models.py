@@ -30,7 +30,7 @@ from ..models.tenant_contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenant_contracts import ACIContract
+from ..models.tenant_contracts import ACIContract, ACIContractSubject
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -1823,8 +1823,8 @@ class ACIContractFilterEntryTestCase(TestCase):
         with self.assertRaises(ValidationError):
             contract_filter_entry.full_clean()
 
-    def test_invalid_aci_contract_filter_name_length(self) -> None:
-        """Test validation of ACI Contract Filter name length."""
+    def test_invalid_aci_contract_filter_entry_name_length(self) -> None:
+        """Test validation of ACI Contract Filter Entry name length."""
         contract_filter_entry = ACIContractFilterEntry(
             name="A" * 65,  # Exceeding the maximum length of 64
         )
@@ -2353,3 +2353,332 @@ class ACIContractTestCase(TestCase):
         )
         with self.assertRaises(IntegrityError):
             duplicate_contract.save()
+
+
+class ACIContractSubjectTestCase(TestCase):
+    """Test case for ACIContractSubject model."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIContractSubject model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_contract_name = "ACITestContract"
+        cls.aci_contract_qos_class = (
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED
+        )
+        cls.aci_contract_scope = ContractScopeChoices.SCOPE_VRF
+        cls.aci_contract_target_dscp = QualityOfServiceDSCPChoices.DSCP_EF
+        cls.aci_contract_subject_name = "ACITestContractSubject"
+        cls.aci_contract_subject_alias = "ACITestContractSubjectAlias"
+        cls.aci_contract_subject_description = (
+            "ACI Test Contract Subject for NetBox ACI Plugin"
+        )
+        cls.aci_contract_subject_comments = """
+        ACI Contract Subject for NetBox ACI Plugin testing.
+        """
+        cls.nb_tenant_name = "NetBoxTestTenant"
+        cls.aci_contract_subject_apply_both_directions_enabled = True
+        cls.aci_contract_subject_qos_class = (
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED
+        )
+        cls.aci_contract_subject_qos_class_cons_to_prov = (
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED
+        )
+        cls.aci_contract_subject_qos_class_prov_to_cons = (
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED
+        )
+        cls.aci_contract_subject_reverse_filter_ports_enabled = True
+        cls.aci_contract_subject_service_graph_name = "ACITestServiceGraph"
+        cls.aci_contract_subject_service_graph_name_cons_to_prov = (
+            "ACITestServiceGraph"
+        )
+        cls.aci_contract_subject_service_graph_name_prov_to_cons = (
+            "ACITestServiceGraph"
+        )
+        cls.aci_contract_subject_target_dscp = (
+            QualityOfServiceDSCPChoices.DSCP_EF
+        )
+        cls.aci_contract_subject_target_dscp_cons_to_prov = (
+            QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED
+        )
+        cls.aci_contract_subject_target_dscp_prov_to_cons = (
+            QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED
+        )
+
+        # Create objects
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.aci_contract = ACIContract.objects.create(
+            name=cls.aci_contract_name,
+            aci_tenant=cls.aci_tenant,
+            nb_tenant=cls.nb_tenant,
+            qos_class=cls.aci_contract_qos_class,
+            scope=cls.aci_contract_scope,
+            target_dscp=cls.aci_contract_target_dscp,
+        )
+        cls.aci_contract_subject = ACIContractSubject.objects.create(
+            name=cls.aci_contract_subject_name,
+            name_alias=cls.aci_contract_subject_alias,
+            description=cls.aci_contract_subject_description,
+            comments=cls.aci_contract_subject_comments,
+            aci_contract=cls.aci_contract,
+            nb_tenant=cls.nb_tenant,
+            apply_both_directions_enabled=(
+                cls.aci_contract_subject_apply_both_directions_enabled
+            ),
+            qos_class=cls.aci_contract_subject_qos_class,
+            qos_class_cons_to_prov=(
+                cls.aci_contract_subject_qos_class_cons_to_prov
+            ),
+            qos_class_prov_to_cons=(
+                cls.aci_contract_subject_qos_class_prov_to_cons
+            ),
+            reverse_filter_ports_enabled=(
+                cls.aci_contract_subject_reverse_filter_ports_enabled
+            ),
+            service_graph_name=cls.aci_contract_subject_service_graph_name,
+            service_graph_name_cons_to_prov=(
+                cls.aci_contract_subject_service_graph_name_cons_to_prov
+            ),
+            service_graph_name_prov_to_cons=(
+                cls.aci_contract_subject_service_graph_name_prov_to_cons
+            ),
+            target_dscp=cls.aci_contract_subject_target_dscp,
+            target_dscp_cons_to_prov=(
+                cls.aci_contract_subject_target_dscp_cons_to_prov
+            ),
+            target_dscp_prov_to_cons=(
+                cls.aci_contract_subject_target_dscp_prov_to_cons
+            ),
+        )
+
+    def test_aci_contract_subject_instance(self) -> None:
+        """Test type of created ACI Contract Subject."""
+        self.assertTrue(
+            isinstance(self.aci_contract_subject, ACIContractSubject)
+        )
+
+    def test_aci_contract_subject_str(self) -> None:
+        """Test string value of created ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.__str__(),
+            f"{self.aci_contract_subject_name}",
+        )
+
+    def test_aci_contract_subject_alias(self) -> None:
+        """Test alias of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.name_alias,
+            self.aci_contract_subject_alias,
+        )
+
+    def test_aci_contract_subject_description(self) -> None:
+        """Test description of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.description,
+            self.aci_contract_subject_description,
+        )
+
+    def test_aci_contract_subject_aci_contract_instance(
+        self,
+    ) -> None:
+        """Test the Contract instance associated with Contract Subject."""
+        self.assertTrue(
+            isinstance(self.aci_contract_subject.aci_contract, ACIContract)
+        )
+
+    def test_aci_contract_subject_aci_contract_name(self) -> None:
+        """Test the Contract name associated with Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.aci_contract.name,
+            self.aci_contract_name,
+        )
+
+    def test_aci_contract_subject_nb_tenant_instance(self) -> None:
+        """Test the NetBox tenant instance associated with Contract Subject."""
+        self.assertTrue(
+            isinstance(self.aci_contract_subject.nb_tenant, Tenant)
+        )
+
+    def test_aci_contract_subject_nb_tenant_name(self) -> None:
+        """Test the NetBox tenant name associated with Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.nb_tenant.name, self.nb_tenant_name
+        )
+
+    def test_aci_contract_subject_apply_both_directions_enabled(self) -> None:
+        """Test the 'apply_both_directions_enabled' of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.apply_both_directions_enabled,
+            self.aci_contract_subject_apply_both_directions_enabled,
+        )
+
+    def test_aci_contract_subject_qos_class(self) -> None:
+        """Test 'qos_class' choice of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.qos_class,
+            self.aci_contract_subject_qos_class,
+        )
+
+    def test_aci_contract_subject_get_qos_class_color(self) -> None:
+        """Test the 'get_qos_class_color' method of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.get_qos_class_color(),
+            QualityOfServiceClassChoices.colors.get(
+                self.aci_contract_subject_qos_class
+            ),
+        )
+
+    def test_aci_contract_subject_qos_class_cons_to_prov(self) -> None:
+        """Test 'qos_class_cons_to_prov' choice of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.qos_class_cons_to_prov,
+            self.aci_contract_subject_qos_class_cons_to_prov,
+        )
+
+    def test_aci_contract_subject_get_qos_class_cons_to_prov_color(
+        self,
+    ) -> None:
+        """Test the 'get_qos_class_cons_to_prov_color' method of Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.get_qos_class_cons_to_prov_color(),
+            QualityOfServiceClassChoices.colors.get(
+                self.aci_contract_subject_qos_class_cons_to_prov
+            ),
+        )
+
+    def test_aci_contract_subject_qos_class_prov_to_cons(self) -> None:
+        """Test 'qos_class_prov_to_cons' choice of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.qos_class_prov_to_cons,
+            self.aci_contract_subject_qos_class_prov_to_cons,
+        )
+
+    def test_aci_contract_subject_get_qos_class_prov_to_cons_color(
+        self,
+    ) -> None:
+        """Test the 'get_qos_class_prov_to_cons_color' method of Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.get_qos_class_prov_to_cons_color(),
+            QualityOfServiceClassChoices.colors.get(
+                self.aci_contract_subject_qos_class_prov_to_cons
+            ),
+        )
+
+    def test_aci_contract_subject_reverse_filter_ports_enabled(self) -> None:
+        """Test the 'reverse_filter_ports_enabled' of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.reverse_filter_ports_enabled,
+            self.aci_contract_subject_reverse_filter_ports_enabled,
+        )
+
+    def test_aci_contract_subject_service_graph_name(self) -> None:
+        """Test the 'service_graph_name' of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.service_graph_name,
+            self.aci_contract_subject_service_graph_name,
+        )
+
+    def test_aci_contract_subject_service_graph_name_cons_to_prov(
+        self,
+    ) -> None:
+        """Test the 'service_graph_name_cons_to_prov' of Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.service_graph_name_cons_to_prov,
+            self.aci_contract_subject_service_graph_name_cons_to_prov,
+        )
+
+    def test_aci_contract_subject_service_graph_name_prov_to_cons(
+        self,
+    ) -> None:
+        """Test the 'service_graph_name_prov_to_cons' of Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.service_graph_name_prov_to_cons,
+            self.aci_contract_subject_service_graph_name_prov_to_cons,
+        )
+
+    def test_aci_contract_subject_target_dscp(self) -> None:
+        """Test 'target_dscp' choice of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.target_dscp,
+            self.aci_contract_subject_target_dscp,
+        )
+
+    def test_aci_contract_subject_target_dscp_cons_to_prov(self) -> None:
+        """Test 'target_dscp_cons_to_prov' choice of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.target_dscp_cons_to_prov,
+            self.aci_contract_subject_target_dscp_cons_to_prov,
+        )
+
+    def test_aci_contract_subject_target_dscp_prov_to_cons(self) -> None:
+        """Test 'target_dscp_prov_to_cons' choice of ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject.target_dscp_prov_to_cons,
+            self.aci_contract_subject_target_dscp_prov_to_cons,
+        )
+
+    def test_invalid_aci_contract_subject_name(self) -> None:
+        """Test validation of ACI Contract Subject naming."""
+        contract_subject = ACIContractSubject(
+            name="ACI Contract Filter Entry Test 1"
+        )
+        with self.assertRaises(ValidationError):
+            contract_subject.full_clean()
+
+    def test_invalid_aci_contract_subject_name_length(self) -> None:
+        """Test validation of ACI Contract Subject name length."""
+        contract_subject = ACIContractSubject(
+            name="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            contract_subject.full_clean()
+
+    def test_invalid_aci_contract_subject_name_alias(self) -> None:
+        """Test validation of ACI Contract Subject aliasing."""
+        contract_subject = ACIContractSubject(
+            name="ACIContractSubjectTest1", name_alias="Invalid Alias"
+        )
+        with self.assertRaises(ValidationError):
+            contract_subject.full_clean()
+
+    def test_invalid_aci_contract_subject_name_alias_length(self) -> None:
+        """Test validation of ACI Contract Subject name alias length."""
+        contract_subject = ACIContractSubject(
+            name="ACIContractSubjectTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+        )
+        with self.assertRaises(ValidationError):
+            contract_subject.full_clean()
+
+    def test_invalid_aci_contract_subject_description(self) -> None:
+        """Test validation of ACI Contract Subject description."""
+        contract_subject = ACIContractSubject(
+            name="ACIContractSubjectTest1",
+            description="Invalid Description: ö",
+        )
+        with self.assertRaises(ValidationError):
+            contract_subject.full_clean()
+
+    def test_invalid_aci_contract_subject_description_length(
+        self,
+    ) -> None:
+        """Test validation of ACI Contract Subject description length."""
+        contract_subject = ACIContractSubject(
+            name="ACIContractSubjectTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+        )
+        with self.assertRaises(ValidationError):
+            contract_subject.full_clean()
+
+    def test_constraint_unique_aci_contract_subject_name_per_aci_contract(
+        self,
+    ) -> None:
+        """Test unique constraint of ACI Contract Subject name."""
+        contract = ACIContract.objects.get(name=self.aci_contract_name)
+        duplicate_contract_subject = ACIContractSubject(
+            name=self.aci_contract_subject_name,
+            aci_contract=contract,
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_contract_subject.save()

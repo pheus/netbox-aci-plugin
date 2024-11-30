@@ -18,6 +18,7 @@ from .filters import (
     ACIContractFilter,
     ACIContractFilterEntryFilter,
     ACIContractFilterFilter,
+    ACIContractSubjectFilter,
     ACIEndpointGroupFilter,
     ACITenantFilter,
     ACIVRFFilter,
@@ -170,6 +171,23 @@ class ACIContractType(NetBoxObjectType):
 
     aci_tenant: Annotated[
         "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
+
+
+@strawberry_django.type(
+    models.ACIContractSubject,
+    fields="__all__",
+    filters=ACIContractSubjectFilter,
+)
+class ACIContractSubjectType(NetBoxObjectType):
+    """GraphQL type definition for the ACIContractSubject model."""
+
+    aci_contract: Annotated[
+        "ACIContractType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
     nb_tenant: (
         Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]

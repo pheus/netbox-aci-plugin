@@ -12,6 +12,7 @@ flowchart TD
     BD(Bridge Domain)
     SN(Subnet)
     CT(Contract)
+    SJ(Subject)
     FT(Filter)
     FTE(Filter Entry)
     subgraph graphTN [Tenant]
@@ -32,6 +33,7 @@ flowchart TD
     subgraph graphCT [Contract]
         subgraph graphCTS [Contract]
             TN -->|1:n| CT
+            CT -->|1:n| SJ
         end
         subgraph graphFT [Filter]
             TN -->|1:n| FT
@@ -454,5 +456,86 @@ The *ACIContract* model has the following fields:
   `CS0` (CS0), `CS1` (CS1), `CS2` (CS2), `CS3` (CS3) `CS4` (CS4), `CS5` (CS5),
   `CS6` (CS6), `CS7` (CS7), `EF` (Expedited Forwarding), `VA`, (Voice Admit).
   (default is *unspecified*)
+- **Comments**: a text field for additional notes or comments.
+- **Tags**: a list of NetBox tags.
+
+## Contract Subject
+
+A *Contract Subject* defines how contract filters and service graph templates
+are applied within a *Contract*.
+Each Subject is associated with an *ACI Contract*.
+
+The *ACIContractSubject* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represent the Contract Subject name in the ACI.
+- **ACI Contract**: a reference to the `ACIContract` model, associating the
+  subject with a specific contract.
+
+*Optional fields*:
+
+- **Name Alias**: an alias for the name of the subject in the ACI.
+- **Description**: a brief description of the subject.
+- **NetBox Tenant**: a reference to the NetBox tenant model, linking the
+  subject to a NetBox tenant.
+- **Apply both directions enabled**: indicates whether the filter associated
+  with the subject is applied in both directions
+  (consumer-to-provider and provider-to-consumer).
+    - Default: `true`
+- **QoS class**: specifies the priority handling, Quality of Service (QoS), for
+  traffic between Consumer and Provider within the fabric.
+    - Values: `unspecified` (unspecified), `level1` (level 1),
+      `level2` (level 2), `level3` (level 3), `level4` (level 4),
+      `level5` (level 5), `level6` (level 6)
+    - Default: `unspecified`
+- **QoS class Consumer to Provider**: specifies the priority handling,
+  Quality of Service (QoS), for traffic from Consumer to Provider within the
+  fabric (for disabled `apply_both_directions_enabled`).
+    - Values: `unspecified` (unspecified), `level1` (level 1),
+      `level2` (level 2), `level3` (level 3), `level4` (level 4),
+      `level5` (level 5), `level6` (level 6)
+      - Default: `unspecified`
+- **QoS class Provider to Consumer**: specifies the priority handling,
+  Quality of Service (QoS), for traffic from Provider to Consumer within the
+  fabric (for disabled `apply_both_directions_enabled`).
+    - Values: `unspecified` (unspecified), `level1` (level 1),
+      `level2` (level 2), `level3` (level 3), `level4` (level 4),
+      `level5` (level 5), `level6` (level 6)
+    - Default: `unspecified`
+- **Reverse filter ports enabled**: Indicates whether the source and
+  destination ports of the associated filter within the subject are reversed
+  for the return traffic.
+    - Default: `true`
+- **Service Graph name**: the name of the Service Graph Template
+  associated with the subject.
+- **Service Graph name Consumer to Provider**: the name of the Service Graph
+  Template associated with the subject for traffic from Consumer to
+  Provider (for disabled `apply_both_directions_enabled`).
+- **Service Graph name Provider to Consumer**: the name of the Service Graph
+  Template associated with the subject for traffic from Provider to
+  Consumer (for disabled `apply_both_directions_enabled`).
+- **Target DSCP**: rewrites the DSCP (Differentiated Services Code Point) value
+  of the incoming traffic to the specified value.
+    - Values: `unspecified`, `AF11`, `AF12`, `AF13`, `AF21`, `AF22`, `AF23`,
+      `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
+      `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
+    - Default: `unspecified`
+- **Target DSCP Consumer to Provider**: rewrites the DSCP (Differentiated
+  Services Code Point) value of the incoming traffic to the specified value
+  for traffic from Consumer to Provider within the fabric
+  (for disabled `apply_both_directions_enabled`).
+    - Values: `unspecified`, `AF11`, `AF12`, `AF13`, `AF21`, `AF22`, `AF23`,
+      `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
+      `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
+    - Default: `unspecified`
+- **Target DSCP Provider to Consumer**: rewrites the DSCP (Differentiated
+  Services Code Point) value of the incoming traffic to the specified value
+  for traffic from Provider to Consumer within the fabric
+  (for disabled `apply_both_directions_enabled`).
+    - Values: `unspecified`, `AF11`, `AF12`, `AF13`, `AF21`, `AF22`, `AF23`,
+      `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
+      `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
+    - Default: `unspecified`
 - **Comments**: a text field for additional notes or comments.
 - **Tags**: a list of NetBox tags.
