@@ -67,7 +67,7 @@ class ACIContract(NetBoxModel):
         choices=QualityOfServiceClassChoices,
         help_text=_(
             "Specifies the priority handling for traffic between Consumer and "
-            "Provider within the fabric."
+            "Provider within the fabric. "
             "Default is 'unspecified'."
         ),
     )
@@ -87,7 +87,7 @@ class ACIContract(NetBoxModel):
         default=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
         choices=QualityOfServiceDSCPChoices,
         help_text=_(
-            "Rewrites the DSCP value of the incoming traffic to the specified"
+            "Rewrites the DSCP value of the incoming traffic to the specified "
             "value. Default is 'unspecified'."
         ),
     )
@@ -194,7 +194,7 @@ class ACIContractSubject(NetBoxModel):
         choices=QualityOfServiceClassChoices,
         help_text=_(
             "Specifies the priority handling for traffic between Consumer and "
-            "Provider within the fabric."
+            "Provider within the fabric. "
             "Default is 'unspecified'."
         ),
     )
@@ -205,7 +205,7 @@ class ACIContractSubject(NetBoxModel):
         choices=QualityOfServiceClassChoices,
         help_text=_(
             "Specifies the priority handling for traffic from Consumer to "
-            "Provider within the fabric."
+            "Provider within the fabric. "
             "Default is 'unspecified'."
         ),
     )
@@ -216,7 +216,7 @@ class ACIContractSubject(NetBoxModel):
         choices=QualityOfServiceClassChoices,
         help_text=_(
             "Specifies the priority handling for traffic from Provider to "
-            "Consumer within the fabric."
+            "Consumer within the fabric. "
             "Default is 'unspecified'."
         ),
     )
@@ -273,7 +273,7 @@ class ACIContractSubject(NetBoxModel):
         default=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
         choices=QualityOfServiceDSCPChoices,
         help_text=_(
-            "Rewrites the DSCP value of the incoming traffic to the specified"
+            "Rewrites the DSCP value of the incoming traffic to the specified "
             "value. Default is 'unspecified'."
         ),
     )
@@ -283,7 +283,7 @@ class ACIContractSubject(NetBoxModel):
         default=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
         choices=QualityOfServiceDSCPChoices,
         help_text=_(
-            "Rewrites the DSCP value of the incoming traffic to the specified"
+            "Rewrites the DSCP value of the incoming traffic to the specified "
             "value for traffic from Consumer to Provider. "
             "Default is 'unspecified'."
         ),
@@ -294,7 +294,7 @@ class ACIContractSubject(NetBoxModel):
         default=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
         choices=QualityOfServiceDSCPChoices,
         help_text=_(
-            "Rewrites the DSCP value of the incoming traffic to the specified"
+            "Rewrites the DSCP value of the incoming traffic to the specified "
             "value for traffic from Provider to Consumer. "
             "Default is 'unspecified'."
         ),

@@ -60,7 +60,7 @@ class ACIContractEditForm(NetBoxModelForm):
         label=_("QoS class"),
         help_text=_(
             "Specifies the priority handling for traffic between Consumer and "
-            "Provider within the fabric."
+            "Provider within the fabric. "
             "Default is 'unspecified'."
         ),
     )
@@ -78,7 +78,7 @@ class ACIContractEditForm(NetBoxModelForm):
         required=False,
         label=_("Target DSCP"),
         help_text=_(
-            "Rewrites the DSCP value of the incoming traffic to the specified"
+            "Rewrites the DSCP value of the incoming traffic to the specified "
             "value. Default is 'unspecified'."
         ),
     )
@@ -297,7 +297,7 @@ class ACIContractImportForm(NetBoxModelImportForm):
         label=_("QoS class"),
         help_text=_(
             "Specifies the priority handling for traffic between Consumer and "
-            "Provider within the fabric."
+            "Provider within the fabric. "
             "Default is 'unspecified'."
         ),
     )
@@ -315,7 +315,7 @@ class ACIContractImportForm(NetBoxModelImportForm):
         required=False,
         label=_("Target DSCP"),
         help_text=_(
-            "Rewrites the DSCP value of the incoming traffic to the specified"
+            "Rewrites the DSCP value of the incoming traffic to the specified "
             "value. Default is 'unspecified'."
         ),
     )
