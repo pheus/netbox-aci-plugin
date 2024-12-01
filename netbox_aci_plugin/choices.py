@@ -256,6 +256,56 @@ class ContractScopeChoices(ChoiceSet):
 
 
 #
+# Contract Subject Filter
+#
+
+
+class ContractSubjectFilterActionChoices(ChoiceSet):
+    """Choice set of Contract Subject Filter actions."""
+
+    # default "permit"
+    ACTION_PERMIT = "permit"
+    ACTION_DENY = "deny"
+
+    CHOICES = (
+        (ACTION_PERMIT, _("permit"), "green"),
+        (ACTION_DENY, _("deny"), "red"),
+    )
+
+
+class ContractSubjectFilterApplyDirectionChoices(ChoiceSet):
+    """Choice set of Contract Subject Filter apply directions."""
+
+    # default "both"
+    DIR_BOTH = "both"
+    DIR_CONS_TO_PROV = "ctp"
+    DIR_PROV_TO_CONS = "ptc"
+
+    CHOICES = (
+        (DIR_BOTH, _("both"), "green"),
+        (DIR_CONS_TO_PROV, _("Consumer to Provider"), "blue"),
+        (DIR_PROV_TO_CONS, _("Provider to Consumer"), "yellow"),
+    )
+
+
+class ContractSubjectFilterPriorityChoices(ChoiceSet):
+    """Choice set of Quality of Service (QoS) classes."""
+
+    # default "default"
+    CLASS_DEFAULT = "default"
+    CLASS_LEVEL_1 = "level1"
+    CLASS_LEVEL_2 = "level2"
+    CLASS_LEVEL_3 = "level3"
+
+    CHOICES = (
+        (CLASS_DEFAULT, _("default level"), "gray"),
+        (CLASS_LEVEL_1, _("lowest priority"), "red"),
+        (CLASS_LEVEL_2, _("medium priority"), "orange"),
+        (CLASS_LEVEL_3, _("highest priority"), "yellow"),
+    )
+
+
+#
 # Quality of Service (QoS)
 #
 

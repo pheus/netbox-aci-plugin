@@ -10,9 +10,13 @@ from netbox.models import NetBoxModel
 
 from ..choices import (
     ContractScopeChoices,
+    ContractSubjectFilterActionChoices,
+    ContractSubjectFilterApplyDirectionChoices,
+    ContractSubjectFilterPriorityChoices,
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
+from ..models.tenant_contract_filters import ACIContractFilter
 from ..models.tenants import ACITenant
 from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
 
@@ -366,3 +370,139 @@ class ACIContractSubject(NetBoxModel):
         return QualityOfServiceClassChoices.colors.get(
             self.qos_class_prov_to_cons
         )
+
+
+class ACIContractSubjectFilter(NetBoxModel):
+    """NetBox model for ACI Contract Subject Filter Attachment."""
+
+    aci_contract_filter = models.ForeignKey(
+        to=ACIContractFilter,
+        on_delete=models.CASCADE,
+        related_name="aci_contract_subject_filters",
+        verbose_name=_("ACI Contract Filter"),
+    )
+    aci_contract_subject = models.ForeignKey(
+        to=ACIContractSubject,
+        on_delete=models.CASCADE,
+        related_name="aci_contract_subject_filters",
+        verbose_name=_("ACI Contract Subject"),
+    )
+    action = models.CharField(
+        verbose_name=_("action"),
+        max_length=6,
+        default=ContractSubjectFilterActionChoices.ACTION_PERMIT,
+        choices=ContractSubjectFilterActionChoices,
+        help_text=_(
+            "Defines the action to be taken on the traffic matched by the "
+            "filter. Choose 'permit' to allow the traffic, or 'deny' to block "
+            "it. Default is 'permit'."
+        ),
+    )
+    apply_direction = models.CharField(
+        verbose_name=_("apply direction"),
+        max_length=4,
+        default=ContractSubjectFilterApplyDirectionChoices.DIR_BOTH,
+        choices=ContractSubjectFilterApplyDirectionChoices,
+        help_text=_(
+            "Specifies the direction to apply the filter: 'both' directions, "
+            "'ctp' (consumer to provider), or 'ptc' (provider to consumer). "
+            "Default is 'both'."
+        ),
+    )
+    log_enabled = models.BooleanField(
+        verbose_name=_("logging enabled"),
+        default=False,
+        help_text=_(
+            "Enables logging for the matched traffic." "Default is disabled."
+        ),
+    )
+    policy_compression_enabled = models.BooleanField(
+        verbose_name=_("policy compression enabled"),
+        default=False,
+        help_text=_(
+            "Enable policy-based compression for filtering traffic. "
+            "This reduces the number of rules in the TCAM. "
+            "Default is disabled."
+        ),
+    )
+    priority = models.CharField(
+        verbose_name=_("(deny) priority"),
+        max_length=7,
+        default=ContractSubjectFilterPriorityChoices.CLASS_DEFAULT,
+        choices=ContractSubjectFilterPriorityChoices,
+        help_text=_(
+            "Specifies the priority of the deny action for matched traffic. "
+            "Only relevant when 'deny' is selected as the action. "
+            "Default is 'default level'."
+        ),
+    )
+    comments = models.TextField(
+        verbose_name=_("comments"),
+        blank=True,
+    )
+
+    clone_fields: tuple = (
+        "aci_contract_subject",
+        "action",
+        "apply_direction",
+        "log_enabled",
+        "policy_compression_enabled",
+        "priority",
+    )
+    prerequisite_models: tuple = (
+        "netbox_aci_plugin.ACIContractSubject",
+        "netbox_aci_plugin.ACIContractFilter",
+    )
+
+    class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_contract_subject", "aci_contract_filter"),
+                name="unique_aci_contract_filter_per_aci_contract_subject",
+            ),
+        ]
+        ordering: tuple = ("aci_contract_subject", "aci_contract_filter")
+        verbose_name: str = _("ACI Contract Subject Filter")
+
+    def __str__(self) -> str:
+        """Return string representation of the instance."""
+        return (
+            f"{self.aci_contract_subject.name}-"
+            f"{self.aci_contract_filter.name}"
+        )
+
+    @property
+    def aci_contract(self) -> ACIContract:
+        """Return the ACIContract instance of related ACIContractSubject."""
+        return self.aci_contract_subject.aci_contract
+
+    @property
+    def aci_contract_filter_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of related ACIContractFilter."""
+        return self.aci_contract_filter.aci_tenant
+
+    @property
+    def aci_contract_subject_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of related ACIContractSubject."""
+        return self.aci_contract_subject.aci_tenant
+
+    def get_absolute_url(self) -> str:
+        """Return the absolute URL of the instance."""
+        return reverse(
+            "plugins:netbox_aci_plugin:acicontractsubjectfilter",
+            args=[self.pk],
+        )
+
+    def get_action_color(self) -> str:
+        """Return the associated color of choice from the ChoiceSet."""
+        return ContractSubjectFilterActionChoices.colors.get(self.action)
+
+    def get_apply_direction_color(self) -> str:
+        """Return the associated color of choice from the ChoiceSet."""
+        return ContractSubjectFilterApplyDirectionChoices.colors.get(
+            self.apply_direction
+        )
+
+    def get_priority_color(self) -> str:
+        """Return the associated color of choice from the ChoiceSet."""
+        return ContractSubjectFilterPriorityChoices.colors.get(self.priority)
