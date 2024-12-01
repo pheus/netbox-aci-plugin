@@ -6,7 +6,11 @@ import django_tables2 as tables
 from django.utils.translation import gettext_lazy as _
 from netbox.tables import NetBoxTable, columns
 
-from ..models.tenant_contracts import ACIContract, ACIContractSubject
+from ..models.tenant_contracts import (
+    ACIContract,
+    ACIContractSubject,
+    ACIContractSubjectFilter,
+)
 
 
 class ACIContractTable(NetBoxTable):
@@ -185,4 +189,105 @@ class ACIContractSubjectReducedTable(NetBoxTable):
         default_columns: tuple = (
             "name",
             "apply_both_directions_enabled",
+        )
+
+
+class ACIContractSubjectFilterTable(NetBoxTable):
+    """NetBox table for the ACI Contract Subject Filter model."""
+
+    aci_contract = tables.Column(
+        verbose_name=_("Contract"),
+        linkify=True,
+    )
+    aci_contract_filter_tenant = tables.Column(
+        verbose_name=_("ACI Tenant (Filter)"),
+        linkify=True,
+    )
+    aci_contract_filter = tables.Column(
+        verbose_name=_("Filter"),
+        linkify=True,
+    )
+    aci_contract_subject_tenant = tables.Column(
+        verbose_name=_("ACI Tenant (Subject)"),
+        linkify=True,
+    )
+    aci_contract_subject = tables.Column(
+        verbose_name=_("Subject"),
+        linkify=True,
+    )
+    action = columns.ChoiceFieldColumn(
+        verbose_name=_("Action"),
+    )
+    apply_direction = columns.ChoiceFieldColumn(
+        verbose_name=_("Apply direction"),
+    )
+    log_enabled = columns.BooleanColumn(
+        verbose_name=_("Logging"),
+    )
+    policy_compression_enabled = columns.BooleanColumn(
+        verbose_name=_("Compression"),
+    )
+    priority = columns.ChoiceFieldColumn(
+        verbose_name=_("Priority"),
+    )
+    tags = columns.TagColumn()
+    comments = columns.MarkdownColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIContractSubjectFilter
+        fields: tuple = (
+            "pk",
+            "id",
+            "aci_contract_filter_tenant",
+            "aci_contract_filter",
+            "aci_contract_subject_tenant",
+            "aci_contract",
+            "aci_contract_subject",
+            "action",
+            "apply_direction",
+            "log_enabled",
+            "policy_compression_enabled",
+            "priority",
+            "tags",
+            "comments",
+        )
+        default_columns: tuple = (
+            "aci_contract_subject",
+            "aci_contract_subject_tenant",
+            "aci_contract",
+            "aci_contract_filter",
+            "action",
+            "log_enabled",
+            "policy_compression_enabled",
+            "tags",
+        )
+
+
+class ACIContractSubjectFilterReducedTable(NetBoxTable):
+    """Reduced NetBox table for the ACI Contract Subject Filter model."""
+
+    aci_contract_filter_tenant = tables.Column(
+        verbose_name=_("ACI Tenant (Filter)"),
+        linkify=True,
+    )
+    aci_contract_filter = tables.Column(
+        verbose_name=_("Filter"),
+        linkify=True,
+    )
+    action = columns.ChoiceFieldColumn(
+        verbose_name=_("Action"),
+    )
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIContractSubjectFilter
+        fields: tuple = (
+            "pk",
+            "id",
+            "aci_contract_filter_tenant",
+            "aci_contract_filter",
+            "action",
+        )
+        default_columns: tuple = (
+            "aci_contract_filter",
+            "action",
         )
