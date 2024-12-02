@@ -12,10 +12,18 @@ from tenancy.models import Tenant
 
 from ..choices import (
     ContractScopeChoices,
+    ContractSubjectFilterActionChoices,
+    ContractSubjectFilterApplyDirectionChoices,
+    ContractSubjectFilterPriorityChoices,
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ..models.tenant_contracts import ACIContract, ACIContractSubject
+from ..models.tenant_contract_filters import ACIContractFilter
+from ..models.tenant_contracts import (
+    ACIContract,
+    ACIContractSubject,
+    ACIContractSubjectFilter,
+)
 from ..models.tenants import ACITenant
 
 
@@ -197,5 +205,93 @@ class ACIContractSubjectFilterSet(NetBoxModelFilterSet):
             | Q(name_alias__icontains=value)
             | Q(description__icontains=value)
             | Q(aci_contract__name__icontains=value)
+        )
+        return queryset.filter(queryset_filter)
+
+
+class ACIContractSubjectFilterFilterSet(NetBoxModelFilterSet):
+    """Filter set for the ACI Contract Subject Filter model."""
+
+    aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_subject__aci_contract__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant (name)"),
+    )
+    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_subject__aci_contract__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant (ID)"),
+    )
+    aci_contract = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_subject__aci_contract",
+        queryset=ACIContract.objects.all(),
+        to_field_name="name",
+        label=_("ACI Contract (name)"),
+    )
+    aci_contract_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_subject__aci_contract",
+        queryset=ACIContract.objects.all(),
+        to_field_name="id",
+        label=_("ACI Contract (ID)"),
+    )
+    aci_contract_subject = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIContractSubject.objects.all(),
+        to_field_name="name",
+        label=_("ACI Contract Subject (name)"),
+    )
+    aci_contract_subject_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIContractSubject.objects.all(),
+        to_field_name="id",
+        label=_("ACI Contract Subject (ID)"),
+    )
+    aci_contract_filter = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIContractFilter.objects.all(),
+        to_field_name="name",
+        label=_("ACI Contract Filter (name)"),
+    )
+    aci_contract_filter_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIContractFilter.objects.all(),
+        to_field_name="id",
+        label=_("ACI Contract Filter (ID)"),
+    )
+    action = django_filters.MultipleChoiceFilter(
+        choices=ContractSubjectFilterActionChoices,
+        null_value=None,
+        label=_("Action"),
+    )
+    apply_direction = django_filters.MultipleChoiceFilter(
+        choices=ContractSubjectFilterApplyDirectionChoices,
+        null_value=None,
+        label=_("Apply direction"),
+    )
+    priority = django_filters.MultipleChoiceFilter(
+        choices=ContractSubjectFilterPriorityChoices,
+        null_value=None,
+        label=_("(Deny) Priority"),
+    )
+
+    class Meta:
+        model = ACIContractSubjectFilter
+        fields: tuple = (
+            "id",
+            "aci_contract_filter",
+            "aci_contract_subject",
+            "action",
+            "apply_direction",
+            "log_enabled",
+            "policy_compression_enabled",
+            "priority",
+        )
+
+    def search(self, queryset, name, value):
+        """Return a QuerySet filtered by the model's description."""
+        if not value.strip():
+            return queryset
+        queryset_filter: Q = (
+            Q(aci_contract_filter__name__icontains=value)
+            | Q(aci_contract_subject__name__icontains=value)
+            | Q(aci_contract_subject__aci_contract__name__icontains=value)
         )
         return queryset.filter(queryset_filter)
