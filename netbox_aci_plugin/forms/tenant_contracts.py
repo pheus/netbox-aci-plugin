@@ -24,10 +24,18 @@ from utilities.forms.rendering import FieldSet, TabbedGroups
 
 from ..choices import (
     ContractScopeChoices,
+    ContractSubjectFilterActionChoices,
+    ContractSubjectFilterApplyDirectionChoices,
+    ContractSubjectFilterPriorityChoices,
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ..models.tenant_contracts import ACIContract, ACIContractSubject
+from ..models.tenant_contract_filters import ACIContractFilter
+from ..models.tenant_contracts import (
+    ACIContract,
+    ACIContractSubject,
+    ACIContractSubjectFilter,
+)
 from ..models.tenants import ACITenant
 
 #
@@ -985,3 +993,421 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
         return self._clean_field_default_unspecified(
             "target_dscp_prov_to_cons"
         )
+
+
+#
+# Contract Subject Filter forms
+#
+
+
+class ACIContractSubjectFilterEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI Contract Subject Filter model."""
+
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        initial_params={
+            "aci_contracts__aci_contract_subjects": "$aci_contract_subject"
+        },
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_contract = DynamicModelChoiceField(
+        queryset=ACIContract.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        initial_params={"aci_contract_subjects": "aci_contract_subject"},
+        required=False,
+        label=_("ACI Contract"),
+    )
+    aci_contract_filter = DynamicModelChoiceField(
+        queryset=ACIContractFilter.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        label=_("ACI Contract Filter"),
+    )
+    aci_contract_subject = DynamicModelChoiceField(
+        queryset=ACIContractSubject.objects.all(),
+        query_params={"aci_contract_id": "$aci_contract"},
+        label=_("ACI Contract Subject"),
+    )
+    action = forms.ChoiceField(
+        choices=ContractSubjectFilterActionChoices,
+        label=_("Action"),
+        help_text=_(
+            "Defines the action to be taken on the traffic matched by the "
+            "filter. Choose 'permit' to allow the traffic, or 'deny' to block "
+            "it. Default is 'permit'."
+        ),
+    )
+    apply_direction = forms.ChoiceField(
+        choices=ContractSubjectFilterApplyDirectionChoices,
+        required=False,
+        label=_("Apply direction"),
+        help_text=_(
+            "Specifies the direction to apply the filter: 'both' directions, "
+            "'ctp' (consumer to provider), or 'ptc' (provider to consumer). "
+            "Default is 'both'."
+        ),
+    )
+    log_enabled = forms.BooleanField(
+        required=False,
+        label=_("Logging enabled"),
+        help_text=_(
+            "Enables logging for the matched traffic." "Default is disabled."
+        ),
+    )
+    policy_compression_enabled = forms.BooleanField(
+        required=False,
+        label=_("Policy compression enabled"),
+        help_text=_(
+            "Enable policy-based compression for filtering traffic. "
+            "This reduces the number of rules in the TCAM. "
+            "Default is disabled."
+        ),
+    )
+    priority = forms.ChoiceField(
+        choices=ContractSubjectFilterPriorityChoices,
+        required=False,
+        label=_("(Deny) Priority"),
+        help_text=_(
+            "Specifies the priority of the deny action for matched traffic. "
+            "Only relevant when 'deny' is selected as the action. "
+            "Default is 'default level'."
+        ),
+    )
+    comments = CommentField()
+
+    fieldsets: tuple = (
+        FieldSet(
+            "aci_tenant",
+            "aci_contract",
+            "aci_contract_subject",
+            "aci_contract_filter",
+            "action",
+            "tags",
+            name=_("ACI Contract Subject Filter"),
+        ),
+        FieldSet(
+            "apply_direction",
+            name=_("Directions Settings"),
+        ),
+        FieldSet(
+            "log_enabled",
+            "policy_compression_enabled",
+            name=_("Directives Settings"),
+        ),
+        FieldSet(
+            "priority",
+            name=_("Priority Settings"),
+        ),
+    )
+
+    class Meta:
+        model = ACIContractSubjectFilter
+        fields: tuple = (
+            "aci_contract_filter",
+            "aci_contract_subject",
+            "action",
+            "apply_direction",
+            "log_enabled",
+            "policy_compression_enabled",
+            "priority",
+            "comments",
+            "tags",
+        )
+
+
+class ACIContractSubjectFilterBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for the ACI Contract Subject Filter model."""
+
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_contract = DynamicModelChoiceField(
+        queryset=ACIContract.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        required=False,
+        label=_("ACI Contract"),
+    )
+    aci_contract_filter = DynamicModelChoiceField(
+        queryset=ACIContractFilter.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        required=False,
+        label=_("ACI Contract Filter"),
+    )
+    aci_contract_subject = DynamicModelChoiceField(
+        queryset=ACIContractSubject.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        required=False,
+        label=_("ACI Contract Subject"),
+    )
+    action = forms.ChoiceField(
+        choices=add_blank_choice(ContractSubjectFilterActionChoices),
+        required=False,
+        label=_("Action"),
+    )
+    apply_direction = forms.ChoiceField(
+        choices=add_blank_choice(ContractSubjectFilterApplyDirectionChoices),
+        required=False,
+        label=_("Apply direction"),
+    )
+    log_enabled = forms.NullBooleanField(
+        required=False,
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+        label=_("Logging enabled"),
+    )
+    policy_compression_enabled = forms.NullBooleanField(
+        required=False,
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+        label=_("Policy compression enabled"),
+    )
+    priority = forms.ChoiceField(
+        choices=add_blank_choice(ContractSubjectFilterPriorityChoices),
+        required=False,
+        label=_("(Deny) Priority"),
+    )
+    comments = CommentField()
+
+    model = ACIContractSubjectFilter
+    fieldsets: tuple = (
+        FieldSet(
+            "aci_tenant",
+            "aci_contract",
+            "aci_contract_subject",
+            "aci_contract_filter",
+            "action",
+            "tags",
+            name=_("ACI Contract Subject Filter"),
+        ),
+        FieldSet(
+            "apply_direction",
+            name=_("Directions Settings"),
+        ),
+        FieldSet(
+            "log_enabled",
+            "policy_compression_enabled",
+            name=_("Directives Settings"),
+        ),
+        FieldSet(
+            "priority",
+            name=_("Priority Settings"),
+        ),
+    )
+    nullable_fields = ("comments",)
+
+
+class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for the ACI Contract Subject Filter model."""
+
+    model = ACIContractSubjectFilter
+    fieldsets: tuple = (
+        FieldSet(
+            "q",
+            "filter_id",
+            "tag",
+        ),
+        FieldSet(
+            "aci_tenant_id",
+            "aci_contract_id",
+            "aci_contract_subject_id",
+            "aci_contract_filter_id",
+            "action",
+            "name",
+            name="Attributes",
+        ),
+        FieldSet(
+            "apply_direction",
+            name=_("Directions Settings"),
+        ),
+        FieldSet(
+            "log_enabled",
+            "policy_compression_enabled",
+            name=_("Directives Settings"),
+        ),
+        FieldSet(
+            "priority",
+            name=_("Priority Settings"),
+        ),
+    )
+
+    aci_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_contract_id = DynamicModelMultipleChoiceField(
+        queryset=ACIContract.objects.all(),
+        required=False,
+        label=_("ACI Contract"),
+    )
+    aci_contract_filter_id = DynamicModelMultipleChoiceField(
+        queryset=ACIContractFilter.objects.all(),
+        required=False,
+        label=_("ACI Contract Filter"),
+    )
+    aci_contract_subject_id = DynamicModelMultipleChoiceField(
+        queryset=ACIContractSubject.objects.all(),
+        required=False,
+        label=_("ACI Contract Subject"),
+    )
+    action = forms.MultipleChoiceField(
+        choices=add_blank_choice(ContractSubjectFilterActionChoices),
+        required=False,
+        label=_("Action"),
+    )
+    apply_direction = forms.MultipleChoiceField(
+        choices=add_blank_choice(ContractSubjectFilterApplyDirectionChoices),
+        required=False,
+        label=_("Apply direction"),
+    )
+    log_enabled = forms.NullBooleanField(
+        required=False,
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+        label=_("Logging enabled"),
+    )
+    policy_compression_enabled = forms.NullBooleanField(
+        required=False,
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+        label=_("Policy compression enabled"),
+    )
+    priority = forms.MultipleChoiceField(
+        choices=add_blank_choice(ContractSubjectFilterPriorityChoices),
+        required=False,
+        label=_("(Deny) Priority"),
+    )
+    tag = TagFilterField(ACIContractSubjectFilter)
+
+
+class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):
+    """NetBox import form for the ACI Contract Subject Filter model."""
+
+    aci_contract_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI Contract"),
+    )
+    aci_contract = CSVModelChoiceField(
+        queryset=ACIContract.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Contract"),
+        help_text=_("Parent ACI Contract of ACI Contract Subject"),
+    )
+    aci_contract_filter_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI Contract Filter"),
+    )
+    aci_contract_filter = CSVModelChoiceField(
+        queryset=ACIContractFilter.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Contract Filter"),
+        help_text=_("Assigned ACI Contract Filter"),
+    )
+    aci_contract_subject = CSVModelChoiceField(
+        queryset=ACIContractSubject.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Contract Subject"),
+        help_text=_("Assigned ACI Contract Subject"),
+    )
+    action = CSVChoiceField(
+        choices=ContractSubjectFilterActionChoices,
+        required=True,
+        label=_("Action"),
+        help_text=_(
+            "Defines the action to be taken on the traffic matched by the "
+            "filter. Choose 'permit' to allow the traffic, or 'deny' to block "
+            "it. Default is 'permit'."
+        ),
+    )
+    apply_direction = CSVChoiceField(
+        choices=ContractSubjectFilterApplyDirectionChoices,
+        required=False,
+        label=_("Apply direction"),
+        help_text=_(
+            "Specifies the direction to apply the filter: 'both' directions, "
+            "'ctp' (consumer to provider), or 'ptc' (provider to consumer). "
+            "Default is 'both'."
+        ),
+    )
+    priority = CSVChoiceField(
+        choices=ContractSubjectFilterPriorityChoices,
+        required=False,
+        label=_("(Deny) Priority"),
+        help_text=_(
+            "Specifies the priority of the deny action for matched traffic. "
+            "Only relevant when 'deny' is selected as the action. "
+            "Default is 'default level'."
+        ),
+    )
+
+    class Meta:
+        model = ACIContractSubjectFilter
+        fields: tuple = (
+            "aci_contract_filter",
+            "aci_contract_subject",
+            "action",
+            "apply_direction",
+            "log_enabled",
+            "policy_compression_enabled",
+            "priority",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        # Limit ACIContractSubject queryset by parent ACI objects
+        if data.get("aci_contract_tenant") and data.get("aci_contract"):
+            # Limit ACIContract queryset by parent ACITenant
+            self.fields["aci_contract"].queryset = ACIContract.objects.filter(
+                aci_tenant__name=data["aci_contract_tenant"]
+            )
+            # Limit ACIContractSubject queryset by parent ACIContract
+            aci_subject_queryset = ACIContractSubject.objects.filter(
+                aci_contract__name=data["aci_contract"]
+            )
+            self.fields["aci_contract_subject"].queryset = aci_subject_queryset
+
+        # Limit ACIContractFilter queryset by parent ACI objects
+        if data.get("aci_contract_filter_tenant") and data.get(
+            "aci_contract_filter"
+        ):
+            # Limit ACIContractFilter queryset by parent ACITenant
+            aci_filter_queryset = ACIContractFilter.objects.filter(
+                aci_tenant__name=data["aci_contract_filter_tenant"]
+            )
+            self.fields["aci_contract_filter"].queryset = aci_filter_queryset
+
+    def clean_apply_direction(self) -> str | None:
+        """Return a cleaned and validated value for apply_direction."""
+        field_value = self.cleaned_data.get("apply_direction", None)
+        if not field_value:
+            return ContractSubjectFilterApplyDirectionChoices.DIR_BOTH
+        return field_value
+
+    def clean_priority(self) -> str | None:
+        """Return a cleaned and validated value for priority."""
+        field_value = self.cleaned_data.get("priority", None)
+        if not field_value:
+            return ContractSubjectFilterPriorityChoices.CLASS_DEFAULT
+        return field_value
