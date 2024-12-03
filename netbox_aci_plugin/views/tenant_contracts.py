@@ -8,6 +8,7 @@ from utilities.views import ViewTab, register_model_view
 
 from ..filtersets.tenant_contracts import (
     ACIContractFilterSet,
+    ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
 from ..forms.tenant_contracts import (
@@ -17,11 +18,21 @@ from ..forms.tenant_contracts import (
     ACIContractImportForm,
     ACIContractSubjectBulkEditForm,
     ACIContractSubjectEditForm,
+    ACIContractSubjectFilterBulkEditForm,
+    ACIContractSubjectFilterEditForm,
+    ACIContractSubjectFilterFilterForm,
     ACIContractSubjectFilterForm,
+    ACIContractSubjectFilterImportForm,
     ACIContractSubjectImportForm,
 )
-from ..models.tenant_contracts import ACIContract, ACIContractSubject
+from ..models.tenant_contracts import (
+    ACIContract,
+    ACIContractSubject,
+    ACIContractSubjectFilter,
+)
 from ..tables.tenant_contracts import (
+    ACIContractSubjectFilterReducedTable,
+    ACIContractSubjectFilterTable,
     ACIContractSubjectReducedTable,
     ACIContractSubjectTable,
     ACIContractTable,
@@ -76,6 +87,30 @@ class ACIContractSubjectChildrenView(generic.ObjectChildrenView):
         ).prefetch_related(
             "aci_contract",
             "nb_tenant",
+            "tags",
+        )
+
+
+class ACIContractSubjectFilterChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of Contract Subject Filter."""
+
+    child_model = ACIContractSubjectFilter
+    filterset = ACIContractSubjectFilterFilterSet
+    tab = ViewTab(
+        label=_("Subject Filters"),
+        badge=lambda obj: obj.aci_contract_subject_filters.count(),
+        permission="netbox_aci_plugin.view_acicontractsubjectfilter",
+        weight=1000,
+    )
+    table = ACIContractSubjectFilterTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIContractSubjectFilter."""
+        return ACIContractSubjectFilter.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
+            "aci_contract_filter",
+            "aci_contract_subject",
             "tags",
         )
 
@@ -209,6 +244,17 @@ class ACIContractSubjectView(generic.ObjectView):
         "tags",
     )
 
+    def get_extra_context(self, request, instance) -> dict:
+        """Return related Contract Subject Filters as extra context."""
+        contract_subject_filters_table = ACIContractSubjectFilterReducedTable(
+            instance.aci_contract_subject_filters.all()
+        )
+        contract_subject_filters_table.configure(request=request)
+
+        return {
+            "contract_subject_filters_table": contract_subject_filters_table,
+        }
+
 
 class ACIContractSubjectListView(generic.ObjectListView):
     """List view for listing all objects of ACIContractSubject."""
@@ -246,6 +292,37 @@ class ACIContractSubjectDeleteView(generic.ObjectDeleteView):
     )
 
 
+@register_model_view(
+    ACIContractSubject, "contractsubjectfilters", path="filters"
+)
+class ACIContractContractSubjectFilterView(
+    ACIContractSubjectFilterChildrenView
+):
+    """Children view of ACI Contract Subject Filter of ACI Contract Subject."""
+
+    queryset = ACIContractSubject.objects.all()
+    template_name = "netbox_aci_plugin/acicontractsubject_subjectfilters.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_contract_subject=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACIContractSubject colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column of ACIContractSubject
+        table.columns.hide("aci_contract_subject_tenant")
+        # Hide ACIContractSubject column
+        table.columns.hide("aci_contract_subject")
+
+        return table
+
+
 class ACIContractSubjectBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of Contract Subject."""
 
@@ -268,3 +345,79 @@ class ACIContractSubjectBulkDeleteView(generic.BulkDeleteView):
     queryset = ACIContractSubject.objects.all()
     filterset = ACIContractSubjectFilterSet
     table = ACIContractSubjectTable
+
+
+#
+# Contract Subject Filter views
+#
+
+
+@register_model_view(ACIContractSubjectFilter)
+class ACIContractSubjectFilterView(generic.ObjectView):
+    """Detail view for displaying a single object of Subject Filter."""
+
+    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+        "aci_contract_filter",
+        "aci_contract_subject",
+        "tags",
+    )
+
+
+class ACIContractSubjectFilterListView(generic.ObjectListView):
+    """List view for listing all objects of Subject Filter."""
+
+    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+        "aci_contract_filter",
+        "aci_contract_subject",
+        "tags",
+    )
+    filterset = ACIContractSubjectFilterFilterSet
+    filterset_form = ACIContractSubjectFilterFilterForm
+    table = ACIContractSubjectFilterTable
+
+
+@register_model_view(ACIContractSubjectFilter, "edit")
+class ACIContractSubjectFilterEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACIContractSubjectFilter."""
+
+    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+        "aci_contract_filter",
+        "aci_contract_subject",
+        "tags",
+    )
+    form = ACIContractSubjectFilterEditForm
+
+
+@register_model_view(ACIContractSubjectFilter, "delete")
+class ACIContractSubjectFilterDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACIContractSubjectFilter."""
+
+    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+        "aci_contract_filter",
+        "aci_contract_subject",
+        "tags",
+    )
+
+
+class ACIContractSubjectFilterBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of Subject Filter."""
+
+    queryset = ACIContractSubjectFilter.objects.all()
+    model_form = ACIContractSubjectFilterImportForm
+
+
+class ACIContractSubjectFilterBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of Subject Filter."""
+
+    queryset = ACIContractSubjectFilter.objects.all()
+    filterset = ACIContractSubjectFilterFilterSet
+    table = ACIContractSubjectFilterTable
+    form = ACIContractSubjectFilterBulkEditForm
+
+
+class ACIContractSubjectFilterBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of Subject Filter."""
+
+    queryset = ACIContractSubjectFilter.objects.all()
+    filterset = ACIContractSubjectFilterFilterSet
+    table = ACIContractSubjectFilterTable
