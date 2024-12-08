@@ -9,7 +9,11 @@ from .models.tenant_contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from .models.tenant_contracts import ACIContract, ACIContractSubject
+from .models.tenant_contracts import (
+    ACIContract,
+    ACIContractSubject,
+    ACIContractSubjectFilter,
+)
 from .models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -214,4 +218,20 @@ class ACIContractSubjectIndex(SearchIndex):
         "name_alias",
         "description",
         "aci_contract",
+    )
+
+
+@register_search
+class ACIContractSubjectFilterIndex(SearchIndex):
+    """NetBox search definition for the ACI Contract Subject Filter model."""
+
+    model = ACIContractSubjectFilter
+
+    fields: tuple = (
+        ("aci_contract_filter", 100),
+        ("aci_contract_subject", 300),
+    )
+    display_attrs: tuple = (
+        "aci_contract_filter",
+        "aci_contract_subject",
     )
