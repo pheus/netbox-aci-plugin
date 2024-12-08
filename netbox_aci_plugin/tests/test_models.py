@@ -20,6 +20,9 @@ from ..choices import (
     ContractFilterPortChoices,
     ContractFilterTCPRulesChoices,
     ContractScopeChoices,
+    ContractSubjectFilterActionChoices,
+    ContractSubjectFilterApplyDirectionChoices,
+    ContractSubjectFilterPriorityChoices,
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
     VRFPCEnforcementDirectionChoices,
@@ -30,7 +33,11 @@ from ..models.tenant_contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenant_contracts import ACIContract, ACIContractSubject
+from ..models.tenant_contracts import (
+    ACIContract,
+    ACIContractSubject,
+    ACIContractSubjectFilter,
+)
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -2682,3 +2689,238 @@ class ACIContractSubjectTestCase(TestCase):
         )
         with self.assertRaises(IntegrityError):
             duplicate_contract_subject.save()
+
+
+class ACIContractSubjectFilterTestCase(TestCase):
+    """Test case for ACIContractSubjectFilter model."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIContractSubjectFilter model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_contract_name = "ACITestContract"
+        cls.aci_contract_qos_class = (
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED
+        )
+        cls.aci_contract_scope = ContractScopeChoices.SCOPE_VRF
+        cls.aci_contract_target_dscp = QualityOfServiceDSCPChoices.DSCP_EF
+        cls.aci_contract_subject_name = "ACITestContractSubject"
+        cls.nb_tenant_name = "NetBoxTestTenant"
+        cls.aci_contract_subject_apply_both_directions_enabled = True
+        cls.aci_contract_subject_qos_class = (
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED
+        )
+        cls.aci_contract_subject_qos_class_cons_to_prov = (
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED
+        )
+        cls.aci_contract_subject_qos_class_prov_to_cons = (
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED
+        )
+        cls.aci_contract_subject_reverse_filter_ports_enabled = True
+        cls.aci_contract_subject_target_dscp = (
+            QualityOfServiceDSCPChoices.DSCP_EF
+        )
+        cls.aci_contract_subject_target_dscp_cons_to_prov = (
+            QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED
+        )
+        cls.aci_contract_subject_target_dscp_prov_to_cons = (
+            QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED
+        )
+        cls.aci_contract_subject_filter_action = (
+            ContractSubjectFilterActionChoices.ACTION_PERMIT
+        )
+        cls.aci_contract_subject_filter_apply_direction = (
+            ContractSubjectFilterApplyDirectionChoices.DIR_BOTH
+        )
+        cls.aci_contract_subject_filter_log_enabled = True
+        cls.aci_contract_subject_filter_policy_compression_enabled = False
+        cls.aci_contract_subject_filter_priority = (
+            ContractSubjectFilterPriorityChoices.CLASS_DEFAULT
+        )
+        cls.aci_contract_filter_name = "ACITestContractFilter"
+
+        # Create objects
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.aci_contract_filter = ACIContractFilter.objects.create(
+            name=cls.aci_contract_filter_name,
+            aci_tenant=cls.aci_tenant,
+            nb_tenant=cls.nb_tenant,
+        )
+        cls.aci_contract = ACIContract.objects.create(
+            name=cls.aci_contract_name,
+            aci_tenant=cls.aci_tenant,
+            nb_tenant=cls.nb_tenant,
+            qos_class=cls.aci_contract_qos_class,
+            scope=cls.aci_contract_scope,
+            target_dscp=cls.aci_contract_target_dscp,
+        )
+        cls.aci_contract_subject = ACIContractSubject.objects.create(
+            name=cls.aci_contract_subject_name,
+            aci_contract=cls.aci_contract,
+            nb_tenant=cls.nb_tenant,
+            apply_both_directions_enabled=(
+                cls.aci_contract_subject_apply_both_directions_enabled
+            ),
+            qos_class=cls.aci_contract_subject_qos_class,
+            qos_class_cons_to_prov=(
+                cls.aci_contract_subject_qos_class_cons_to_prov
+            ),
+            qos_class_prov_to_cons=(
+                cls.aci_contract_subject_qos_class_prov_to_cons
+            ),
+            reverse_filter_ports_enabled=(
+                cls.aci_contract_subject_reverse_filter_ports_enabled
+            ),
+            target_dscp=cls.aci_contract_subject_target_dscp,
+            target_dscp_cons_to_prov=(
+                cls.aci_contract_subject_target_dscp_cons_to_prov
+            ),
+            target_dscp_prov_to_cons=(
+                cls.aci_contract_subject_target_dscp_prov_to_cons
+            ),
+        )
+        cls.aci_contract_subject_filter = ACIContractSubjectFilter.objects.create(
+            aci_contract_filter=cls.aci_contract_filter,
+            aci_contract_subject=cls.aci_contract_subject,
+            action=cls.aci_contract_subject_filter_action,
+            apply_direction=cls.aci_contract_subject_filter_apply_direction,
+            log_enabled=cls.aci_contract_subject_filter_log_enabled,
+            policy_compression_enabled=(
+                cls.aci_contract_subject_filter_policy_compression_enabled
+            ),
+            priority=cls.aci_contract_subject_filter_priority,
+        )
+
+    def test_aci_contract_subject_filter_instance(self) -> None:
+        """Test type of created ACI Contract Subject Filter."""
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_subject_filter, ACIContractSubjectFilter
+            )
+        )
+
+    def test_aci_contract_subject_filter_str(self) -> None:
+        """Test string value of created ACI Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.__str__(),
+            f"{self.aci_contract_subject_name}-"
+            f"{self.aci_contract_filter_name}",
+        )
+
+    def test_aci_contract_subject_filter_aci_contract_instance(
+        self,
+    ) -> None:
+        """Test the Contract instance associated with Subject Filter."""
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_subject_filter.aci_contract, ACIContract
+            )
+        )
+
+    def test_aci_contract_subject_filter_aci_contract_filter_instance(
+        self,
+    ) -> None:
+        """Test the Contract Filter instance associated with Subject Filter."""
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_subject_filter.aci_contract_filter,
+                ACIContractFilter,
+            )
+        )
+
+    def test_aci_contract_subject_filter_aci_contract_name(self) -> None:
+        """Test the Contract name associated with Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.aci_contract.name,
+            self.aci_contract_name,
+        )
+
+    def test_aci_contract_subject_filter_aci_contract_filter_name(
+        self,
+    ) -> None:
+        """Test the Contract Filter name associated with Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.aci_contract_filter.name,
+            self.aci_contract_filter_name,
+        )
+
+    def test_aci_contract_subject_filter_action(self) -> None:
+        """Test the 'action' of ACI Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.action,
+            self.aci_contract_subject_filter_action,
+        )
+
+    def test_aci_contract_subject_filter_get_action_color(self) -> None:
+        """Test the 'get_action_color' method of Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.get_action_color(),
+            ContractSubjectFilterActionChoices.colors.get(
+                self.aci_contract_subject_filter_action
+            ),
+        )
+
+    def test_aci_contract_subject_filter_apply_direction(self) -> None:
+        """Test the 'apply_direction' of ACI Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.apply_direction,
+            self.aci_contract_subject_filter_apply_direction,
+        )
+
+    def test_aci_contract_subject_filter_get_apply_direction_color(
+        self,
+    ) -> None:
+        """Test the 'get_apply_direction_color' method of Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.get_apply_direction_color(),
+            ContractSubjectFilterApplyDirectionChoices.colors.get(
+                self.aci_contract_subject_filter_apply_direction
+            ),
+        )
+
+    def test_aci_contract_subject_filter_log_enabled(self) -> None:
+        """Test the 'log_enabled' of ACI Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.log_enabled,
+            self.aci_contract_subject_filter_log_enabled,
+        )
+
+    def test_aci_contract_subject_filter_policy_compression_enabled(
+        self,
+    ) -> None:
+        """Test the 'policy_compression_enabled' of ACI Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.policy_compression_enabled,
+            self.aci_contract_subject_filter_policy_compression_enabled,
+        )
+
+    def test_aci_contract_subject_filter_priority(self) -> None:
+        """Test the 'priority' of ACI Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.priority,
+            self.aci_contract_subject_filter_priority,
+        )
+
+    def test_aci_contract_subject_filter_get_priority_color(self) -> None:
+        """Test the 'get_priority_color' method of Contract Subject Filter."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.get_priority_color(),
+            ContractSubjectFilterPriorityChoices.colors.get(
+                self.aci_contract_subject_filter_priority
+            ),
+        )
+
+    def test_constraint_unique_aci_contract_subject_filter_per_aci_contract_subject(
+        self,
+    ) -> None:
+        """Test unique constraint of ACI Contract Subject Filter assigment."""
+        contract_subject = ACIContractSubject.objects.get(
+            name=self.aci_contract_subject_name
+        )
+        duplicate_contract_subject_filter = ACIContractSubjectFilter(
+            aci_contract_filter=self.aci_contract_filter,
+            aci_contract_subject=contract_subject,
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_contract_subject_filter.save()

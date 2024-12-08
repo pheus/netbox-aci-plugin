@@ -13,6 +13,7 @@ flowchart TD
     SN(Subnet)
     CT(Contract)
     SJ(Subject)
+    SJF(Subject Filter)
     FT(Filter)
     FTE(Filter Entry)
     subgraph graphTN [Tenant]
@@ -34,11 +35,13 @@ flowchart TD
         subgraph graphCTS [Contract]
             TN -->|1:n| CT
             CT -->|1:n| SJ
+            SJ -->|1:n| SJF
         end
         subgraph graphFT [Filter]
             TN -->|1:n| FT
             FT -->|1:n| FTE
         end
+        SJF -.->|n:1| FT
     end
     EPG -->|n:1| BD
 ```
@@ -535,5 +538,43 @@ The *ACIContractSubject* model has the following fields:
       `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
       `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
     - Default: `unspecified`
+- **Comments**: a text field for additional notes or comments.
+- **Tags**: a list of NetBox tags.
+
+## Contract Subject Filter
+
+The *Contract Subject Filter* defines the association of a *Contract Filter*
+with a *Contract Subject*.
+It specifies how the filter is applied to traffic between consumer and
+provider endpoints.
+
+The *ACIContractSubjectFilter* model has the following fields:
+
+*Required fields*:
+
+- **ACI Contract Filter**: links to the associated `ACIContractFilter` model.
+- **ACI Contract Subject**: ties the filter to the `ACIContractSubject` model,
+  associating the given filter with a specific ACI Contract Subject.
+
+*Optional fields*:
+
+- **Action**: determines whether the traffic is permitted or denied.
+    - Values: `permit`, `deny`
+    - Default: `permit`
+- **Apply direction**: specifies the direction to apply the filter.
+    - Values: `both` (both directions), `ctp` (consumer to provider),
+      `ptc` (provider to consumer)
+    - Default: `both`
+- **Log enabled**: indicates whether logging is enabled for the applied filter.
+    - Default: `false`
+- **Policy Compression enabled**: specifies whether policy-based compression
+  for filtering is enabled.
+  This reduces the number of rules in the TCAM.
+    - Default: `false`
+- **Priority**: sets the priority of deny actions.
+  The value is only valid for *action* `deny`.
+    - Values: `default` (default level), `level1` (level 1),
+      `level2` (level 2), `level3` (level 3)
+    - Default: `default`
 - **Comments**: a text field for additional notes or comments.
 - **Tags**: a list of NetBox tags.
