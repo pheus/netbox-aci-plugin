@@ -82,7 +82,7 @@ class ACIContract(NetBoxModel):
         choices=ContractScopeChoices,
         help_text=_(
             "Scope defines the extent within which the contract is "
-            "applicable. Default is 'vrf'."
+            "applicable. Default is 'context'."
         ),
     )
     target_dscp = models.CharField(
@@ -413,7 +413,7 @@ class ACIContractSubjectFilter(NetBoxModel):
         verbose_name=_("logging enabled"),
         default=False,
         help_text=_(
-            "Enables logging for the matched traffic." "Default is disabled."
+            "Enables logging for the matched traffic. Default is disabled."
         ),
     )
     policy_compression_enabled = models.BooleanField(
@@ -433,7 +433,7 @@ class ACIContractSubjectFilter(NetBoxModel):
         help_text=_(
             "Specifies the priority of the deny action for matched traffic. "
             "Only relevant when 'deny' is selected as the action. "
-            "Default is 'default level'."
+            "Default is 'default'."
         ),
     )
     comments = models.TextField(
