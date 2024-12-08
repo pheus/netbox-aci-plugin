@@ -102,6 +102,9 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "nb_tenant": nb_tenant2.id,
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -179,6 +182,9 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "nb_tenant": nb_tenant2.id,
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -293,6 +299,9 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "preferred_group_enabled": False,
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -469,6 +478,9 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "virtual_mac_address": "00:AB:CD:11:22:02",
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIBridgeDomainSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -626,6 +638,9 @@ class ACIBridgeDomainSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "virtual_ip_enabled": False,
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -720,7 +735,7 @@ class ACIEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 description="Second ACI Test",
                 comments="# ACI Test 2",
                 aci_app_profile=aci_app_profile2,
-                aci_bridge_domain=aci_bd1,
+                aci_bridge_domain=aci_bd2,
                 nb_tenant=nb_tenant2,
             ),
             ACIEndpointGroup(
@@ -776,6 +791,9 @@ class ACIEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "proxy_arp_enabled": True,
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIContractFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -853,6 +871,9 @@ class ACIContractFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "nb_tenant": nb_tenant2.id,
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIContractFilterEntryAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -989,6 +1010,9 @@ class ACIContractFilterEntryAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "tcp_rules": ["unspecified"],
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIContractAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -1082,6 +1106,9 @@ class ACIContractAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "target_dscp": "VA",
             },
         ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
 
 
 class ACIContractSubjectAPIViewTestCase(APIViewTestCases.APIViewTestCase):
