@@ -300,7 +300,7 @@ class ACIContractImportForm(NetBoxModelImportForm):
         help_text=_("Assigned NetBox Tenant"),
     )
     qos_class = CSVChoiceField(
-        choices=QualityOfServiceDSCPChoices,
+        choices=QualityOfServiceClassChoices,
         required=False,
         label=_("QoS class"),
         help_text=_(
@@ -862,7 +862,7 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
         help_text=_("Assigned NetBox Tenant"),
     )
     qos_class = CSVChoiceField(
-        choices=QualityOfServiceDSCPChoices,
+        choices=QualityOfServiceClassChoices,
         required=False,
         label=_("QoS class"),
         help_text=_(
@@ -872,7 +872,7 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
         ),
     )
     qos_class_cons_to_prov = CSVChoiceField(
-        choices=QualityOfServiceDSCPChoices,
+        choices=QualityOfServiceClassChoices,
         required=False,
         label=_("QoS class (consumer to provider)"),
         help_text=_(
@@ -882,7 +882,7 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
         ),
     )
     qos_class_prov_to_cons = CSVChoiceField(
-        choices=QualityOfServiceDSCPChoices,
+        choices=QualityOfServiceClassChoices,
         required=False,
         label=_("QoS class (provider to consumer)"),
         help_text=_(
