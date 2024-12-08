@@ -14,7 +14,11 @@ from ..models.tenant_contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenant_contracts import ACIContract, ACIContractSubject
+from ..models.tenant_contracts import (
+    ACIContract,
+    ACIContractSubject,
+    ACIContractSubjectFilter,
+)
 from ..models.tenant_networks import (
     ACIVRF,
     ACIBridgeDomain,
@@ -1198,4 +1202,148 @@ class ACIContractSubjectAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+
+
+class ACIContractSubjectFilterAPIViewTestCase(
+    APIViewTestCases.APIViewTestCase
+):
+    """API view test case for ACI Contract Subject Filter."""
+
+    model = ACIContractSubjectFilter
+    view_namespace: str = f"plugins-api:{app_name}"
+    brief_fields: list[str] = [
+        "aci_contract_filter",
+        "aci_contract_subject",
+        "action",
+        "display",
+        "id",
+        "url",
+    ]
+    user_permissions = (
+        "netbox_aci_plugin.view_acicontractfilter",
+        "netbox_aci_plugin.view_acicontractsubject",
+    )
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up ACI Contract Subject Filter for API view testing."""
+        nb_tenant1 = Tenant.objects.create(
+            name="NetBox Tenant API 1", slug="netbox-tenant-api-1"
+        )
+        nb_tenant2 = Tenant.objects.create(
+            name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
+        )
+        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
+        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_contract_filter1 = ACIContractFilter.objects.create(
+            name="ACIContractFilterTestAPI1",
+            aci_tenant=aci_tenant1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_contract_filter2 = ACIContractFilter.objects.create(
+            name="ACIContractFilterTestAPI2",
+            aci_tenant=aci_tenant2,
+            nb_tenant=nb_tenant2,
+        )
+        aci_contract_filter3 = ACIContractFilter.objects.create(
+            name="ACIContractFilterTestAPI3",
+            aci_tenant=aci_tenant1,
+            nb_tenant=nb_tenant2,
+        )
+        aci_contract_filter4 = ACIContractFilter.objects.create(
+            name="ACIContractFilterTestAPI4",
+            aci_tenant=aci_tenant2,
+            nb_tenant=nb_tenant1,
+        )
+        aci_contract1 = ACIContract.objects.create(
+            name="ACIContractTestAPI1",
+            aci_tenant=aci_tenant1,
+            nb_tenant=nb_tenant1,
+            qos_class="unspecified",
+            scope="context",
+            target_dscp="unspecified",
+        )
+        aci_contract2 = ACIContract.objects.create(
+            name="ACIContractTestAPI2",
+            aci_tenant=aci_tenant2,
+            nb_tenant=nb_tenant2,
+            qos_class="level1",
+            scope="tenant",
+            target_dscp="unspecified",
+        )
+        aci_contract_subject1 = ACIContractSubject.objects.create(
+            name="ACIContractSubjectTestAPI1",
+            aci_contract=aci_contract1,
+            nb_tenant=nb_tenant1,
+            apply_both_directions_enabled=True,
+            qos_class="unspecified",
+            reverse_filter_ports_enabled=True,
+            target_dscp="unspecified",
+        )
+        aci_contract_subject2 = ACIContractSubject.objects.create(
+            name="ACIContractSubjectTestAPI2",
+            aci_contract=aci_contract2,
+            nb_tenant=nb_tenant2,
+            apply_both_directions_enabled=True,
+            qos_class="unspecified",
+            reverse_filter_ports_enabled=True,
+            target_dscp="unspecified",
+        )
+
+        aci_contract_subject_filters = (
+            ACIContractSubjectFilter(
+                aci_contract_filter=aci_contract_filter1,
+                aci_contract_subject=aci_contract_subject1,
+                action="permit",
+                apply_direction="both",
+                log_enabled=True,
+                policy_compression_enabled=False,
+                priority="default",
+            ),
+            ACIContractSubjectFilter(
+                aci_contract_filter=aci_contract_filter2,
+                aci_contract_subject=aci_contract_subject2,
+                action="permit",
+                apply_direction="both",
+                log_enabled=False,
+                policy_compression_enabled=True,
+                priority="level1",
+            ),
+            ACIContractSubjectFilter(
+                aci_contract_filter=aci_contract_filter1,
+                aci_contract_subject=aci_contract_subject2,
+                action="deny",
+                apply_direction="ctp",
+                log_enabled=False,
+                policy_compression_enabled=True,
+                priority="level3",
+            ),
+        )
+        ACIContractSubjectFilter.objects.bulk_create(
+            aci_contract_subject_filters
+        )
+
+        cls.create_data: list[dict] = [
+            {
+                "aci_contract_filter": aci_contract_filter3.id,
+                "aci_contract_subject": aci_contract_subject1.id,
+                "action": "permit",
+                "apply_direction": "both",
+                "log_enabled": True,
+                "policy_compression_enabled": False,
+                "priority": "default",
+            },
+            {
+                "aci_contract_filter": aci_contract_filter4.id,
+                "aci_contract_subject": aci_contract_subject2.id,
+                "action": "permit",
+                "apply_direction": "both",
+                "log_enabled": True,
+                "policy_compression_enabled": False,
+                "priority": "default",
+            },
+        ]
+        cls.bulk_update_data = {
+            "log_enabled": False,
         }
