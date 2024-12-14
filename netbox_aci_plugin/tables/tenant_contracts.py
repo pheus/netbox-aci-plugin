@@ -8,6 +8,7 @@ from netbox.tables import NetBoxTable, columns
 
 from ..models.tenant_contracts import (
     ACIContract,
+    ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
@@ -67,6 +68,69 @@ class ACIContractTable(NetBoxTable):
             "scope",
             "tags",
         )
+
+
+class ACIContractRelationTable(NetBoxTable):
+    """NetBox table for the ACI Contract Relation model."""
+
+    aci_contract_tenant = tables.Column(
+        verbose_name=_("ACI Tenant (Contract)"),
+        linkify=True,
+    )
+    aci_contract = tables.Column(
+        verbose_name=_("Contract"),
+        linkify=True,
+    )
+    aci_object_tenant = tables.Column(
+        verbose_name=_("ACI Tenant (Object)"),
+        linkify=True,
+    )
+    aci_object_type = columns.ContentTypeColumn(
+        verbose_name=_("Object Type"),
+    )
+    aci_object = tables.Column(
+        verbose_name=_("Object"),
+        orderable=False,
+        linkify=True,
+    )
+    role = columns.ChoiceFieldColumn(
+        verbose_name=_("Role"),
+    )
+    tags = columns.TagColumn()
+    comments = columns.MarkdownColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIContractRelation
+        fields: tuple = (
+            "pk",
+            "id",
+            "aci_contract",
+            "aci_contract_tenant",
+            "aci_object_type",
+            "aci_object",
+            "aci_object_tenant",
+            "role",
+            "tags",
+            "comments",
+        )
+        default_columns: tuple = (
+            "aci_contract",
+            "aci_contract_tenant",
+            "aci_object_type",
+            "aci_object",
+            "role",
+            "tags",
+        )
+
+    def render_aci_object(self, record) -> str | None:
+        """Render the ACI object name."""
+        if record.aci_object_type.model == "aciendpointgroup":
+            return (
+                f"{record.aci_object.aci_app_profile} "
+                f"| {record.aci_object.name}"
+            )
+        else:
+            return record.aci_object.name
 
 
 class ACIContractSubjectTable(NetBoxTable):
