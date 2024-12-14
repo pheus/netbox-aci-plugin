@@ -256,6 +256,24 @@ class ContractScopeChoices(ChoiceSet):
 
 
 #
+# Contract Relation
+#
+
+
+class ContractRelationRoleChoices(ChoiceSet):
+    """Choice set of Contract Relation roles."""
+
+    # default "provider"
+    ROLE_PROVIDER = "prov"
+    ROLE_CONSUMER = "cons"
+
+    CHOICES = (
+        (ROLE_PROVIDER, _("Provider"), "blue"),
+        (ROLE_CONSUMER, _("Consumer"), "yellow"),
+    )
+
+
+#
 # Contract Subject Filter
 #
 
