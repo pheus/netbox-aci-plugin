@@ -14,6 +14,7 @@ from ..filtersets.tenant_contract_filters import (
 )
 from ..filtersets.tenant_contracts import (
     ACIContractFilterSet,
+    ACIContractRelationFilterSet,
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
@@ -30,6 +31,7 @@ from ..models.tenant_contract_filters import (
 )
 from ..models.tenant_contracts import (
     ACIContract,
+    ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
@@ -45,6 +47,7 @@ from .serializers import (
     ACIBridgeDomainSubnetSerializer,
     ACIContractFilterEntrySerializer,
     ACIContractFilterSerializer,
+    ACIContractRelationSerializer,
     ACIContractSerializer,
     ACIContractSubjectFilterSerializer,
     ACIContractSubjectSerializer,
@@ -162,6 +165,18 @@ class ACIContractListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIContractSerializer
     filterset_class = ACIContractFilterSet
+
+
+class ACIContractRelationListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Contract Relation instances."""
+
+    queryset = ACIContractRelation.objects.prefetch_related(
+        "aci_contract",
+        "aci_object",
+        "tags",
+    )
+    serializer_class = ACIContractRelationSerializer
+    filterset_class = ACIContractRelationFilterSet
 
 
 class ACIContractSubjectListViewSet(NetBoxModelViewSet):
