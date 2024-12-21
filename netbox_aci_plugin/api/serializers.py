@@ -2,11 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.contrib.contenttypes.models import ContentType
+from drf_spectacular.utils import extend_schema_field
 from ipam.api.serializers import IPAddressSerializer, VRFSerializer
+from netbox.api.fields import ContentTypeField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from utilities.api import get_serializer_for_model
 
+from ..constants import CONTRACT_RELATION_OBJECT_TYPES
 from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant_contract_filters import (
     ACIContractFilter,
@@ -14,6 +19,7 @@ from ..models.tenant_contract_filters import (
 )
 from ..models.tenant_contracts import (
     ACIContract,
+    ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
@@ -445,6 +451,66 @@ class ACIContractSerializer(NetBoxModelSerializer):
             "nb_tenant",
             "scope",
         )
+
+
+class ACIContractRelationSerializer(NetBoxModelSerializer):
+    """Serializer for the ACI Contract Relation model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:"
+        "acicontractrelation-detail"
+    )
+    aci_contract = ACIContractSerializer(nested=True, required=True)
+    aci_object_type = ContentTypeField(
+        queryset=ContentType.objects.filter(
+            model__in=CONTRACT_RELATION_OBJECT_TYPES
+        ),
+        required=False,
+        default=None,
+        allow_null=True,
+    )
+    aci_object_id = serializers.IntegerField(
+        required=False,
+        default=None,
+        allow_null=True,
+    )
+    aci_object = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = ACIContractRelation
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "aci_contract",
+            "aci_object_type",
+            "aci_object_id",
+            "aci_object",
+            "role",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "aci_contract",
+            "aci_object_type",
+            "aci_object_id",
+            "aci_object",
+            "role",
+        )
+
+    @extend_schema_field(serializers.JSONField(allow_null=True))
+    def get_aci_object(self, obj):
+        if obj.aci_object_id is None:
+            return None
+        serializer = get_serializer_for_model(obj.aci_object)
+        context = {"request": self.context["request"]}
+        return serializer(obj.aci_object, nested=True, context=context).data
 
 
 class ACIContractSubjectSerializer(NetBoxModelSerializer):
