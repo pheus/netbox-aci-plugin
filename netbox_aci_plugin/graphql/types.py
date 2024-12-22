@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Annotated, List, Optional
+from typing import Annotated, List, Optional, Union
 
 import strawberry
 import strawberry_django
@@ -18,6 +18,7 @@ from .filters import (
     ACIContractFilter,
     ACIContractFilterEntryFilter,
     ACIContractFilterFilter,
+    ACIContractRelationFilter,
     ACIContractSubjectFilter,
     ACIContractSubjectFilterFilter,
     ACIEndpointGroupFilter,
@@ -177,6 +178,45 @@ class ACIContractType(NetBoxObjectType):
         Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
         | None
     )
+
+
+@strawberry_django.type(
+    models.ACIContractRelation,
+    exclude=[
+        "aci_object_id",
+        "aci_object_type",
+        "_aci_endpoint_group",
+        "_aci_vrf",
+    ],
+    filters=ACIContractRelationFilter,
+)
+class ACIContractRelationType(NetBoxObjectType):
+    """GraphQL type definition for the ACIContractRelation model."""
+
+    aci_contract: Annotated[
+        "ACIContractType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+
+    @strawberry.field(description="ACI Object")
+    def aci_object(
+        self,
+    ) -> (
+        Annotated[
+            Union[
+                Annotated[
+                    "ACIEndpointGroupType",
+                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
+                ],
+                Annotated[
+                    "ACIVRFType",
+                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
+                ],
+            ],
+            strawberry.union("ACIContractRelationObjectType"),
+        ]
+        | None
+    ):
+        return self.aci_object
 
 
 @strawberry_django.type(
