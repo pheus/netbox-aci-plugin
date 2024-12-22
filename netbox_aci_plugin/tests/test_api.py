@@ -16,6 +16,7 @@ from ..models.tenant_contract_filters import (
 )
 from ..models.tenant_contracts import (
     ACIContract,
+    ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
@@ -1108,6 +1109,165 @@ class ACIContractAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+
+
+class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
+    """API view test case for ACI Contract Relation."""
+
+    model = ACIContractRelation
+    view_namespace: str = f"plugins-api:{app_name}"
+    brief_fields: list[str] = [
+        "aci_contract",
+        "aci_object",
+        "aci_object_id",
+        "aci_object_type",
+        "display",
+        "id",
+        "role",
+        "url",
+    ]
+    user_permissions = (
+        "netbox_aci_plugin.view_acicontract",
+        "netbox_aci_plugin.view_aciendpointgroup",
+        "netbox_aci_plugin.view_acivrf",
+    )
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up ACI Contract Relation for API view testing."""
+        nb_tenant1 = Tenant.objects.create(
+            name="NetBox Tenant API 1", slug="netbox-tenant-api-1"
+        )
+        nb_tenant2 = Tenant.objects.create(
+            name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
+        )
+        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
+        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_app_profile1 = ACIAppProfile.objects.create(
+            name="ACITestAppProfileAPI1",
+            aci_tenant=aci_tenant1,
+        )
+        aci_app_profile2 = ACIAppProfile.objects.create(
+            name="ACITestAppProfileAPI2",
+            aci_tenant=aci_tenant2,
+        )
+        aci_vrf1 = ACIVRF.objects.create(
+            name="ACI-VRF-API-1",
+            aci_tenant=aci_tenant1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_vrf2 = ACIVRF.objects.create(
+            name="ACI-VRF-API-2",
+            aci_tenant=aci_tenant2,
+            nb_tenant=nb_tenant2,
+        )
+        aci_bd1 = ACIBridgeDomain.objects.create(
+            name="ACI-BD-API-1",
+            aci_tenant=aci_tenant1,
+            aci_vrf=aci_vrf1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_bd2 = ACIBridgeDomain.objects.create(
+            name="ACI-BD-API-2",
+            aci_tenant=aci_tenant2,
+            aci_vrf=aci_vrf2,
+            nb_tenant=nb_tenant2,
+        )
+        aci_epg1 = ACIEndpointGroup.objects.create(
+            name="ACIEndpointGroupTestAPI1",
+            aci_app_profile=aci_app_profile1,
+            aci_bridge_domain=aci_bd1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_epg2 = ACIEndpointGroup.objects.create(
+            name="ACIEndpointGroupTestAPI2",
+            aci_app_profile=aci_app_profile1,
+            aci_bridge_domain=aci_bd1,
+            nb_tenant=nb_tenant2,
+        )
+        aci_epg3 = ACIEndpointGroup.objects.create(
+            name="ACIEndpointGroupTestAPI3",
+            aci_app_profile=aci_app_profile2,
+            aci_bridge_domain=aci_bd2,
+            nb_tenant=nb_tenant1,
+        )
+        aci_epg4 = ACIEndpointGroup.objects.create(
+            name="ACIEndpointGroupTestAPI4",
+            aci_app_profile=aci_app_profile2,
+            aci_bridge_domain=aci_bd2,
+            nb_tenant=nb_tenant2,
+        )
+        aci_contract1 = ACIContract.objects.create(
+            name="ACIContractTestAPI1",
+            aci_tenant=aci_tenant1,
+            nb_tenant=nb_tenant1,
+            qos_class="unspecified",
+            scope="context",
+            target_dscp="unspecified",
+        )
+        aci_contract2 = ACIContract.objects.create(
+            name="ACIContractTestAPI2",
+            aci_tenant=aci_tenant2,
+            nb_tenant=nb_tenant2,
+            qos_class="level1",
+            scope="tenant",
+            target_dscp="unspecified",
+        )
+
+        aci_contract_relations = (
+            ACIContractRelation(
+                aci_contract=aci_contract1,
+                aci_object=aci_epg1,
+                role="prov",
+                comments="# ACI Test 1",
+            ),
+            ACIContractRelation(
+                aci_contract=aci_contract1,
+                aci_object=aci_epg2,
+                role="cons",
+                comments="# ACI Test 2",
+            ),
+            ACIContractRelation(
+                aci_contract=aci_contract1,
+                aci_object=aci_vrf1,
+                role="prov",
+                comments="# ACI Test 3",
+            ),
+            ACIContractRelation(
+                aci_contract=aci_contract1,
+                aci_object=aci_vrf1,
+                role="cons",
+                comments="# ACI Test 4",
+            ),
+        )
+        ACIContractRelation.objects.bulk_create(aci_contract_relations)
+
+        cls.create_data: list[dict] = [
+            {
+                "aci_contract": aci_contract2.id,
+                "aci_object_id": aci_epg3.id,
+                "aci_object_type": f"{app_name}.aciendpointgroup",
+                "role": "cons",
+                "comments": "# ACI Test 5",
+            },
+            {
+                "aci_contract": aci_contract2.id,
+                "aci_object_id": aci_epg4.id,
+                "aci_object_type": f"{app_name}.aciendpointgroup",
+                "role": "prov",
+                "comments": "# ACI Test 6",
+            },
+            {
+                "aci_contract": aci_contract2.id,
+                "aci_object_id": aci_vrf2.id,
+                "aci_object_type": f"{app_name}.acivrf",
+                "role": "cons",
+                "comments": "# ACI Test 7",
+            },
+        ]
+        cls.bulk_update_data = {
+            "comments": "ACI comment bulk update",
         }
 
 
