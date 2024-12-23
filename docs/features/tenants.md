@@ -12,6 +12,7 @@ flowchart TD
     BD(Bridge Domain)
     SN(Subnet)
     CT(Contract)
+    CTR(Relation)
     SJ(Subject)
     SJF(Subject Filter)
     FT(Filter)
@@ -28,13 +29,14 @@ flowchart TD
             TN -->|1:n| BD
             BD -->|1:n| SN
         end
-        BD -.->|1:n| VRF
+        BD -.->|n:1| VRF
         TN -->|1:n| VRF
     end
     subgraph graphCT [Contract]
         subgraph graphCTS [Contract]
             TN -->|1:n| CT
             CT -->|1:n| SJ
+            CT -->|1:n| CTR
             SJ -->|1:n| SJF
         end
         subgraph graphFT [Filter]
@@ -42,8 +44,10 @@ flowchart TD
             FT -->|1:n| FTE
         end
         SJF -.->|n:1| FT
+        CTR -.->|n:1| EPG
+        CTR -.->|n:1| VRF
     end
-    EPG -->|n:1| BD
+    EPG -.->|n:1| BD
 ```
 
 ## Tenant
@@ -457,6 +461,36 @@ The *ACIContract* model has the following fields:
       `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
       `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
     - Default: `unspecified`
+- **Comments**: a text field for additional notes or comments.
+- **Tags**: a list of NetBox tags.
+
+## Contract Relation
+
+A *Contract Relation* links a *Contract* to specific ACI objects such as
+*Endpoint Groups* (EPG) or *Virtual Routing and Forwarding* (VRF) instances.
+A *Contract Relation* specifies the role of a given *Contract* for an
+associated ACI object, either as a **Provider** or a **Consumer**.
+Both the *Contract* and the associated ACI object must belong to the same
+*ACI Tenant*.
+
+The *ACIContractRelation* model has the following fields:
+
+*Required fields*:
+
+- **ACI Contract**: a reference to the related `ACIContract` model.
+  This defines the Contract associated with the relation.
+- **ACI Object Type**: the type of the target ACI object (e.g.,
+  *Endpoint Group* or *VRF*) in the form `app.model`.
+    - Values: `netbox_aci_plugin.aciendpointgroup` (Endpoint Group),
+      `netbox_aci_plugin.acivrf` (VRF)
+- **ACI Object ID**: represents the (database) identifier for the specific
+  ACI object.
+
+*Optional fields*:
+
+- **Role**: specifies the role of the Contract for the associated ACI object.
+    - Values: `prov` (Provider), `cons` (Consumer)
+    - Default: `prov`
 - **Comments**: a text field for additional notes or comments.
 - **Tags**: a list of NetBox tags.
 
