@@ -75,7 +75,7 @@ class ACIVRFIndex(SearchIndex):
     )
     display_attrs: tuple = (
         "name",
-        "alias",
+        "name_alias",
         "description",
         "aci_tenant",
         "nb_tenant",
