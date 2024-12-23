@@ -9,8 +9,10 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
+from utilities.filters import ContentTypeFilter
 
 from ..choices import (
+    ContractRelationRoleChoices,
     ContractScopeChoices,
     ContractSubjectFilterActionChoices,
     ContractSubjectFilterApplyDirectionChoices,
@@ -18,12 +20,15 @@ from ..choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
+from ..models.tenant_app_profiles import ACIEndpointGroup
 from ..models.tenant_contract_filters import ACIContractFilter
 from ..models.tenant_contracts import (
     ACIContract,
+    ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
+from ..models.tenant_networks import ACIVRF
 from ..models.tenants import ACITenant
 
 
@@ -106,6 +111,124 @@ class ACIContractFilterSet(NetBoxModelFilterSet):
         return queryset.filter(
             Q(aci_tenant=aci_tenant_id) | Q(aci_tenant__name="common")
         )
+
+
+class ACIContractRelationFilterSet(NetBoxModelFilterSet):
+    """Filter set for the ACI Contract Relation model."""
+
+    aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant of Contract (name)"),
+    )
+    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant of Contract (ID)"),
+    )
+    aci_contract = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIContract.objects.all(),
+        to_field_name="name",
+        label=_("ACI Contract (name)"),
+    )
+    aci_contract_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIContract.objects.all(),
+        to_field_name="id",
+        label=_("ACI Contract (ID)"),
+    )
+    nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__nb_tenant",
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        label=_("NetBox tenant (name)"),
+    )
+    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__nb_tenant",
+        queryset=Tenant.objects.all(),
+        to_field_name="id",
+        label=_("NetBox tenant (ID)"),
+    )
+    aci_object_type = ContentTypeFilter(
+        label=_("ACI Object Type"),
+    )
+    role = django_filters.MultipleChoiceFilter(
+        choices=ContractRelationRoleChoices,
+        null_value=None,
+        label=_("Role"),
+    )
+
+    # Cached related objects filters
+    aci_endpoint_group_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_group__aci_app_profile__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant of Endpoint Group (name)"),
+    )
+    aci_endpoint_group_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_group__aci_app_profile__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant of Endpoint Group (ID)"),
+    )
+    aci_endpoint_group = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_group",
+        queryset=ACIEndpointGroup.objects.all(),
+        to_field_name="name",
+        label=_("ACI Endpoint Group (name)"),
+    )
+    aci_endpoint_group_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_group",
+        queryset=ACIEndpointGroup.objects.all(),
+        to_field_name="id",
+        label=_("ACI Endpoint Group (ID)"),
+    )
+    aci_vrf_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_vrf__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant of VRF (name)"),
+    )
+    aci_vrf_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_vrf__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant of VRF (ID)"),
+    )
+    aci_vrf = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_vrf",
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        label=_("ACI VRF (name)"),
+    )
+    aci_vrf_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_vrf",
+        queryset=ACIVRF.objects.all(),
+        to_field_name="id",
+        label=_("ACI VRF (ID)"),
+    )
+
+    class Meta:
+        model = ACIContractRelation
+        fields: tuple = (
+            "id",
+            "aci_contract",
+            "aci_object_type",
+            "aci_object_id",
+            "role",
+        )
+
+    def search(self, queryset, name, value):
+        """Return a QuerySet filtered by the model's related object names."""
+        if not value.strip():
+            return queryset
+        queryset_filter: Q = (
+            Q(aci_contract__name__icontains=value)
+            | Q(aci_endpoint_group__name__icontains=value)
+            | Q(aci_vrf__name__icontains=value)
+        )
+        return queryset.filter(queryset_filter)
 
 
 class ACIContractSubjectFilterSet(NetBoxModelFilterSet):

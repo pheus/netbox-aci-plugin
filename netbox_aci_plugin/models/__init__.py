@@ -2,6 +2,7 @@ from .tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
 from .tenant_contract_filters import ACIContractFilter, ACIContractFilterEntry
 from .tenant_contracts import (
     ACIContract,
+    ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
@@ -13,6 +14,7 @@ __all__ = (
     "ACIBridgeDomain",
     "ACIBridgeDomainSubnet",
     "ACIContract",
+    "ACIContractRelation",
     "ACIContractSubject",
     "ACIContractSubjectFilter",
     "ACIContractFilter",

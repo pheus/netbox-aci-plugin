@@ -1,0 +1,48 @@
+
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load helpers %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acicontractrelation_list' %}?aci_tenant_id={{ object.aci_contract.aci_tenant.pk }}">{{ object.aci_contract.aci_tenant }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acicontractrelation_list' %}?aci_contract_id={{ object.aci_contract.pk }}">{{ object.aci_contract }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h2 class="card-header">{% trans "ACI Contract Relation" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ACI Tenant" %}</th>
+            <td>{{ object.aci_contract.aci_tenant|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ACI Contract" %}</th>
+            <td>{{ object.aci_contract|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ACI Object Type" %}</th>
+            <td>{{ object.aci_object_type.name|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ACI Object" %}</th>
+            <td>{{ object.aci_object|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Role" %}</th>
+            <td>{% badge object.get_role_display bg_color=object.get_role_color %}</td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}

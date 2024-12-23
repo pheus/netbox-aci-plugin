@@ -35,6 +35,11 @@ from .views.tenant_contracts import (
     ACIContractBulkImportView,
     ACIContractEditView,
     ACIContractListView,
+    ACIContractRelationBulkDeleteView,
+    ACIContractRelationBulkEditView,
+    ACIContractRelationBulkImportView,
+    ACIContractRelationEditView,
+    ACIContractRelationListView,
     ACIContractSubjectBulkDeleteView,
     ACIContractSubjectBulkEditView,
     ACIContractSubjectBulkImportView,
@@ -325,6 +330,36 @@ urlpatterns: tuple = (
     path(
         "contracts/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acicontract")),
+    ),
+    # ACI Contract Relation
+    path(
+        "contracts/relations/",
+        ACIContractRelationListView.as_view(),
+        name="acicontractrelation_list",
+    ),
+    path(
+        "contracts/relations/add/",
+        ACIContractRelationEditView.as_view(),
+        name="acicontractrelation_add",
+    ),
+    path(
+        "contracts/relations/delete/",
+        ACIContractRelationBulkDeleteView.as_view(),
+        name="acicontractrelation_bulk_delete",
+    ),
+    path(
+        "contracts/relations/edit/",
+        ACIContractRelationBulkEditView.as_view(),
+        name="acicontractrelation_bulk_edit",
+    ),
+    path(
+        "contracts/relations/import/",
+        ACIContractRelationBulkImportView.as_view(),
+        name="acicontractrelation_import",
+    ),
+    path(
+        "contracts/relations/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acicontractrelation")),
     ),
     # ACI Contract Subject
     path(

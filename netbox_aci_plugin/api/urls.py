@@ -21,6 +21,7 @@ router.register(
     "contract-filter-entries", views.ACIContractFilterEntryListViewSet
 )
 router.register("contracts", views.ACIContractListViewSet)
+router.register("contract-relations", views.ACIContractRelationListViewSet)
 router.register("contract-subjects", views.ACIContractSubjectListViewSet)
 router.register(
     "contract-subject-filters", views.ACIContractSubjectFilterListViewSet

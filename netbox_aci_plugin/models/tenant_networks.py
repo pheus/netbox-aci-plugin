@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from dcim.fields import MACAddressField
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
@@ -147,6 +148,14 @@ class ACIVRF(NetBoxModel):
     comments = models.TextField(
         verbose_name=_("comments"),
         blank=True,
+    )
+
+    # Generic relations
+    aci_contract_relations = GenericRelation(
+        to="netbox_aci_plugin.ACIContractRelation",
+        content_type_field="aci_object_type",
+        object_id_field="aci_object_id",
+        related_query_name="aci_vrf",
     )
 
     clone_fields: tuple = (

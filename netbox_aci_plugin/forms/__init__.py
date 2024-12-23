@@ -8,6 +8,7 @@ from .tenant_contract_filters import (
 )
 from .tenant_contracts import (
     ACIContractFilterForm,
+    ACIContractRelationFilterForm,
     ACIContractSubjectFilterFilterForm,
     ACIContractSubjectFilterForm,
 )
@@ -23,6 +24,7 @@ __all__ = (
     "ACIBridgeDomainFilterForm",
     "ACIBridgeDomainSubnetFilterForm",
     "ACIContractFilterForm",
+    "ACIContractRelationFilterForm",
     "ACIContractSubjectFilterForm",
     "ACIContractSubjectFilterFilterForm",
     "ACIContractFilterFilterForm",

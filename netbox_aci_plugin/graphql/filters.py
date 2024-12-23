@@ -18,6 +18,7 @@ from ..filtersets.tenant_contract_filters import (
 )
 from ..filtersets.tenant_contracts import (
     ACIContractFilterSet,
+    ACIContractRelationFilterSet,
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
@@ -99,6 +100,14 @@ class ACIContractFilterEntryFilter(BaseFilterMixin):
 @autotype_decorator(ACIContractFilterSet)
 class ACIContractFilter(BaseFilterMixin):
     """GraphQL filter definition for the Contract model."""
+
+    pass
+
+
+@strawberry_django.filter(models.ACIContractRelation, lookups=True)
+@autotype_decorator(ACIContractRelationFilterSet)
+class ACIContractRelationFilter(BaseFilterMixin):
+    """GraphQL filter definition for the Contract Relation model."""
 
     pass
 

@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.apps import apps
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.urls import reverse
@@ -9,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
 
 from ..choices import (
+    ContractRelationRoleChoices,
     ContractScopeChoices,
     ContractSubjectFilterActionChoices,
     ContractSubjectFilterApplyDirectionChoices,
@@ -16,6 +20,7 @@ from ..choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
+from ..constants import CONTRACT_RELATION_OBJECT_TYPES
 from ..models.tenant_contract_filters import ACIContractFilter
 from ..models.tenants import ACITenant
 from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
@@ -138,6 +143,170 @@ class ACIContract(NetBoxModel):
     def get_scope_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return ContractScopeChoices.colors.get(self.scope)
+
+
+class ACIContractRelation(NetBoxModel):
+    """NetBox model for ACI Contract Relation to ACI objects."""
+
+    aci_contract = models.ForeignKey(
+        to=ACIContract,
+        on_delete=models.CASCADE,
+        related_name="aci_contract_relations",
+        verbose_name=_("ACI Contract"),
+    )
+    aci_object_type = models.ForeignKey(
+        to="contenttypes.ContentType",
+        on_delete=models.PROTECT,
+        related_name="+",
+        limit_choices_to=models.Q(model__in=CONTRACT_RELATION_OBJECT_TYPES),
+        verbose_name=_("ACI object type"),
+        blank=True,
+        null=True,
+    )
+    aci_object_id = models.PositiveIntegerField(
+        verbose_name=_("ACI object ID"),
+        blank=True,
+        null=True,
+    )
+    aci_object = GenericForeignKey(
+        "aci_object_type",
+        "aci_object_id",
+    )
+    role = models.CharField(
+        verbose_name=_("role"),
+        max_length=4,
+        choices=ContractRelationRoleChoices,
+        default=ContractRelationRoleChoices.ROLE_PROVIDER,
+        help_text=_(
+            "Specifies the role of the ACI Contract for the given "
+            "ACI object as either a provider or a consumer. "
+            "Default is 'provider'."
+        ),
+    )
+    comments = models.TextField(
+        verbose_name=_("comments"),
+        blank=True,
+    )
+
+    # Cached related objects by association name for faster access
+    _aci_endpoint_group = models.ForeignKey(
+        to="netbox_aci_plugin.ACIEndpointGroup",
+        on_delete=models.CASCADE,
+        related_name="_aci_contract_relations",
+        verbose_name=_("ACI Endpoint Group"),
+        blank=True,
+        null=True,
+    )
+    _aci_vrf = models.ForeignKey(
+        to="netbox_aci_plugin.ACIVRF",
+        on_delete=models.CASCADE,
+        related_name="_aci_contract_relations",
+        verbose_name=_("ACI VRF"),
+        blank=True,
+        null=True,
+    )
+
+    clone_fields: tuple = (
+        "aci_contract",
+        "aci_object_type",
+        "aci_object_id",
+        "role",
+    )
+    prerequisite_models: tuple = ("netbox_aci_plugin.ACIContract",)
+
+    class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=(
+                    "aci_contract",
+                    "aci_object_type",
+                    "aci_object_id",
+                    "role",
+                ),
+                name="unique_aci_object_relation_role_per_aci_contract",
+            ),
+        ]
+        indexes: tuple = (
+            models.Index(fields=("aci_object_type", "aci_object_id")),
+        )
+        ordering: tuple = (
+            "aci_contract",
+            "_aci_endpoint_group",
+            "_aci_vrf",
+            "role",
+        )
+        verbose_name: str = _("ACI Contract Relation")
+
+    def __str__(self) -> str:
+        """Return string representation of the instance."""
+        return f"{self.aci_contract.name} - {self.role} - {self.aci_object}"
+
+    @property
+    def aci_contract_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of related ACIContract."""
+        return self.aci_contract.aci_tenant
+
+    @property
+    def aci_object_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of the related ACI object."""
+        return self.aci_object.aci_tenant
+
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+        super().clean()
+
+        # Validate ACI object assignment
+        if self.aci_object_type and not self.aci_object_id:
+            raise ValidationError(
+                _("Cannot set aci_object_type without aci_object_id.")
+            )
+        if self.aci_object_id and not self.aci_object_type:
+            raise ValidationError(
+                _("Cannot set aci_object_id without aci_object_type.")
+            )
+        # Validate the assigned ACI Contract and ACI Object shares the same
+        # ACI Tenant
+        if self.aci_contract.aci_tenant != self.aci_object.aci_tenant:
+            raise ValidationError(
+                _(
+                    "ACI Contract and ACI Object must belong to the same "
+                    "ACI Tenant."
+                )
+            )
+
+    def save(self, *args, **kwargs) -> None:
+        """Saves the current instance to the database."""
+        # Cache the related objects for faster access
+        self.cache_related_objects()
+
+        super().save(*args, **kwargs)
+
+    def cache_related_objects(self) -> None:
+        """Cache the related objects for faster access."""
+        self._aci_endpoint_group = self._aci_vrf = None
+        if self.aci_object_type:
+            aci_object_type = self.aci_object_type.model_class()
+            if aci_object_type == apps.get_model(
+                "netbox_aci_plugin", "ACIEndpointGroup"
+            ):
+                self._aci_endpoint_group = self.aci_object
+            elif aci_object_type == apps.get_model(
+                "netbox_aci_plugin", "ACIVRF"
+            ):
+                self._aci_vrf = self.aci_object
+
+    cache_related_objects.alters_data = True
+
+    def get_absolute_url(self) -> str:
+        """Return the absolute URL of the instance."""
+        return reverse(
+            "plugins:netbox_aci_plugin:acicontractrelation",
+            args=[self.pk],
+        )
+
+    def get_role_color(self) -> str:
+        """Return the associated color of choice from the ChoiceSet."""
+        return ContractRelationRoleChoices.colors.get(self.role)
 
 
 class ACIContractSubject(NetBoxModel):
