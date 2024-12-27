@@ -1639,7 +1639,7 @@ class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
 class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI Contract Subject Filter model."""
 
-    aci_contract_tenant = CSVModelChoiceField(
+    aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         required=True,
@@ -1652,13 +1652,6 @@ class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):
         required=True,
         label=_("ACI Contract"),
         help_text=_("Parent ACI Contract of ACI Contract Subject"),
-    )
-    aci_contract_filter_tenant = CSVModelChoiceField(
-        queryset=ACITenant.objects.all(),
-        to_field_name="name",
-        required=True,
-        label=_("ACI Tenant"),
-        help_text=_("Parent ACI Tenant of ACI Contract Filter"),
     )
     aci_contract_filter = CSVModelChoiceField(
         queryset=ACIContractFilter.objects.all(),
@@ -1704,6 +1697,11 @@ class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):
             "Default is 'default'."
         ),
     )
+    is_aci_contract_filter_in_common = forms.BooleanField(
+        required=False,
+        label=_("Is ACI Contract Filter in 'common'"),
+        help_text=_("Assigned ACI Contract Filter is in ACI Tenant 'common'"),
+    )
 
     class Meta:
         model = ACIContractSubjectFilter
@@ -1727,10 +1725,10 @@ class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):
             return
 
         # Limit ACIContractSubject queryset by parent ACI objects
-        if data.get("aci_contract_tenant") and data.get("aci_contract"):
+        if data.get("aci_tenant") and data.get("aci_contract"):
             # Limit ACIContract queryset by parent ACITenant
             self.fields["aci_contract"].queryset = ACIContract.objects.filter(
-                aci_tenant__name=data["aci_contract_tenant"]
+                aci_tenant__name=data["aci_tenant"]
             )
             # Limit ACIContractSubject queryset by parent ACIContract
             aci_subject_queryset = ACIContractSubject.objects.filter(
@@ -1738,13 +1736,17 @@ class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):
             )
             self.fields["aci_contract_subject"].queryset = aci_subject_queryset
 
-        # Limit ACIContractFilter queryset by parent ACI objects
-        if data.get("aci_contract_filter_tenant") and data.get(
-            "aci_contract_filter"
-        ):
-            # Limit ACIContractFilter queryset by parent ACITenant
+        # Limit ACIContractFilter queryset by "common" ACITenant
+        if data.get("is_aci_contract_filter_in_common") == "true":
             aci_filter_queryset = ACIContractFilter.objects.filter(
-                aci_tenant__name=data["aci_contract_filter_tenant"]
+                aci_tenant__name="common"
+            )
+            self.fields["aci_contract_filter"].queryset = aci_filter_queryset
+        # Limit ACIContractFilter queryset by parent ACITenant
+        elif data.get("aci_tenant"):
+            # Limit ACIContractFilter queryset by ACITenant of ACIContract
+            aci_filter_queryset = ACIContractFilter.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
             )
             self.fields["aci_contract_filter"].queryset = aci_filter_queryset
 
