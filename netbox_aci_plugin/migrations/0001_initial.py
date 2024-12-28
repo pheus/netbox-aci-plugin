@@ -15,9 +15,9 @@ def create_default_aci_tenants(apps, schema_editor) -> None:
         # version than this migration expects.
         aci_tenant = apps.get_model(ACIConfig.name, "ACITenant")
         default_aci_tenants = ["common", "infra", "mgmt"]
-        for aci_default_tenant in default_aci_tenants:
-            if not aci_tenant.objects.filter(name=aci_default_tenant).exists():
-                aci_tenant.objects.create(name=aci_default_tenant)
+        for default_aci_tenant in default_aci_tenants:
+            if not aci_tenant.objects.filter(name=default_aci_tenant).exists():
+                aci_tenant.objects.create(name=default_aci_tenant)
 
 
 class Migration(migrations.Migration):
