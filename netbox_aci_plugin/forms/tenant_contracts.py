@@ -440,7 +440,6 @@ class ACIContractRelationEditForm(NetBoxModelForm):
         fields: tuple = (
             "aci_contract",
             "aci_object_type",
-            "aci_object",
             "role",
             "comments",
             "tags",
