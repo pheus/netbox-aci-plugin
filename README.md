@@ -13,12 +13,16 @@ Documentation: https://pheus.github.io/netbox-aci-plugin/
 - Endpoint Groups
 - Bridge Domains
 - VRF
+- Contracts
+- Contract Subjects
+- Contract Filters
 
 ## Compatibility
 
 | NetBox Version | Plugin Version |
-|----------------|----------------|
-|     4.1        |      0.0.9     |
+|:--------------:|:--------------:|
+|      4.1       |     0.0.10     |
+|      4.2       |     0.0.10     |
 
 ## Installing
 
@@ -51,6 +55,8 @@ PLUGINS_CONFIG = {
     "netbox_aci_plugin": {
         # create default ACI Tenants "common", "infra", "mgmt" during migration
         "create_default_aci_tenants": True,
+        # create default ACI Filters "arp", "icmp", "ip" during migration
+        "create_default_aci_contract_filters": True,
     },
 }
 ```

@@ -2,7 +2,7 @@
 
 __author__ = """Martin Hauser"""
 __email__ = "git@pheus.dev"
-__version__ = "0.0.9"
+__version__ = "0.0.10"
 
 
 from netbox.plugins import PluginConfig
@@ -19,9 +19,10 @@ class ACIConfig(PluginConfig):
     author_email = __email__
     base_url = "aci"
     min_version = "4.1.0"
-    max_version = "4.1.99"
+    max_version = "4.2.99"
     default_settings = {
         "create_default_aci_tenants": True,
+        "create_default_aci_contracts_filters": True,
     }
 
 

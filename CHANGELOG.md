@@ -5,15 +5,24 @@
 * First release on PyPI.
 
 ---
-## 0.0.10 (unreleased)
+
+## 0.0.10 (2025-01-12)
 
 ### Enhancements
 
-* Add the ACI Contract Filter model, forms and views
+* Add the ACI Contract Filter model, along with its forms and views
 * Add the model, views and forms for the Entries in the ACI Contract Filter
 * Move the Bridge Domain Subnet addition control to the Subnet table header
+* Add the model, views and forms for ACI Contract Subject and its associated
+  Filters within the ACI Contract Subject
+* Add support for relations between ACI objects (Endpoint Groups, VRFs) and
+  the ACI Contract via the ACIContractRelation model, views and forms
+* Add NetBox v4.2 compatibility
 
 ### Bug Fixes
+
+* Fix column headers of ACI Tenant and VRF fields for the Bridge Domain Subnet
+  table
 
 ## 0.0.9 (2024-10-08)
 
@@ -24,16 +33,19 @@
 ### Enhancements
 
 * Add database migration for ACITenant
-* Allow creation of default ACI Tenants (`common`, `infra`, `mgmt`) during migration
+* Allow creation of default ACI Tenants (`common`, `infra`, `mgmt`) during
+  migration
 * Add database migrations for ACIVRF, ACIBridgeDomain, ACIBridgeDomainSubnet
 * Add database migrations for ACIAppProfile, ACIEndpointGroup
-* Provide a plugin configuration option to disable the creation of the default ACI Tenants
+* Provide a plugin configuration option to disable the creation of the default
+  ACI Tenants
 * Add support for GraphQL extended permissions in NetBox v4.0.10 and v4.0.11
 * Add NetBox v4.1 compatibility
 
 ### Bug Fixes
 
-* Fix OpenAPI schema generation warning for 'present_in_aci_tenant_or_common' filter
+* Fix OpenAPI schema generation warning for 'present_in_aci_tenant_or_common'
+  filter
 * Include `_id` suffix for filter `present_in_aci_tenant_or_common`
 
 ## 0.0.8 (2024-07-17)
@@ -125,7 +137,7 @@
 
 * Fix form query parameters for NetBox tenants
 * Add blank choices to boolean fields for filter forms
-* Add NetBox tenant field to ACI Bridge Domain form
+* Add the NetBox tenant field to the ACI Bridge Domain form
 
 ## 0.0.3 (2024-05-22)
 
