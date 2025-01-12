@@ -8,6 +8,10 @@
 
 ## 0.0.10 (2025-01-12)
 
+### Breaking Changes
+
+* Requires NetBox version 4.1.5 or higher
+
 ### Enhancements
 
 * Add the ACI Contract Filter model, along with its forms and views
