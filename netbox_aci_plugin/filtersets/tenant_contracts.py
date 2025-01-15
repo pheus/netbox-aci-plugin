@@ -70,6 +70,8 @@ class ACIContractFilterSet(NetBoxModelFilterSet):
         null_value=None,
         label=_("Target DSCP"),
     )
+
+    # Filters extended with a custom filter method
     present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
         queryset=ACITenant.objects.all(),
         method="filter_present_in_aci_tenant_or_common_id",

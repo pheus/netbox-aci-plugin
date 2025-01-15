@@ -69,6 +69,8 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         choices=VRFPCEnforcementPreferenceChoices,
         null_value=None,
     )
+
+    # Filters extended with a custom filter method
     present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
         queryset=ACITenant.objects.all(),
         method="filter_present_in_aci_tenant_or_common_id",
@@ -167,11 +169,6 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         choices=BDMultiDestinationFloodingChoices,
         null_value=None,
     )
-    present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
-        queryset=ACITenant.objects.all(),
-        method="filter_present_in_aci_tenant_or_common_id",
-        label=_("ACI Tenant (ID)"),
-    )
     unknown_ipv4_multicast = django_filters.MultipleChoiceFilter(
         choices=BDUnknownMulticastChoices,
         null_value=None,
@@ -187,6 +184,13 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
     virtual_mac_address = MultiValueMACAddressFilter(
         field_name="virtual_mac_address",
         label=_("Virtual MAC address"),
+    )
+
+    # Filters extended with a custom filter method
+    present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
+        queryset=ACITenant.objects.all(),
+        method="filter_present_in_aci_tenant_or_common_id",
+        label=_("ACI Tenant (ID)"),
     )
 
     class Meta:
