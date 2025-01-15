@@ -131,19 +131,27 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
         return table
 
 
-@register_model_view(ACITenant, "vrfs", path="vrfs")
-class ACITenantVRFView(ACIVRFChildrenView):
-    """Children view of ACI VRF of ACI Tenant."""
+@register_model_view(ACITenant, "endpointgroups", path="endpoint-groups")
+class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
+    """Children view of ACI Endpoint Group of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/acitenant_vrfs.html"
+    tab = ViewTab(
+        label=_("Endpoint Groups"),
+        badge=lambda obj: ACIEndpointGroupChildrenView.child_model.objects.filter(
+            aci_app_profile__aci_tenant=obj.pk
+        ).count(),
+        permission="netbox_aci_plugin.view_aciendpointgroup",
+        weight=1000,
+    )
+    template_name = "netbox_aci_plugin/acitenant_endpointgroups.html"
 
     def get_children(self, request, parent):
-        """Return all ACIVRF objects for current ACITenant."""
+        """Return all children objects to the current parent object."""
         return (
             super()
             .get_children(request, parent)
-            .filter(aci_tenant_id=parent.pk)
+            .filter(aci_app_profile__aci_tenant=parent.pk)
         )
 
     def get_table(self, *args, **kwargs):
@@ -181,27 +189,19 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
         return table
 
 
-@register_model_view(ACITenant, "endpointgroups", path="endpoint-groups")
-class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
-    """Children view of ACI Endpoint Group of ACI Tenant."""
+@register_model_view(ACITenant, "vrfs", path="vrfs")
+class ACITenantVRFView(ACIVRFChildrenView):
+    """Children view of ACI VRF of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    tab = ViewTab(
-        label=_("Endpoint Groups"),
-        badge=lambda obj: ACIEndpointGroupChildrenView.child_model.objects.filter(
-            aci_app_profile__aci_tenant=obj.pk
-        ).count(),
-        permission="netbox_aci_plugin.view_aciendpointgroup",
-        weight=1000,
-    )
-    template_name = "netbox_aci_plugin/acitenant_endpointgroups.html"
+    template_name = "netbox_aci_plugin/acitenant_vrfs.html"
 
     def get_children(self, request, parent):
-        """Return all children objects to the current parent object."""
+        """Return all ACIVRF objects for current ACITenant."""
         return (
             super()
             .get_children(request, parent)
-            .filter(aci_app_profile__aci_tenant=parent.pk)
+            .filter(aci_tenant_id=parent.pk)
         )
 
     def get_table(self, *args, **kwargs):
