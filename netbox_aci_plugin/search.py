@@ -204,7 +204,7 @@ class ACIContractIndex(SearchIndex):
 
 
 @register_search
-class ACIContractRelationFilterIndex(SearchIndex):
+class ACIContractRelationIndex(SearchIndex):
     """NetBox search definition for the ACI Contract Relation model."""
 
     model = ACIContractRelation
