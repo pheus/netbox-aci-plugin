@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
@@ -37,6 +38,7 @@ from ..tables.tenant_networks import (
     ACIVRFTable,
 )
 from .tenant_app_profiles import ACIEndpointGroupChildrenView
+from .tenant_contracts import ACIContractRelationChildrenView
 
 #
 # Base children views
@@ -186,6 +188,39 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
         table.columns.hide("aci_tenant")
         # Hide ACIVRF column
         table.columns.hide("aci_vrf")
+
+        return table
+
+
+@register_model_view(ACIVRF, "contractrelations", path="contract-relations")
+class ACIVRFContractRelationView(ACIContractRelationChildrenView):
+    """Children view of ACI Contract Relation of ACI VRF."""
+
+    queryset = ACIVRF.objects.all()
+    template_name = "netbox_aci_plugin/acivrf_contractrelations.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return super().get_children(request, parent).filter(aci_vrf=parent.pk)
+
+    def get_extra_context(self, request, instance) -> dict:
+        """Return ContentType as extra context."""
+        aci_vrf_content_type = ContentType.objects.get_for_model(ACIVRF)
+
+        return {
+            "content_type_id": aci_vrf_content_type.id,
+        }
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI object colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column of ACIContract
+        table.columns.hide("aci_contract_tenant")
+        # Hide ACI object type column
+        table.columns.hide("aci_object_type")
+        # Hide ACI object column
+        table.columns.hide("aci_object")
 
         return table
 
