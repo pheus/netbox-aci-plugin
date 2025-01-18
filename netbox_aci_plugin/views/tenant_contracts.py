@@ -80,7 +80,7 @@ class ACIContractRelationChildrenView(generic.ObjectChildrenView):
     child_model = ACIContractRelation
     filterset = ACIContractRelationFilterSet
     tab = ViewTab(
-        label=_("Relations"),
+        label=_("Contract Relations"),
         badge=lambda obj: obj.aci_contract_relations.count(),
         permission="netbox_aci_plugin.view_acicontractrelation",
         weight=1000,
