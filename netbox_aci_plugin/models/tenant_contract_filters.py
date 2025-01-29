@@ -277,8 +277,7 @@ class ACIContractFilterEntry(NetBoxModel):
         blank=True,
         default=default_contract_filter_entry_tcp_rules,
         help_text=_(
-            "Specifies the matching TCP flag values. "
-            "Default is 'unspecified'."
+            "Specifies the matching TCP flag values. Default is 'unspecified'."
         ),
         validators=[validate_contract_filter_tcp_rules],
     )

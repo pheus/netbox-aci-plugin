@@ -20,7 +20,7 @@ repos:
           - "--django"
 
   - repo: https://github.com/PyCQA/isort
-    rev: "5.13.2"
+    rev: "6.0.0"
     hooks:
       - id: isort
         args:
@@ -28,7 +28,7 @@ repos:
         exclude: ^.devcontainer/
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.8.5"
+    rev: "v0.9.3"
     hooks:
       # Run the linter.
       - id: ruff

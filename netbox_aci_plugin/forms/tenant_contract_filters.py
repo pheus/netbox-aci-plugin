@@ -423,8 +423,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
         ),
         label=_("TCP rules"),
         help_text=_(
-            "Specifies the matching TCP flag values. "
-            "Default is 'unspecified'."
+            "Specifies the matching TCP flag values. Default is 'unspecified'."
         ),
     )
     comments = CommentField()
@@ -1107,8 +1106,7 @@ class ACIContractFilterEntryImportForm(NetBoxModelImportForm):
         required=False,
         label=_("TCP rules"),
         help_text=_(
-            "Specify TCP rules for the filter entry. "
-            "Default is 'unspecified'."
+            "Specify TCP rules for the filter entry. Default is 'unspecified'."
         ),
     )
 

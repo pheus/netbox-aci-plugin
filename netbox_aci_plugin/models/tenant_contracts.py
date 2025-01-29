@@ -636,8 +636,7 @@ class ACIContractSubjectFilter(NetBoxModel):
     def __str__(self) -> str:
         """Return string representation of the instance."""
         return (
-            f"{self.aci_contract_subject.name}-"
-            f"{self.aci_contract_filter.name}"
+            f"{self.aci_contract_subject.name}-{self.aci_contract_filter.name}"
         )
 
     @property

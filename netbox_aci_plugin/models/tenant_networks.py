@@ -342,8 +342,7 @@ class ACIBridgeDomain(NetBoxModel):
         null=True,
         default="00:22:BD:F8:19:FF",
         help_text=_(
-            "MAC address of the bridge domain. "
-            "Default is '00:22:BD:F8:19:FF'."
+            "MAC address of the bridge domain. Default is '00:22:BD:F8:19:FF'."
         ),
     )
     multi_destination_flooding = models.CharField(

@@ -35,8 +35,7 @@ class ACITenantFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     def test_invalid_aci_tenant_field_values(self) -> None:
@@ -81,8 +80,7 @@ class ACIAppProfileFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     def test_invalid_aci_app_profile_field_values(self) -> None:
@@ -128,8 +126,7 @@ class ACIVRFFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     def test_invalid_aci_vrf_field_values(self) -> None:
@@ -174,8 +171,7 @@ class ACIBridgeDomainFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     @classmethod
@@ -230,8 +226,7 @@ class ACIBridgeDomainSubnetFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     def test_invalid_aci_bridge_domain_subnet_field_values(self) -> None:
@@ -276,8 +271,7 @@ class ACIEndpointGroupFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     @classmethod
@@ -342,8 +336,7 @@ class ACIContractFilterFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     def test_invalid_aci_contract_filter_field_values(self) -> None:
@@ -388,8 +381,7 @@ class ACIContractFilterEntryFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     def test_invalid_aci_contract_filter_entry_field_values(self) -> None:
@@ -439,8 +431,7 @@ class ACIContractFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     def test_invalid_aci_contract_field_values(self) -> None:
@@ -485,8 +476,7 @@ class ACIContractSubjectFormTestCase(TestCase):
         " allowed."
     )
     description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
 
     def test_invalid_aci_contract_subject_field_values(self) -> None:
