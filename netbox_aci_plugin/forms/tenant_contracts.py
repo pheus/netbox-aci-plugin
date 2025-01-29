@@ -451,9 +451,15 @@ class ACIContractRelationEditForm(NetBoxModelForm):
         # Initialize fields with initial values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()
+
         if instance is not None and instance.aci_object:
             # Initialize ACI object field
             initial["aci_object"] = instance.aci_object
+
+        # Check if "comments" is absent, indicating a request with custom
+        # GET parameters for prefilling of the form field "aci_object".
+        prefill_aci_object = "comments" not in initial
+
         kwargs["initial"] = initial
 
         super().__init__(*args, **kwargs)
@@ -483,6 +489,7 @@ class ACIContractRelationEditForm(NetBoxModelForm):
             if (
                 self.instance
                 and aci_object_type_id != self.instance.aci_object_type_id
+                and not prefill_aci_object
             ):
                 self.initial["aci_object"] = None
 
