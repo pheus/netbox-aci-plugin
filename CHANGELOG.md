@@ -6,6 +6,20 @@
 
 ---
 
+## 0.0.11 (unreleased)
+
+### Breaking Changes
+
+* Requires NetBox version 4.2.0 or higher
+
+### Enhancements
+
+* Add Contract Relations views to ACI Endpoint Group and ACI VRF
+
+### Bug Fixes
+
+* Rename the search index for ACI Contract Relation
+
 ## 0.0.10 (2025-01-12)
 
 ### Breaking Changes
