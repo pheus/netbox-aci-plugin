@@ -216,8 +216,7 @@ class ACIContractRelationIndex(SearchIndex):
     )
     display_attrs: tuple = (
         "aci_contract",
-        "aci_object_type",
-        "aci_object_id",
+        "aci_object",
         "role",
     )
 
