@@ -73,6 +73,7 @@ class ACITenantView(generic.ObjectView):
         }
 
 
+@register_model_view(ACITenant, "list", path="", detail=False)
 class ACITenantListView(generic.ObjectListView):
     """List view for listing all objects of ACI Tenant."""
 
@@ -85,6 +86,7 @@ class ACITenantListView(generic.ObjectListView):
     table = ACITenantTable
 
 
+@register_model_view(ACITenant, "add", detail=False)
 @register_model_view(ACITenant, "edit")
 class ACITenantEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Tenant."""
@@ -239,6 +241,7 @@ class ACITenantContractView(ACIContractChildrenView):
         return table
 
 
+@register_model_view(ACITenant, "bulk_import", path="import", detail=False)
 class ACITenantBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI Tenant."""
 
@@ -246,6 +249,7 @@ class ACITenantBulkImportView(generic.BulkImportView):
     model_form = ACITenantImportForm
 
 
+@register_model_view(ACITenant, "bulk_edit", path="edit", detail=False)
 class ACITenantBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI Tenant."""
 
@@ -255,6 +259,7 @@ class ACITenantBulkEditView(generic.BulkEditView):
     form = ACITenantBulkEditForm
 
 
+@register_model_view(ACITenant, "bulk_delete", path="delete", detail=False)
 class ACITenantBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI Tenant."""
 

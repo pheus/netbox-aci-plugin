@@ -17,7 +17,7 @@ acitenant_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_acitenant"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:acitenant_import",
+            link="plugins:netbox_aci_plugin:acitenant_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_acitenant"],
@@ -38,7 +38,7 @@ aciappprofile_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_aciappprofile"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:aciappprofile_import",
+            link="plugins:netbox_aci_plugin:aciappprofile_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_aciappprofile"],
@@ -59,7 +59,7 @@ acibd_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_acibridgedomain"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:acibridgedomain_import",
+            link="plugins:netbox_aci_plugin:acibridgedomain_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_acibridgedomain"],
@@ -80,7 +80,7 @@ acibdsubnet_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_acibridgedomainsubnet"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:acibridgedomainsubnet_import",
+            link="plugins:netbox_aci_plugin:acibridgedomainsubnet_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_acibridgedomainsubnet"],
@@ -101,7 +101,7 @@ aciendpointgroup_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_aciendpointgroup"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:aciendpointgroup_import",
+            link="plugins:netbox_aci_plugin:aciendpointgroup_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_aciendpointgroup"],
@@ -122,7 +122,7 @@ acivrf_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_acivrf"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:acivrf_import",
+            link="plugins:netbox_aci_plugin:acivrf_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_acivrf"],
@@ -143,7 +143,7 @@ acicontractfilter_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_acicontractfilter"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:acicontractfilter_import",
+            link="plugins:netbox_aci_plugin:acicontractfilter_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_acicontractfilter"],
@@ -164,7 +164,7 @@ acicontractfilterentry_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_acicontractfilterentry"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:acicontractfilterentry_import",
+            link="plugins:netbox_aci_plugin:acicontractfilterentry_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_acicontractfilterentry"],
@@ -185,7 +185,7 @@ acicontract_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_acicontract"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:acicontract_import",
+            link="plugins:netbox_aci_plugin:acicontract_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_acicontract"],
@@ -206,7 +206,7 @@ acicontractsubject_item = PluginMenuItem(
             permissions=["netbox_aci_plugin.add_acicontractsubject"],
         ),
         PluginMenuButton(
-            link="plugins:netbox_aci_plugin:acicontractsubject_import",
+            link="plugins:netbox_aci_plugin:acicontractsubject_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
             permissions=["netbox_aci_plugin.add_acicontractsubject"],

@@ -98,6 +98,7 @@ class ACIAppProfileView(generic.ObjectView):
     )
 
 
+@register_model_view(ACIAppProfile, "list", path="", detail=False)
 class ACIAppProfileListView(generic.ObjectListView):
     """List view for listing all objects of ACI Application Profile."""
 
@@ -111,6 +112,7 @@ class ACIAppProfileListView(generic.ObjectListView):
     table = ACIAppProfileTable
 
 
+@register_model_view(ACIAppProfile, "add", detail=False)
 @register_model_view(ACIAppProfile, "edit")
 class ACIAppProfileEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Application Profile."""
@@ -159,6 +161,7 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
         return table
 
 
+@register_model_view(ACIAppProfile, "bulk_import", path="import", detail=False)
 class ACIAppProfileBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI App Profile."""
 
@@ -166,6 +169,7 @@ class ACIAppProfileBulkImportView(generic.BulkImportView):
     model_form = ACIAppProfileImportForm
 
 
+@register_model_view(ACIAppProfile, "bulk_edit", path="edit", detail=False)
 class ACIAppProfileBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI App Profile."""
 
@@ -175,6 +179,7 @@ class ACIAppProfileBulkEditView(generic.BulkEditView):
     form = ACIAppProfileBulkEditForm
 
 
+@register_model_view(ACIAppProfile, "bulk_delete", path="delete", detail=False)
 class ACIAppProfileBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI App Profile."""
 
@@ -200,6 +205,7 @@ class ACIEndpointGroupView(generic.ObjectView):
     )
 
 
+@register_model_view(ACIEndpointGroup, "list", path="", detail=False)
 class ACIEndpointGroupListView(generic.ObjectListView):
     """List view for listing all objects of ACI Endpoint Group."""
 
@@ -214,6 +220,7 @@ class ACIEndpointGroupListView(generic.ObjectListView):
     table = ACIEndpointGroupTable
 
 
+@register_model_view(ACIEndpointGroup, "add", detail=False)
 @register_model_view(ACIEndpointGroup, "edit")
 class ACIEndpointGroupEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Endpoint Group."""
@@ -280,6 +287,9 @@ class ACIVRFContractRelationView(ACIContractRelationChildrenView):
         return table
 
 
+@register_model_view(
+    ACIEndpointGroup, "bulk_import", path="import", detail=False
+)
 class ACIEndpointGroupBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI Endpoint Group."""
 
@@ -287,6 +297,7 @@ class ACIEndpointGroupBulkImportView(generic.BulkImportView):
     model_form = ACIEndpointGroupImportForm
 
 
+@register_model_view(ACIEndpointGroup, "bulk_edit", path="edit", detail=False)
 class ACIEndpointGroupBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI Endpoint Group."""
 
@@ -296,6 +307,9 @@ class ACIEndpointGroupBulkEditView(generic.BulkEditView):
     form = ACIEndpointGroupBulkEditForm
 
 
+@register_model_view(
+    ACIEndpointGroup, "bulk_delete", path="delete", detail=False
+)
 class ACIEndpointGroupBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI Endpoint Group."""
 

@@ -85,6 +85,7 @@ class ACIContractFilterView(generic.ObjectView):
         }
 
 
+@register_model_view(ACIContractFilter, "list", path="", detail=False)
 class ACIContractFilterListView(generic.ObjectListView):
     """List view for listing all objects of ACI Contract Filter."""
 
@@ -98,6 +99,7 @@ class ACIContractFilterListView(generic.ObjectListView):
     table = ACIContractFilterTable
 
 
+@register_model_view(ACIContractFilter, "add", detail=False)
 @register_model_view(ACIContractFilter, "edit")
 class ACIContractFilterEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Contract Filter."""
@@ -150,6 +152,9 @@ class ACIContractFilterContractFilterEntryView(
         return table
 
 
+@register_model_view(
+    ACIContractFilter, "bulk_import", path="import", detail=False
+)
 class ACIContractFilterBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACIContractFilter."""
 
@@ -157,6 +162,7 @@ class ACIContractFilterBulkImportView(generic.BulkImportView):
     model_form = ACIContractFilterImportForm
 
 
+@register_model_view(ACIContractFilter, "bulk_edit", path="edit", detail=False)
 class ACIContractFilterBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACIContractFilter."""
 
@@ -166,6 +172,9 @@ class ACIContractFilterBulkEditView(generic.BulkEditView):
     form = ACIContractFilterBulkEditForm
 
 
+@register_model_view(
+    ACIContractFilter, "bulk_delete", path="delete", detail=False
+)
 class ACIContractFilterBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACIContractFilter."""
 
@@ -189,6 +198,7 @@ class ACIContractFilterEntryView(generic.ObjectView):
     )
 
 
+@register_model_view(ACIContractFilterEntry, "list", path="", detail=False)
 class ACIContractFilterEntryListView(generic.ObjectListView):
     """List view for listing all objects of ACIContractFilterEntry."""
 
@@ -201,6 +211,7 @@ class ACIContractFilterEntryListView(generic.ObjectListView):
     table = ACIContractFilterEntryTable
 
 
+@register_model_view(ACIContractFilterEntry, "add", detail=False)
 @register_model_view(ACIContractFilterEntry, "edit")
 class ACIContractFilterEntryEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACIContractFilterEntry."""
@@ -222,6 +233,9 @@ class ACIContractFilterEntryDeleteView(generic.ObjectDeleteView):
     )
 
 
+@register_model_view(
+    ACIContractFilterEntry, "bulk_import", path="import", detail=False
+)
 class ACIContractFilterEntryBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of Filter Entry."""
 
@@ -229,6 +243,9 @@ class ACIContractFilterEntryBulkImportView(generic.BulkImportView):
     model_form = ACIContractFilterEntryImportForm
 
 
+@register_model_view(
+    ACIContractFilterEntry, "bulk_edit", path="edit", detail=False
+)
 class ACIContractFilterEntryBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of Filter Entry."""
 
@@ -238,6 +255,9 @@ class ACIContractFilterEntryBulkEditView(generic.BulkEditView):
     form = ACIContractFilterEntryBulkEditForm
 
 
+@register_model_view(
+    ACIContractFilterEntry, "bulk_delete", path="delete", detail=False
+)
 class ACIContractFilterEntryBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of Filter Entry."""
 

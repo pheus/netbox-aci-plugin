@@ -5,95 +5,15 @@
 from django.urls import include, path
 from utilities.urls import get_model_urls
 
-from .views.tenant_app_profiles import (
-    ACIAppProfileBulkDeleteView,
-    ACIAppProfileBulkEditView,
-    ACIAppProfileBulkImportView,
-    ACIAppProfileEditView,
-    ACIAppProfileListView,
-    ACIEndpointGroupBulkDeleteView,
-    ACIEndpointGroupBulkEditView,
-    ACIEndpointGroupBulkImportView,
-    ACIEndpointGroupEditView,
-    ACIEndpointGroupListView,
-)
-from .views.tenant_contract_filters import (
-    ACIContractFilterBulkDeleteView,
-    ACIContractFilterBulkEditView,
-    ACIContractFilterBulkImportView,
-    ACIContractFilterEditView,
-    ACIContractFilterEntryBulkDeleteView,
-    ACIContractFilterEntryBulkEditView,
-    ACIContractFilterEntryBulkImportView,
-    ACIContractFilterEntryEditView,
-    ACIContractFilterEntryListView,
-    ACIContractFilterListView,
-)
-from .views.tenant_contracts import (
-    ACIContractBulkDeleteView,
-    ACIContractBulkEditView,
-    ACIContractBulkImportView,
-    ACIContractEditView,
-    ACIContractListView,
-    ACIContractRelationBulkDeleteView,
-    ACIContractRelationBulkEditView,
-    ACIContractRelationBulkImportView,
-    ACIContractRelationEditView,
-    ACIContractRelationListView,
-    ACIContractSubjectBulkDeleteView,
-    ACIContractSubjectBulkEditView,
-    ACIContractSubjectBulkImportView,
-    ACIContractSubjectEditView,
-    ACIContractSubjectFilterBulkDeleteView,
-    ACIContractSubjectFilterBulkEditView,
-    ACIContractSubjectFilterBulkImportView,
-    ACIContractSubjectFilterEditView,
-    ACIContractSubjectFilterListView,
-    ACIContractSubjectListView,
-)
-from .views.tenant_networks import (
-    ACIBridgeDomainBulkDeleteView,
-    ACIBridgeDomainBulkEditView,
-    ACIBridgeDomainBulkImportView,
-    ACIBridgeDomainEditView,
-    ACIBridgeDomainListView,
-    ACIBridgeDomainSubnetBulkDeleteView,
-    ACIBridgeDomainSubnetBulkEditView,
-    ACIBridgeDomainSubnetBulkImportView,
-    ACIBridgeDomainSubnetEditView,
-    ACIBridgeDomainSubnetListView,
-    ACIVRFBulkDeleteView,
-    ACIVRFBulkEditView,
-    ACIVRFBulkImportView,
-    ACIVRFEditView,
-    ACIVRFListView,
-)
-from .views.tenants import (
-    ACITenantBulkDeleteView,
-    ACITenantBulkEditView,
-    ACITenantBulkImportView,
-    ACITenantEditView,
-    ACITenantListView,
-)
+from . import views  # noqa F401
 
 urlpatterns: tuple = (
     # ACI Tenants
-    path("tenants/", ACITenantListView.as_view(), name="acitenant_list"),
-    path("tenants/add/", ACITenantEditView.as_view(), name="acitenant_add"),
     path(
-        "tenants/delete/",
-        ACITenantBulkDeleteView.as_view(),
-        name="acitenant_bulk_delete",
-    ),
-    path(
-        "tenants/edit/",
-        ACITenantBulkEditView.as_view(),
-        name="acitenant_bulk_edit",
-    ),
-    path(
-        "tenants/import/",
-        ACITenantBulkImportView.as_view(),
-        name="acitenant_import",
+        "tenants/",
+        include(
+            get_model_urls("netbox_aci_plugin", "acitenant", detail=False)
+        ),
     ),
     path(
         "tenants/<int:pk>/",
@@ -102,28 +22,9 @@ urlpatterns: tuple = (
     # ACI Application Profiles
     path(
         "app-profiles/",
-        ACIAppProfileListView.as_view(),
-        name="aciappprofile_list",
-    ),
-    path(
-        "app-profiles/add/",
-        ACIAppProfileEditView.as_view(),
-        name="aciappprofile_add",
-    ),
-    path(
-        "app-profiles/delete/",
-        ACIAppProfileBulkDeleteView.as_view(),
-        name="aciappprofile_bulk_delete",
-    ),
-    path(
-        "app-profiles/edit/",
-        ACIAppProfileBulkEditView.as_view(),
-        name="aciappprofile_bulk_edit",
-    ),
-    path(
-        "app-profiles/import/",
-        ACIAppProfileBulkImportView.as_view(),
-        name="aciappprofile_import",
+        include(
+            get_model_urls("netbox_aci_plugin", "aciappprofile", detail=False)
+        ),
     ),
     path(
         "app-profiles/<int:pk>/",
@@ -132,28 +33,11 @@ urlpatterns: tuple = (
     # ACI Endpoint Group
     path(
         "endpoint-groups/",
-        ACIEndpointGroupListView.as_view(),
-        name="aciendpointgroup_list",
-    ),
-    path(
-        "endpoint-groups/add/",
-        ACIEndpointGroupEditView.as_view(),
-        name="aciendpointgroup_add",
-    ),
-    path(
-        "endpoint-groups/delete/",
-        ACIEndpointGroupBulkDeleteView.as_view(),
-        name="aciendpointgroup_bulk_delete",
-    ),
-    path(
-        "endpoint-groups/edit/",
-        ACIEndpointGroupBulkEditView.as_view(),
-        name="aciendpointgroup_bulk_edit",
-    ),
-    path(
-        "endpoint-groups/import/",
-        ACIEndpointGroupBulkImportView.as_view(),
-        name="aciendpointgroup_import",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "aciendpointgroup", detail=False
+            )
+        ),
     ),
     path(
         "endpoint-groups/<int:pk>/",
@@ -162,28 +46,11 @@ urlpatterns: tuple = (
     # ACI Bridge Domain
     path(
         "bridge-domains/",
-        ACIBridgeDomainListView.as_view(),
-        name="acibridgedomain_list",
-    ),
-    path(
-        "bridge-domains/add/",
-        ACIBridgeDomainEditView.as_view(),
-        name="acibridgedomain_add",
-    ),
-    path(
-        "bridge-domains/delete/",
-        ACIBridgeDomainBulkDeleteView.as_view(),
-        name="acibridgedomain_bulk_delete",
-    ),
-    path(
-        "bridge-domains/edit/",
-        ACIBridgeDomainBulkEditView.as_view(),
-        name="acibridgedomain_bulk_edit",
-    ),
-    path(
-        "bridge-domains/import/",
-        ACIBridgeDomainBulkImportView.as_view(),
-        name="acibridgedomain_import",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acibridgedomain", detail=False
+            )
+        ),
     ),
     path(
         "bridge-domains/<int:pk>/",
@@ -192,50 +59,20 @@ urlpatterns: tuple = (
     # ACI Bridge Domain Subnet
     path(
         "bridge-domain-subnets/",
-        ACIBridgeDomainSubnetListView.as_view(),
-        name="acibridgedomainsubnet_list",
-    ),
-    path(
-        "bridge-domain-subnets/add/",
-        ACIBridgeDomainSubnetEditView.as_view(),
-        name="acibridgedomainsubnet_add",
-    ),
-    path(
-        "bridge-domain-subnets/delete/",
-        ACIBridgeDomainSubnetBulkDeleteView.as_view(),
-        name="acibridgedomainsubnet_bulk_delete",
-    ),
-    path(
-        "bridge-domain-subnets/edit/",
-        ACIBridgeDomainSubnetBulkEditView.as_view(),
-        name="acibridgedomainsubnet_bulk_edit",
-    ),
-    path(
-        "bridge-domain-subnets/import/",
-        ACIBridgeDomainSubnetBulkImportView.as_view(),
-        name="acibridgedomainsubnet_import",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acibridgedomainsubnet", detail=False
+            )
+        ),
     ),
     path(
         "bridge-domain-subnets/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acibridgedomainsubnet")),
     ),
     # ACI VRF
-    path("vrfs/", ACIVRFListView.as_view(), name="acivrf_list"),
-    path("vrfs/add/", ACIVRFEditView.as_view(), name="acivrf_add"),
     path(
-        "vrfs/delete/",
-        ACIVRFBulkDeleteView.as_view(),
-        name="acivrf_bulk_delete",
-    ),
-    path(
-        "vrfs/edit/",
-        ACIVRFBulkEditView.as_view(),
-        name="acivrf_bulk_edit",
-    ),
-    path(
-        "vrfs/import/",
-        ACIVRFBulkImportView.as_view(),
-        name="acivrf_import",
+        "vrfs/",
+        include(get_model_urls("netbox_aci_plugin", "acivrf", detail=False)),
     ),
     path(
         "vrfs/<int:pk>/",
@@ -244,28 +81,11 @@ urlpatterns: tuple = (
     # ACI Contract Filter
     path(
         "contract-filters/",
-        ACIContractFilterListView.as_view(),
-        name="acicontractfilter_list",
-    ),
-    path(
-        "contract-filters/add/",
-        ACIContractFilterEditView.as_view(),
-        name="acicontractfilter_add",
-    ),
-    path(
-        "contract-filters/delete/",
-        ACIContractFilterBulkDeleteView.as_view(),
-        name="acicontractfilter_bulk_delete",
-    ),
-    path(
-        "contract-filters/edit/",
-        ACIContractFilterBulkEditView.as_view(),
-        name="acicontractfilter_bulk_edit",
-    ),
-    path(
-        "contract-filters/import/",
-        ACIContractFilterBulkImportView.as_view(),
-        name="acicontractfilter_import",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acicontractfilter", detail=False
+            )
+        ),
     ),
     path(
         "contract-filters/<int:pk>/",
@@ -274,28 +94,11 @@ urlpatterns: tuple = (
     # ACI Contract Filter Entry
     path(
         "contract-filter-entries/",
-        ACIContractFilterEntryListView.as_view(),
-        name="acicontractfilterentry_list",
-    ),
-    path(
-        "contract-filter-entries/add/",
-        ACIContractFilterEntryEditView.as_view(),
-        name="acicontractfilterentry_add",
-    ),
-    path(
-        "contract-filter-entries/delete/",
-        ACIContractFilterEntryBulkDeleteView.as_view(),
-        name="acicontractfilterentry_bulk_delete",
-    ),
-    path(
-        "contract-filter-entries/edit/",
-        ACIContractFilterEntryBulkEditView.as_view(),
-        name="acicontractfilterentry_bulk_edit",
-    ),
-    path(
-        "contract-filter-entries/import/",
-        ACIContractFilterEntryBulkImportView.as_view(),
-        name="acicontractfilterentry_import",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acicontractfilterentry", detail=False
+            )
+        ),
     ),
     path(
         "contract-filter-entries/<int:pk>/",
@@ -304,28 +107,9 @@ urlpatterns: tuple = (
     # ACI Contract
     path(
         "contracts/",
-        ACIContractListView.as_view(),
-        name="acicontract_list",
-    ),
-    path(
-        "contracts/add/",
-        ACIContractEditView.as_view(),
-        name="acicontract_add",
-    ),
-    path(
-        "contracts/delete/",
-        ACIContractBulkDeleteView.as_view(),
-        name="acicontract_bulk_delete",
-    ),
-    path(
-        "contracts/edit/",
-        ACIContractBulkEditView.as_view(),
-        name="acicontract_bulk_edit",
-    ),
-    path(
-        "contracts/import/",
-        ACIContractBulkImportView.as_view(),
-        name="acicontract_import",
+        include(
+            get_model_urls("netbox_aci_plugin", "acicontract", detail=False)
+        ),
     ),
     path(
         "contracts/<int:pk>/",
@@ -334,28 +118,11 @@ urlpatterns: tuple = (
     # ACI Contract Relation
     path(
         "contracts/relations/",
-        ACIContractRelationListView.as_view(),
-        name="acicontractrelation_list",
-    ),
-    path(
-        "contracts/relations/add/",
-        ACIContractRelationEditView.as_view(),
-        name="acicontractrelation_add",
-    ),
-    path(
-        "contracts/relations/delete/",
-        ACIContractRelationBulkDeleteView.as_view(),
-        name="acicontractrelation_bulk_delete",
-    ),
-    path(
-        "contracts/relations/edit/",
-        ACIContractRelationBulkEditView.as_view(),
-        name="acicontractrelation_bulk_edit",
-    ),
-    path(
-        "contracts/relations/import/",
-        ACIContractRelationBulkImportView.as_view(),
-        name="acicontractrelation_import",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acicontractrelation", detail=False
+            )
+        ),
     ),
     path(
         "contracts/relations/<int:pk>/",
@@ -364,28 +131,11 @@ urlpatterns: tuple = (
     # ACI Contract Subject
     path(
         "contract-subjects/",
-        ACIContractSubjectListView.as_view(),
-        name="acicontractsubject_list",
-    ),
-    path(
-        "contract-subjects/add/",
-        ACIContractSubjectEditView.as_view(),
-        name="acicontractsubject_add",
-    ),
-    path(
-        "contract-subjects/delete/",
-        ACIContractSubjectBulkDeleteView.as_view(),
-        name="acicontractsubject_bulk_delete",
-    ),
-    path(
-        "contract-subjects/edit/",
-        ACIContractSubjectBulkEditView.as_view(),
-        name="acicontractsubject_bulk_edit",
-    ),
-    path(
-        "contract-subjects/import/",
-        ACIContractSubjectBulkImportView.as_view(),
-        name="acicontractsubject_import",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acicontractsubject", detail=False
+            )
+        ),
     ),
     path(
         "contract-subjects/<int:pk>/",
@@ -394,28 +144,11 @@ urlpatterns: tuple = (
     # ACI Contract Subject Filter
     path(
         "contract-subjects/filters/",
-        ACIContractSubjectFilterListView.as_view(),
-        name="acicontractsubjectfilter_list",
-    ),
-    path(
-        "contract-subjects/filters/add/",
-        ACIContractSubjectFilterEditView.as_view(),
-        name="acicontractsubjectfilter_add",
-    ),
-    path(
-        "contract-subjects/filters/delete/",
-        ACIContractSubjectFilterBulkDeleteView.as_view(),
-        name="acicontractsubjectfilter_bulk_delete",
-    ),
-    path(
-        "contract-subjects/filters/edit/",
-        ACIContractSubjectFilterBulkEditView.as_view(),
-        name="acicontractsubjectfilter_bulk_edit",
-    ),
-    path(
-        "contract-subjects/filters/import/",
-        ACIContractSubjectFilterBulkImportView.as_view(),
-        name="acicontractsubjectfilter_import",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acicontractsubjectfilter", detail=False
+            )
+        ),
     ),
     path(
         "contract-subjects/filters/<int:pk>/",

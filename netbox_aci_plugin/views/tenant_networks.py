@@ -133,6 +133,7 @@ class ACIVRFView(generic.ObjectView):
     )
 
 
+@register_model_view(ACIVRF, "list", path="", detail=False)
 class ACIVRFListView(generic.ObjectListView):
     """List view for listing all objects of ACI VRF."""
 
@@ -146,6 +147,7 @@ class ACIVRFListView(generic.ObjectListView):
     table = ACIVRFTable
 
 
+@register_model_view(ACIVRF, "add", detail=False)
 @register_model_view(ACIVRF, "edit")
 class ACIVRFEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI VRF."""
@@ -225,6 +227,7 @@ class ACIVRFContractRelationView(ACIContractRelationChildrenView):
         return table
 
 
+@register_model_view(ACIVRF, "bulk_import", path="import", detail=False)
 class ACIVRFBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI VRF."""
 
@@ -232,6 +235,7 @@ class ACIVRFBulkImportView(generic.BulkImportView):
     model_form = ACIVRFImportForm
 
 
+@register_model_view(ACIVRF, "bulk_edit", path="edit", detail=False)
 class ACIVRFBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI VRF."""
 
@@ -241,6 +245,7 @@ class ACIVRFBulkEditView(generic.BulkEditView):
     form = ACIVRFBulkEditForm
 
 
+@register_model_view(ACIVRF, "bulk_delete", path="delete", detail=False)
 class ACIVRFBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI VRF."""
 
@@ -278,6 +283,7 @@ class ACIBridgeDomainView(generic.ObjectView):
         }
 
 
+@register_model_view(ACIBridgeDomain, "list", path="", detail=False)
 class ACIBridgeDomainListView(generic.ObjectListView):
     """List view for listing all objects of ACI Bridge Domain."""
 
@@ -292,6 +298,7 @@ class ACIBridgeDomainListView(generic.ObjectListView):
     table = ACIBridgeDomainTable
 
 
+@register_model_view(ACIBridgeDomain, "add", detail=False)
 @register_model_view(ACIBridgeDomain, "edit")
 class ACIBridgeDomainEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Bridge Domain."""
@@ -367,6 +374,9 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
         return table
 
 
+@register_model_view(
+    ACIBridgeDomain, "bulk_import", path="import", detail=False
+)
 class ACIBridgeDomainBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI Bridge Domain."""
 
@@ -374,6 +384,7 @@ class ACIBridgeDomainBulkImportView(generic.BulkImportView):
     model_form = ACIBridgeDomainImportForm
 
 
+@register_model_view(ACIBridgeDomain, "bulk_edit", path="edit", detail=False)
 class ACIBridgeDomainBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI Bridge Domain."""
 
@@ -383,6 +394,9 @@ class ACIBridgeDomainBulkEditView(generic.BulkEditView):
     form = ACIBridgeDomainBulkEditForm
 
 
+@register_model_view(
+    ACIBridgeDomain, "bulk_delete", path="delete", detail=False
+)
 class ACIBridgeDomainBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI Bridge Domain."""
 
@@ -408,6 +422,7 @@ class ACIBridgeDomainSubnetView(generic.ObjectView):
     )
 
 
+@register_model_view(ACIBridgeDomainSubnet, "list", path="", detail=False)
 class ACIBridgeDomainSubnetListView(generic.ObjectListView):
     """List view for listing all objects of ACI BD Subnet."""
 
@@ -422,6 +437,7 @@ class ACIBridgeDomainSubnetListView(generic.ObjectListView):
     table = ACIBridgeDomainSubnetTable
 
 
+@register_model_view(ACIBridgeDomainSubnet, "add", detail=False)
 @register_model_view(ACIBridgeDomainSubnet, "edit")
 class ACIBridgeDomainSubnetEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI BD Subnet."""
@@ -447,6 +463,9 @@ class ACIBridgeDomainSubnetDeleteView(generic.ObjectDeleteView):
     )
 
 
+@register_model_view(
+    ACIBridgeDomainSubnet, "bulk_import", path="import", detail=False
+)
 class ACIBridgeDomainSubnetBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI BD Subnet."""
 
@@ -454,6 +473,9 @@ class ACIBridgeDomainSubnetBulkImportView(generic.BulkImportView):
     model_form = ACIBridgeDomainSubnetImportForm
 
 
+@register_model_view(
+    ACIBridgeDomainSubnet, "bulk_edit", path="edit", detail=False
+)
 class ACIBridgeDomainSubnetBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI BD Subnet."""
 
@@ -463,6 +485,9 @@ class ACIBridgeDomainSubnetBulkEditView(generic.BulkEditView):
     form = ACIBridgeDomainSubnetBulkEditForm
 
 
+@register_model_view(
+    ACIBridgeDomainSubnet, "bulk_delete", path="delete", detail=False
+)
 class ACIBridgeDomainSubnetBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI BD Subnet."""
 
