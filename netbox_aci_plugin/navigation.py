@@ -47,7 +47,7 @@ aciappprofile_item = PluginMenuItem(
 )
 
 # ACI Bridge Domain
-acibd_item = PluginMenuItem(
+acibridgedomain_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acibridgedomain_list",
     link_text="Bridge Domains",
     permissions=["netbox_aci_plugin.view_acibridgedomain"],
@@ -68,7 +68,7 @@ acibd_item = PluginMenuItem(
 )
 
 # ACI Bridge Domain Subnet
-acibdsubnet_item = PluginMenuItem(
+acibridgedomainsubnet_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acibridgedomainsubnet_list",
     link_text="Bridge Domain Subnets",
     permissions=["netbox_aci_plugin.view_acibridgedomainsubnet"],
@@ -219,18 +219,31 @@ menu = PluginMenu(
     label="ACI",
     groups=(
         (
-            "Tenant",
+            "Tenants",
+            (acitenant_item,),
+        ),
+        (
+            "Tenant Application Profiles",
             (
-                acitenant_item,
                 aciappprofile_item,
                 aciendpointgroup_item,
-                acibd_item,
-                acibdsubnet_item,
+            ),
+        ),
+        (
+            "Tenant Networking",
+            (
+                acibridgedomain_item,
+                acibridgedomainsubnet_item,
                 acivrf_item,
-                acicontractfilter_item,
-                acicontractfilterentry_item,
+            ),
+        ),
+        (
+            "Tenant Contracts",
+            (
                 acicontract_item,
                 acicontractsubject_item,
+                acicontractfilter_item,
+                acicontractfilterentry_item,
             ),
         ),
     ),
