@@ -4,8 +4,7 @@
 
 from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
-from utilities.relations import get_related_models
-from utilities.views import ViewTab, register_model_view
+from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
 
 from ..filtersets.tenants import ACITenantFilterSet
 from ..forms.tenants import (
@@ -30,7 +29,7 @@ from .tenant_networks import ACIBridgeDomainChildrenView, ACIVRFChildrenView
 
 
 @register_model_view(ACITenant)
-class ACITenantView(generic.ObjectView):
+class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
     """Detail view for displaying a single object of ACI Tenant."""
 
     queryset = ACITenant.objects.prefetch_related(
@@ -41,35 +40,20 @@ class ACITenantView(generic.ObjectView):
     def get_extra_context(self, request, instance) -> dict:
         """Return related models as extra context."""
 
-        # Get related models from ForeignKey fields
-        related_models: list[tuple] = [
-            (
-                model.objects.restrict(request.user, "view").filter(
-                    aci_tenant=instance
-                ),
-                f"{field}_id",
-            )
-            for model, field in get_related_models(ACITenant, ordered=False)
-        ]
-
-        # Get related models of directly referenced models
-        related_sub_models: list[tuple] = [
+        # Get extra related models of directly referenced models
+        extra_related_models: tuple[tuple] = (
             (
                 ACIEndpointGroup.objects.restrict(request.user, "view").filter(
                     aci_app_profile__aci_tenant=instance
                 ),
                 "aci_tenant_id",
             ),
-        ]
-
-        # Combine the lists and sort the combined list by the model's name
-        sorted_related_models = sorted(
-            related_models + related_sub_models,
-            key=lambda x: x[0].model._meta.verbose_name.lower(),
         )
 
         return {
-            "related_models": sorted_related_models,
+            "related_models": self.get_related_models(
+                request, instance, extra=extra_related_models
+            )
         }
 
 
