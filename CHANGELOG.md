@@ -15,6 +15,13 @@
 ### Enhancements
 
 * Add Contract Relations views to ACI Endpoint Group and ACI VRF
+* Refactor view registration leveraging the `get_model_urls` utility
+  introduced in **NetBox v4.2**
+* Refactors API serializers into separate modules for better organization
+* Utilize `GetRelatedModelsMixin` for managing related models in
+  `ACITenantView`
+* Reorganizes the ACI menu into distinct groups for better clarity:
+  Tenants, Application Profiles, Networking, and Contracts.
 
 ### Bug Fixes
 
