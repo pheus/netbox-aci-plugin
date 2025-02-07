@@ -23,51 +23,18 @@ from ..choices import (
 from ..constants import CONTRACT_RELATION_OBJECT_TYPES
 from ..models.tenant_contract_filters import ACIContractFilter
 from ..models.tenants import ACITenant
-from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
+from ..validators import ACIPolicyNameValidator
+from .base import ACIBaseModel
 
 
-class ACIContract(NetBoxModel):
+class ACIContract(ACIBaseModel):
     """NetBox model for ACI Contract."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_tenant = models.ForeignKey(
         to=ACITenant,
         on_delete=models.PROTECT,
         related_name="aci_contracts",
         verbose_name=_("ACI Tenant"),
-    )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_contracts",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
     )
     qos_class = models.CharField(
         verbose_name=_("QoS class"),
@@ -100,15 +67,9 @@ class ACIContract(NetBoxModel):
             "value. Default is 'unspecified'."
         ),
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_tenant",
-        "nb_tenant",
         "qos_class",
         "scope",
         "target_dscp",
@@ -131,10 +92,6 @@ class ACIContract(NetBoxModel):
             return f"{self.name} ({self.aci_tenant.name})"
         else:
             return self.name
-
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse("plugins:netbox_aci_plugin:acicontract", args=[self.pk])
 
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
@@ -309,48 +266,14 @@ class ACIContractRelation(NetBoxModel):
         return ContractRelationRoleChoices.colors.get(self.role)
 
 
-class ACIContractSubject(NetBoxModel):
+class ACIContractSubject(ACIBaseModel):
     """NetBox model for ACI Contract Subject."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_contract = models.ForeignKey(
         to=ACIContract,
         on_delete=models.CASCADE,
         related_name="aci_contract_subjects",
         verbose_name=_("ACI Contract"),
-    )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_contract_subjects",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
     )
     apply_both_directions_enabled = models.BooleanField(
         verbose_name=_("apply both directions enabled"),
@@ -472,15 +395,9 @@ class ACIContractSubject(NetBoxModel):
             "Default is 'unspecified'."
         ),
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_contract",
-        "nb_tenant",
         "apply_both_directions_enabled",
         "qos_class",
         "qos_class_cons_to_prov",
@@ -516,13 +433,6 @@ class ACIContractSubject(NetBoxModel):
     def aci_tenant(self) -> ACITenant:
         """Return the ACITenant instance of related ACIContract."""
         return self.aci_contract.aci_tenant
-
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:acicontractsubject",
-            args=[self.pk],
-        )
 
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""

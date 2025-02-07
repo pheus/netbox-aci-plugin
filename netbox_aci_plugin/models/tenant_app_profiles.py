@@ -6,69 +6,26 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from netbox.models import NetBoxModel
 
 from ..choices import QualityOfServiceClassChoices
 from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
 from ..models.tenants import ACITenant
-from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
+from ..validators import ACIPolicyNameValidator
+from .base import ACIBaseModel
 
 
-class ACIAppProfile(NetBoxModel):
+class ACIAppProfile(ACIBaseModel):
     """NetBox model for ACI Application Profile."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_tenant = models.ForeignKey(
         to=ACITenant,
         on_delete=models.PROTECT,
         related_name="aci_app_profiles",
         verbose_name=_("ACI Tenant"),
     )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_app_profiles",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
-    )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
-        "aci_tenant",
-        "nb_tenant",
-    )
+    clone_fields: tuple = ACIBaseModel.clone_fields + ("aci_tenant",)
     prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
 
     class Meta:
@@ -81,46 +38,10 @@ class ACIAppProfile(NetBoxModel):
         ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Application Profile")
 
-    def __str__(self) -> str:
-        """Return string representation of the instance."""
-        return self.name
 
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:aciappprofile", args=[self.pk]
-        )
-
-
-class ACIEndpointGroup(NetBoxModel):
+class ACIEndpointGroup(ACIBaseModel):
     """NetBox model for ACI Endpoint Groups (EPG)."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_app_profile = models.ForeignKey(
         to=ACIAppProfile,
         on_delete=models.PROTECT,
@@ -132,14 +53,6 @@ class ACIEndpointGroup(NetBoxModel):
         on_delete=models.PROTECT,
         related_name="aci_endpoint_groups",
         verbose_name=_("ACI Bridge Domain"),
-    )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_endpoint_groups",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
     )
     admin_shutdown = models.BooleanField(
         verbose_name=_("admin state shutdown"),
@@ -203,10 +116,6 @@ class ACIEndpointGroup(NetBoxModel):
             "Whether proxy ARP is enabled for the EPG. Default is disabled."
         ),
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
     # Generic relations
     aci_contract_relations = GenericRelation(
@@ -216,11 +125,9 @@ class ACIEndpointGroup(NetBoxModel):
         related_query_name="aci_endpoint_group",
     )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_app_profile",
         "aci_bridge_domain",
-        "nb_tenant",
         "admin_shutdown",
         "custom_qos_policy_name",
         "flood_in_encap_enabled",
@@ -243,10 +150,6 @@ class ACIEndpointGroup(NetBoxModel):
         ]
         ordering: tuple = ("aci_app_profile", "name")
         verbose_name: str = _("ACI Endpoint Group")
-
-    def __str__(self) -> str:
-        """Return string representation of the instance."""
-        return self.name
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
@@ -295,12 +198,6 @@ class ACIEndpointGroup(NetBoxModel):
     def aci_vrf(self) -> ACIVRF:
         """Return the ACIVRF instance of the related ACIBridgeDomain."""
         return self.aci_bridge_domain.aci_vrf
-
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:aciendpointgroup", args=[self.pk]
-        )
 
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""

@@ -8,9 +8,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from netbox.models import NetBoxModel
 
 from ..choices import (
     BDMultiDestinationFloodingChoices,
@@ -20,51 +18,18 @@ from ..choices import (
     VRFPCEnforcementPreferenceChoices,
 )
 from ..models.tenants import ACITenant
-from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
+from ..validators import ACIPolicyNameValidator
+from .base import ACIBaseModel
 
 
-class ACIVRF(NetBoxModel):
+class ACIVRF(ACIBaseModel):
     """NetBox model for ACI VRF."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_tenant = models.ForeignKey(
         to=ACITenant,
         on_delete=models.PROTECT,
         related_name="aci_vrfs",
         verbose_name=_("ACI Tenant"),
-    )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_vrfs",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
     )
     nb_vrf = models.ForeignKey(
         to="ipam.VRF",
@@ -145,10 +110,6 @@ class ACIVRF(NetBoxModel):
             "Default is disabled."
         ),
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
     # Generic relations
     aci_contract_relations = GenericRelation(
@@ -158,10 +119,8 @@ class ACIVRF(NetBoxModel):
         related_query_name="aci_vrf",
     )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_tenant",
-        "nb_tenant",
         "nb_vrf",
         "bd_enforcement_enabled",
         "dns_labels",
@@ -191,10 +150,6 @@ class ACIVRF(NetBoxModel):
         else:
             return self.name
 
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse("plugins:netbox_aci_plugin:acivrf", args=[self.pk])
-
     def get_pc_enforcement_direction_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return VRFPCEnforcementDirectionChoices.colors.get(
@@ -208,35 +163,9 @@ class ACIVRF(NetBoxModel):
         )
 
 
-class ACIBridgeDomain(NetBoxModel):
+class ACIBridgeDomain(ACIBaseModel):
     """NetBox model for ACI Bridge Domain."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_tenant = models.ForeignKey(
         to=ACITenant,
         on_delete=models.PROTECT,
@@ -248,14 +177,6 @@ class ACIBridgeDomain(NetBoxModel):
         on_delete=models.PROTECT,
         related_name="aci_bridge_domains",
         verbose_name=_("ACI VRF"),
-    )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_bridge_domains",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
     )
     advertise_host_routes_enabled = models.BooleanField(
         verbose_name=_("advertise host routes enabled"),
@@ -436,16 +357,10 @@ class ACIBridgeDomain(NetBoxModel):
             "multiple sites. Default is ''."
         ),
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_tenant",
         "aci_vrf",
-        "nb_tenant",
         "advertise_host_routes_enabled",
         "arp_flooding_enabled",
         "clear_remote_mac_enabled",
@@ -523,12 +438,6 @@ class ACIBridgeDomain(NetBoxModel):
 
         super().save(*args, **kwargs)
 
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:acibridgedomain", args=[self.pk]
-        )
-
     def get_multi_destination_flooding_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return BDMultiDestinationFloodingChoices.colors.get(
@@ -552,35 +461,9 @@ class ACIBridgeDomain(NetBoxModel):
         return BDUnknownUnicastChoices.colors.get(self.unknown_unicast)
 
 
-class ACIBridgeDomainSubnet(NetBoxModel):
+class ACIBridgeDomainSubnet(ACIBaseModel):
     """NetBox model for ACI Bridge Domain Subnet."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_bridge_domain = models.ForeignKey(
         to=ACIBridgeDomain,
         on_delete=models.CASCADE,
@@ -592,14 +475,6 @@ class ACIBridgeDomainSubnet(NetBoxModel):
         on_delete=models.CASCADE,
         related_name="aci_bridge_domain_subnet",
         verbose_name=_("gateway IP address"),
-    )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_bridge_domain_subnets",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
     )
     advertised_externally_enabled = models.BooleanField(
         verbose_name=_("advertised externally enabled"),
@@ -677,15 +552,9 @@ class ACIBridgeDomainSubnet(NetBoxModel):
             "Treat the gateway IP as virtual IP. Default is disabled."
         ),
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_bridge_domain",
-        "nb_tenant",
         "advertised_externally_enabled",
         "igmp_querier_enabled",
         "ip_data_plane_learning_enabled",
@@ -720,10 +589,6 @@ class ACIBridgeDomainSubnet(NetBoxModel):
         ordering: tuple = ("aci_bridge_domain", "name")
         verbose_name: str = _("ACI Bridge Domain Subnet")
 
-    def __str__(self) -> str:
-        """Return string representation of the instance."""
-        return self.name
-
     @property
     def aci_tenant(self) -> ACITenant:
         """Return the ACITenant instance of the related ACIBridgeDomain."""
@@ -733,9 +598,3 @@ class ACIBridgeDomainSubnet(NetBoxModel):
     def aci_vrf(self) -> ACIVRF:
         """Return the ACIVRF instance of the related ACIBridgeDomain."""
         return self.aci_bridge_domain.aci_vrf
-
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:acibridgedomainsubnet", args=[self.pk]
-        )

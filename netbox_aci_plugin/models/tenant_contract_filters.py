@@ -4,11 +4,8 @@
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxLengthValidator
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from netbox.models import NetBoxModel
 from tenancy.models import Tenant
 
 from ..choices import (
@@ -23,12 +20,11 @@ from ..choices import (
 )
 from ..models.tenants import ACITenant
 from ..validators import (
-    ACIPolicyDescriptionValidator,
-    ACIPolicyNameValidator,
     validate_contract_filter_ip_protocol,
     validate_contract_filter_port,
     validate_contract_filter_tcp_rules,
 )
+from .base import ACIBaseModel
 
 
 def default_contract_filter_entry_tcp_rules() -> list[str]:
@@ -38,59 +34,17 @@ def default_contract_filter_entry_tcp_rules() -> list[str]:
     ]
 
 
-class ACIContractFilter(NetBoxModel):
+class ACIContractFilter(ACIBaseModel):
     """NetBox model for ACI Contract Filter."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_tenant = models.ForeignKey(
         to=ACITenant,
         on_delete=models.PROTECT,
         related_name="aci_contract_filters",
         verbose_name=_("ACI Tenant"),
     )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_contract_filters",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
-    )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
-        "aci_tenant",
-        "nb_tenant",
-    )
+    clone_fields: tuple = ACIBaseModel.clone_fields + ("aci_tenant",)
     prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
 
     class Meta:
@@ -110,42 +64,10 @@ class ACIContractFilter(NetBoxModel):
         else:
             return self.name
 
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:acicontractfilter", args=[self.pk]
-        )
 
-
-class ACIContractFilterEntry(NetBoxModel):
+class ACIContractFilterEntry(ACIBaseModel):
     """NetBox model for ACI Contract Filter Entry."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_contract_filter = models.ForeignKey(
         to=ACIContractFilter,
         on_delete=models.CASCADE,
@@ -281,13 +203,8 @@ class ACIContractFilterEntry(NetBoxModel):
         ),
         validators=[validate_contract_filter_tcp_rules],
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_contract_filter",
         "arp_opc",
         "destination_from_port",
@@ -479,12 +396,6 @@ class ACIContractFilterEntry(NetBoxModel):
     def nb_tenant(self) -> Tenant:
         """Return the NetBox Tenant instance of related ACIContractFilter."""
         return self.aci_contract_filter.nb_tenant
-
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:acicontractfilterentry", args=[self.pk]
-        )
 
     def get_destination_from_port_display(self) -> str:
         """Return the associated string representation from the ChoiceSet."""
