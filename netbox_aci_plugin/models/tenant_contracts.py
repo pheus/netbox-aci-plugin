@@ -93,6 +93,11 @@ class ACIContract(ACIBaseModel):
         else:
             return self.name
 
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_tenant
+
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return QualityOfServiceClassChoices.colors.get(self.qos_class)
@@ -207,6 +212,11 @@ class ACIContractRelation(NetBoxModel):
     def aci_object_tenant(self) -> ACITenant:
         """Return the ACITenant instance of the related ACI object."""
         return self.aci_object.aci_tenant
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_contract
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
@@ -434,6 +444,11 @@ class ACIContractSubject(ACIBaseModel):
         """Return the ACITenant instance of related ACIContract."""
         return self.aci_contract.aci_tenant
 
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_contract
+
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return QualityOfServiceClassChoices.colors.get(self.qos_class)
@@ -563,6 +578,11 @@ class ACIContractSubjectFilter(NetBoxModel):
     def aci_contract_subject_tenant(self) -> ACITenant:
         """Return the ACITenant instance of related ACIContractSubject."""
         return self.aci_contract_subject.aci_tenant
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_contract_subject
 
     def get_absolute_url(self) -> str:
         """Return the absolute URL of the instance."""

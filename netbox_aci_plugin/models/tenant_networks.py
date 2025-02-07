@@ -150,6 +150,11 @@ class ACIVRF(ACIBaseModel):
         else:
             return self.name
 
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_tenant
+
     def get_pc_enforcement_direction_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return VRFPCEnforcementDirectionChoices.colors.get(
@@ -438,6 +443,11 @@ class ACIBridgeDomain(ACIBaseModel):
 
         super().save(*args, **kwargs)
 
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_tenant
+
     def get_multi_destination_flooding_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return BDMultiDestinationFloodingChoices.colors.get(
@@ -598,3 +608,8 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
     def aci_vrf(self) -> ACIVRF:
         """Return the ACIVRF instance of the related ACIBridgeDomain."""
         return self.aci_bridge_domain.aci_vrf
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_bridge_domain

@@ -64,6 +64,11 @@ class ACIContractFilter(ACIBaseModel):
         else:
             return self.name
 
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_tenant
+
 
 class ACIContractFilterEntry(ACIBaseModel):
     """NetBox model for ACI Contract Filter Entry."""
@@ -396,6 +401,11 @@ class ACIContractFilterEntry(ACIBaseModel):
     def nb_tenant(self) -> Tenant:
         """Return the NetBox Tenant instance of related ACIContractFilter."""
         return self.aci_contract_filter.nb_tenant
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_contract_filter
 
     def get_destination_from_port_display(self) -> str:
         """Return the associated string representation from the ChoiceSet."""

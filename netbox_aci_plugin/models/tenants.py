@@ -20,3 +20,7 @@ class ACITenant(ACIBaseModel):
         ]
         ordering: tuple = ("name",)
         verbose_name: str = _("ACI Tenant")
+
+    def parent_object(self) -> ACIBaseModel | None:
+        """Return the parent object of the instance."""
+        return None

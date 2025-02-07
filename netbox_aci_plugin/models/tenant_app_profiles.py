@@ -38,6 +38,11 @@ class ACIAppProfile(ACIBaseModel):
         ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Application Profile")
 
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_tenant
+
 
 class ACIEndpointGroup(ACIBaseModel):
     """NetBox model for ACI Endpoint Groups (EPG)."""
@@ -198,6 +203,11 @@ class ACIEndpointGroup(ACIBaseModel):
     def aci_vrf(self) -> ACIVRF:
         """Return the ACIVRF instance of the related ACIBridgeDomain."""
         return self.aci_bridge_domain.aci_vrf
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_app_profile
 
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""

@@ -72,3 +72,8 @@ class ACIBaseModel(NetBoxModel):
             f"plugins:{self._meta.app_label}:{self._meta.model_name}",
             args=[self.pk],
         )
+
+    @property
+    def parent_object(self) -> NetBoxModel | None:
+        """Return the parent object of the instance."""
+        return NotImplemented
