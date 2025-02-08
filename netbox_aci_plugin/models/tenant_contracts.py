@@ -125,14 +125,14 @@ class ACIContractRelation(NetBoxModel):
         blank=True,
         null=True,
     )
-    aci_object_id = models.PositiveIntegerField(
+    aci_object_id = models.PositiveBigIntegerField(
         verbose_name=_("ACI object ID"),
         blank=True,
         null=True,
     )
     aci_object = GenericForeignKey(
-        "aci_object_type",
-        "aci_object_id",
+        ct_field="aci_object_type",
+        fk_field="aci_object_id",
     )
     role = models.CharField(
         verbose_name=_("role"),
