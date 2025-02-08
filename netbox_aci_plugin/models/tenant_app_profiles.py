@@ -32,7 +32,7 @@ class ACIAppProfile(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_tenant", "name"),
-                name="unique_aci_app_profile_name_per_aci_tenant",
+                name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
         ordering: tuple = ("aci_tenant", "name")
@@ -150,7 +150,7 @@ class ACIEndpointGroup(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_app_profile", "name"),
-                name="unique_endpoint_group_name_per_aci_app_profile",
+                name="%(app_label)s_%(class)s_unique_per_aci_app_profile",
             ),
         ]
         ordering: tuple = ("aci_app_profile", "name")

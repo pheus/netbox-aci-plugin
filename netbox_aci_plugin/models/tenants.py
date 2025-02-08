@@ -15,7 +15,7 @@ class ACITenant(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("name",),
-                name="unique_aci_tenant_name",
+                name="%(app_label)s_%(class)s_unique_name",
             ),
         ]
         ordering: tuple = ("name",)

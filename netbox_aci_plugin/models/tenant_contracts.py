@@ -80,7 +80,7 @@ class ACIContract(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_tenant", "name"),
-                name="unique_aci_contract_name_per_aci_tenant",
+                name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
         ordering: tuple = ("aci_tenant", "name")
@@ -185,7 +185,7 @@ class ACIContractRelation(NetBoxModel):
                     "aci_object_id",
                     "role",
                 ),
-                name="unique_aci_object_relation_role_per_aci_contract",
+                name="%(app_label)s_%(class)s_unique_per_aci_contract_role",
             ),
         ]
         indexes: tuple = (
@@ -426,7 +426,7 @@ class ACIContractSubject(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_contract", "name"),
-                name="unique_aci_contract_subject_name_per_aci_contract",
+                name="%(app_label)s_%(class)s_unique_per_aci_contract",
             ),
         ]
         ordering: tuple = ("aci_contract", "name")
@@ -552,7 +552,7 @@ class ACIContractSubjectFilter(NetBoxModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_contract_subject", "aci_contract_filter"),
-                name="unique_aci_contract_filter_per_aci_contract_subject",
+                name="%(app_label)s_%(class)s_unique_per_aci_contract_subject",
             ),
         ]
         ordering: tuple = ("aci_contract_subject", "aci_contract_filter")

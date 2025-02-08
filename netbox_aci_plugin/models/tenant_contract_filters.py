@@ -50,7 +50,7 @@ class ACIContractFilter(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_tenant", "name"),
-                name="unique_aci_contract_filter_name_per_aci_tenant",
+                name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
         ordering: tuple = ("aci_tenant", "name")
@@ -230,7 +230,7 @@ class ACIContractFilterEntry(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_contract_filter", "name"),
-                name="unique_aci_filter_entry_name_per_aci_contract_filter",
+                name="%(app_label)s_%(class)s_unique_per_aci_contract_filter",
             ),
         ]
         ordering: tuple = ("aci_contract_filter", "name")

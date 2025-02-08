@@ -137,7 +137,7 @@ class ACIVRF(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_tenant", "name"),
-                name="unique_aci_vrf_name_per_aci_tenant",
+                name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
         ordering: tuple = ("aci_tenant", "name")
@@ -396,7 +396,7 @@ class ACIBridgeDomain(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_tenant", "name"),
-                name="unique_aci_bridge_domain_name_per_aci_tenant",
+                name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
         ordering: tuple = ("aci_tenant", "aci_vrf", "name")
@@ -580,11 +580,11 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_bridge_domain", "name"),
-                name="unique_aci_bd_subnet_name_per_aci_bridge_domain",
+                name="%(app_label)s_%(class)s_unique_per_aci_bridge_domain",
             ),
             models.UniqueConstraint(
                 fields=("aci_bridge_domain", "gateway_ip_address"),
-                name="unique_aci_bd_subnet_gateway_ip_per_aci_bridge_domain",
+                name="%(app_label)s_%(class)s_unique_per_gateway_ip_address",
             ),
             models.UniqueConstraint(
                 fields=("aci_bridge_domain",),
