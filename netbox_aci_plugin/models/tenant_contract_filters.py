@@ -6,7 +6,6 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from tenancy.models import Tenant
 
 from ..choices import (
     ContractFilterARPOpenPeripheralCodesChoices,
@@ -396,11 +395,6 @@ class ACIContractFilterEntry(ACIBaseModel):
     def aci_tenant(self) -> ACITenant:
         """Return the ACITenant instance of related ACIContractFilter."""
         return self.aci_contract_filter.aci_tenant
-
-    @property
-    def nb_tenant(self) -> Tenant:
-        """Return the NetBox Tenant instance of related ACIContractFilter."""
-        return self.aci_contract_filter.nb_tenant
 
     @property
     def parent_object(self) -> ACIBaseModel:
