@@ -161,6 +161,10 @@ class ACIContractFilterEntryType(NetBoxObjectType):
         "ACIContractFilterType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
 
 
 @strawberry_django.type(
