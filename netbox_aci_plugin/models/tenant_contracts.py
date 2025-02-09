@@ -23,51 +23,18 @@ from ..choices import (
 from ..constants import CONTRACT_RELATION_OBJECT_TYPES
 from ..models.tenant_contract_filters import ACIContractFilter
 from ..models.tenants import ACITenant
-from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
+from ..validators import ACIPolicyNameValidator
+from .base import ACIBaseModel
 
 
-class ACIContract(NetBoxModel):
+class ACIContract(ACIBaseModel):
     """NetBox model for ACI Contract."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_tenant = models.ForeignKey(
         to=ACITenant,
         on_delete=models.PROTECT,
         related_name="aci_contracts",
         verbose_name=_("ACI Tenant"),
-    )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_contracts",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
     )
     qos_class = models.CharField(
         verbose_name=_("QoS class"),
@@ -100,15 +67,9 @@ class ACIContract(NetBoxModel):
             "value. Default is 'unspecified'."
         ),
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_tenant",
-        "nb_tenant",
         "qos_class",
         "scope",
         "target_dscp",
@@ -119,7 +80,7 @@ class ACIContract(NetBoxModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_tenant", "name"),
-                name="unique_aci_contract_name_per_aci_tenant",
+                name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
         ordering: tuple = ("aci_tenant", "name")
@@ -132,9 +93,10 @@ class ACIContract(NetBoxModel):
         else:
             return self.name
 
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse("plugins:netbox_aci_plugin:acicontract", args=[self.pk])
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_tenant
 
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
@@ -163,14 +125,14 @@ class ACIContractRelation(NetBoxModel):
         blank=True,
         null=True,
     )
-    aci_object_id = models.PositiveIntegerField(
+    aci_object_id = models.PositiveBigIntegerField(
         verbose_name=_("ACI object ID"),
         blank=True,
         null=True,
     )
     aci_object = GenericForeignKey(
-        "aci_object_type",
-        "aci_object_id",
+        ct_field="aci_object_type",
+        fk_field="aci_object_id",
     )
     role = models.CharField(
         verbose_name=_("role"),
@@ -223,7 +185,7 @@ class ACIContractRelation(NetBoxModel):
                     "aci_object_id",
                     "role",
                 ),
-                name="unique_aci_object_relation_role_per_aci_contract",
+                name="%(app_label)s_%(class)s_unique_per_aci_contract_role",
             ),
         ]
         indexes: tuple = (
@@ -250,6 +212,11 @@ class ACIContractRelation(NetBoxModel):
     def aci_object_tenant(self) -> ACITenant:
         """Return the ACITenant instance of the related ACI object."""
         return self.aci_object.aci_tenant
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_contract
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
@@ -309,48 +276,14 @@ class ACIContractRelation(NetBoxModel):
         return ContractRelationRoleChoices.colors.get(self.role)
 
 
-class ACIContractSubject(NetBoxModel):
+class ACIContractSubject(ACIBaseModel):
     """NetBox model for ACI Contract Subject."""
 
-    name = models.CharField(
-        verbose_name=_("name"),
-        max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    name_alias = models.CharField(
-        verbose_name=_("name alias"),
-        max_length=64,
-        blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
-    )
-    description = models.CharField(
-        verbose_name=_("description"),
-        max_length=128,
-        blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
-    )
     aci_contract = models.ForeignKey(
         to=ACIContract,
         on_delete=models.CASCADE,
         related_name="aci_contract_subjects",
         verbose_name=_("ACI Contract"),
-    )
-    nb_tenant = models.ForeignKey(
-        to="tenancy.Tenant",
-        on_delete=models.SET_NULL,
-        related_name="aci_contract_subjects",
-        verbose_name=_("NetBox tenant"),
-        blank=True,
-        null=True,
     )
     apply_both_directions_enabled = models.BooleanField(
         verbose_name=_("apply both directions enabled"),
@@ -472,15 +405,9 @@ class ACIContractSubject(NetBoxModel):
             "Default is 'unspecified'."
         ),
     )
-    comments = models.TextField(
-        verbose_name=_("comments"),
-        blank=True,
-    )
 
-    clone_fields: tuple = (
-        "description",
+    clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_contract",
-        "nb_tenant",
         "apply_both_directions_enabled",
         "qos_class",
         "qos_class_cons_to_prov",
@@ -499,7 +426,7 @@ class ACIContractSubject(NetBoxModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_contract", "name"),
-                name="unique_aci_contract_subject_name_per_aci_contract",
+                name="%(app_label)s_%(class)s_unique_per_aci_contract",
             ),
         ]
         ordering: tuple = ("aci_contract", "name")
@@ -517,12 +444,10 @@ class ACIContractSubject(NetBoxModel):
         """Return the ACITenant instance of related ACIContract."""
         return self.aci_contract.aci_tenant
 
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:acicontractsubject",
-            args=[self.pk],
-        )
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_contract
 
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
@@ -627,7 +552,7 @@ class ACIContractSubjectFilter(NetBoxModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_contract_subject", "aci_contract_filter"),
-                name="unique_aci_contract_filter_per_aci_contract_subject",
+                name="%(app_label)s_%(class)s_unique_per_aci_contract_subject",
             ),
         ]
         ordering: tuple = ("aci_contract_subject", "aci_contract_filter")
@@ -653,6 +578,11 @@ class ACIContractSubjectFilter(NetBoxModel):
     def aci_contract_subject_tenant(self) -> ACITenant:
         """Return the ACITenant instance of related ACIContractSubject."""
         return self.aci_contract_subject.aci_tenant
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_contract_subject
 
     def get_absolute_url(self) -> str:
         """Return the absolute URL of the instance."""
