@@ -21,8 +21,7 @@ Documentation: https://pheus.github.io/netbox-aci-plugin/
 
 | NetBox Version | Plugin Version |
 |:--------------:|:--------------:|
-|     4.1.5      |     0.0.10     |
-|      4.2       |     0.0.10     |
+|      4.2       |     0.0.11     |
 
 ## Installing
 

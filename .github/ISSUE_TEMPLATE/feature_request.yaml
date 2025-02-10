@@ -1,5 +1,6 @@
 ---
 name: ✨ Feature Request
+type: Feature
 description: Propose a new NetBox ACI Plugin feature or enhancement
 labels: ["type: feature"]
 body:
@@ -16,14 +17,14 @@ body:
     attributes:
       label: NetBox ACI Plugin version
       description: What version of NetBox ACI Plugin are you currently running?
-      placeholder: v0.0.10
+      placeholder: v0.0.11
     validations:
       required: true
   - type: input
     attributes:
       label: NetBox version
       description: What version of NetBox are you currently running?
-      placeholder: v4.2.1
+      placeholder: v4.2.3
     validations:
       required: true
   - type: dropdown

@@ -1,5 +1,6 @@
 ---
 name: 🐛 Bug Report
+type: Bug
 description: >
   Report a reproducible bug in the current release of NetBox ACI Plugin
 labels: ["type: bug"]
@@ -13,14 +14,14 @@ body:
     attributes:
       label: NetBox ACI Plugin version
       description: What version of NetBox ACI Plugin are you currently running?
-      placeholder: v0.0.10
+      placeholder: v0.0.11
     validations:
       required: true
   - type: input
     attributes:
       label: NetBox version
       description: What version of NetBox are you currently running?
-      placeholder: v4.2.1
+      placeholder: v4.2.3
     validations:
       required: true
   - type: dropdown

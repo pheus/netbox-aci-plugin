@@ -6,7 +6,7 @@
 
 ---
 
-## 0.0.11 (unreleased)
+## 0.0.11 (2025-02-10)
 
 ### Breaking Changes
 
@@ -21,11 +21,15 @@
 * Utilize `GetRelatedModelsMixin` for managing related models in
   `ACITenantView`
 * Reorganizes the ACI menu into distinct groups for better clarity:
-  Tenants, Application Profiles, Networking, and Contracts.
+  Tenants, Application Profiles, Networking and Contracts.
+* Extracts common fields and methods into a new `ACIBaseModel` to reduce
+  duplicate code across ACI-related models
+* Enhance GraphQL queries by adding support for related ACI objects
 
 ### Bug Fixes
 
 * Rename the search index for ACI Contract Relation
+* Fix `aci_object_id` field type supporting larger ID values
 
 ## 0.0.10 (2025-01-12)
 
