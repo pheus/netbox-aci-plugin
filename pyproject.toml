@@ -28,13 +28,18 @@ classifiers=[
 requires-python = ">=3.10.0"
 
 [project.optional-dependencies]
+docs = [
+    "mkdocs==1.6.1",
+    "mkdocs-material==9.5.49",
+    "mkdocs-include-markdown-plugin==7.1.2",
+]
 test = [
     "check-manifest==0.50",
-    "isort",
-    "pre-commit==4.0.1",
+    "isort==6.0.0",
+    "pre-commit==4.1.0",
     "pytest==8.3.4",
-    "ruff==0.9.3",
-    "yamllint",
+    "ruff==0.9.6",
+    "yamllint==1.35.1",
 ]
 
 [project.urls]
