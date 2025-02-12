@@ -220,17 +220,32 @@ class ACIContractRelation(NetBoxModel):
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
+
+        # Validate ACI object assignment before validation of any other fields
+        if self.aci_object_type and not self.aci_object:
+            aci_model_class = self.aci_object_type.model_class()
+            raise ValidationError(
+                {
+                    "aci_object": _(
+                        "The {aci_object} field is required, if an ACI Object "
+                        "Type is selected.".format(
+                            aci_object=aci_model_class._meta.verbose_name
+                        )
+                    )
+                }
+            )
+        if self.aci_object and not self.aci_object_type:
+            raise ValidationError(
+                {
+                    "aci_object_type": _(
+                        "An ACI Object Type is required, if an ACI Object is "
+                        "provided."
+                    )
+                }
+            )
+
         super().clean()
 
-        # Validate ACI object assignment
-        if self.aci_object_type and not self.aci_object_id:
-            raise ValidationError(
-                _("Cannot set aci_object_type without aci_object_id.")
-            )
-        if self.aci_object_id and not self.aci_object_type:
-            raise ValidationError(
-                _("Cannot set aci_object_id without aci_object_type.")
-            )
         # Validate the assigned ACI Contract and ACI Object shares the same
         # ACI Tenant
         if self.aci_contract.aci_tenant != self.aci_object.aci_tenant:
