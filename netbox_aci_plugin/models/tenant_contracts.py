@@ -25,6 +25,7 @@ from ..models.tenant_contract_filters import ACIContractFilter
 from ..models.tenants import ACITenant
 from ..validators import ACIPolicyNameValidator
 from .base import ACIBaseModel
+from .mixins import UniqueGenericForeignKeyMixin
 
 
 class ACIContract(ACIBaseModel):
@@ -107,7 +108,7 @@ class ACIContract(ACIBaseModel):
         return ContractScopeChoices.colors.get(self.scope)
 
 
-class ACIContractRelation(NetBoxModel):
+class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
     """NetBox model for ACI Contract Relation to ACI objects."""
 
     aci_contract = models.ForeignKey(
@@ -175,6 +176,13 @@ class ACIContractRelation(NetBoxModel):
         "role",
     )
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIContract",)
+
+    # Unique GenericForeignKey validation
+    generic_fk_field = "aci_object"
+    generic_unique_fields = (
+        "aci_contract",
+        "role",
+    )
 
     class Meta:
         constraints: list[models.UniqueConstraint] = [
@@ -255,6 +263,9 @@ class ACIContractRelation(NetBoxModel):
                     "ACI Tenant."
                 )
             )
+
+        # Perform the mixin's unique constraint validation
+        self._validate_generic_uniqueness()
 
     def save(self, *args, **kwargs) -> None:
         """Saves the current instance to the database."""
