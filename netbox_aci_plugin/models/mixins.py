@@ -4,7 +4,7 @@
 
 from django.core.exceptions import FieldDoesNotExist
 from django.core.validators import ValidationError
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 
 
 class UniqueGenericForeignKeyMixin:
