@@ -24,7 +24,7 @@ from ..models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..tables.tenant_contract_filters import (
+from ..tables.tenant.contract_filters import (
     ACIContractFilterEntryReducedTable,
     ACIContractFilterEntryTable,
     ACIContractFilterTable,

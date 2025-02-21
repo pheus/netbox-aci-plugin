@@ -36,7 +36,7 @@ from ..models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ..tables.tenant_contracts import (
+from ..tables.tenant.contracts import (
     ACIContractRelationTable,
     ACIContractSubjectFilterReducedTable,
     ACIContractSubjectFilterTable,

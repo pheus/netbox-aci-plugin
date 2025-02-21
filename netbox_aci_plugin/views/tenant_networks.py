@@ -31,7 +31,7 @@ from ..models.tenant.networks import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from ..tables.tenant_networks import (
+from ..tables.tenant.networks import (
     ACIBridgeDomainSubnetReducedTable,
     ACIBridgeDomainSubnetTable,
     ACIBridgeDomainTable,

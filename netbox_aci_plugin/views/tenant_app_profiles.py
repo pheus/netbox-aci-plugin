@@ -22,7 +22,7 @@ from ..forms.tenant_app_profiles import (
     ACIEndpointGroupImportForm,
 )
 from ..models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
-from ..tables.tenant_app_profiles import (
+from ..tables.tenant.app_profiles import (
     ACIAppProfileTable,
     ACIEndpointGroupTable,
 )

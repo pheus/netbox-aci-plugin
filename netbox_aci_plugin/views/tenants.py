@@ -15,7 +15,7 @@ from ..forms.tenants import (
 )
 from ..models.tenant.app_profiles import ACIEndpointGroup
 from ..models.tenant.tenants import ACITenant
-from ..tables.tenants import ACITenantTable
+from ..tables.tenant.tenants import ACITenantTable
 from .tenant_app_profiles import (
     ACIAppProfileChildrenView,
     ACIEndpointGroupChildrenView,
