@@ -34,11 +34,11 @@ from ..choices import (
     QualityOfServiceDSCPChoices,
     add_custom_choice,
 )
-from ..models.tenant_contract_filters import (
+from ..models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenants import ACITenant
+from ..models.tenant.tenants import ACITenant
 from ..validators import (
     validate_contract_filter_ip_protocol,
     validate_contract_filter_port,

@@ -10,16 +10,16 @@ from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ..choices import (
+from ...choices import (
     BDMultiDestinationFloodingChoices,
     BDUnknownMulticastChoices,
     BDUnknownUnicastChoices,
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ..models.tenants import ACITenant
-from ..validators import ACIPolicyNameValidator
-from .base import ACIBaseModel
+from ...validators import ACIPolicyNameValidator
+from ..base import ACIBaseModel
+from .tenants import ACITenant
 
 
 class ACIVRF(ACIBaseModel):

@@ -21,11 +21,11 @@ from ..choices import (
     QualityOfServiceDSCPChoices,
     add_custom_choice,
 )
-from ..models.tenant_contract_filters import (
+from ..models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenants import ACITenant
+from ..models.tenant.tenants import ACITenant
 
 
 class ACIContractFilterFilterSet(NetBoxModelFilterSet):

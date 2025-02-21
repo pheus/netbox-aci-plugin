@@ -24,23 +24,23 @@ from ..filtersets.tenant_networks import (
     ACIVRFFilterSet,
 )
 from ..filtersets.tenants import ACITenantFilterSet
-from ..models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
-from ..models.tenant_contract_filters import (
+from ..models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from ..models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenant_contracts import (
+from ..models.tenant.contracts import (
     ACIContract,
     ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ..models.tenant_networks import (
+from ..models.tenant.networks import (
     ACIVRF,
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from ..models.tenants import ACITenant
+from ..models.tenant.tenants import ACITenant
 from .serializers import (
     ACIAppProfileSerializer,
     ACIBridgeDomainSerializer,

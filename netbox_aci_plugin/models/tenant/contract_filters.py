@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ..choices import (
+from ...choices import (
     ContractFilterARPOpenPeripheralCodesChoices,
     ContractFilterEtherTypeChoices,
     ContractFilterICMPv4TypesChoices,
@@ -17,13 +17,13 @@ from ..choices import (
     ContractFilterTCPRulesChoices,
     QualityOfServiceDSCPChoices,
 )
-from ..models.tenants import ACITenant
-from ..validators import (
+from ...validators import (
     validate_contract_filter_ip_protocol,
     validate_contract_filter_port,
     validate_contract_filter_tcp_rules,
 )
-from .base import ACIBaseModel
+from ..base import ACIBaseModel
+from .tenants import ACITenant
 
 
 def default_contract_filter_entry_tcp_rules() -> list[str]:

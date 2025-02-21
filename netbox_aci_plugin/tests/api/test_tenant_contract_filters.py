@@ -6,11 +6,11 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ...api.urls import app_name
-from ...models.tenant_contract_filters import (
+from ...models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ...models.tenants import ACITenant
+from ...models.tenant.tenants import ACITenant
 
 
 class ACIContractFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):

@@ -26,7 +26,7 @@ from ..forms.tenant_networks import (
     ACIVRFFilterForm,
     ACIVRFImportForm,
 )
-from ..models.tenant_networks import (
+from ..models.tenant.networks import (
     ACIVRF,
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,

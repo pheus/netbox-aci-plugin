@@ -20,7 +20,7 @@ from utilities.forms.fields import (
 )
 from utilities.forms.rendering import FieldSet
 
-from ..models.tenants import ACITenant
+from ..models.tenant.tenants import ACITenant
 
 
 class ACITenantEditForm(NetBoxModelForm):

@@ -8,11 +8,11 @@ from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ..choices import QualityOfServiceClassChoices
-from ..models.tenant_networks import ACIVRF, ACIBridgeDomain
-from ..models.tenants import ACITenant
-from ..validators import ACIPolicyNameValidator
-from .base import ACIBaseModel
+from ...choices import QualityOfServiceClassChoices
+from ...validators import ACIPolicyNameValidator
+from ..base import ACIBaseModel
+from .networks import ACIVRF, ACIBridgeDomain
+from .tenants import ACITenant
 
 
 class ACIAppProfile(ACIBaseModel):

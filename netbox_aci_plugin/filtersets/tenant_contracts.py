@@ -20,16 +20,16 @@ from ..choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ..models.tenant_app_profiles import ACIEndpointGroup
-from ..models.tenant_contract_filters import ACIContractFilter
-from ..models.tenant_contracts import (
+from ..models.tenant.app_profiles import ACIEndpointGroup
+from ..models.tenant.contract_filters import ACIContractFilter
+from ..models.tenant.contracts import (
     ACIContract,
     ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ..models.tenant_networks import ACIVRF
-from ..models.tenants import ACITenant
+from ..models.tenant.networks import ACIVRF
+from ..models.tenant.tenants import ACITenant
 
 
 class ACIContractFilterSet(NetBoxModelFilterSet):

@@ -5,7 +5,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .base import ACIBaseModel
+from ..base import ACIBaseModel
 
 
 class ACITenant(ACIBaseModel):

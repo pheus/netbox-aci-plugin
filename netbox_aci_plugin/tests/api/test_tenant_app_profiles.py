@@ -7,9 +7,9 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ...api.urls import app_name
-from ...models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
-from ...models.tenant_networks import ACIVRF, ACIBridgeDomain
-from ...models.tenants import ACITenant
+from ...models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from ...models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ...models.tenant.tenants import ACITenant
 
 
 class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):

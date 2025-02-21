@@ -30,7 +30,7 @@ from ..forms.tenant_contracts import (
     ACIContractSubjectFilterImportForm,
     ACIContractSubjectImportForm,
 )
-from ..models.tenant_contracts import (
+from ..models.tenant.contracts import (
     ACIContract,
     ACIContractRelation,
     ACIContractSubject,

@@ -13,8 +13,8 @@ from ..forms.tenants import (
     ACITenantFilterForm,
     ACITenantImportForm,
 )
-from ..models.tenant_app_profiles import ACIEndpointGroup
-from ..models.tenants import ACITenant
+from ..models.tenant.app_profiles import ACIEndpointGroup
+from ..models.tenant.tenants import ACITenant
 from ..tables.tenants import ACITenantTable
 from .tenant_app_profiles import (
     ACIAppProfileChildrenView,

@@ -15,12 +15,12 @@ from ...choices import (
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ...models.tenant_networks import (
+from ...models.tenant.networks import (
     ACIVRF,
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from ...models.tenants import ACITenant
+from ...models.tenant.tenants import ACITenant
 
 
 class ACIVRFTestCase(TestCase):

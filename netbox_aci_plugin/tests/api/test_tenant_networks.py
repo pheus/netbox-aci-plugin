@@ -7,12 +7,12 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ...api.urls import app_name
-from ...models.tenant_networks import (
+from ...models.tenant.networks import (
     ACIVRF,
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from ...models.tenants import ACITenant
+from ...models.tenant.tenants import ACITenant
 
 
 class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):

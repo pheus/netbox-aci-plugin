@@ -1,13 +1,13 @@
-from .tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
-from .tenant_contract_filters import ACIContractFilter, ACIContractFilterEntry
-from .tenant_contracts import (
+from .tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from .tenant.contract_filters import ACIContractFilter, ACIContractFilterEntry
+from .tenant.contracts import (
     ACIContract,
     ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from .tenant_networks import ACIVRF, ACIBridgeDomain, ACIBridgeDomainSubnet
-from .tenants import ACITenant
+from .tenant.networks import ACIVRF, ACIBridgeDomain, ACIBridgeDomainSubnet
+from .tenant.tenants import ACITenant
 
 __all__ = (
     "ACIAppProfile",

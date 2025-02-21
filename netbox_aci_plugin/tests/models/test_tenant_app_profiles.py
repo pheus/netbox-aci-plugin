@@ -8,9 +8,9 @@ from django.test import TestCase
 from tenancy.models import Tenant
 
 from ...choices import QualityOfServiceClassChoices
-from ...models.tenant_app_profiles import ACIAppProfile, ACIEndpointGroup
-from ...models.tenant_networks import ACIVRF, ACIBridgeDomain
-from ...models.tenants import ACITenant
+from ...models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from ...models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ...models.tenant.tenants import ACITenant
 
 
 class ACIAppProfileTestCase(TestCase):

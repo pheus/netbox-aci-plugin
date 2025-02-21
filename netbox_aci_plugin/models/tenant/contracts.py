@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
 
-from ..choices import (
+from ...choices import (
     ContractRelationRoleChoices,
     ContractScopeChoices,
     ContractSubjectFilterActionChoices,
@@ -20,12 +20,12 @@ from ..choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ..constants import CONTRACT_RELATION_OBJECT_TYPES
-from ..models.tenant_contract_filters import ACIContractFilter
-from ..models.tenants import ACITenant
-from ..validators import ACIPolicyNameValidator
-from .base import ACIBaseModel
-from .mixins import UniqueGenericForeignKeyMixin
+from ...constants import CONTRACT_RELATION_OBJECT_TYPES
+from ...validators import ACIPolicyNameValidator
+from ..base import ACIBaseModel
+from ..mixins import UniqueGenericForeignKeyMixin
+from .contract_filters import ACIContractFilter
+from .tenants import ACITenant
 
 
 class ACIContract(ACIBaseModel):

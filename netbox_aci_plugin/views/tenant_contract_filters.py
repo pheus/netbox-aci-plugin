@@ -20,7 +20,7 @@ from ..forms.tenant_contract_filters import (
     ACIContractFilterFilterForm,
     ACIContractFilterImportForm,
 )
-from ..models.tenant_contract_filters import (
+from ..models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
