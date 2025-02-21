@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
 
-from ..models.tenant.tenants import ACITenant
+from ...models.tenant.tenants import ACITenant
 
 
 class ACITenantFilterSet(NetBoxModelFilterSet):

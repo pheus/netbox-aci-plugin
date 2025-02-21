@@ -4,26 +4,26 @@
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
-from ..filtersets.tenant_app_profiles import (
+from ..filtersets.tenant.app_profiles import (
     ACIAppProfileFilterSet,
     ACIEndpointGroupFilterSet,
 )
-from ..filtersets.tenant_contract_filters import (
+from ..filtersets.tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
 )
-from ..filtersets.tenant_contracts import (
+from ..filtersets.tenant.contracts import (
     ACIContractFilterSet,
     ACIContractRelationFilterSet,
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
-from ..filtersets.tenant_networks import (
+from ..filtersets.tenant.networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
     ACIVRFFilterSet,
 )
-from ..filtersets.tenants import ACITenantFilterSet
+from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
 from ..models.tenant.contract_filters import (
     ACIContractFilter,

@@ -11,7 +11,7 @@ from drf_spectacular.utils import extend_schema_field
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
 
-from ..choices import (
+from ...choices import (
     ContractFilterARPOpenPeripheralCodesChoices,
     ContractFilterEtherTypeChoices,
     ContractFilterICMPv4TypesChoices,
@@ -21,11 +21,11 @@ from ..choices import (
     QualityOfServiceDSCPChoices,
     add_custom_choice,
 )
-from ..models.tenant.contract_filters import (
+from ...models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenant.tenants import ACITenant
+from ...models.tenant.tenants import ACITenant
 
 
 class ACIContractFilterFilterSet(NetBoxModelFilterSet):

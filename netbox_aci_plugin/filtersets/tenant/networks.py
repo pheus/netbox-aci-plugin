@@ -13,19 +13,19 @@ from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
 from utilities.filters import MultiValueMACAddressFilter
 
-from ..choices import (
+from ...choices import (
     BDMultiDestinationFloodingChoices,
     BDUnknownMulticastChoices,
     BDUnknownUnicastChoices,
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ..models.tenant.networks import (
+from ...models.tenant.networks import (
     ACIVRF,
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from ..models.tenant.tenants import ACITenant
+from ...models.tenant.tenants import ACITenant
 
 
 class ACIVRFFilterSet(NetBoxModelFilterSet):

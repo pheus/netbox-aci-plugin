@@ -8,10 +8,10 @@ from django.utils.translation import gettext_lazy as _
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
 
-from ..choices import QualityOfServiceClassChoices
-from ..models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
-from ..models.tenant.networks import ACIVRF, ACIBridgeDomain
-from ..models.tenant.tenants import ACITenant
+from ...choices import QualityOfServiceClassChoices
+from ...models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from ...models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ...models.tenant.tenants import ACITenant
 
 
 class ACIAppProfileFilterSet(NetBoxModelFilterSet):

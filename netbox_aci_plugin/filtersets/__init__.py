@@ -1,23 +1,23 @@
-from .tenant_app_profiles import (
+from .tenant.app_profiles import (
     ACIAppProfileFilterSet,
     ACIEndpointGroupFilterSet,
 )
-from .tenant_contract_filters import (
+from .tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
 )
-from .tenant_contracts import (
+from .tenant.contracts import (
     ACIContractFilterSet,
     ACIContractRelationFilterSet,
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
-from .tenant_networks import (
+from .tenant.networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
     ACIVRFFilterSet,
 )
-from .tenants import ACITenantFilterSet
+from .tenant.tenants import ACITenantFilterSet
 
 __all__ = (
     "ACIAppProfileFilterSet",
