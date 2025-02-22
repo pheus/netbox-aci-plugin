@@ -6,22 +6,22 @@ from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
 
-from ..filtersets.tenant.tenants import ACITenantFilterSet
-from ..forms.tenant.tenants import (
+from ...filtersets.tenant.tenants import ACITenantFilterSet
+from ...forms.tenant.tenants import (
     ACITenantBulkEditForm,
     ACITenantEditForm,
     ACITenantFilterForm,
     ACITenantImportForm,
 )
-from ..models.tenant.app_profiles import ACIEndpointGroup
-from ..models.tenant.tenants import ACITenant
-from ..tables.tenant.tenants import ACITenantTable
-from .tenant_app_profiles import (
+from ...models.tenant.app_profiles import ACIEndpointGroup
+from ...models.tenant.tenants import ACITenant
+from ...tables.tenant.tenants import ACITenantTable
+from .app_profiles import (
     ACIAppProfileChildrenView,
     ACIEndpointGroupChildrenView,
 )
-from .tenant_contracts import ACIContractChildrenView
-from .tenant_networks import ACIBridgeDomainChildrenView, ACIVRFChildrenView
+from .contracts import ACIContractChildrenView
+from .networks import ACIBridgeDomainChildrenView, ACIVRFChildrenView
 
 #
 # Tenant views

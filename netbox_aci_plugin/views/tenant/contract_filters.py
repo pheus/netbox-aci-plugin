@@ -6,11 +6,11 @@ from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
-from ..filtersets.tenant.contract_filters import (
+from ...filtersets.tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
 )
-from ..forms.tenant.contract_filters import (
+from ...forms.tenant.contract_filters import (
     ACIContractFilterBulkEditForm,
     ACIContractFilterEditForm,
     ACIContractFilterEntryBulkEditForm,
@@ -20,11 +20,11 @@ from ..forms.tenant.contract_filters import (
     ACIContractFilterFilterForm,
     ACIContractFilterImportForm,
 )
-from ..models.tenant.contract_filters import (
+from ...models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..tables.tenant.contract_filters import (
+from ...tables.tenant.contract_filters import (
     ACIContractFilterEntryReducedTable,
     ACIContractFilterEntryTable,
     ACIContractFilterTable,

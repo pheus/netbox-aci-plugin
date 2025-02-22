@@ -1,4 +1,4 @@
-from .tenant_app_profiles import (
+from .tenant.app_profiles import (
     ACIAppProfileBulkDeleteView,
     ACIAppProfileBulkEditView,
     ACIAppProfileBulkImportView,
@@ -10,7 +10,7 @@ from .tenant_app_profiles import (
     ACIEndpointGroupEditView,
     ACIEndpointGroupListView,
 )
-from .tenant_contract_filters import (
+from .tenant.contract_filters import (
     ACIContractFilterBulkDeleteView,
     ACIContractFilterBulkEditView,
     ACIContractFilterBulkImportView,
@@ -22,7 +22,7 @@ from .tenant_contract_filters import (
     ACIContractFilterEntryListView,
     ACIContractFilterListView,
 )
-from .tenant_contracts import (
+from .tenant.contracts import (
     ACIContractBulkDeleteView,
     ACIContractBulkEditView,
     ACIContractBulkImportView,
@@ -44,7 +44,7 @@ from .tenant_contracts import (
     ACIContractSubjectFilterListView,
     ACIContractSubjectListView,
 )
-from .tenant_networks import (
+from .tenant.networks import (
     ACIBridgeDomainBulkDeleteView,
     ACIBridgeDomainBulkEditView,
     ACIBridgeDomainBulkImportView,
@@ -61,7 +61,7 @@ from .tenant_networks import (
     ACIVRFEditView,
     ACIVRFListView,
 )
-from .tenants import (
+from .tenant.tenants import (
     ACITenantBulkDeleteView,
     ACITenantBulkEditView,
     ACITenantBulkImportView,

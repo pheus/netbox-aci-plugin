@@ -6,13 +6,13 @@ from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
-from ..filtersets.tenant.contracts import (
+from ...filtersets.tenant.contracts import (
     ACIContractFilterSet,
     ACIContractRelationFilterSet,
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
-from ..forms.tenant.contracts import (
+from ...forms.tenant.contracts import (
     ACIContractBulkEditForm,
     ACIContractEditForm,
     ACIContractFilterForm,
@@ -30,13 +30,13 @@ from ..forms.tenant.contracts import (
     ACIContractSubjectFilterImportForm,
     ACIContractSubjectImportForm,
 )
-from ..models.tenant.contracts import (
+from ...models.tenant.contracts import (
     ACIContract,
     ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ..tables.tenant.contracts import (
+from ...tables.tenant.contracts import (
     ACIContractRelationTable,
     ACIContractSubjectFilterReducedTable,
     ACIContractSubjectFilterTable,

@@ -7,11 +7,11 @@ from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
-from ..filtersets.tenant.app_profiles import (
+from ...filtersets.tenant.app_profiles import (
     ACIAppProfileFilterSet,
     ACIEndpointGroupFilterSet,
 )
-from ..forms.tenant.app_profiles import (
+from ...forms.tenant.app_profiles import (
     ACIAppProfileBulkEditForm,
     ACIAppProfileEditForm,
     ACIAppProfileFilterForm,
@@ -21,12 +21,12 @@ from ..forms.tenant.app_profiles import (
     ACIEndpointGroupFilterForm,
     ACIEndpointGroupImportForm,
 )
-from ..models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
-from ..tables.tenant.app_profiles import (
+from ...models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from ...tables.tenant.app_profiles import (
     ACIAppProfileTable,
     ACIEndpointGroupTable,
 )
-from .tenant_contracts import ACIContractRelationChildrenView
+from .contracts import ACIContractRelationChildrenView
 
 #
 # Base children views
