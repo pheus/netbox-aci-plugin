@@ -32,7 +32,7 @@ from utilities.forms.rendering import FieldSet, TabbedGroups
 from utilities.forms.widgets import HTMXSelect
 from utilities.templatetags.builtins.filters import bettertitle
 
-from ..choices import (
+from ...choices import (
     ContractRelationRoleChoices,
     ContractScopeChoices,
     ContractSubjectFilterActionChoices,
@@ -41,17 +41,17 @@ from ..choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ..constants import CONTRACT_RELATION_OBJECT_TYPES
-from ..models.tenant.app_profiles import ACIEndpointGroup
-from ..models.tenant.contract_filters import ACIContractFilter
-from ..models.tenant.contracts import (
+from ...constants import CONTRACT_RELATION_OBJECT_TYPES
+from ...models.tenant.app_profiles import ACIEndpointGroup
+from ...models.tenant.contract_filters import ACIContractFilter
+from ...models.tenant.contracts import (
     ACIContract,
     ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ..models.tenant.networks import ACIVRF
-from ..models.tenant.tenants import ACITenant
+from ...models.tenant.networks import ACIVRF
+from ...models.tenant.tenants import ACITenant
 
 #
 # Contract forms

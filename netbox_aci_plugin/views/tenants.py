@@ -7,7 +7,7 @@ from netbox.views import generic
 from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
 
 from ..filtersets.tenant.tenants import ACITenantFilterSet
-from ..forms.tenants import (
+from ..forms.tenant.tenants import (
     ACITenantBulkEditForm,
     ACITenantEditForm,
     ACITenantFilterForm,

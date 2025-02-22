@@ -12,7 +12,7 @@ from ..filtersets.tenant.networks import (
     ACIBridgeDomainSubnetFilterSet,
     ACIVRFFilterSet,
 )
-from ..forms.tenant_networks import (
+from ..forms.tenant.networks import (
     ACIBridgeDomainBulkEditForm,
     ACIBridgeDomainEditForm,
     ACIBridgeDomainFilterForm,

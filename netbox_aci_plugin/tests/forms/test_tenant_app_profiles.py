@@ -4,7 +4,7 @@
 
 from django.test import TestCase
 
-from ...forms.tenant_app_profiles import (
+from ...forms.tenant.app_profiles import (
     ACIAppProfileEditForm,
     ACIEndpointGroupEditForm,
 )

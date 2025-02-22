@@ -23,7 +23,7 @@ from utilities.forms.fields import (
 )
 from utilities.forms.rendering import FieldSet, TabbedGroups
 
-from ..choices import (
+from ...choices import (
     ContractFilterARPOpenPeripheralCodesChoices,
     ContractFilterEtherTypeChoices,
     ContractFilterICMPv4TypesChoices,
@@ -34,16 +34,16 @@ from ..choices import (
     QualityOfServiceDSCPChoices,
     add_custom_choice,
 )
-from ..models.tenant.contract_filters import (
+from ...models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
-from ..models.tenant.tenants import ACITenant
-from ..validators import (
+from ...models.tenant.tenants import ACITenant
+from ...validators import (
     validate_contract_filter_ip_protocol,
     validate_contract_filter_port,
 )
-from .widgets.misc import TextInputWithOptions
+from ..widgets.misc import TextInputWithOptions
 
 #
 # Contract Filter forms

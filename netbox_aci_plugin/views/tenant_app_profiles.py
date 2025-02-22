@@ -11,7 +11,7 @@ from ..filtersets.tenant.app_profiles import (
     ACIAppProfileFilterSet,
     ACIEndpointGroupFilterSet,
 )
-from ..forms.tenant_app_profiles import (
+from ..forms.tenant.app_profiles import (
     ACIAppProfileBulkEditForm,
     ACIAppProfileEditForm,
     ACIAppProfileFilterForm,

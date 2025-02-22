@@ -10,7 +10,7 @@ from ..filtersets.tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
 )
-from ..forms.tenant_contract_filters import (
+from ..forms.tenant.contract_filters import (
     ACIContractFilterBulkEditForm,
     ACIContractFilterEditForm,
     ACIContractFilterEntryBulkEditForm,

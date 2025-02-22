@@ -4,7 +4,7 @@
 
 from django.test import TestCase
 
-from ...forms.tenants import ACITenantEditForm
+from ...forms.tenant.tenants import ACITenantEditForm
 
 
 class ACITenantFormTestCase(TestCase):
