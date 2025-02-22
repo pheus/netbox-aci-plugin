@@ -1,23 +1,23 @@
-from .tenant_app_profiles import (
+from .tenant.app_profiles import (
     ACIAppProfileSerializer,
     ACIEndpointGroupSerializer,
 )
-from .tenant_contract_filters import (
+from .tenant.contract_filters import (
     ACIContractFilterEntrySerializer,
     ACIContractFilterSerializer,
 )
-from .tenant_contracts import (
+from .tenant.contracts import (
     ACIContractRelationSerializer,
     ACIContractSerializer,
     ACIContractSubjectFilterSerializer,
     ACIContractSubjectSerializer,
 )
-from .tenant_networks import (
+from .tenant.networks import (
     ACIBridgeDomainSerializer,
     ACIBridgeDomainSubnetSerializer,
     ACIVRFSerializer,
 )
-from .tenants import ACITenantSerializer
+from .tenant.tenants import ACITenantSerializer
 
 __all__ = (
     # From tenant_app_profiles

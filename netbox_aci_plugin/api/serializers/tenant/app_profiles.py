@@ -6,8 +6,8 @@ from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 
-from ...models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
-from .tenant_networks import ACIBridgeDomainSerializer
+from ....models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from .networks import ACIBridgeDomainSerializer
 from .tenants import ACITenantSerializer
 
 

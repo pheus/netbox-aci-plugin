@@ -6,7 +6,7 @@ from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 
-from ...models.tenant.contract_filters import (
+from ....models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )

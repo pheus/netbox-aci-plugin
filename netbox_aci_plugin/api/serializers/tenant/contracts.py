@@ -10,14 +10,14 @@ from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 from utilities.api import get_serializer_for_model
 
-from ...constants import CONTRACT_RELATION_OBJECT_TYPES
-from ...models.tenant.contracts import (
+from ....constants import CONTRACT_RELATION_OBJECT_TYPES
+from ....models.tenant.contracts import (
     ACIContract,
     ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from .tenant_contract_filters import ACIContractFilterSerializer
+from .contract_filters import ACIContractFilterSerializer
 from .tenants import ACITenantSerializer
 
 
