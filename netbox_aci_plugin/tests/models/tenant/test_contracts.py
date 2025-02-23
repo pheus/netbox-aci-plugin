@@ -7,7 +7,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from tenancy.models import Tenant
 
-from ...choices import (
+from ....choices import (
     ContractRelationRoleChoices,
     ContractScopeChoices,
     ContractSubjectFilterActionChoices,
@@ -16,16 +16,16 @@ from ...choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ...models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
-from ...models.tenant.contract_filters import ACIContractFilter
-from ...models.tenant.contracts import (
+from ....models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from ....models.tenant.contract_filters import ACIContractFilter
+from ....models.tenant.contracts import (
     ACIContract,
     ACIContractRelation,
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ...models.tenant.networks import ACIVRF, ACIBridgeDomain
-from ...models.tenant.tenants import ACITenant
+from ....models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ....models.tenant.tenants import ACITenant
 
 
 class ACIContractTestCase(TestCase):

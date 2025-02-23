@@ -5,8 +5,8 @@
 from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
-from ...api.urls import app_name
-from ...models.tenant.tenants import ACITenant
+from ....api.urls import app_name
+from ....models.tenant.tenants import ACITenant
 
 
 class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):

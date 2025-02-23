@@ -6,13 +6,13 @@ from ipam.models import VRF, IPAddress
 from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
-from ...api.urls import app_name
-from ...models.tenant.networks import (
+from ....api.urls import app_name
+from ....models.tenant.networks import (
     ACIVRF,
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from ...models.tenant.tenants import ACITenant
+from ....models.tenant.tenants import ACITenant
 
 
 class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):

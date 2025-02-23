@@ -4,13 +4,13 @@
 
 from django.test import TestCase
 
-from ...forms.tenant.networks import (
+from ....forms.tenant.networks import (
     ACIBridgeDomainEditForm,
     ACIBridgeDomainSubnetEditForm,
     ACIVRFEditForm,
 )
-from ...models.tenant.networks import ACIVRF
-from ...models.tenant.tenants import ACITenant
+from ....models.tenant.networks import ACIVRF
+from ....models.tenant.tenants import ACITenant
 
 
 class ACIVRFFormTestCase(TestCase):

@@ -4,7 +4,7 @@
 
 from django.test import TestCase
 
-from ...forms.tenant.contracts import (
+from ....forms.tenant.contracts import (
     ACIContractEditForm,
     ACIContractSubjectEditForm,
 )

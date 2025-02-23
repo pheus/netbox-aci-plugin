@@ -7,7 +7,7 @@ from django.db.utils import IntegrityError
 from django.test import TestCase
 from tenancy.models import Tenant
 
-from ...models.tenant.tenants import ACITenant
+from ....models.tenant.tenants import ACITenant
 
 
 class ACITenantTestCase(TestCase):

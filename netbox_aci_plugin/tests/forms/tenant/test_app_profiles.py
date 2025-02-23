@@ -4,13 +4,13 @@
 
 from django.test import TestCase
 
-from ...forms.tenant.app_profiles import (
+from ....forms.tenant.app_profiles import (
     ACIAppProfileEditForm,
     ACIEndpointGroupEditForm,
 )
-from ...models.tenant.app_profiles import ACIAppProfile
-from ...models.tenant.networks import ACIVRF, ACIBridgeDomain
-from ...models.tenant.tenants import ACITenant
+from ....models.tenant.app_profiles import ACIAppProfile
+from ....models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ....models.tenant.tenants import ACITenant
 
 
 class ACIAppProfileFormTestCase(TestCase):

@@ -6,10 +6,10 @@ from ipam.models import VRF
 from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
-from ...api.urls import app_name
-from ...models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
-from ...models.tenant.networks import ACIVRF, ACIBridgeDomain
-from ...models.tenant.tenants import ACITenant
+from ....api.urls import app_name
+from ....models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from ....models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ....models.tenant.tenants import ACITenant
 
 
 class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
