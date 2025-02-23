@@ -1,7 +1,4 @@
-from .tenant.app_profiles import (
-    ACIAppProfileFilterSet,
-    ACIEndpointGroupFilterSet,
-)
+from .tenant.app_profiles import ACIAppProfileFilterSet
 from .tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
@@ -12,6 +9,7 @@ from .tenant.contracts import (
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
+from .tenant.endpoint_groups import ACIEndpointGroupFilterSet
 from .tenant.networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,

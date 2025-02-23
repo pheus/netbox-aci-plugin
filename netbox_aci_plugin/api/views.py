@@ -4,10 +4,7 @@
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
-from ..filtersets.tenant.app_profiles import (
-    ACIAppProfileFilterSet,
-    ACIEndpointGroupFilterSet,
-)
+from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ..filtersets.tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
@@ -18,6 +15,7 @@ from ..filtersets.tenant.contracts import (
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
+from ..filtersets.tenant.endpoint_groups import ACIEndpointGroupFilterSet
 from ..filtersets.tenant.networks import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,

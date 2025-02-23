@@ -7,10 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
-from ...filtersets.tenant.app_profiles import (
-    ACIAppProfileFilterSet,
-    ACIEndpointGroupFilterSet,
-)
+from ...filtersets.tenant.app_profiles import ACIAppProfileFilterSet
+from ...filtersets.tenant.endpoint_groups import ACIEndpointGroupFilterSet
 from ...forms.tenant.app_profiles import (
     ACIAppProfileBulkEditForm,
     ACIAppProfileEditForm,
