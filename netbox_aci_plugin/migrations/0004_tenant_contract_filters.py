@@ -6,7 +6,7 @@ import utilities.json
 from django.db import migrations, models
 from netbox.plugins.utils import get_plugin_config
 
-import netbox_aci_plugin.models.tenant_contract_filters
+import netbox_aci_plugin.models.tenant.contract_filters
 import netbox_aci_plugin.validators
 from netbox_aci_plugin import ACIConfig
 
@@ -336,7 +336,7 @@ class Migration(migrations.Migration):
                     django.contrib.postgres.fields.ArrayField(
                         base_field=models.CharField(max_length=11),
                         blank=True,
-                        default=netbox_aci_plugin.models.tenant_contract_filters.default_contract_filter_entry_tcp_rules,
+                        default=netbox_aci_plugin.models.tenant.contract_filters.default_contract_filter_entry_tcp_rules,
                         size=None,
                         validators=[
                             netbox_aci_plugin.validators.validate_contract_filter_tcp_rules
