@@ -4,7 +4,7 @@
 
 from netbox.search import SearchIndex, register_search
 
-from .models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from .models.tenant.app_profiles import ACIAppProfile
 from .models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
@@ -15,6 +15,7 @@ from .models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
+from .models.tenant.endpoint_groups import ACIEndpointGroup
 from .models.tenant.networks import (
     ACIVRF,
     ACIBridgeDomain,

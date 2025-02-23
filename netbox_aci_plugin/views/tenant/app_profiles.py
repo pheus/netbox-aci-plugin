@@ -21,7 +21,8 @@ from ...forms.tenant.app_profiles import (
     ACIEndpointGroupFilterForm,
     ACIEndpointGroupImportForm,
 )
-from ...models.tenant.app_profiles import ACIAppProfile, ACIEndpointGroup
+from ...models.tenant.app_profiles import ACIAppProfile
+from ...models.tenant.endpoint_groups import ACIEndpointGroup
 from ...tables.tenant.app_profiles import (
     ACIAppProfileTable,
     ACIEndpointGroupTable,
