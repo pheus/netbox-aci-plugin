@@ -23,10 +23,8 @@ from ...forms.tenant.app_profiles import (
 )
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.endpoint_groups import ACIEndpointGroup
-from ...tables.tenant.app_profiles import (
-    ACIAppProfileTable,
-    ACIEndpointGroupTable,
-)
+from ...tables.tenant.app_profiles import ACIAppProfileTable
+from ...tables.tenant.endpoint_groups import ACIEndpointGroupTable
 from .contracts import ACIContractRelationChildrenView
 
 #
