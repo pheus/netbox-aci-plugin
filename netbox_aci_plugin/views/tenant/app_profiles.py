@@ -14,6 +14,8 @@ from ...forms.tenant.app_profiles import (
     ACIAppProfileEditForm,
     ACIAppProfileFilterForm,
     ACIAppProfileImportForm,
+)
+from ...forms.tenant.endpoint_groups import (
     ACIEndpointGroupBulkEditForm,
     ACIEndpointGroupEditForm,
     ACIEndpointGroupFilterForm,
