@@ -1,7 +1,4 @@
-from .tenant.app_profiles import (
-    ACIAppProfileSerializer,
-    ACIEndpointGroupSerializer,
-)
+from .tenant.app_profiles import ACIAppProfileSerializer
 from .tenant.contract_filters import (
     ACIContractFilterEntrySerializer,
     ACIContractFilterSerializer,
@@ -12,6 +9,7 @@ from .tenant.contracts import (
     ACIContractSubjectFilterSerializer,
     ACIContractSubjectSerializer,
 )
+from .tenant.endpoint_groups import ACIEndpointGroupSerializer
 from .tenant.networks import (
     ACIBridgeDomainSerializer,
     ACIBridgeDomainSubnetSerializer,
