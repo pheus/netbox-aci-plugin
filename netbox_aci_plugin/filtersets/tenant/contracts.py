@@ -20,7 +20,6 @@ from ...choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ...models.tenant.app_profiles import ACIEndpointGroup
 from ...models.tenant.contract_filters import ACIContractFilter
 from ...models.tenant.contracts import (
     ACIContract,
@@ -28,6 +27,7 @@ from ...models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
+from ...models.tenant.endpoint_groups import ACIEndpointGroup
 from ...models.tenant.networks import ACIVRF
 from ...models.tenant.tenants import ACITenant
 

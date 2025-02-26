@@ -13,14 +13,12 @@ from ...forms.tenant.tenants import (
     ACITenantFilterForm,
     ACITenantImportForm,
 )
-from ...models.tenant.app_profiles import ACIEndpointGroup
+from ...models.tenant.endpoint_groups import ACIEndpointGroup
 from ...models.tenant.tenants import ACITenant
 from ...tables.tenant.tenants import ACITenantTable
-from .app_profiles import (
-    ACIAppProfileChildrenView,
-    ACIEndpointGroupChildrenView,
-)
+from .app_profiles import ACIAppProfileChildrenView
 from .contracts import ACIContractChildrenView
+from .endpoint_groups import ACIEndpointGroupChildrenView
 from .networks import ACIBridgeDomainChildrenView, ACIVRFChildrenView
 
 #
