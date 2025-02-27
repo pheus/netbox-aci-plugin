@@ -18,18 +18,20 @@ from .tenant.networks import (
 from .tenant.tenants import ACITenantSerializer
 
 __all__ = (
-    # From tenant_app_profiles
+    # From app_profiles
     "ACIAppProfileSerializer",
     "ACIEndpointGroupSerializer",
-    # From tenant_contract_filters
+    # From contract_filters
     "ACIContractFilterEntrySerializer",
     "ACIContractFilterSerializer",
-    # From tenant_contracts
+    # From contracts
     "ACIContractRelationSerializer",
     "ACIContractSerializer",
     "ACIContractSubjectFilterSerializer",
     "ACIContractSubjectSerializer",
-    # From tenant_networks
+    # From endpoint_groups
+    "ACIEndpointGroupSerializer",
+    # From networks
     "ACIBridgeDomainSerializer",
     "ACIBridgeDomainSubnetSerializer",
     "ACIVRFSerializer",
