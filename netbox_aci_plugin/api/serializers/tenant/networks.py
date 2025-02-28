@@ -7,11 +7,11 @@ from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 
-from ....models.tenant.networks import (
-    ACIVRF,
+from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
+from ....models.tenant.networks import ACIVRF
 from .tenants import ACITenantSerializer
 
 

@@ -7,11 +7,11 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
-from ....models.tenant.networks import (
-    ACIVRF,
+from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
+from ....models.tenant.networks import ACIVRF
 from ....models.tenant.tenants import ACITenant
 
 

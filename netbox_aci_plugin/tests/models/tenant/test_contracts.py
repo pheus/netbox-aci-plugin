@@ -17,6 +17,7 @@ from ....choices import (
     QualityOfServiceDSCPChoices,
 )
 from ....models.tenant.app_profiles import ACIAppProfile
+from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.contract_filters import ACIContractFilter
 from ....models.tenant.contracts import (
     ACIContract,
@@ -25,7 +26,7 @@ from ....models.tenant.contracts import (
     ACIContractSubjectFilter,
 )
 from ....models.tenant.endpoint_groups import ACIEndpointGroup
-from ....models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ....models.tenant.networks import ACIVRF
 from ....models.tenant.tenants import ACITenant
 
 

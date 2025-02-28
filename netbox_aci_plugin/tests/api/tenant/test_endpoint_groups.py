@@ -8,8 +8,9 @@ from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
 from ....models.tenant.app_profiles import ACIAppProfile
+from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.endpoint_groups import ACIEndpointGroup
-from ....models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ....models.tenant.networks import ACIVRF
 from ....models.tenant.tenants import ACITenant
 
 

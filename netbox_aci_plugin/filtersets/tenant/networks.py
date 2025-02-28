@@ -20,11 +20,11 @@ from ...choices import (
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ...models.tenant.networks import (
-    ACIVRF,
+from ...models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
+from ...models.tenant.networks import ACIVRF
 from ...models.tenant.tenants import ACITenant
 
 
