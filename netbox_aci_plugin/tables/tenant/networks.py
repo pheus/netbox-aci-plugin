@@ -10,7 +10,7 @@ from ...models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from ...models.tenant.networks import ACIVRF
+from ...models.tenant.vrfs import ACIVRF
 
 BRIDGEDOMAIN_SUBNETS = """
 {% for bd_subnet in value.all %}

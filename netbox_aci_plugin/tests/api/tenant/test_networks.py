@@ -11,8 +11,8 @@ from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from ....models.tenant.networks import ACIVRF
 from ....models.tenant.tenants import ACITenant
+from ....models.tenant.vrfs import ACIVRF
 
 
 class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):

@@ -38,8 +38,8 @@ from ..models.tenant.contracts import (
     ACIContractSubjectFilter,
 )
 from ..models.tenant.endpoint_groups import ACIEndpointGroup
-from ..models.tenant.networks import ACIVRF
 from ..models.tenant.tenants import ACITenant
+from ..models.tenant.vrfs import ACIVRF
 from .serializers import (
     ACIAppProfileSerializer,
     ACIBridgeDomainSerializer,

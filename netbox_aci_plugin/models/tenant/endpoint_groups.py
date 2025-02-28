@@ -13,8 +13,8 @@ from ...validators import ACIPolicyNameValidator
 from ..base import ACIBaseModel
 from .app_profiles import ACIAppProfile
 from .bridge_domains import ACIBridgeDomain
-from .networks import ACIVRF
 from .tenants import ACITenant
+from .vrfs import ACIVRF
 
 
 class ACIEndpointGroup(ACIBaseModel):

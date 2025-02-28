@@ -9,8 +9,8 @@ from ....forms.tenant.networks import (
     ACIBridgeDomainSubnetEditForm,
     ACIVRFEditForm,
 )
-from ....models.tenant.networks import ACIVRF
 from ....models.tenant.tenants import ACITenant
+from ....models.tenant.vrfs import ACIVRF
 
 
 class ACIVRFFormTestCase(TestCase):

@@ -16,8 +16,8 @@ from ...choices import (
 )
 from ...validators import ACIPolicyNameValidator
 from ..base import ACIBaseModel
-from .networks import ACIVRF
 from .tenants import ACITenant
+from .vrfs import ACIVRF
 
 
 class ACIBridgeDomain(ACIBaseModel):
