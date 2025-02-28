@@ -36,7 +36,7 @@ from ...tables.tenant.bridge_domains import (
     ACIBridgeDomainSubnetTable,
     ACIBridgeDomainTable,
 )
-from ...tables.tenant.networks import ACIVRFTable
+from ...tables.tenant.vrfs import ACIVRFTable
 from .app_profiles import ACIEndpointGroupChildrenView
 from .contracts import ACIContractRelationChildrenView
 
