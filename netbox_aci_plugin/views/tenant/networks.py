@@ -11,7 +11,7 @@ from ...filtersets.tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
 )
-from ...filtersets.tenant.networks import ACIVRFFilterSet
+from ...filtersets.tenant.vrfs import ACIVRFFilterSet
 from ...forms.tenant.networks import (
     ACIBridgeDomainBulkEditForm,
     ACIBridgeDomainEditForm,

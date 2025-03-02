@@ -24,8 +24,8 @@ from ..filtersets.tenant.contracts import (
     ACIContractSubjectFilterSet,
 )
 from ..filtersets.tenant.endpoint_groups import ACIEndpointGroupFilterSet
-from ..filtersets.tenant.networks import ACIVRFFilterSet
 from ..filtersets.tenant.tenants import ACITenantFilterSet
+from ..filtersets.tenant.vrfs import ACIVRFFilterSet
 
 
 @strawberry_django.filter(models.ACITenant, lookups=True)

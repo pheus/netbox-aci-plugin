@@ -14,8 +14,8 @@ from .tenant.contracts import (
     ACIContractSubjectFilterSet,
 )
 from .tenant.endpoint_groups import ACIEndpointGroupFilterSet
-from .tenant.networks import ACIVRFFilterSet
 from .tenant.tenants import ACITenantFilterSet
+from .tenant.vrfs import ACIVRFFilterSet
 
 __all__ = (
     "ACIAppProfileFilterSet",
