@@ -14,8 +14,8 @@ from .tenant.contracts import (
     ACIContractSubjectFilterForm,
 )
 from .tenant.endpoint_groups import ACIEndpointGroupFilterForm
-from .tenant.networks import ACIVRFFilterForm
 from .tenant.tenants import ACITenantFilterForm
+from .tenant.vrfs import ACIVRFFilterForm
 
 __all__ = (
     "ACIAppProfileFilterForm",

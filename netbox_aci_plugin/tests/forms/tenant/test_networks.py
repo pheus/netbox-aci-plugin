@@ -8,7 +8,7 @@ from ....forms.tenant.bridge_domains import (
     ACIBridgeDomainEditForm,
     ACIBridgeDomainSubnetEditForm,
 )
-from ....forms.tenant.networks import ACIVRFEditForm
+from ....forms.tenant.vrfs import ACIVRFEditForm
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 

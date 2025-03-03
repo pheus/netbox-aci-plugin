@@ -22,7 +22,7 @@ from ...forms.tenant.bridge_domains import (
     ACIBridgeDomainSubnetFilterForm,
     ACIBridgeDomainSubnetImportForm,
 )
-from ...forms.tenant.networks import (
+from ...forms.tenant.vrfs import (
     ACIVRFBulkEditForm,
     ACIVRFEditForm,
     ACIVRFFilterForm,
