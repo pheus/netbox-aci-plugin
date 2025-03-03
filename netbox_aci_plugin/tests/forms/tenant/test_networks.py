@@ -4,11 +4,11 @@
 
 from django.test import TestCase
 
-from ....forms.tenant.networks import (
+from ....forms.tenant.bridge_domains import (
     ACIBridgeDomainEditForm,
     ACIBridgeDomainSubnetEditForm,
-    ACIVRFEditForm,
 )
+from ....forms.tenant.networks import ACIVRFEditForm
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
