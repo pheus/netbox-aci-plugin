@@ -65,7 +65,7 @@ from .tenant.networks import (
     ACIVRFEditView,
     ACIVRFListView,
 )
-from .tenant.tenants import (
+from .tenant.vrfs import (
     ACITenantBulkDeleteView,
     ACITenantBulkEditView,
     ACITenantBulkImportView,
