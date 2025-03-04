@@ -5,6 +5,18 @@ from .tenant.app_profiles import (
     ACIAppProfileEditView,
     ACIAppProfileListView,
 )
+from .tenant.bridge_domains import (
+    ACIBridgeDomainBulkDeleteView,
+    ACIBridgeDomainBulkEditView,
+    ACIBridgeDomainBulkImportView,
+    ACIBridgeDomainEditView,
+    ACIBridgeDomainListView,
+    ACIBridgeDomainSubnetBulkDeleteView,
+    ACIBridgeDomainSubnetBulkEditView,
+    ACIBridgeDomainSubnetBulkImportView,
+    ACIBridgeDomainSubnetEditView,
+    ACIBridgeDomainSubnetListView,
+)
 from .tenant.contract_filters import (
     ACIContractFilterBulkDeleteView,
     ACIContractFilterBulkEditView,
@@ -47,16 +59,6 @@ from .tenant.endpoint_groups import (
     ACIEndpointGroupListView,
 )
 from .tenant.networks import (
-    ACIBridgeDomainBulkDeleteView,
-    ACIBridgeDomainBulkEditView,
-    ACIBridgeDomainBulkImportView,
-    ACIBridgeDomainEditView,
-    ACIBridgeDomainListView,
-    ACIBridgeDomainSubnetBulkDeleteView,
-    ACIBridgeDomainSubnetBulkEditView,
-    ACIBridgeDomainSubnetBulkImportView,
-    ACIBridgeDomainSubnetEditView,
-    ACIBridgeDomainSubnetListView,
     ACIVRFBulkDeleteView,
     ACIVRFBulkEditView,
     ACIVRFBulkImportView,

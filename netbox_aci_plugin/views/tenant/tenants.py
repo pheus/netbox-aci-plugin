@@ -17,9 +17,10 @@ from ...models.tenant.endpoint_groups import ACIEndpointGroup
 from ...models.tenant.tenants import ACITenant
 from ...tables.tenant.tenants import ACITenantTable
 from .app_profiles import ACIAppProfileChildrenView
+from .bridge_domains import ACIBridgeDomainChildrenView
 from .contracts import ACIContractChildrenView
 from .endpoint_groups import ACIEndpointGroupChildrenView
-from .networks import ACIBridgeDomainChildrenView, ACIVRFChildrenView
+from .networks import ACIVRFChildrenView
 
 #
 # Tenant views
