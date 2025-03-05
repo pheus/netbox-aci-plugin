@@ -14,8 +14,8 @@ from .tenant.contracts import (
     ACIContractSubjectSerializer,
 )
 from .tenant.endpoint_groups import ACIEndpointGroupSerializer
-from .tenant.networks import ACIVRFSerializer
 from .tenant.tenants import ACITenantSerializer
+from .tenant.vrfs import ACIVRFSerializer
 
 __all__ = (
     # From app_profiles

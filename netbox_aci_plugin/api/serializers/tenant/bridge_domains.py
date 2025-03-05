@@ -11,8 +11,8 @@ from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
 )
-from .networks import ACIVRFSerializer
 from .tenants import ACITenantSerializer
+from .vrfs import ACIVRFSerializer
 
 
 class ACIBridgeDomainSerializer(NetBoxModelSerializer):
