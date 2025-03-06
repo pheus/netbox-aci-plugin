@@ -9,6 +9,10 @@ from netbox.graphql.filter_mixins import BaseFilterMixin, autotype_decorator
 
 from .. import models
 from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
+from ..filtersets.tenant.bridge_domains import (
+    ACIBridgeDomainFilterSet,
+    ACIBridgeDomainSubnetFilterSet,
+)
 from ..filtersets.tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
@@ -20,12 +24,8 @@ from ..filtersets.tenant.contracts import (
     ACIContractSubjectFilterSet,
 )
 from ..filtersets.tenant.endpoint_groups import ACIEndpointGroupFilterSet
-from ..filtersets.tenant.networks import (
-    ACIBridgeDomainFilterSet,
-    ACIBridgeDomainSubnetFilterSet,
-    ACIVRFFilterSet,
-)
 from ..filtersets.tenant.tenants import ACITenantFilterSet
+from ..filtersets.tenant.vrfs import ACIVRFFilterSet
 
 
 @strawberry_django.filter(models.ACITenant, lookups=True)

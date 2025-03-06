@@ -6,8 +6,9 @@ from django.test import TestCase
 
 from ....forms.tenant.endpoint_groups import ACIEndpointGroupEditForm
 from ....models.tenant.app_profiles import ACIAppProfile
-from ....models.tenant.networks import ACIVRF, ACIBridgeDomain
+from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.tenants import ACITenant
+from ....models.tenant.vrfs import ACIVRF
 
 
 class ACIEndpointGroupFormTestCase(TestCase):

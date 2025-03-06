@@ -1,4 +1,8 @@
 from .tenant.app_profiles import ACIAppProfileFilterSet
+from .tenant.bridge_domains import (
+    ACIBridgeDomainFilterSet,
+    ACIBridgeDomainSubnetFilterSet,
+)
 from .tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
@@ -10,12 +14,8 @@ from .tenant.contracts import (
     ACIContractSubjectFilterSet,
 )
 from .tenant.endpoint_groups import ACIEndpointGroupFilterSet
-from .tenant.networks import (
-    ACIBridgeDomainFilterSet,
-    ACIBridgeDomainSubnetFilterSet,
-    ACIVRFFilterSet,
-)
 from .tenant.tenants import ACITenantFilterSet
+from .tenant.vrfs import ACIVRFFilterSet
 
 __all__ = (
     "ACIAppProfileFilterSet",

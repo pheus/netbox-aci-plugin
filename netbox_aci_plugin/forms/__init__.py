@@ -1,4 +1,8 @@
 from .tenant.app_profiles import ACIAppProfileFilterForm
+from .tenant.bridge_domains import (
+    ACIBridgeDomainFilterForm,
+    ACIBridgeDomainSubnetFilterForm,
+)
 from .tenant.contract_filters import (
     ACIContractFilterEntryFilterForm,
     ACIContractFilterFilterForm,
@@ -10,12 +14,8 @@ from .tenant.contracts import (
     ACIContractSubjectFilterForm,
 )
 from .tenant.endpoint_groups import ACIEndpointGroupFilterForm
-from .tenant.networks import (
-    ACIBridgeDomainFilterForm,
-    ACIBridgeDomainSubnetFilterForm,
-    ACIVRFFilterForm,
-)
 from .tenant.tenants import ACITenantFilterForm
+from .tenant.vrfs import ACIVRFFilterForm
 
 __all__ = (
     "ACIAppProfileFilterForm",

@@ -8,7 +8,7 @@ from tenancy.api.serializers_.tenants import TenantSerializer
 
 from ....models.tenant.endpoint_groups import ACIEndpointGroup
 from .app_profiles import ACIAppProfileSerializer
-from .networks import ACIBridgeDomainSerializer
+from .bridge_domains import ACIBridgeDomainSerializer
 
 
 class ACIEndpointGroupSerializer(NetBoxModelSerializer):

@@ -5,6 +5,10 @@
 from netbox.api.viewsets import NetBoxModelViewSet
 
 from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
+from ..filtersets.tenant.bridge_domains import (
+    ACIBridgeDomainFilterSet,
+    ACIBridgeDomainSubnetFilterSet,
+)
 from ..filtersets.tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
     ACIContractFilterFilterSet,
@@ -16,13 +20,13 @@ from ..filtersets.tenant.contracts import (
     ACIContractSubjectFilterSet,
 )
 from ..filtersets.tenant.endpoint_groups import ACIEndpointGroupFilterSet
-from ..filtersets.tenant.networks import (
-    ACIBridgeDomainFilterSet,
-    ACIBridgeDomainSubnetFilterSet,
-    ACIVRFFilterSet,
-)
 from ..filtersets.tenant.tenants import ACITenantFilterSet
+from ..filtersets.tenant.vrfs import ACIVRFFilterSet
 from ..models.tenant.app_profiles import ACIAppProfile
+from ..models.tenant.bridge_domains import (
+    ACIBridgeDomain,
+    ACIBridgeDomainSubnet,
+)
 from ..models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
@@ -34,12 +38,8 @@ from ..models.tenant.contracts import (
     ACIContractSubjectFilter,
 )
 from ..models.tenant.endpoint_groups import ACIEndpointGroup
-from ..models.tenant.networks import (
-    ACIVRF,
-    ACIBridgeDomain,
-    ACIBridgeDomainSubnet,
-)
 from ..models.tenant.tenants import ACITenant
+from ..models.tenant.vrfs import ACIVRF
 from .serializers import (
     ACIAppProfileSerializer,
     ACIBridgeDomainSerializer,

@@ -10,9 +10,10 @@ from tenancy.models import Tenant
 
 from ...choices import QualityOfServiceClassChoices
 from ...models.tenant.app_profiles import ACIAppProfile
+from ...models.tenant.bridge_domains import ACIBridgeDomain
 from ...models.tenant.endpoint_groups import ACIEndpointGroup
-from ...models.tenant.networks import ACIVRF, ACIBridgeDomain
 from ...models.tenant.tenants import ACITenant
+from ...models.tenant.vrfs import ACIVRF
 
 
 class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):

@@ -12,8 +12,9 @@ from ...choices import QualityOfServiceClassChoices
 from ...validators import ACIPolicyNameValidator
 from ..base import ACIBaseModel
 from .app_profiles import ACIAppProfile
-from .networks import ACIVRF, ACIBridgeDomain
+from .bridge_domains import ACIBridgeDomain
 from .tenants import ACITenant
+from .vrfs import ACIVRF
 
 
 class ACIEndpointGroup(ACIBaseModel):
