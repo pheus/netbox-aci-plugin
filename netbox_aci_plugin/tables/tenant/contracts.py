@@ -6,6 +6,7 @@ import django_tables2 as tables
 from django.utils.translation import gettext_lazy as _
 from netbox.tables import NetBoxTable, columns
 
+from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.contracts import (
     ACIContract,
     ACIContractRelation,
@@ -124,7 +125,7 @@ class ACIContractRelationTable(NetBoxTable):
 
     def render_aci_object(self, record) -> str | None:
         """Render the ACI object name."""
-        if record.aci_object_type.model == "aciendpointgroup":
+        if isinstance(record.aci_object.parent_object, ACIAppProfile):
             return (
                 f"{record.aci_object.aci_app_profile} "
                 f"| {record.aci_object.name}"
