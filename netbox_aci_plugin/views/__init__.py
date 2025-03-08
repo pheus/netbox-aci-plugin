@@ -58,19 +58,19 @@ from .tenant.endpoint_groups import (
     ACIEndpointGroupEditView,
     ACIEndpointGroupListView,
 )
-from .tenant.networks import (
-    ACIVRFBulkDeleteView,
-    ACIVRFBulkEditView,
-    ACIVRFBulkImportView,
-    ACIVRFEditView,
-    ACIVRFListView,
-)
 from .tenant.tenants import (
     ACITenantBulkDeleteView,
     ACITenantBulkEditView,
     ACITenantBulkImportView,
     ACITenantEditView,
     ACITenantListView,
+)
+from .tenant.vrfs import (
+    ACIVRFBulkDeleteView,
+    ACIVRFBulkEditView,
+    ACIVRFBulkImportView,
+    ACIVRFEditView,
+    ACIVRFListView,
 )
 
 __all__ = (

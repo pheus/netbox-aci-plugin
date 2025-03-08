@@ -20,7 +20,7 @@ from .app_profiles import ACIAppProfileChildrenView
 from .bridge_domains import ACIBridgeDomainChildrenView
 from .contracts import ACIContractChildrenView
 from .endpoint_groups import ACIEndpointGroupChildrenView
-from .networks import ACIVRFChildrenView
+from .vrfs import ACIVRFChildrenView
 
 #
 # Tenant views
