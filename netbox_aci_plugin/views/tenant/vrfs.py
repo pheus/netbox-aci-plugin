@@ -105,7 +105,7 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
     """Children view of ACI Bridge Domain of ACI VRF."""
 
     queryset = ACIVRF.objects.all()
-    template_name = "netbox_aci_plugin/acivrf_bridgedomains.html"
+    template_name = "netbox_aci_plugin/inc/acivrf/bridgedomains.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -128,7 +128,7 @@ class ACIVRFContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI VRF."""
 
     queryset = ACIVRF.objects.all()
-    template_name = "netbox_aci_plugin/acivrf_contractrelations.html"
+    template_name = "netbox_aci_plugin/inc/acivrf/contractrelations.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

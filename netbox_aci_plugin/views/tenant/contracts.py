@@ -217,7 +217,7 @@ class ACIContractContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI Contract."""
 
     queryset = ACIContract.objects.all()
-    template_name = "netbox_aci_plugin/acicontract_relations.html"
+    template_name = "netbox_aci_plugin/inc/acicontract/relations.html"
     tab = ViewTab(
         label=_("Relations"),
         badge=lambda obj: obj.aci_contract_relations.count(),
@@ -250,7 +250,7 @@ class ACIContractContractSubjectView(ACIContractSubjectChildrenView):
     """Children view of ACI Contract Subject of ACI Contract."""
 
     queryset = ACIContract.objects.all()
-    template_name = "netbox_aci_plugin/acicontract_subjects.html"
+    template_name = "netbox_aci_plugin/inc/acicontract/subjects.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -460,7 +460,9 @@ class ACIContractContractSubjectFilterView(
     """Children view of ACI Contract Subject Filter of ACI Contract Subject."""
 
     queryset = ACIContractSubject.objects.all()
-    template_name = "netbox_aci_plugin/acicontractsubject_subjectfilters.html"
+    template_name = (
+        "netbox_aci_plugin/inc/acicontractsubject/subjectfilters.html"
+    )
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

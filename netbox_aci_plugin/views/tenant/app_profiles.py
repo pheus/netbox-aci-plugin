@@ -105,7 +105,7 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
     """Children view of ACI Endpoint Group of ACI Application Profile."""
 
     queryset = ACIAppProfile.objects.all()
-    template_name = "netbox_aci_plugin/aciappprofile_endpointgroups.html"
+    template_name = "netbox_aci_plugin/inc/aciappprofile/endpointgroups.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

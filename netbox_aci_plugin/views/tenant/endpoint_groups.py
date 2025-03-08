@@ -114,7 +114,9 @@ class ACIVRFContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI Endpoint Group."""
 
     queryset = ACIEndpointGroup.objects.all()
-    template_name = "netbox_aci_plugin/aciendpointgroup_contractrelations.html"
+    template_name = (
+        "netbox_aci_plugin/inc/aciendpointgroup/contractrelations.html"
+    )
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

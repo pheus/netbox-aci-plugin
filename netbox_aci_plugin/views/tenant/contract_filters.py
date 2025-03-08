@@ -132,7 +132,7 @@ class ACIContractFilterContractFilterEntryView(
     """Children view of ACI Contract Filter Entry of ACI Contract Filter."""
 
     queryset = ACIContractFilter.objects.all()
-    template_name = "netbox_aci_plugin/acicontractfilter_entries.html"
+    template_name = "netbox_aci_plugin/inc/acicontractfilter/entries.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

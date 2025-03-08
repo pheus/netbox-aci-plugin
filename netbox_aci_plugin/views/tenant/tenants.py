@@ -96,7 +96,7 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
     """Children view of ACI Application Profile of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/acitenant_appprofiles.html"
+    template_name = "netbox_aci_plugin/inc/acitenant/appprofiles.html"
 
     def get_children(self, request, parent):
         """Return all ACIAppProfile objects for the current ACITenant."""
@@ -129,7 +129,7 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
         permission="netbox_aci_plugin.view_aciendpointgroup",
         weight=1000,
     )
-    template_name = "netbox_aci_plugin/acitenant_endpointgroups.html"
+    template_name = "netbox_aci_plugin/inc/acitenant/endpointgroups.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -154,7 +154,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
     """Children view of ACI Bridge Domain of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/acitenant_bridgedomains.html"
+    template_name = "netbox_aci_plugin/inc/acitenant/bridgedomains.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -179,7 +179,7 @@ class ACITenantVRFView(ACIVRFChildrenView):
     """Children view of ACI VRF of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/acitenant_vrfs.html"
+    template_name = "netbox_aci_plugin/inc/acitenant/vrfs.html"
 
     def get_children(self, request, parent):
         """Return all ACIVRF objects for current ACITenant."""
@@ -204,7 +204,7 @@ class ACITenantContractView(ACIContractChildrenView):
     """Children view of ACI Application Profile of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/acitenant_contracts.html"
+    template_name = "netbox_aci_plugin/inc/acitenant/contracts.html"
 
     def get_children(self, request, parent):
         """Return all ACIContract objects for the current ACITenant."""

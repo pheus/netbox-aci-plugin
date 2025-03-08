@@ -161,7 +161,7 @@ class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
     """Children view of ACI Bridge Domain Subnet of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.all()
-    template_name = "netbox_aci_plugin/acibridgedomain_subnets.html"
+    template_name = "netbox_aci_plugin/inc/acibridgedomain/subnets.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -186,7 +186,7 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
     """Children view of ACI Endpoint Group of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.all()
-    template_name = "netbox_aci_plugin/acibridgedomain_endpointgroups.html"
+    template_name = "netbox_aci_plugin/inc/acibridgedomain/endpointgroups.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
