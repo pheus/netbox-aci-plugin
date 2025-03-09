@@ -16,20 +16,22 @@ from .bridge_domains import ACIBridgeDomain
 from .tenants import ACITenant
 from .vrfs import ACIVRF
 
+#
+# ACI Endpoint Group Base
+#
 
-class ACIEndpointGroup(ACIBaseModel):
-    """NetBox model for ACI Endpoint Groups (EPG)."""
+
+class ACIEndpointGroupBaseModel(ACIBaseModel):
+    """NetBox abstract model for ACI Endpoint Groups (EPG)."""
 
     aci_app_profile = models.ForeignKey(
         to=ACIAppProfile,
         on_delete=models.PROTECT,
-        related_name="aci_endpoint_groups",
         verbose_name=_("ACI Application Profile"),
     )
     aci_bridge_domain = models.ForeignKey(
         to=ACIBridgeDomain,
         on_delete=models.PROTECT,
-        related_name="aci_endpoint_groups",
         verbose_name=_("ACI Bridge Domain"),
     )
     admin_shutdown = models.BooleanField(
@@ -87,21 +89,6 @@ class ACIEndpointGroup(ACIBaseModel):
             "communication without contracts. Default is disabled."
         ),
     )
-    proxy_arp_enabled = models.BooleanField(
-        verbose_name=_("proxy ARP enabled"),
-        default=False,
-        help_text=_(
-            "Whether proxy ARP is enabled for the EPG. Default is disabled."
-        ),
-    )
-
-    # Generic relations
-    aci_contract_relations = GenericRelation(
-        to="netbox_aci_plugin.ACIContractRelation",
-        content_type_field="aci_object_type",
-        object_id_field="aci_object_id",
-        related_query_name="aci_endpoint_group",
-    )
 
     clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_app_profile",
@@ -112,7 +99,6 @@ class ACIEndpointGroup(ACIBaseModel):
         "intra_epg_isolation_enabled",
         "qos_class",
         "preferred_group_member_enabled",
-        "proxy_arp_enabled",
     )
     prerequisite_models: tuple = (
         "netbox_aci_plugin.ACIAppProfile",
@@ -120,14 +106,8 @@ class ACIEndpointGroup(ACIBaseModel):
     )
 
     class Meta:
-        constraints: list[models.UniqueConstraint] = [
-            models.UniqueConstraint(
-                fields=("aci_app_profile", "name"),
-                name="%(app_label)s_%(class)s_unique_per_aci_app_profile",
-            ),
-        ]
+        abstract: bool = True
         ordering: tuple = ("aci_app_profile", "name")
-        verbose_name: str = _("ACI Endpoint Group")
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
@@ -185,3 +165,42 @@ class ACIEndpointGroup(ACIBaseModel):
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return QualityOfServiceClassChoices.colors.get(self.qos_class)
+
+
+#
+# ACI Endpoint Group
+#
+
+
+class ACIEndpointGroup(ACIEndpointGroupBaseModel):
+    """NetBox model for ACI Endpoint Groups (EPG)."""
+
+    proxy_arp_enabled = models.BooleanField(
+        verbose_name=_("proxy ARP enabled"),
+        default=False,
+        help_text=_(
+            "Whether proxy ARP is enabled for the EPG. Default is disabled."
+        ),
+    )
+
+    # Generic relations
+    aci_contract_relations = GenericRelation(
+        to="netbox_aci_plugin.ACIContractRelation",
+        content_type_field="aci_object_type",
+        object_id_field="aci_object_id",
+        related_query_name="aci_endpoint_group",
+    )
+
+    clone_fields: tuple = ACIEndpointGroupBaseModel.clone_fields + (
+        "proxy_arp_enabled",
+    )
+
+    class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_app_profile", "name"),
+                name="%(app_label)s_%(class)s_unique_name_per_aci_app_profile",
+            ),
+        ]
+        default_related_name: str = "aci_endpoint_groups"
+        verbose_name: str = _("ACI Endpoint Group")
