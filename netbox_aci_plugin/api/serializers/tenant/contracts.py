@@ -72,9 +72,7 @@ class ACIContractRelationSerializer(NetBoxModelSerializer):
     )
     aci_contract = ACIContractSerializer(nested=True, required=True)
     aci_object_type = ContentTypeField(
-        queryset=ContentType.objects.filter(
-            model__in=CONTRACT_RELATION_OBJECT_TYPES
-        ),
+        queryset=ContentType.objects.filter(CONTRACT_RELATION_OBJECT_TYPES),
         required=False,
         default=None,
         allow_null=True,

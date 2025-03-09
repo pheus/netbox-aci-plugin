@@ -394,9 +394,7 @@ class ACIContractRelationEditForm(NetBoxModelForm):
         label=_("ACI Contract"),
     )
     aci_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(
-            model__in=CONTRACT_RELATION_OBJECT_TYPES
-        ),
+        queryset=ContentType.objects.filter(CONTRACT_RELATION_OBJECT_TYPES),
         widget=HTMXSelect(),
         label=_("ACI Object Type"),
     )
@@ -516,9 +514,7 @@ class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
         label=_("ACI Contract"),
     )
     aci_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(
-            model__in=CONTRACT_RELATION_OBJECT_TYPES
-        ),
+        queryset=ContentType.objects.filter(CONTRACT_RELATION_OBJECT_TYPES),
         required=False,
         widget=HTMXSelect(method="post", attrs={"hx-select": "#form_fields"}),
         label=_("ACI Object Type"),
@@ -669,9 +665,7 @@ class ACIContractRelationImportForm(NetBoxModelImportForm):
         label=_("ACI Object ID"),
     )
     aci_object_type = CSVContentTypeField(
-        queryset=ContentType.objects.filter(
-            model__in=CONTRACT_RELATION_OBJECT_TYPES
-        ),
+        queryset=ContentType.objects.filter(CONTRACT_RELATION_OBJECT_TYPES),
         label=_("ACI Object Type (app & model)"),
     )
     role = CSVChoiceField(

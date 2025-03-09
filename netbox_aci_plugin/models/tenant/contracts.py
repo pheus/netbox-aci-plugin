@@ -121,7 +121,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         to="contenttypes.ContentType",
         on_delete=models.PROTECT,
         related_name="+",
-        limit_choices_to=models.Q(model__in=CONTRACT_RELATION_OBJECT_TYPES),
+        limit_choices_to=CONTRACT_RELATION_OBJECT_TYPES,
         verbose_name=_("ACI object type"),
         blank=True,
         null=True,
