@@ -2,13 +2,18 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import (
+    GenericRelation,
+)
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ...choices import QualityOfServiceClassChoices
+from ...choices import (
+    QualityOfServiceClassChoices,
+    USegAttributeMatchOperatorChoices,
+)
 from ...validators import ACIPolicyNameValidator
 from ..base import ACIBaseModel
 from .app_profiles import ACIAppProfile
@@ -204,3 +209,50 @@ class ACIEndpointGroup(ACIEndpointGroupBaseModel):
         ]
         default_related_name: str = "aci_endpoint_groups"
         verbose_name: str = _("ACI Endpoint Group")
+
+
+#
+# ACI uSeg Endpoint Group
+#
+
+
+class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
+    """NetBox model for ACI uSeg Endpoint Groups (uSegEPG)."""
+
+    match_operator = models.CharField(
+        verbose_name=_("match uSeg attributes"),
+        max_length=3,
+        default=USegAttributeMatchOperatorChoices.MATCH_ANY,
+        choices=USegAttributeMatchOperatorChoices,
+        help_text=_(
+            "Operator to match the related uSeg attributes. Default is 'any'."
+        ),
+    )
+
+    # Generic relations
+    aci_contract_relations = GenericRelation(
+        to="netbox_aci_plugin.ACIContractRelation",
+        content_type_field="aci_object_type",
+        object_id_field="aci_object_id",
+        related_query_name="aci_useg_endpoint_group",
+    )
+
+    clone_fields: tuple = ACIEndpointGroupBaseModel.clone_fields + (
+        "match_operator",
+    )
+
+    class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_app_profile", "name"),
+                name="%(app_label)s_%(class)s_unique_name_per_aci_app_profile",
+            ),
+        ]
+        default_related_name: str = "aci_useg_endpoint_groups"
+        verbose_name: str = _("ACI uSeg Endpoint Group")
+
+    def get_match_operator_color(self) -> str:
+        """Return the associated color of choice from the ChoiceSet."""
+        return USegAttributeMatchOperatorChoices.colors.get(
+            self.match_operator
+        )

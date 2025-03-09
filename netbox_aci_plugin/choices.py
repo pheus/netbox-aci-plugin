@@ -407,6 +407,24 @@ class QualityOfServiceDSCPChoices(ChoiceSet):
 
 
 #
+# uSeg EPG
+#
+
+
+class USegAttributeMatchOperatorChoices(ChoiceSet):
+    """Choice set of uSeg EPG attribute match operator."""
+
+    # default "any"
+    MATCH_ANY = "any"
+    MATCH_ALL = "all"
+
+    CHOICES = (
+        (MATCH_ANY, _("any"), "blue"),
+        (MATCH_ALL, _("all"), "yellow"),
+    )
+
+
+#
 # VRF
 #
 
