@@ -2,20 +2,24 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from dcim.models import MACAddress
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
+from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
 
 from ....choices import (
     QualityOfServiceClassChoices,
     USegAttributeMatchOperatorChoices,
+    USegAttributeTypeChoices,
 )
 from ....models.tenant.app_profiles import ACIAppProfile
 from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
+    ACIUSegNetworkAttribute,
 )
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
@@ -623,3 +627,473 @@ class ACIUSegEndpointGroupTestCase(TestCase):
         )
         with self.assertRaises(IntegrityError):
             duplicate_epg.save()
+
+
+class ACIUSegNetworkAttributeTestCase(TestCase):
+    """Test case for ACIUSegNetworkAttribute model."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIUSegNetworkAttribute model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_app_profile_name = "ACITestAppProfile"
+        cls.aci_vrf_name = "ACITestVRF"
+        cls.aci_bd_name = "ACITestBD"
+        cls.aci_useg_epg_name = "ACITestUSegEPG"
+        cls.aci_useg_network_attr_ip_name = (
+            "ACITestUSegNetworkAttributeIPAddress"
+        )
+        cls.aci_useg_network_attr_mac_name = (
+            "ACITestUSegNetworkAttributeMACAddress"
+        )
+        cls.aci_useg_network_attr_prefix_name = (
+            "ACITestUSegNetworkAttributePrefix"
+        )
+        cls.aci_useg_network_attr_subnet_name = (
+            "ACITestUSegNetworkAttributeEPGSubnet"
+        )
+        cls.aci_useg_network_attr_alias = "ACITestUSegNetworkAttributeAlias"
+        cls.aci_useg_network_attr_description = (
+            "ACI Test uSeg Network Attribute for NetBox ACI Plugin"
+        )
+        cls.aci_useg_network_attr_comments = """
+        ACI uSeg Network Attribute for NetBox ACI Plugin testing.
+        """
+        cls.aci_useg_network_attr_use_epg_subnet = True
+        cls.nb_tenant_name = "NetBoxTestTenant"
+
+        # Create objects
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.aci_app_profile = ACIAppProfile.objects.create(
+            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
+        )
+        cls.aci_vrf = ACIVRF.objects.create(
+            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
+        )
+        cls.aci_bd = ACIBridgeDomain.objects.create(
+            name=cls.aci_bd_name,
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+        )
+        cls.aci_useg_epg = ACIUSegEndpointGroup.objects.create(
+            name=cls.aci_useg_epg_name,
+            aci_app_profile=cls.aci_app_profile,
+            aci_bridge_domain=cls.aci_bd,
+            nb_tenant=cls.nb_tenant,
+        )
+
+        # Create attribute objects
+        cls.ip_address1 = IPAddress.objects.create(address="192.168.1.1/24")
+        cls.ip_address2 = IPAddress.objects.create(address="192.168.1.2/24")
+        cls.mac_address1 = MACAddress.objects.create(
+            mac_address="00:00:00:00:00:01"
+        )
+        cls.mac_address2 = MACAddress.objects.create(
+            mac_address="00:00:00:00:00:02"
+        )
+        cls.prefix1 = Prefix.objects.create(prefix="192.168.1.0/24")
+        cls.prefix2 = Prefix.objects.create(prefix="192.168.2.0/24")
+
+        # Create model objects
+        cls.aci_useg_network_attr_ip_address = (
+            ACIUSegNetworkAttribute.objects.create(
+                name=cls.aci_useg_network_attr_ip_name,
+                name_alias=cls.aci_useg_network_attr_alias,
+                description=cls.aci_useg_network_attr_description,
+                comments=cls.aci_useg_network_attr_comments,
+                aci_useg_endpoint_group=cls.aci_useg_epg,
+                attr_object=cls.ip_address1,
+                nb_tenant=cls.nb_tenant,
+            )
+        )
+        cls.aci_useg_network_attr_mac_address = (
+            ACIUSegNetworkAttribute.objects.create(
+                name=cls.aci_useg_network_attr_mac_name,
+                name_alias=cls.aci_useg_network_attr_alias,
+                description=cls.aci_useg_network_attr_description,
+                comments=cls.aci_useg_network_attr_comments,
+                aci_useg_endpoint_group=cls.aci_useg_epg,
+                attr_object=cls.mac_address1,
+                nb_tenant=cls.nb_tenant,
+            )
+        )
+        cls.aci_useg_network_attr_prefix = (
+            ACIUSegNetworkAttribute.objects.create(
+                name=cls.aci_useg_network_attr_prefix_name,
+                name_alias=cls.aci_useg_network_attr_alias,
+                description=cls.aci_useg_network_attr_description,
+                comments=cls.aci_useg_network_attr_comments,
+                aci_useg_endpoint_group=cls.aci_useg_epg,
+                attr_object=cls.prefix1,
+                nb_tenant=cls.nb_tenant,
+            )
+        )
+        cls.aci_useg_network_attr_epg_subnet = (
+            ACIUSegNetworkAttribute.objects.create(
+                name=cls.aci_useg_network_attr_subnet_name,
+                name_alias=cls.aci_useg_network_attr_alias,
+                description=cls.aci_useg_network_attr_description,
+                comments=cls.aci_useg_network_attr_comments,
+                aci_useg_endpoint_group=cls.aci_useg_epg,
+                nb_tenant=cls.nb_tenant,
+                use_epg_subnet=cls.aci_useg_network_attr_use_epg_subnet,
+            )
+        )
+
+    def test_create_aci_useg_network_attr_instance(self) -> None:
+        """Test type of created ACI uSeg Network Attribute."""
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_ip_address, ACIUSegNetworkAttribute
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_mac_address, ACIUSegNetworkAttribute
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_prefix, ACIUSegNetworkAttribute
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_epg_subnet, ACIUSegNetworkAttribute
+            )
+        )
+
+    def test_aci_useg_network_attr_str(self) -> None:
+        """Test string representation of ACI uSeg Network Attribute."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.__str__(),
+            f"{self.aci_useg_network_attr_ip_address.name} "
+            f"({self.aci_useg_epg_name})",
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_mac_address.__str__(),
+            f"{self.aci_useg_network_attr_mac_address.name} "
+            f"({self.aci_useg_epg_name})",
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_prefix.__str__(),
+            f"{self.aci_useg_network_attr_prefix.name} "
+            f"({self.aci_useg_epg_name})",
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_epg_subnet.__str__(),
+            f"{self.aci_useg_network_attr_epg_subnet.name} "
+            f"({self.aci_useg_epg_name})",
+        )
+
+    def test_aci_useg_network_attr_name_alias(self) -> None:
+        """Test name alias of ACI uSeg Network Attribute."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.name_alias,
+            self.aci_useg_network_attr_alias,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_mac_address.name_alias,
+            self.aci_useg_network_attr_alias,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_prefix.name_alias,
+            self.aci_useg_network_attr_alias,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_epg_subnet.name_alias,
+            self.aci_useg_network_attr_alias,
+        )
+
+    def test_aci_useg_network_attr_description(self) -> None:
+        """Test description of ACI uSeg Network Attribute."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.description,
+            self.aci_useg_network_attr_description,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_mac_address.description,
+            self.aci_useg_network_attr_description,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_prefix.description,
+            self.aci_useg_network_attr_description,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_epg_subnet.description,
+            self.aci_useg_network_attr_description,
+        )
+
+    def test_aci_useg_network_attr_aci_useg_endpoint_group_instance(
+        self,
+    ) -> None:
+        """Test the ACI uSeg EPG instance associated with uSeg Attribute."""
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_ip_address.aci_useg_endpoint_group,
+                ACIUSegEndpointGroup,
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_mac_address.aci_useg_endpoint_group,
+                ACIUSegEndpointGroup,
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_prefix.aci_useg_endpoint_group,
+                ACIUSegEndpointGroup,
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_epg_subnet.aci_useg_endpoint_group,
+                ACIUSegEndpointGroup,
+            )
+        )
+
+    def test_aci_useg_network_attr_aci_useg_endpoint_group_name(self) -> None:
+        """Test the ACI uSeg EPG name associated with ACI uSeg Attribute."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.aci_useg_endpoint_group.name,
+            self.aci_useg_epg_name,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_mac_address.aci_useg_endpoint_group.name,
+            self.aci_useg_epg_name,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_prefix.aci_useg_endpoint_group.name,
+            self.aci_useg_epg_name,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_epg_subnet.aci_useg_endpoint_group.name,
+            self.aci_useg_epg_name,
+        )
+
+    def test_aci_useg_network_attr_attr_object_instance(self) -> None:
+        """Test the object instance associated with ACI uSeg Attribute."""
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_ip_address.attr_object, IPAddress
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_mac_address.attr_object, MACAddress
+            )
+        )
+        self.assertTrue(
+            isinstance(self.aci_useg_network_attr_prefix.attr_object, Prefix)
+        )
+
+    def test_aci_useg_network_attr_aci_tenant_instance(self) -> None:
+        """Test the ACI Tenant instance associated with ACI uSeg Attribute."""
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_ip_address.aci_tenant, ACITenant
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_mac_address.aci_tenant, ACITenant
+            )
+        )
+        self.assertTrue(
+            isinstance(self.aci_useg_network_attr_prefix.aci_tenant, ACITenant)
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_epg_subnet.aci_tenant, ACITenant
+            )
+        )
+
+    def test_aci_useg_network_attr_nb_tenant_instance(self) -> None:
+        """Test the NetBox tenant instance associated with uSeg Attribute."""
+        self.assertTrue(
+            isinstance(self.aci_useg_network_attr_ip_address.nb_tenant, Tenant)
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_useg_network_attr_mac_address.nb_tenant, Tenant
+            )
+        )
+        self.assertTrue(
+            isinstance(self.aci_useg_network_attr_prefix.nb_tenant, Tenant)
+        )
+        self.assertTrue(
+            isinstance(self.aci_useg_network_attr_epg_subnet.nb_tenant, Tenant)
+        )
+
+    def test_aci_useg_network_attr_nb_tenant_name(self) -> None:
+        """Test the NetBox tenant name associated with ACI uSeg Attribute."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.nb_tenant.name,
+            self.nb_tenant_name,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_mac_address.nb_tenant.name,
+            self.nb_tenant_name,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_prefix.nb_tenant.name,
+            self.nb_tenant_name,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_epg_subnet.nb_tenant.name,
+            self.nb_tenant_name,
+        )
+
+    def test_aci_useg_network_attr_type(self) -> None:
+        """Test 'type' choice of ACI uSeg Network Attribute."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.type,
+            USegAttributeTypeChoices.TYPE_IP,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_mac_address.type,
+            USegAttributeTypeChoices.TYPE_MAC,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_prefix.type,
+            USegAttributeTypeChoices.TYPE_IP,
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_epg_subnet.type,
+            USegAttributeTypeChoices.TYPE_IP,
+        )
+
+    def test_aci_useg_network_attr_get_type_color(self) -> None:
+        """Test the 'get_type_color' method of ACI uSeg Network Attribute."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.get_type_color(),
+            USegAttributeTypeChoices.colors.get(
+                USegAttributeTypeChoices.TYPE_IP
+            ),
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_mac_address.get_type_color(),
+            USegAttributeTypeChoices.colors.get(
+                USegAttributeTypeChoices.TYPE_MAC
+            ),
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_prefix.get_type_color(),
+            USegAttributeTypeChoices.colors.get(
+                USegAttributeTypeChoices.TYPE_IP
+            ),
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_epg_subnet.get_type_color(),
+            USegAttributeTypeChoices.colors.get(
+                USegAttributeTypeChoices.TYPE_IP
+            ),
+        )
+
+    def test_aci_useg_network_attr_use_epg_subnet(self) -> None:
+        """Test 'use_epg_subnet' option of ACI uSeg Network Attribute."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.use_epg_subnet, False
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_mac_address.use_epg_subnet, False
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_prefix.use_epg_subnet, False
+        )
+        self.assertEqual(
+            self.aci_useg_network_attr_epg_subnet.use_epg_subnet, True
+        )
+
+    def test_invalid_aci_useg_network_attr_name(self) -> None:
+        """Test validation of ACI uSeg Network Attribute naming."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="ACI uSeg Network Attribute Test 1",
+            aci_useg_endpoint_group=self.aci_useg_epg,
+        )
+        with self.assertRaises(ValidationError):
+            useg_network_attr.full_clean()
+
+    def test_invalid_aci_useg_network_attr_name_length(self) -> None:
+        """Test validation of ACI uSeg Network Attribute name length."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="A" * 65,  # Exceeding the maximum length of 64
+            aci_useg_endpoint_group=self.aci_useg_epg,
+        )
+        with self.assertRaises(ValidationError):
+            useg_network_attr.full_clean()
+
+    def test_invalid_aci_useg_network_attr_name_alias(self) -> None:
+        """Test validation of ACI uSeg Network Attribute aliasing."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="ACIUSegNetworkAttrTest1",
+            name_alias="Invalid Alias",
+            aci_useg_endpoint_group=self.aci_useg_epg,
+        )
+        with self.assertRaises(ValidationError):
+            useg_network_attr.full_clean()
+
+    def test_invalid_aci_useg_network_attr_name_alias_length(self) -> None:
+        """Test validation of ACI uSeg Network Attribute name alias length."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="ACIUSegNetworkAttrTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+            aci_useg_endpoint_group=self.aci_useg_epg,
+        )
+        with self.assertRaises(ValidationError):
+            useg_network_attr.full_clean()
+
+    def test_invalid_aci_useg_network_attr_description(self) -> None:
+        """Test validation of ACI uSeg Network Attribute description."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="ACIUSegNetworkAttrTest1",
+            description="Invalid Description: ö",
+            aci_useg_endpoint_group=self.aci_useg_epg,
+        )
+        with self.assertRaises(ValidationError):
+            useg_network_attr.full_clean()
+
+    def test_invalid_aci_useg_network_attr_description_length(self) -> None:
+        """Test validation of ACI uSeg Network Attribute description length."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="ACIUSegNetworkAttrTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+            aci_useg_endpoint_group=self.aci_useg_epg,
+        )
+        with self.assertRaises(ValidationError):
+            useg_network_attr.full_clean()
+
+    def test_invalid_aci_useg_network_attr_attr_object(self) -> None:
+        """Test validation of the object assignment for ACI uSeg Attribute."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name=self.aci_useg_network_attr_ip_name,
+            aci_useg_endpoint_group=self.aci_useg_epg,
+            attr_object=self.aci_bd,
+        )
+        with self.assertRaises(ValidationError):
+            useg_network_attr.full_clean()
+
+    def test_constraint_unique_aci_useg_network_attr_name_per_aci_useg_epg(
+        self,
+    ) -> None:
+        """Test unique constraint of ACI uSeg Attribute name per uSeg EPG."""
+        duplicate_useg_network_attr = ACIUSegNetworkAttribute(
+            name=self.aci_useg_network_attr_ip_name,
+            aci_useg_endpoint_group=self.aci_useg_epg,
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_useg_network_attr.save()
+
+    def test_constraint_unique_aci_useg_network_attr_epg_subnet_per_aci_useg_epg(
+        self,
+    ) -> None:
+        """Test unique constraint of one 'use_epg_subnet' per ACI uSeg EPG."""
+        duplicate_useg_network_attr_use_epg_subnet = ACIUSegNetworkAttribute(
+            name="ACITestUSegNetworkAttributeEPGSubnetDuplicate",
+            aci_useg_endpoint_group=self.aci_useg_epg,
+            use_epg_subnet=True,
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_useg_network_attr_use_epg_subnet.save()

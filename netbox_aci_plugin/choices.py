@@ -425,6 +425,26 @@ class USegAttributeMatchOperatorChoices(ChoiceSet):
 
 
 #
+# uSeg Attribute
+#
+
+
+class USegAttributeTypeChoices(ChoiceSet):
+    """Choice set of uSeg EPG attribute type."""
+
+    # default "mac"
+    TYPE_MAC = "mac"
+    TYPE_IP = "ip"
+    TYPE_VM = "vm"
+
+    CHOICES = (
+        (TYPE_MAC, _("MAC"), "blue"),
+        (TYPE_IP, _("IP"), "teal"),
+        (TYPE_VM, _("Virtual Machine"), "yellow"),
+    )
+
+
+#
 # VRF
 #
 
