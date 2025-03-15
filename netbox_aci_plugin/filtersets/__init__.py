@@ -13,7 +13,11 @@ from .tenant.contracts import (
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
-from .tenant.endpoint_groups import ACIEndpointGroupFilterSet
+from .tenant.endpoint_groups import (
+    ACIEndpointGroupFilterSet,
+    ACIUSegEndpointGroupFilterSet,
+    ACIUSegNetworkAttributeFilterSet,
+)
 from .tenant.tenants import ACITenantFilterSet
 from .tenant.vrfs import ACIVRFFilterSet
 
@@ -29,5 +33,7 @@ __all__ = (
     "ACIContractFilterEntryFilterSet",
     "ACIEndpointGroupFilterSet",
     "ACITenantFilterSet",
+    "ACIUSegEndpointGroupFilterSet",
+    "ACIUSegNetworkAttributeFilterSet",
     "ACIVRFFilterSet",
 )
