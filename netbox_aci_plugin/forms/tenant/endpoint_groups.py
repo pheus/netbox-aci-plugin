@@ -2,8 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from dcim.models import MACAddress
 from django import forms
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
+from ipam.models import VRF, IPAddress, Prefix
 from netbox.forms import (
     NetBoxModelBulkEditForm,
     NetBoxModelFilterSetForm,
@@ -14,23 +18,30 @@ from tenancy.models import Tenant, TenantGroup
 from utilities.forms import (
     BOOLEAN_WITH_BLANK_CHOICES,
     add_blank_choice,
+    get_field_value,
 )
 from utilities.forms.fields import (
     CommentField,
+    ContentTypeChoiceField,
     CSVChoiceField,
+    CSVContentTypeField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
+from utilities.forms.widgets import HTMXSelect
+from utilities.templatetags.builtins.filters import bettertitle
 
 from ...choices import QualityOfServiceClassChoices
+from ...constants import USEG_NETWORK_ATTRIBUTES_MODELS
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.bridge_domains import ACIBridgeDomain
 from ...models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
+    ACIUSegNetworkAttribute,
 )
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
@@ -1065,3 +1076,490 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
                 aci_tenant__name=data["aci_tenant"]
             )
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset
+
+
+#
+# uSEg Network Attribute forms
+#
+
+
+class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI uSeg Network Attribute model."""
+
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        initial_params={
+            "aci_app_profiles__aci_useg_endpoint_groups": (
+                "$aci_useg_endpoint_group"
+            )
+        },
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_app_profile = DynamicModelChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        initial_params={
+            "aci_useg_endpoint_groups": "$aci_useg_endpoint_group"
+        },
+        required=False,
+        label=_("ACI Application Profile"),
+    )
+    aci_useg_endpoint_group = DynamicModelChoiceField(
+        queryset=ACIUSegEndpointGroup.objects.all(),
+        query_params={"aci_app_profile_id": "$aci_app_profile"},
+        label=_("ACI uSeg Endpoint Group"),
+    )
+    attr_object_type = ContentTypeChoiceField(
+        queryset=ContentType.objects.filter(USEG_NETWORK_ATTRIBUTES_MODELS),
+        required=False,
+        widget=HTMXSelect(),
+        label=_("Attribute Object Type"),
+    )
+    attr_object = DynamicModelChoiceField(
+        queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
+        selector=True,
+        required=False,
+        label=_("Attribute Object"),
+        disabled=True,
+    )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    use_epg_subnet = forms.BooleanField(
+        required=False,
+        label=_("Use EPG subnet"),
+        help_text=_(
+            "Whether the EPG subnet is applied as uSeg attribute. "
+            "Default is disabled."
+        ),
+    )
+    comments = CommentField()
+
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_app_profile",
+            "aci_useg_endpoint_group",
+            "description",
+            "tags",
+            name=_("ACI uSeg Network Attribute"),
+        ),
+        FieldSet(
+            "use_epg_subnet",
+            name=_("EPG Subnet Settings"),
+        ),
+        FieldSet(
+            "attr_object_type",
+            "attr_object",
+            name=_("Attribute Assignment"),
+        ),
+        FieldSet(
+            "nb_tenant_group",
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+
+    class Meta:
+        model = ACIUSegNetworkAttribute
+        fields: tuple = (
+            "name",
+            "name_alias",
+            "aci_useg_endpoint_group",
+            "attr_object_type",
+            "description",
+            "nb_tenant",
+            "use_epg_subnet",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize the ACI uSeg Network Attribute form."""
+
+        # Initialize fields with initial values
+        instance = kwargs.get("instance")
+        initial = kwargs.get("initial", {}).copy()
+
+        if instance is not None and instance.attr_object:
+            # Initialize Attribute object field
+            initial["attr_object"] = instance.attr_object
+
+        # Check if "comments" is absent, indicating a request with custom
+        # GET parameters for prefilling of the form field "attr_object".
+        prefill_attr_object = "comments" not in initial
+
+        kwargs["initial"] = initial
+
+        super().__init__(*args, **kwargs)
+
+        if attr_object_type_id := get_field_value(self, "attr_object_type"):
+            try:
+                # Retrieve the ContentType model class based on the Attribute
+                # object type
+                attr_object_type = ContentType.objects.get(
+                    pk=attr_object_type_id
+                )
+                attr_model = attr_object_type.model_class()
+
+                # Configure the queryset and label for the attr_object field
+                self.fields["attr_object"].queryset = attr_model.objects.all()
+                self.fields["attr_object"].widget.attrs["selector"] = (
+                    attr_model._meta.label_lower
+                )
+                self.fields["attr_object"].disabled = False
+                self.fields["attr_object"].label = _(
+                    bettertitle(attr_model._meta.verbose_name)
+                )
+            except ObjectDoesNotExist:
+                pass
+
+            # Clears the attr_object field if the selected type changes
+            if (
+                self.instance
+                and attr_object_type_id != self.instance.attr_object_type_id
+                and not prefill_attr_object
+            ):
+                self.initial["attr_object"] = None
+
+    def clean(self):
+        """Validate form fields for the ACI uSeg Network Attribute form."""
+        super().clean()
+
+        # Ensure the selected Attribute object gets assigned
+        self.instance.attr_object = self.cleaned_data.get("attr_object")
+
+
+class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for the ACI uSeg Network Attribute model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_app_profile = DynamicModelChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        required=False,
+        label=_("ACI Application Profile"),
+    )
+    aci_useg_endpoint_group = DynamicModelChoiceField(
+        queryset=ACIUSegEndpointGroup.objects.all(),
+        query_params={"aci_app_profile_id": "$aci_app_profile"},
+        required=False,
+        label=_("ACI uSeg Endpoint Group"),
+    )
+    attr_object_type = ContentTypeChoiceField(
+        queryset=ContentType.objects.filter(USEG_NETWORK_ATTRIBUTES_MODELS),
+        required=False,
+        widget=HTMXSelect(method="post", attrs={"hx-select": "#form_fields"}),
+        label=_("Attribute Object Type"),
+    )
+    attr_object = DynamicModelChoiceField(
+        queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        selector=True,
+        required=False,
+        label=_("ACI Object"),
+        disabled=True,
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    use_epg_subnet = forms.NullBooleanField(
+        required=False,
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+        label=_("Use EPG subnet"),
+    )
+    comments = CommentField()
+
+    model = ACIUSegNetworkAttribute
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_app_profile",
+            "aci_useg_endpoint_group",
+            "description",
+            "tags",
+            name=_("ACI uSeg Network Attribute"),
+        ),
+        FieldSet(
+            "use_epg_subnet",
+            name=_("EPG Subnet Settings"),
+        ),
+        FieldSet(
+            "attr_object_type",
+            "attr_object",
+            name=_("Attribute Assignment"),
+        ),
+        FieldSet(
+            "nb_tenant_group",
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields: tuple = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "comments",
+    )
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize the ACI uSeg Network Attribute bulk edit form."""
+
+        super().__init__(*args, **kwargs)
+
+        if attr_object_type_id := get_field_value(self, "attr_object_type"):
+            try:
+                # Retrieve the ContentType model class based on the Attribute
+                # object type
+                attr_object_type = ContentType.objects.get(
+                    pk=attr_object_type_id
+                )
+                attr_model = attr_object_type.model_class()
+
+                # Configure the queryset and label for the attr_object field
+                self.fields["attr_object"].queryset = attr_model.objects.all()
+                self.fields["attr_object"].widget.attrs["selector"] = (
+                    attr_model._meta.label_lower
+                )
+                self.fields["attr_object"].disabled = False
+                self.fields["attr_object"].label = _(
+                    bettertitle(attr_model._meta.verbose_name)
+                )
+            except ObjectDoesNotExist:
+                pass
+
+
+class ACIUSegNetworkAttributeFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for the ACI uSeg Network Attribute model."""
+
+    model = ACIUSegNetworkAttribute
+    fieldsets: tuple = (
+        FieldSet(
+            "q",
+            "filter_id",
+            "tag",
+        ),
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant_id",
+            "aci_app_profile_id",
+            "aci_useg_endpoint_group_id",
+            "description",
+            "tags",
+            name=_("ACI uSeg Network Attribute"),
+        ),
+        FieldSet(
+            "use_epg_subnet",
+            name=_("EPG Subnet Settings"),
+        ),
+        FieldSet(
+            "ip_address_vrf_id",
+            "ip_address_id",
+            "mac_address_id",
+            "prefix_vrf_id",
+            "prefix_id",
+            name=_("Attribute Assignment"),
+        ),
+        FieldSet(
+            "nb_tenant_group_id",
+            "nb_tenant_id",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+
+    name = forms.CharField(
+        required=False,
+    )
+    name_alias = forms.CharField(
+        required=False,
+    )
+    description = forms.CharField(
+        required=False,
+    )
+    aci_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_app_profile_id = DynamicModelMultipleChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI Application Profile"),
+    )
+    aci_useg_endpoint_group_id = DynamicModelMultipleChoiceField(
+        queryset=ACIUSegEndpointGroup.objects.all(),
+        query_params={"aci_app_profile_id": "$aci_app_profile_id"},
+        null_option="None",
+        required=False,
+        label=_("ACI uSeg Endpoint Group"),
+    )
+    ip_address_vrf_id = DynamicModelMultipleChoiceField(
+        queryset=VRF.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("VRF of IP Address"),
+    )
+    ip_address_id = DynamicModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(),
+        query_params={"vrf_id": "$ip_address_vrf_id"},
+        null_option="None",
+        required=False,
+        label=_("IP Address"),
+    )
+    mac_address_id = DynamicModelMultipleChoiceField(
+        queryset=MACAddress.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("MAC Address"),
+    )
+    prefix_vrf_id = DynamicModelMultipleChoiceField(
+        queryset=VRF.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("VRF of Prefix"),
+    )
+    prefix_id = DynamicModelMultipleChoiceField(
+        queryset=Prefix.objects.all(),
+        query_params={"vrf_id": "$prefix_vrf_id"},
+        null_option="None",
+        required=False,
+        label=_("Prefix"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    use_epg_subnet = forms.NullBooleanField(
+        required=False,
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+        label=_("Use EPG subnet"),
+    )
+    tag = TagFilterField(ACIUSegNetworkAttribute)
+
+
+class ACIUSegNetworkAttributeImportForm(NetBoxModelImportForm):
+    """NetBox import form for the ACI uSeg Network Attribute model."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI Application Profile"),
+    )
+    aci_app_profile = CSVModelChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Application Profile"),
+        help_text=_("Assigned ACI Application Profile"),
+    )
+    aci_useg_endpoint_group = CSVModelChoiceField(
+        queryset=ACIUSegEndpointGroup.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI uSeg Endpoint Group"),
+        help_text=_("Assigned ACI uSeg Endpoint Group"),
+    )
+    attr_object_id = forms.IntegerField(
+        required=False,
+        label=_("Attribute Object ID"),
+    )
+    attr_object_type = CSVContentTypeField(
+        queryset=ContentType.objects.filter(USEG_NETWORK_ATTRIBUTES_MODELS),
+        required=False,
+        label=_("Attribute Object Type (app & model)"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+
+    class Meta:
+        model = ACIUSegNetworkAttribute
+        fields: tuple = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_app_profile",
+            "aci_useg_endpoint_group",
+            "description",
+            "nb_tenant",
+            "use_epg_subnet",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        # Limit ACIUSegEndpointGroup queryset by parent ACI objects
+        if data.get("aci_tenant") and data.get("aci_app_profile"):
+            # Limit ACIAppProfile queryset by parent ACITenant
+            aci_appprofile_queryset = ACIAppProfile.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
+            )
+            self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
+            # Limit ACIUSegEndpointGroup queryset by parent ACIAppProfile
+            aci_useg_endpoint_group_queryset = (
+                ACIUSegEndpointGroup.objects.filter(
+                    aci_app_profile__name=data["aci_app_profile"]
+                )
+            )
+            self.fields[
+                "aci_useg_endpoint_group"
+            ].queryset = aci_useg_endpoint_group_queryset

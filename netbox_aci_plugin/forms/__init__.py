@@ -16,6 +16,7 @@ from .tenant.contracts import (
 from .tenant.endpoint_groups import (
     ACIEndpointGroupFilterForm,
     ACIUSegEndpointGroupFilterForm,
+    ACIUSegNetworkAttributeFilterForm,
 )
 from .tenant.tenants import ACITenantFilterForm
 from .tenant.vrfs import ACIVRFFilterForm
@@ -33,5 +34,6 @@ __all__ = (
     "ACIEndpointGroupFilterForm",
     "ACITenantFilterForm",
     "ACIUSegEndpointGroupFilterForm",
+    "ACIUSegNetworkAttributeFilterForm",
     "ACIVRFFilterForm",
 )
