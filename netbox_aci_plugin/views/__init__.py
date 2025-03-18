@@ -62,6 +62,11 @@ from .tenant.endpoint_groups import (
     ACIUSegEndpointGroupBulkImportView,
     ACIUSegEndpointGroupEditView,
     ACIUSegEndpointGroupListView,
+    ACIUSegNetworkAttributeBulkDeleteView,
+    ACIUSegNetworkAttributeBulkEditView,
+    ACIUSegNetworkAttributeBulkImportView,
+    ACIUSegNetworkAttributeEditView,
+    ACIUSegNetworkAttributeListView,
 )
 from .tenant.tenants import (
     ACITenantBulkDeleteView,
@@ -151,6 +156,12 @@ __all__ = (
     "ACIUSegEndpointGroupBulkImportView",
     "ACIUSegEndpointGroupEditView",
     "ACIUSegEndpointGroupListView",
+    # ACIUsegNetworkAttribute
+    "ACIUSegNetworkAttributeBulkDeleteView",
+    "ACIUSegNetworkAttributeBulkEditView",
+    "ACIUSegNetworkAttributeBulkImportView",
+    "ACIUSegNetworkAttributeEditView",
+    "ACIUSegNetworkAttributeListView",
     # ACIVRF
     "ACIVRFBulkDeleteView",
     "ACIVRFBulkEditView",

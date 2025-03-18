@@ -11,6 +11,7 @@ from ...filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ...filtersets.tenant.endpoint_groups import (
     ACIEndpointGroupFilterSet,
     ACIUSegEndpointGroupFilterSet,
+    ACIUSegNetworkAttributeFilterSet,
 )
 from ...forms.tenant.endpoint_groups import (
     ACIEndpointGroupBulkEditForm,
@@ -21,14 +22,20 @@ from ...forms.tenant.endpoint_groups import (
     ACIUSegEndpointGroupEditForm,
     ACIUSegEndpointGroupFilterForm,
     ACIUSegEndpointGroupImportForm,
+    ACIUSegNetworkAttributeBulkEditForm,
+    ACIUSegNetworkAttributeEditForm,
+    ACIUSegNetworkAttributeFilterForm,
+    ACIUSegNetworkAttributeImportForm,
 )
 from ...models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
+    ACIUSegNetworkAttribute,
 )
 from ...tables.tenant.endpoint_groups import (
     ACIEndpointGroupTable,
     ACIUSegEndpointGroupTable,
+    ACIUSegNetworkAttributeTable,
 )
 from .contracts import ACIContractRelationChildrenView
 
@@ -82,6 +89,32 @@ class ACIUSegEndpointGroupChildrenView(generic.ObjectChildrenView):
         ).prefetch_related(
             "aci_app_profile",
             "aci_bridge_domain",
+            "nb_tenant",
+            "tags",
+        )
+
+
+class ACIUSegNetworkAttributeChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI uSeg Network Attribute."""
+
+    child_model = ACIUSegNetworkAttribute
+    filterset = ACIUSegNetworkAttributeFilterSet
+    tab = ViewTab(
+        label=_("Network Attributes"),
+        badge=lambda obj: obj.aci_useg_network_attributes.count(),
+        permission="netbox_aci_plugin.view_aciusegnetworkattribute",
+        weight=1000,
+    )
+    table = ACIUSegNetworkAttributeTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIUSegNetworkAttribute."""
+        return ACIUSegNetworkAttribute.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
+            "aci_useg_endpoint_group",
+            "attr_object_type",
+            "attr_object",
             "nb_tenant",
             "tags",
         )
@@ -323,6 +356,39 @@ class ACIUSegEndpointGroupContractRelationView(
 
 
 @register_model_view(
+    ACIUSegEndpointGroup, "usegnetworkattributes", path="network-attributes"
+)
+class ACIUSegEndpointGroupUSegNetworkAttributeView(
+    ACIUSegNetworkAttributeChildrenView
+):
+    """Children view of ACI uSeg Network Attribute of uSeg Endpoint Group."""
+
+    queryset = ACIUSegEndpointGroup.objects.all()
+    template_name = (
+        "netbox_aci_plugin/inc/aciusegendpointgroup/networkattributes.html"
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_useg_endpoint_group=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACIUSegEndpointGroup colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column of ACIContract
+        table.columns.hide("aci_tenant")
+        # Hide ACIUSegEndpointGroup column
+        table.columns.hide("aci_useg_endpoint_group")
+
+        return table
+
+
+@register_model_view(
     ACIUSegEndpointGroup, "bulk_import", path="import", detail=False
 )
 class ACIUSegEndpointGroupBulkImportView(generic.BulkImportView):
@@ -353,3 +419,94 @@ class ACIUSegEndpointGroupBulkDeleteView(generic.BulkDeleteView):
     queryset = ACIUSegEndpointGroup.objects.all()
     filterset = ACIUSegEndpointGroupFilterSet
     table = ACIUSegEndpointGroupTable
+
+
+#
+# uSeg Network Attribute views
+#
+
+
+@register_model_view(ACIUSegNetworkAttribute)
+class ACIUSegNetworkAttributeView(generic.ObjectView):
+    """Detail view for displaying a single object of uSeg Network Attribute."""
+
+    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+        "aci_useg_endpoint_group",
+        "attr_object",
+        "nb_tenant",
+        "tags",
+    )
+
+
+@register_model_view(ACIUSegNetworkAttribute, "list", path="", detail=False)
+class ACIUSegNetworkAttributeListView(generic.ObjectListView):
+    """List view for listing all objects of ACI uSeg Network Attribute."""
+
+    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+        "aci_useg_endpoint_group",
+        "attr_object",
+        "nb_tenant",
+        "tags",
+    )
+    filterset = ACIUSegNetworkAttributeFilterSet
+    filterset_form = ACIUSegNetworkAttributeFilterForm
+    table = ACIUSegNetworkAttributeTable
+
+
+@register_model_view(ACIUSegNetworkAttribute, "add", detail=False)
+@register_model_view(ACIUSegNetworkAttribute, "edit")
+class ACIUSegNetworkAttributeEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACI uSeg Network Attribute."""
+
+    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+        "aci_useg_endpoint_group",
+        "attr_object",
+        "nb_tenant",
+        "tags",
+    )
+    form = ACIUSegNetworkAttributeEditForm
+
+
+@register_model_view(ACIUSegNetworkAttribute, "delete")
+class ACIUSegNetworkAttributeDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACI uSeg Network Attribute."""
+
+    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+        "aci_useg_endpoint_group",
+        "attr_object",
+        "nb_tenant",
+        "tags",
+    )
+
+
+@register_model_view(
+    ACIUSegNetworkAttribute, "bulk_import", path="import", detail=False
+)
+class ACIUSegNetworkAttributeBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of Network Attribute."""
+
+    queryset = ACIUSegNetworkAttribute.objects.all()
+    model_form = ACIUSegNetworkAttributeImportForm
+
+
+@register_model_view(
+    ACIUSegNetworkAttribute, "bulk_edit", path="edit", detail=False
+)
+class ACIUSegNetworkAttributeBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of Network Attribute."""
+
+    queryset = ACIUSegNetworkAttribute.objects.all()
+    filterset = ACIUSegNetworkAttributeFilterSet
+    table = ACIUSegNetworkAttributeTable
+    form = ACIUSegNetworkAttributeBulkEditForm
+
+
+@register_model_view(
+    ACIUSegNetworkAttribute, "bulk_delete", path="delete", detail=False
+)
+class ACIUSegNetworkAttributeBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of Network Attribute."""
+
+    queryset = ACIUSegNetworkAttribute.objects.all()
+    filterset = ACIUSegNetworkAttributeFilterSet
+    table = ACIUSegNetworkAttributeTable
