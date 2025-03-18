@@ -57,6 +57,11 @@ from .tenant.endpoint_groups import (
     ACIEndpointGroupBulkImportView,
     ACIEndpointGroupEditView,
     ACIEndpointGroupListView,
+    ACIUSegEndpointGroupBulkDeleteView,
+    ACIUSegEndpointGroupBulkEditView,
+    ACIUSegEndpointGroupBulkImportView,
+    ACIUSegEndpointGroupEditView,
+    ACIUSegEndpointGroupListView,
 )
 from .tenant.tenants import (
     ACITenantBulkDeleteView,
@@ -140,6 +145,12 @@ __all__ = (
     "ACITenantBulkImportView",
     "ACITenantEditView",
     "ACITenantListView",
+    # ACIUSegEndpointGroup
+    "ACIUSegEndpointGroupBulkDeleteView",
+    "ACIUSegEndpointGroupBulkEditView",
+    "ACIUSegEndpointGroupBulkImportView",
+    "ACIUSegEndpointGroupEditView",
+    "ACIUSegEndpointGroupListView",
     # ACIVRF
     "ACIVRFBulkDeleteView",
     "ACIVRFBulkEditView",
