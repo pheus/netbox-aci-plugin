@@ -109,6 +109,27 @@ aciendpointgroup_item = PluginMenuItem(
     ),
 )
 
+# ACI uSeg Endpoint Group
+aciusegendpointgroup_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:aciusegendpointgroup_list",
+    link_text="uSeg Endpoint Groups",
+    permissions=["netbox_aci_plugin.vieusegw_aciendpointgroup"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciusegendpointgroup_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.adduseg_aciendpointgroup"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciusegendpointgroup_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.adduseg_aciendpointgroup"],
+        ),
+    ),
+)
+
 # ACI VRF
 acivrf_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acivrf_list",
@@ -227,6 +248,7 @@ menu = PluginMenu(
             (
                 aciappprofile_item,
                 aciendpointgroup_item,
+                aciusegendpointgroup_item,
             ),
         ),
         (

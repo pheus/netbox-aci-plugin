@@ -17,7 +17,7 @@ class PluginTest(TestCase):
     # Menu group: Tenants
     menu_group_tenants_item_count: int = 1
     # Menu group: Tenant Application Profiles
-    menu_group_tenant_app_profiles_item_count: int = 2
+    menu_group_tenant_app_profiles_item_count: int = 3
     # Menu group: Tenant Contracts
     menu_group_tenant_contracts_item_count: int = 4
     # Menu group: Tenant Networking
