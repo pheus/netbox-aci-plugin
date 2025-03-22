@@ -13,7 +13,10 @@ from .tenant.contracts import (
     ACIContractSubjectFilterSerializer,
     ACIContractSubjectSerializer,
 )
-from .tenant.endpoint_groups import ACIEndpointGroupSerializer
+from .tenant.endpoint_groups import (
+    ACIEndpointGroupSerializer,
+    ACIUSegEndpointGroupSerializer,
+)
 from .tenant.tenants import ACITenantSerializer
 from .tenant.vrfs import ACIVRFSerializer
 
@@ -34,6 +37,7 @@ __all__ = (
     "ACIContractSubjectSerializer",
     # From endpoint_groups
     "ACIEndpointGroupSerializer",
+    "ACIUSegEndpointGroupSerializer",
     # From networks
     "ACIVRFSerializer",
     # From tenants
