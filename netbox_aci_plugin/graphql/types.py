@@ -23,6 +23,7 @@ from .filters import (
     ACIContractSubjectFilterFilter,
     ACIEndpointGroupFilter,
     ACITenantFilter,
+    ACIUSegEndpointGroupFilter,
     ACIVRFFilter,
 )
 
@@ -90,6 +91,12 @@ class ACIAppProfileType(NetBoxObjectType):
     aci_endpoint_groups: List[
         Annotated[
             "ACIEndpointGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_useg_endpoint_groups: List[
+        Annotated[
+            "ACIUSegEndpointGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
@@ -190,6 +197,36 @@ class ACIBridgeDomainSubnetType(NetBoxObjectType):
 )
 class ACIEndpointGroupType(NetBoxObjectType):
     """GraphQL type definition for the ACIEndpointGroup model."""
+
+    # Model fields
+    aci_app_profile: Annotated[
+        "ACIAppProfileType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_bridge_domain: Annotated[
+        "ACIBridgeDomainType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
+
+    # Related models
+    aci_contract_relations: List[
+        Annotated[
+            "ACIContractRelationType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACIUSegEndpointGroup,
+    fields="__all__",
+    filters=ACIUSegEndpointGroupFilter,
+)
+class ACIUSegEndpointGroupType(NetBoxObjectType):
+    """GraphQL type definition for the ACIUSegEndpointGroup model."""
 
     # Model fields
     aci_app_profile: Annotated[

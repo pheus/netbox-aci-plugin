@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2024 Martin Hauser
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 from typing import List
 
 import strawberry
@@ -18,6 +19,7 @@ from .types import (
     ACIContractType,
     ACIEndpointGroupType,
     ACITenantType,
+    ACIUSegEndpointGroupType,
     ACIVRFType,
 )
 
@@ -51,6 +53,13 @@ class NetBoxACIQuery:
 
     aci_endpoint_group: ACIEndpointGroupType = strawberry_django.field()
     aci_endpoint_group_list: List[ACIEndpointGroupType] = (
+        strawberry_django.field()
+    )
+
+    aci_useg_endpoint_group: ACIUSegEndpointGroupType = (
+        strawberry_django.field()
+    )
+    aci_useg_endpoint_group_list: List[ACIUSegEndpointGroupType] = (
         strawberry_django.field()
     )
 
