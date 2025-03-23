@@ -26,6 +26,7 @@ from ..filtersets.tenant.contracts import (
 from ..filtersets.tenant.endpoint_groups import (
     ACIEndpointGroupFilterSet,
     ACIUSegEndpointGroupFilterSet,
+    ACIUSegNetworkAttributeFilterSet,
 )
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
@@ -85,6 +86,14 @@ class ACIEndpointGroupFilter(BaseFilterMixin):
 @autotype_decorator(ACIUSegEndpointGroupFilterSet)
 class ACIUSegEndpointGroupFilter(BaseFilterMixin):
     """GraphQL filter definition for the uSeg Endpoint Group model."""
+
+    pass
+
+
+@strawberry_django.filter(models.ACIUSegNetworkAttribute, lookups=True)
+@autotype_decorator(ACIUSegNetworkAttributeFilterSet)
+class ACIUSegNetworkAttributeFilter(BaseFilterMixin):
+    """GraphQL filter definition for the uSeg Network Attribute model."""
 
     pass
 

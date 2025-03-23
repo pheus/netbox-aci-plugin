@@ -20,6 +20,7 @@ from .types import (
     ACIEndpointGroupType,
     ACITenantType,
     ACIUSegEndpointGroupType,
+    ACIUSegNetworkAttributeType,
     ACIVRFType,
 )
 
@@ -60,6 +61,13 @@ class NetBoxACIQuery:
         strawberry_django.field()
     )
     aci_useg_endpoint_group_list: List[ACIUSegEndpointGroupType] = (
+        strawberry_django.field()
+    )
+
+    aci_useg_network_attribute: ACIUSegNetworkAttributeType = (
+        strawberry_django.field()
+    )
+    aci_useg_network_attribute_list: List[ACIUSegNetworkAttributeType] = (
         strawberry_django.field()
     )
 
