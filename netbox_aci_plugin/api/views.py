@@ -22,6 +22,7 @@ from ..filtersets.tenant.contracts import (
 from ..filtersets.tenant.endpoint_groups import (
     ACIEndpointGroupFilterSet,
     ACIUSegEndpointGroupFilterSet,
+    ACIUSegNetworkAttributeFilterSet,
 )
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
@@ -43,6 +44,7 @@ from ..models.tenant.contracts import (
 from ..models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
+    ACIUSegNetworkAttribute,
 )
 from ..models.tenant.tenants import ACITenant
 from ..models.tenant.vrfs import ACIVRF
@@ -59,6 +61,7 @@ from .serializers import (
     ACIEndpointGroupSerializer,
     ACITenantSerializer,
     ACIUSegEndpointGroupSerializer,
+    ACIUSegNetworkAttributeSerializer,
     ACIVRFSerializer,
 )
 
@@ -149,6 +152,19 @@ class ACIUSegEndpointGroupListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIUSegEndpointGroupSerializer
     filterset_class = ACIUSegEndpointGroupFilterSet
+
+
+class ACIUSegNetworkAttributeListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI uSeg Network Attribute instances."""
+
+    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+        "aci_useg_endpoint_group",
+        "attr_object",
+        "nb_tenant",
+        "tags",
+    )
+    serializer_class = ACIUSegNetworkAttributeSerializer
+    filterset_class = ACIUSegNetworkAttributeFilterSet
 
 
 class ACIContractFilterListViewSet(NetBoxModelViewSet):
