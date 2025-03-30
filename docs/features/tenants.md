@@ -8,6 +8,7 @@ flowchart TD
     TN([Tenant])
     AP(Application Profile)
     EPG(Endpoint Group)
+    USEGEPG(uSeg Endpoint Group)
     VRF(VRF)
     BD(Bridge Domain)
     SN(Subnet)
@@ -23,6 +24,7 @@ flowchart TD
     subgraph graphAP [Application Profile]
         TN -->|1:n| AP
         AP -->|1:n| EPG
+        AP -->|1:n| USEGEPG
     end
     subgraph graphNW [Network]
         subgraph graphBD [Bridge Domain]
@@ -45,9 +47,11 @@ flowchart TD
         end
         SJF -.->|n:1| FT
         CTR -.->|n:1| EPG
+        CTR -.->|n:1| USEGEPG
         CTR -.->|n:1| VRF
     end
     EPG -.->|n:1| BD
+    USEGEPG -.->|n:1| BD
 ```
 
 ## Tenant
@@ -299,6 +303,57 @@ The *ACIEndpointGroup* model has the following fields:
     - Default: `false`
 - **Proxy-ARP enabled**: a boolean field, whether proxy ARP is enabled for the
   EPG.
+    - Default: `false`
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+## uSeg Endpoint Group
+
+An *uSeg Endpoint Group* (uSeg EPG) is a named collection of endpoints
+(network-connected devices) based on attributes for micro segmentation (uSeg).
+The EPG needs to be contained in an Application Profile and be linked to a
+Bridge Domain.
+uSeg Endpoint Groups consist of one or more associated
+*uSeg Network Attributes* defining the attributes segmenting one or more
+endpoints.
+
+The *ACIUSegEndpointGroup* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the uSeg Endpoint Group name in the ACI.
+- **ACI Application Profile**: indicates the Application Profile that contains
+  this uSeg Endpoint Group.
+- **ACI Bridge Domain**: links the associated Bridge Domain.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the uSeg Endpoint Group.
+- **Description**: a description of the uSeg Endpoint Group.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Admin shutdown**: a boolean field, whether the uSeg EPG is in shutdown
+  mode, removing all policy configuration from all switches.
+    - Default: `false`
+- **Custom QoS policy name**: the name of the custom Quality of Service (Qos)
+  policy name associated with the uSeg EPG.
+- **Flood in encapsulation enabled**: a boolean field representing whether the
+  flooding traffic is limited to the encapsulation of the uSeg EPG.
+    - Default: `false`
+- **Intra-EPG isolation enabled**: a boolean field, whether the communication
+  between endpoints in the uSeg EPG is prevented.
+    - Default: `false`
+- **Match operator**: specifies the match operation for the referenced uSeg
+  attributes.
+    - Values: `any` (any), `all` (all),
+    - Default: `any`
+- **QoS class**: represents the assignment of the ACI Quality of Service (QoS)
+  level for traffic sourced in the uSeg EPG.
+    - Values: `unspecified` (unspecified), `level1` (level 1),
+      `level2` (level 2), `level3` (level 3), `level4` (level 4),
+      `level5` (level 5), `level6` (level 6)
+    - Default: `unspecified`
+- **Preferred group member enabled**: a boolean field, if the uSeg EPG is a
+  member of the preferred group and allows communication without contracts.
     - Default: `false`
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
