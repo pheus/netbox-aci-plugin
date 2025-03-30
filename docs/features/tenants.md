@@ -9,6 +9,7 @@ flowchart TD
     AP(Application Profile)
     EPG(Endpoint Group)
     USEGEPG(uSeg Endpoint Group)
+    USEGATTR(uSeg Attribute)
     VRF(VRF)
     BD(Bridge Domain)
     SN(Subnet)
@@ -25,6 +26,9 @@ flowchart TD
         TN -->|1:n| AP
         AP -->|1:n| EPG
         AP -->|1:n| USEGEPG
+        subgraph graphUSEG [uSeg EPG]
+            USEGEPG -->|1:n| USEGATTR
+        end
     end
     subgraph graphNW [Network]
         subgraph graphBD [Bridge Domain]
@@ -355,6 +359,40 @@ The *ACIUSegEndpointGroup* model has the following fields:
 - **Preferred group member enabled**: a boolean field, if the uSeg EPG is a
   member of the preferred group and allows communication without contracts.
     - Default: `false`
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+## uSeg Network Attribute
+
+The *ACIUSegNetworkAttribute* model represents a network attribute associated
+with a uSeg Endpoint Group.
+This attribute is used to segment endpoints based on network parameters — such
+as IP address, MAC address or network prefix information.
+
+The *ACIUSegNetworkAttribute* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the uSeg Endpoint Group name in the ACI.
+- **ACI uSeg Endpoint Group**: a reference to the uSeg Endpoint Group
+  associated with this network attribute.
+
+*Optional fields*:
+
+- **Name alias**: an alternate name for the uSeg Network Attribute.
+- **Description**: a description of the uSeg Network Attribute.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Attribute Object Type**: defines the type of the associated network object
+  (e.g., *IPAddress*, *MACAddress*, *Prefix*) in the form `app.model`.
+- **Attribute Object ID**: represents the (database) identifier for the
+  associated object.
+- **Attribute Object**: references the specific network object to which this
+  attribute applies.
+- **Use EPG Subnet**: a boolean indicating whether the uSeg Endpoint Group's
+  subnet should be used.
+    - Default: `false`
+- **Type**: specifies the ACI uSeg category of the network attribute
+  (read-only).
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
 
