@@ -281,8 +281,8 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
     ip_address = django_filters.ModelMultipleChoiceFilter(
         field_name="_ip_address",
         queryset=IPAddress.objects.all(),
-        to_field_name="name",
-        label=_("IP Address (name)"),
+        to_field_name="address",
+        label=_("IP Address (address)"),
     )
     ip_address_id = django_filters.ModelMultipleChoiceFilter(
         field_name="_ip_address",
@@ -293,8 +293,8 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
     mac_address = django_filters.ModelMultipleChoiceFilter(
         field_name="_mac_address",
         queryset=MACAddress.objects.all(),
-        to_field_name="name",
-        label=_("MAC Address (name)"),
+        to_field_name="mac_address",
+        label=_("MAC Address (MAC Address)"),
     )
     mac_address_id = django_filters.ModelMultipleChoiceFilter(
         field_name="_mac_address",
@@ -317,8 +317,8 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
     prefix = django_filters.ModelMultipleChoiceFilter(
         field_name="_prefix",
         queryset=Prefix.objects.all(),
-        to_field_name="name",
-        label=_("Prefix (name)"),
+        to_field_name="prefix",
+        label=_("Prefix (Prefix)"),
     )
     prefix_id = django_filters.ModelMultipleChoiceFilter(
         field_name="_prefix",
@@ -349,5 +349,9 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
             Q(name__icontains=value)
             | Q(name_alias__icontains=value)
             | Q(description__icontains=value)
+            | Q(aci_useg_endpoint_group__name__icontains=value)
+            | Q(ip_address__address__icontains=value)
+            | Q(mac_address__mac_address__icontains=value)
+            | Q(prefix__prefix__icontains=value)
         )
         return queryset.filter(queryset_filter)

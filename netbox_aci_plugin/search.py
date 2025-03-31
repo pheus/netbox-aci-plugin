@@ -181,6 +181,10 @@ class ACIUSegNetworkAttributeIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("aci_useg_endpoint_group", 300),
+        ("_ip_address", 300),
+        ("_mac_address", 300),
+        ("_prefix", 400),
     )
     display_attrs: tuple = (
         "name",
