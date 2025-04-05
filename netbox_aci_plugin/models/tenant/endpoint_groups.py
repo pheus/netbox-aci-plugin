@@ -34,7 +34,7 @@ from .vrfs import ACIVRF
 
 
 class ACIEndpointGroupBaseModel(ACIBaseModel):
-    """NetBox abstract model for ACI Endpoint Groups (EPG)."""
+    """NetBox abstract model for ACI Endpoint Group (EPG)."""
 
     aci_app_profile = models.ForeignKey(
         to=ACIAppProfile,
@@ -185,7 +185,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
 
 
 class ACIEndpointGroup(ACIEndpointGroupBaseModel):
-    """NetBox model for ACI Endpoint Groups (EPG)."""
+    """NetBox model for ACI Endpoint Group (EPG)."""
 
     proxy_arp_enabled = models.BooleanField(
         verbose_name=_("proxy ARP enabled"),
@@ -271,7 +271,7 @@ class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
 
 
 class ACIUSegAttributeBaseModel(ACIBaseModel):
-    """Base model for ACI uSeg Attributes."""
+    """Base model for ACI uSeg Attribute."""
 
     aci_useg_endpoint_group = models.ForeignKey(
         to=ACIUSegEndpointGroup,
@@ -327,7 +327,7 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
 class ACIUSegNetworkAttribute(
     ACIUSegAttributeBaseModel, UniqueGenericForeignKeyMixin
 ):
-    """NetBox model for ACI uSeg Network Attributes."""
+    """NetBox model for ACI uSeg Network Attribute."""
 
     attr_object_type = models.ForeignKey(
         to="contenttypes.ContentType",
