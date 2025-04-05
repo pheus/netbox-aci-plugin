@@ -160,6 +160,14 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         blank=True,
         null=True,
     )
+    _aci_useg_endpoint_group = models.ForeignKey(
+        to="netbox_aci_plugin.ACIUSegEndpointGroup",
+        on_delete=models.CASCADE,
+        related_name="_aci_contract_relations",
+        verbose_name=_("ACI uSeg Endpoint Group"),
+        blank=True,
+        null=True,
+    )
     _aci_vrf = models.ForeignKey(
         to="netbox_aci_plugin.ACIVRF",
         on_delete=models.CASCADE,
@@ -283,6 +291,10 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                 "netbox_aci_plugin", "ACIEndpointGroup"
             ):
                 self._aci_endpoint_group = self.aci_object
+            elif aci_object_type == apps.get_model(
+                "netbox_aci_plugin", "ACIUSegEndpointGroup"
+            ):
+                self._aci_useg_endpoint_group = self.aci_object
             elif aci_object_type == apps.get_model(
                 "netbox_aci_plugin", "ACIVRF"
             ):

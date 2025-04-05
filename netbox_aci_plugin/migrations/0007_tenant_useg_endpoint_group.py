@@ -235,7 +235,10 @@ class Migration(migrations.Migration):
                 blank=True,
                 limit_choices_to=models.Q(
                     ("app_label", "netbox_aci_plugin"),
-                    ("model__in", ("aciendpointgroup", "acivrf")),
+                    (
+                        "model__in",
+                        ("aciendpointgroup", "aciusegendpointgroup", "acivrf"),
+                    ),
                 ),
                 null=True,
                 on_delete=django.db.models.deletion.PROTECT,
@@ -298,6 +301,17 @@ class Migration(migrations.Migration):
             name="tags",
             field=taggit.managers.TaggableManager(
                 through="extras.TaggedItem", to="extras.Tag"
+            ),
+        ),
+        migrations.AddField(
+            model_name="acicontractrelation",
+            name="_aci_useg_endpoint_group",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="_aci_contract_relations",
+                to="netbox_aci_plugin.aciusegendpointgroup",
             ),
         ),
         migrations.AddField(

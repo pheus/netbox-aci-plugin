@@ -15,7 +15,10 @@ from ....models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ....models.tenant.endpoint_groups import ACIEndpointGroup
+from ....models.tenant.endpoint_groups import (
+    ACIEndpointGroup,
+    ACIUSegEndpointGroup,
+)
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
@@ -134,6 +137,7 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     user_permissions = (
         "netbox_aci_plugin.view_acicontract",
         "netbox_aci_plugin.view_aciendpointgroup",
+        "netbox_aci_plugin.view_aciusegendpointgroup",
         "netbox_aci_plugin.view_acivrf",
     )
 
@@ -202,6 +206,30 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             aci_bridge_domain=aci_bd2,
             nb_tenant=nb_tenant2,
         )
+        aci_useg_epg1 = ACIUSegEndpointGroup.objects.create(
+            name="ACIUSegEndpointGroupTestAPI1",
+            aci_app_profile=aci_app_profile1,
+            aci_bridge_domain=aci_bd1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_useg_epg2 = ACIUSegEndpointGroup.objects.create(
+            name="ACIUSegEndpointGroupTestAPI2",
+            aci_app_profile=aci_app_profile1,
+            aci_bridge_domain=aci_bd1,
+            nb_tenant=nb_tenant2,
+        )
+        aci_useg_epg3 = ACIUSegEndpointGroup.objects.create(
+            name="ACIUSegEndpointGroupTestAPI3",
+            aci_app_profile=aci_app_profile2,
+            aci_bridge_domain=aci_bd2,
+            nb_tenant=nb_tenant1,
+        )
+        aci_useg_epg4 = ACIUSegEndpointGroup.objects.create(
+            name="ACIUSegEndpointGroupTestAPI4",
+            aci_app_profile=aci_app_profile2,
+            aci_bridge_domain=aci_bd2,
+            nb_tenant=nb_tenant2,
+        )
         aci_contract1 = ACIContract.objects.create(
             name="ACIContractTestAPI1",
             aci_tenant=aci_tenant1,
@@ -234,15 +262,27 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             ),
             ACIContractRelation(
                 aci_contract=aci_contract1,
-                aci_object=aci_vrf1,
+                aci_object=aci_useg_epg1,
                 role="prov",
                 comments="# ACI Test 3",
             ),
             ACIContractRelation(
                 aci_contract=aci_contract1,
-                aci_object=aci_vrf1,
+                aci_object=aci_useg_epg2,
                 role="cons",
                 comments="# ACI Test 4",
+            ),
+            ACIContractRelation(
+                aci_contract=aci_contract1,
+                aci_object=aci_vrf1,
+                role="prov",
+                comments="# ACI Test 5",
+            ),
+            ACIContractRelation(
+                aci_contract=aci_contract1,
+                aci_object=aci_vrf1,
+                role="cons",
+                comments="# ACI Test 6",
             ),
         )
         ACIContractRelation.objects.bulk_create(aci_contract_relations)
@@ -253,21 +293,35 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "aci_object_id": aci_epg3.id,
                 "aci_object_type": f"{app_name}.aciendpointgroup",
                 "role": "cons",
-                "comments": "# ACI Test 5",
+                "comments": "# ACI Test 7",
             },
             {
                 "aci_contract": aci_contract2.id,
                 "aci_object_id": aci_epg4.id,
                 "aci_object_type": f"{app_name}.aciendpointgroup",
                 "role": "prov",
-                "comments": "# ACI Test 6",
+                "comments": "# ACI Test 8",
+            },
+            {
+                "aci_contract": aci_contract2.id,
+                "aci_object_id": aci_useg_epg3.id,
+                "aci_object_type": f"{app_name}.aciusegendpointgroup",
+                "role": "cons",
+                "comments": "# ACI Test 9",
+            },
+            {
+                "aci_contract": aci_contract2.id,
+                "aci_object_id": aci_useg_epg4.id,
+                "aci_object_type": f"{app_name}.aciusegendpointgroup",
+                "role": "prov",
+                "comments": "# ACI Test 10",
             },
             {
                 "aci_contract": aci_contract2.id,
                 "aci_object_id": aci_vrf2.id,
                 "aci_object_type": f"{app_name}.acivrf",
                 "role": "cons",
-                "comments": "# ACI Test 7",
+                "comments": "# ACI Test 11",
             },
         ]
         cls.bulk_update_data = {

@@ -263,6 +263,7 @@ class ACIContractRelationIndex(SearchIndex):
     fields: tuple = (
         ("aci_contract", 100),
         ("_aci_endpoint_group", 300),
+        ("_aci_useg_endpoint_group", 300),
         ("_aci_vrf", 400),
     )
     display_attrs: tuple = (

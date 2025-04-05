@@ -392,6 +392,7 @@ class ACIContractType(NetBoxObjectType):
         "aci_object_id",
         "aci_object_type",
         "_aci_endpoint_group",
+        "_aci_useg_endpoint_group",
         "_aci_vrf",
     ],
     filters=ACIContractRelationFilter,
@@ -412,6 +413,10 @@ class ACIContractRelationType(NetBoxObjectType):
             Union[
                 Annotated[
                     "ACIEndpointGroupType",
+                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
+                ],
+                Annotated[
+                    "ACIUSegEndpointGroupType",
                     strawberry.lazy("netbox_aci_plugin.graphql.types"),
                 ],
                 Annotated[
