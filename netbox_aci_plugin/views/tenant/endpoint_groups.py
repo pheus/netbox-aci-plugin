@@ -181,7 +181,7 @@ class ACIEndpointGroupDeleteView(generic.ObjectDeleteView):
 @register_model_view(
     ACIEndpointGroup, "contractrelations", path="contract-relations"
 )
-class ACIVRFContractRelationView(ACIContractRelationChildrenView):
+class ACIEndpointGroupContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI Endpoint Group."""
 
     queryset = ACIEndpointGroup.objects.all()
