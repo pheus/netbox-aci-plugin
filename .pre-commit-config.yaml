@@ -7,6 +7,7 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: "v5.0.0"
     hooks:
+      - id: check-docstring-first
       - id: check-merge-conflict
       - id: check-symlinks
       - id: end-of-file-fixer
@@ -18,9 +19,10 @@ repos:
       - id: name-tests-test
         args:
           - "--django"
+      - id: requirements-txt-fixer
 
   - repo: https://github.com/PyCQA/isort
-    rev: "6.0.0"
+    rev: "6.0.1"
     hooks:
       - id: isort
         args:
@@ -28,7 +30,7 @@ repos:
         exclude: ^.devcontainer/
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.9.6"
+    rev: "v0.11.4"
     hooks:
       # Run the linter.
       - id: ruff
@@ -37,7 +39,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/adrienverge/yamllint
-    rev: "v1.35.1"
+    rev: "v1.37.0"
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
