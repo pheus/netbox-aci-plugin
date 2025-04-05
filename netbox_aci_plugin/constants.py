@@ -16,3 +16,19 @@ CONTRACT_RELATION_OBJECT_TYPES = Q(
         "acivrf",
     ),
 )
+
+
+#
+# uSeg Endpoint Group Attributes
+#
+
+USEG_NETWORK_ATTRIBUTES_MODELS = Q(
+    Q(
+        app_label="ipam",
+        model__in=(
+            "prefix",
+            "ipaddress",
+        ),
+    )
+    | Q(app_label="dcim", model="macaddress")
+)

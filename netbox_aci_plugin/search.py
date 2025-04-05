@@ -19,7 +19,11 @@ from .models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from .models.tenant.endpoint_groups import ACIEndpointGroup
+from .models.tenant.endpoint_groups import (
+    ACIEndpointGroup,
+    ACIUSegEndpointGroup,
+    ACIUSegNetworkAttribute,
+)
 from .models.tenant.tenants import ACITenant
 from .models.tenant.vrfs import ACIVRF
 
@@ -142,6 +146,52 @@ class ACIEndpointGroupIndex(SearchIndex):
         "description",
         "aci_app_profile",
         "aci_bridge_domain",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIUSegEndpointGroupIndex(SearchIndex):
+    """NetBox search definition for the ACI uSeg Endpoint Group model."""
+
+    model = ACIUSegEndpointGroup
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_app_profile",
+        "aci_bridge_domain",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIUSegNetworkAttributeIndex(SearchIndex):
+    """NetBox search definition for the ACI uSeg Network Attribute model."""
+
+    model = ACIUSegNetworkAttribute
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("aci_useg_endpoint_group", 300),
+        ("_ip_address", 300),
+        ("_mac_address", 300),
+        ("_prefix", 400),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_useg_endpoint_group",
+        "attr_object",
         "nb_tenant",
     )
 

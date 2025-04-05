@@ -6,7 +6,8 @@ from typing import Annotated, List, Optional, Union
 
 import strawberry
 import strawberry_django
-from ipam.graphql.types import IPAddressType, VRFType
+from dcim.graphql.types import MACAddressType
+from ipam.graphql.types import IPAddressType, PrefixType, VRFType
 from netbox.graphql.types import NetBoxObjectType
 from tenancy.graphql.types import TenantType
 
@@ -23,6 +24,8 @@ from .filters import (
     ACIContractSubjectFilterFilter,
     ACIEndpointGroupFilter,
     ACITenantFilter,
+    ACIUSegEndpointGroupFilter,
+    ACIUSegNetworkAttributeFilter,
     ACIVRFFilter,
 )
 
@@ -90,6 +93,12 @@ class ACIAppProfileType(NetBoxObjectType):
     aci_endpoint_groups: List[
         Annotated[
             "ACIEndpointGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_useg_endpoint_groups: List[
+        Annotated[
+            "ACIUSegEndpointGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
@@ -211,6 +220,87 @@ class ACIEndpointGroupType(NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+
+
+@strawberry_django.type(
+    models.ACIUSegEndpointGroup,
+    fields="__all__",
+    filters=ACIUSegEndpointGroupFilter,
+)
+class ACIUSegEndpointGroupType(NetBoxObjectType):
+    """GraphQL type definition for the ACIUSegEndpointGroup model."""
+
+    # Model fields
+    aci_app_profile: Annotated[
+        "ACIAppProfileType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_bridge_domain: Annotated[
+        "ACIBridgeDomainType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
+
+    # Related models
+    aci_contract_relations: List[
+        Annotated[
+            "ACIContractRelationType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_useg_network_attributes: List[
+        Annotated[
+            "ACIUSegNetworkAttributeType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACIUSegNetworkAttribute,
+    exclude=[
+        "attr_object_id",
+        "attr_object_type",
+        "_ip_address",
+        "_mac_address",
+        "_prefix",
+    ],
+    filters=ACIUSegNetworkAttributeFilter,
+)
+class ACIUSegNetworkAttributeType(NetBoxObjectType):
+    """GraphQL type definition for the ACIUSegNetworkAttribute model."""
+
+    # Model fields
+    aci_useg_endpoint_group: Annotated[
+        "ACIUSegEndpointGroupType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
+
+    @strawberry.field(description="Attribute Object")
+    def attr_object(
+        self,
+    ) -> (
+        Annotated[
+            Union[
+                Annotated[
+                    "IPAddressType", strawberry.lazy("ipam.graphql.types")
+                ],
+                Annotated[
+                    "MACAddressType", strawberry.lazy("dcim.graphql.types")
+                ],
+                Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")],
+            ],
+            strawberry.union("ACIUSegNetworkAttributeObjectType"),
+        ]
+        | None
+    ):
+        return self.attr_object
 
 
 @strawberry_django.type(

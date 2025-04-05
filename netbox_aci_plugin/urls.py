@@ -43,6 +43,34 @@ urlpatterns: tuple = (
         "endpoint-groups/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciendpointgroup")),
     ),
+    # ACI uSeg Endpoint Group
+    path(
+        "useg-endpoint-groups/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "aciusegendpointgroup", detail=False
+            )
+        ),
+    ),
+    path(
+        "useg-endpoint-groups/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciusegendpointgroup")),
+    ),
+    # ACI uSeg Network Attribute
+    path(
+        "useg-endpoint-groups/network-attributes/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "aciusegnetworkattribute", detail=False
+            )
+        ),
+    ),
+    path(
+        "useg-endpoint-groups/network-attributes/<int:pk>/",
+        include(
+            get_model_urls("netbox_aci_plugin", "aciusegnetworkattribute")
+        ),
+    ),
     # ACI Bridge Domain
     path(
         "bridge-domains/",
