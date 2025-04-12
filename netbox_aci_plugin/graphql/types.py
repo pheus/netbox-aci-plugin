@@ -23,6 +23,7 @@ from .filters import (
     ACIContractSubjectFilter,
     ACIContractSubjectFilterFilter,
     ACIEndpointGroupFilter,
+    ACIEndpointSecurityGroupFilter,
     ACITenantFilter,
     ACIUSegEndpointGroupFilter,
     ACIUSegNetworkAttributeFilter,
@@ -301,6 +302,28 @@ class ACIUSegNetworkAttributeType(NetBoxObjectType):
         | None
     ):
         return self.attr_object
+
+
+@strawberry_django.type(
+    models.ACIEndpointSecurityGroup,
+    fields="__all__",
+    filters=ACIEndpointSecurityGroupFilter,
+)
+class ACIEndpointSecurityGroupType(NetBoxObjectType):
+    """GraphQL type definition for the ACIEndpointSecurityGroup model."""
+
+    # Model fields
+    aci_app_profile: Annotated[
+        "ACIAppProfileType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_vrf: Annotated[
+        "ACIVRFType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
 
 
 @strawberry_django.type(
