@@ -19,6 +19,9 @@ router.register("usegendpointgroups", views.ACIUSegEndpointGroupListViewSet)
 router.register(
     "usegnetworkattributes", views.ACIUSegNetworkAttributeListViewSet
 )
+router.register(
+    "endpointsecuritygroups", views.ACIEndpointSecurityGroupListViewSet
+)
 router.register("vrfs", views.ACIVRFListViewSet)
 router.register("contract-filters", views.ACIContractFilterListViewSet)
 router.register(
