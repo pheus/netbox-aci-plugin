@@ -130,6 +130,27 @@ aciusegendpointgroup_item = PluginMenuItem(
     ),
 )
 
+# ACI Endpoint Security Group
+aciendpointsecuritygroup_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:aciendpointsecuritygroup_list",
+    link_text="Endpoint Security Groups",
+    permissions=["netbox_aci_plugin.view_aciendpointsecuritygroup"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciendpointsecuritygroup_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_aciendpointsecuritygroup"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciendpointsecuritygroup_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_aciendpointsecuritygroup"],
+        ),
+    ),
+)
+
 # ACI VRF
 acivrf_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acivrf_list",
@@ -249,6 +270,7 @@ menu = PluginMenu(
                 aciappprofile_item,
                 aciendpointgroup_item,
                 aciusegendpointgroup_item,
+                aciendpointsecuritygroup_item,
             ),
         ),
         (
