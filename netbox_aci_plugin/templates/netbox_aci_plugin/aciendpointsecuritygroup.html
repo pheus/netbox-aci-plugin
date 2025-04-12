@@ -1,0 +1,70 @@
+
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_app_profile_id={{ object.aci_app_profile.pk }}">{{ object.aci_app_profile }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_vrf_id={{ object.aci_vrf.pk }}">{{ object.aci_vrf }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h2 class="card-header">{% trans "ACI Endpoint Security Group" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ACI Tenant" %}</th>
+            <td>{{ object.aci_tenant|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ACI Application Profile" %}</th>
+            <td>{{ object.aci_app_profile|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "ACI VRF" %}</th>
+            <td>{{ object.aci_vrf|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Name Alias" %}</th>
+            <td>{{ object.name_alias|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Description" %}</th>
+            <td>{{ object.description|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox Tenant" %}</th>
+            <td>
+                {% if object.nb_tenant.group %}
+                    {{ object.nb_tenant.group|linkify }} /
+                {% endif %}
+                {{ object.nb_tenant|linkify|placeholder }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2 class="card-header">{% trans "Policy Enforcement Settings" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Preferred Group Member enabled" %}</th>
+            <td>{% checkmark object.preferred_group_member_enabled %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Intra-ESG Isolation enabled" %}</th>
+            <td>{% checkmark object.intra_esg_isolation_enabled %}</td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}
