@@ -18,6 +18,7 @@ from .tenant.endpoint_groups import (
     ACIUSegEndpointGroupSerializer,
     ACIUSegNetworkAttributeSerializer,
 )
+from .tenant.endpoint_security_groups import ACIEndpointSecurityGroupSerializer
 from .tenant.tenants import ACITenantSerializer
 from .tenant.vrfs import ACIVRFSerializer
 
@@ -40,7 +41,9 @@ __all__ = (
     "ACIEndpointGroupSerializer",
     "ACIUSegEndpointGroupSerializer",
     "ACIUSegNetworkAttributeSerializer",
-    # From networks
+    # From endpoint_security_groups
+    "ACIEndpointSecurityGroupSerializer",
+    # From vrfs
     "ACIVRFSerializer",
     # From tenants
     "ACITenantSerializer",
