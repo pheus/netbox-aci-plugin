@@ -24,6 +24,7 @@ from .models.tenant.endpoint_groups import (
     ACIUSegEndpointGroup,
     ACIUSegNetworkAttribute,
 )
+from .models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from .models.tenant.tenants import ACITenant
 from .models.tenant.vrfs import ACIVRF
 
@@ -192,6 +193,27 @@ class ACIUSegNetworkAttributeIndex(SearchIndex):
         "description",
         "aci_useg_endpoint_group",
         "attr_object",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIEndpointSecurityGroupIndex(SearchIndex):
+    """NetBox search definition for the ACI Endpoint Security Group model."""
+
+    model = ACIEndpointSecurityGroup
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_app_profile",
+        "aci_vrf",
         "nb_tenant",
     )
 
