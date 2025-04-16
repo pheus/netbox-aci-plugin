@@ -19,6 +19,7 @@ from .endpoint_groups import (
     ACIEndpointGroupChildrenView,
     ACIUSegEndpointGroupChildrenView,
 )
+from .endpoint_security_groups import ACIEndpointSecurityGroupChildrenView
 
 #
 # Base children views
@@ -137,6 +138,37 @@ class ACIAppProfileUSegEndpointGroupView(ACIUSegEndpointGroupChildrenView):
     queryset = ACIAppProfile.objects.all()
     template_name = (
         "netbox_aci_plugin/inc/aciappprofile/usegendpointgroups.html"
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_app_profile=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACIAppProfile colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIAppProfile column
+        table.columns.hide("aci_app_profile")
+
+        return table
+
+
+@register_model_view(
+    ACIAppProfile, "endpointsecuritygroups", path="endpoint-security-groups"
+)
+class ACIAppProfileEndpointSecurityGroupView(
+    ACIEndpointSecurityGroupChildrenView
+):
+    """Children view of ACI Endpoint Security Group of ACI App Profile."""
+
+    queryset = ACIAppProfile.objects.all()
+    template_name = (
+        "netbox_aci_plugin/inc/aciappprofile/endpointsecuritygroups.html"
     )
 
     def get_children(self, request, parent):
