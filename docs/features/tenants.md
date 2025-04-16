@@ -10,6 +10,7 @@ flowchart TD
     EPG(Endpoint Group)
     USEGEPG(uSeg Endpoint Group)
     USEGATTR(uSeg Attribute)
+    ESG(Endpoint Security Group)
     VRF(VRF)
     BD(Bridge Domain)
     SN(Subnet)
@@ -29,6 +30,7 @@ flowchart TD
         subgraph graphUSEG [uSeg EPG]
             USEGEPG -->|1:n| USEGATTR
         end
+        AP -->|1:n| ESG
     end
     subgraph graphNW [Network]
         subgraph graphBD [Bridge Domain]
@@ -52,10 +54,12 @@ flowchart TD
         SJF -.->|n:1| FT
         CTR -.->|n:1| EPG
         CTR -.->|n:1| USEGEPG
+        CTR -.->|n:1| ESG
         CTR -.->|n:1| VRF
     end
     EPG -.->|n:1| BD
     USEGEPG -.->|n:1| BD
+    ESG -.->|n:1| VRF
 ```
 
 ## Tenant
@@ -393,6 +397,38 @@ The *ACIUSegNetworkAttribute* model has the following fields:
     - Default: `false`
 - **Type**: specifies the ACI uSeg category of the network attribute
   (read-only).
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+## Endpoint Security Group
+
+An *Endpoint Security Group* (ESG) is a named set of endpoints
+(network-connected devices) that applies security policies based on specified
+attributes.
+The ESG must be contained in an Application Profile and be linked to a VRF.
+
+The *ACIEndpointSecurityGroup* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the Endpoint Security Group name in the ACI.
+- **ACI Application Profile**: containing the Endpoint Security Group.
+- **ACI VRF**: a reference to the associated VRF.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Endpoint Security Group.
+- **Description**: a description of the Endpoint Group.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Admin shutdown**: a boolean field indicating whether the ESG is in shutdown
+  mode, removing all policy configuration from all switches.
+    - Default: `false`
+- **Intra-ESG isolation enabled**: a boolean field indicating whether the
+  communication between endpoints in the ESG is prevented.
+    - Default: `false`
+- **Preferred group member enabled**: a boolean field indicating whether the
+  ESG is in the preferred group, allowing communication without contracts.
+    - Default: `false`
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
 
