@@ -13,6 +13,7 @@ CONTRACT_RELATION_OBJECT_TYPES = Q(
     app_label="netbox_aci_plugin",
     model__in=(
         "aciendpointgroup",
+        "aciendpointsecuritygroup",
         "aciusegendpointgroup",
         "acivrf",
     ),

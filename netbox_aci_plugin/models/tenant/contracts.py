@@ -4,6 +4,7 @@
 
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
@@ -25,6 +26,8 @@ from ...validators import ACIPolicyNameValidator
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .contract_filters import ACIContractFilter
+from .endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
+from .endpoint_security_groups import ACIEndpointSecurityGroup
 from .tenants import ACITenant
 
 
@@ -160,6 +163,14 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         blank=True,
         null=True,
     )
+    _aci_endpoint_security_group = models.ForeignKey(
+        to="netbox_aci_plugin.ACIEndpointSecurityGroup",
+        on_delete=models.CASCADE,
+        related_name="_aci_contract_relations",
+        verbose_name=_("ACI Endpoint Security Group"),
+        blank=True,
+        null=True,
+    )
     _aci_useg_endpoint_group = models.ForeignKey(
         to="netbox_aci_plugin.ACIUSegEndpointGroup",
         on_delete=models.CASCADE,
@@ -275,6 +286,52 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         # Perform the mixin's unique constraint validation
         self._validate_generic_uniqueness()
 
+        # Validate that the ACI Contract has no conflicting ACI Object types
+        # assigned.
+        # (e.g., ACI Endpoint Group and ACI Endpoint Security Group)
+        self._validate_aci_object_conflict()
+
+    def _validate_aci_object_conflict(self) -> None:
+        """Validate that this does not conflict with an existing ACI Object."""
+        endpoint_group_ct = ContentType.objects.get_for_model(ACIEndpointGroup)
+        useg_endpoint_group_ct = ContentType.objects.get_for_model(
+            ACIUSegEndpointGroup
+        )
+        endpoint_security_group_ct = ContentType.objects.get_for_model(
+            ACIEndpointSecurityGroup
+        )
+
+        # Determine which ContentTypes conflict with the current
+        # ACI Object Type
+        if self.aci_object_type == endpoint_security_group_ct:
+            conflict_cts = [endpoint_group_ct, useg_endpoint_group_ct]
+        elif self.aci_object_type in [
+            endpoint_group_ct,
+            useg_endpoint_group_ct,
+        ]:
+            conflict_cts = [endpoint_security_group_ct]
+        else:
+            return  # No conflicts, so exit early
+
+        # Check whether there is an existing ContractRelation for the same
+        # ACI Contract with a conflicting ACI Object Type.
+        conflict_relations = ACIContractRelation.objects.filter(
+            aci_contract=self.aci_contract,
+            aci_object_type__in=conflict_cts,
+        )
+        # If updating an existing instance, exclude the current record.
+        if self.pk:
+            conflict_relations = conflict_relations.exclude(pk=self.pk)
+
+        if conflict_relations.exists():
+            raise ValidationError(
+                _(
+                    "Invalid Contract Relation: ACI Endpoint Security Groups "
+                    "cannot be associated together with ACI Endpoint Groups "
+                    "or ACI uSeg Endpoint Groups for the same ACI Contract."
+                )
+            )
+
     def save(self, *args, **kwargs) -> None:
         """Saves the current instance to the database."""
         # Cache the related objects for faster access
@@ -291,6 +348,10 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                 "netbox_aci_plugin", "ACIEndpointGroup"
             ):
                 self._aci_endpoint_group = self.aci_object
+            elif aci_object_type == apps.get_model(
+                "netbox_aci_plugin", "ACIEndpointSecurityGroup"
+            ):
+                self._aci_endpoint_security_group = self.aci_object
             elif aci_object_type == apps.get_model(
                 "netbox_aci_plugin", "ACIUSegEndpointGroup"
             ):

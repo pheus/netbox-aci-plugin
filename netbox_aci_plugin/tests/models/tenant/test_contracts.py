@@ -29,6 +29,7 @@ from ....models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
 )
+from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
@@ -206,7 +207,8 @@ class ACIContractRelationTestCase(TestCase):
     def setUpTestData(cls) -> None:
         """Set up test data for ACIContract model."""
         cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_contract_name = "ACITestContract"
+        cls.aci_contract_epg_name = "ACITestContractEPG"
+        cls.aci_contract_esg_name = "ACITestContractESG"
         cls.nb_tenant_name = "NetBoxTestTenant"
         cls.aci_app_profile_name = "ACITestAppProfile"
         cls.aci_vrf_name = "ACITestVRF"
@@ -215,6 +217,8 @@ class ACIContractRelationTestCase(TestCase):
         cls.aci_epg2_name = "ACITestEPG2"
         cls.aci_useg_epg1_name = "ACITestUSegEPG1"
         cls.aci_useg_epg2_name = "ACITestUSegEPG2"
+        cls.aci_esg1_name = "ACITestESG1"
+        cls.aci_esg2_name = "ACITestESG2"
         cls.aci_contract_qos_class = (
             QualityOfServiceClassChoices.CLASS_UNSPECIFIED
         )
@@ -268,8 +272,28 @@ class ACIContractRelationTestCase(TestCase):
             aci_bridge_domain=cls.aci_bd,
             nb_tenant=cls.nb_tenant,
         )
-        cls.aci_contract = ACIContract.objects.create(
-            name=cls.aci_contract_name,
+        cls.aci_esg1 = ACIEndpointSecurityGroup.objects.create(
+            name=cls.aci_esg1_name,
+            aci_app_profile=cls.aci_app_profile,
+            aci_vrf=cls.aci_vrf,
+            nb_tenant=cls.nb_tenant,
+        )
+        cls.aci_esg2 = ACIEndpointSecurityGroup.objects.create(
+            name=cls.aci_esg2_name,
+            aci_app_profile=cls.aci_app_profile,
+            aci_vrf=cls.aci_vrf,
+            nb_tenant=cls.nb_tenant,
+        )
+        cls.aci_contract_epg = ACIContract.objects.create(
+            name=cls.aci_contract_epg_name,
+            aci_tenant=cls.aci_tenant,
+            nb_tenant=cls.nb_tenant,
+            qos_class=cls.aci_contract_qos_class,
+            scope=cls.aci_contract_scope,
+            target_dscp=cls.aci_contract_target_dscp,
+        )
+        cls.aci_contract_esg = ACIContract.objects.create(
+            name=cls.aci_contract_esg_name,
             aci_tenant=cls.aci_tenant,
             nb_tenant=cls.nb_tenant,
             qos_class=cls.aci_contract_qos_class,
@@ -278,7 +302,7 @@ class ACIContractRelationTestCase(TestCase):
         )
         cls.aci_contract_relation_epg_cons = (
             ACIContractRelation.objects.create(
-                aci_contract=cls.aci_contract,
+                aci_contract=cls.aci_contract_epg,
                 aci_object=cls.aci_epg1,
                 role=cls.aci_contract_relation_role_cons,
                 comments=cls.aci_contract_relation_comments,
@@ -286,14 +310,14 @@ class ACIContractRelationTestCase(TestCase):
         )
         cls.aci_contract_relation_epg_prov = (
             ACIContractRelation.objects.create(
-                aci_contract=cls.aci_contract,
+                aci_contract=cls.aci_contract_epg,
                 aci_object=cls.aci_epg2,
                 role=cls.aci_contract_relation_role_prov,
             )
         )
         cls.aci_contract_relation_useg_epg_cons = (
             ACIContractRelation.objects.create(
-                aci_contract=cls.aci_contract,
+                aci_contract=cls.aci_contract_epg,
                 aci_object=cls.aci_useg_epg1,
                 role=cls.aci_contract_relation_role_cons,
                 comments=cls.aci_contract_relation_comments,
@@ -301,15 +325,39 @@ class ACIContractRelationTestCase(TestCase):
         )
         cls.aci_contract_relation_useg_epg_prov = (
             ACIContractRelation.objects.create(
-                aci_contract=cls.aci_contract,
+                aci_contract=cls.aci_contract_epg,
                 aci_object=cls.aci_useg_epg2,
                 role=cls.aci_contract_relation_role_prov,
             )
         )
-        cls.aci_contract_relation_vz_any = ACIContractRelation.objects.create(
-            aci_contract=cls.aci_contract,
-            aci_object=cls.aci_vrf,
-            role=cls.aci_contract_relation_role_prov,
+        cls.aci_contract_relation_epg_vz_any = (
+            ACIContractRelation.objects.create(
+                aci_contract=cls.aci_contract_epg,
+                aci_object=cls.aci_vrf,
+                role=cls.aci_contract_relation_role_prov,
+            )
+        )
+        cls.aci_contract_relation_esg_cons = (
+            ACIContractRelation.objects.create(
+                aci_contract=cls.aci_contract_esg,
+                aci_object=cls.aci_esg1,
+                role=cls.aci_contract_relation_role_cons,
+                comments=cls.aci_contract_relation_comments,
+            )
+        )
+        cls.aci_contract_relation_esg_prov = (
+            ACIContractRelation.objects.create(
+                aci_contract=cls.aci_contract_esg,
+                aci_object=cls.aci_esg2,
+                role=cls.aci_contract_relation_role_prov,
+            )
+        )
+        cls.aci_contract_relation_esg_vz_any = (
+            ACIContractRelation.objects.create(
+                aci_contract=cls.aci_contract_esg,
+                aci_object=cls.aci_vrf,
+                role=cls.aci_contract_relation_role_prov,
+            )
         )
 
     def test_aci_contract_relation_instance(self) -> None:
@@ -335,38 +383,73 @@ class ACIContractRelationTestCase(TestCase):
             )
         )
         self.assertTrue(
-            isinstance(self.aci_contract_relation_vz_any, ACIContractRelation)
+            isinstance(
+                self.aci_contract_relation_epg_vz_any, ACIContractRelation
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_cons, ACIContractRelation
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_prov, ACIContractRelation
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_vz_any, ACIContractRelation
+            )
         )
 
     def test_aci_contract_str(self) -> None:
         """Test string values of created ACI Contract Relation instances."""
         self.assertEqual(
             self.aci_contract_relation_epg_cons.__str__(),
-            f"{self.aci_contract_name} - "
+            f"{self.aci_contract_epg_name} - "
             f"{self.aci_contract_relation_role_cons} - "
             f"{self.aci_epg1_name}",
         )
         self.assertEqual(
             self.aci_contract_relation_epg_prov.__str__(),
-            f"{self.aci_contract_name} - "
+            f"{self.aci_contract_epg_name} - "
             f"{self.aci_contract_relation_role_prov} - "
             f"{self.aci_epg2_name}",
         )
         self.assertEqual(
             self.aci_contract_relation_useg_epg_cons.__str__(),
-            f"{self.aci_contract_name} - "
+            f"{self.aci_contract_epg_name} - "
             f"{self.aci_contract_relation_role_cons} - "
             f"{self.aci_useg_epg1_name}",
         )
         self.assertEqual(
             self.aci_contract_relation_useg_epg_prov.__str__(),
-            f"{self.aci_contract_name} - "
+            f"{self.aci_contract_epg_name} - "
             f"{self.aci_contract_relation_role_prov} - "
             f"{self.aci_useg_epg2_name}",
         )
         self.assertEqual(
-            self.aci_contract_relation_vz_any.__str__(),
-            f"{self.aci_contract_name} - "
+            self.aci_contract_relation_epg_vz_any.__str__(),
+            f"{self.aci_contract_epg_name} - "
+            f"{self.aci_contract_relation_role_prov} - "
+            f"{self.aci_vrf_name}",
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_cons.__str__(),
+            f"{self.aci_contract_esg_name} - "
+            f"{self.aci_contract_relation_role_cons} - "
+            f"{self.aci_esg1_name}",
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_prov.__str__(),
+            f"{self.aci_contract_esg_name} - "
+            f"{self.aci_contract_relation_role_prov} - "
+            f"{self.aci_esg2_name}",
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_vz_any.__str__(),
+            f"{self.aci_contract_esg_name} - "
             f"{self.aci_contract_relation_role_prov} - "
             f"{self.aci_vrf_name}",
         )
@@ -397,7 +480,22 @@ class ACIContractRelationTestCase(TestCase):
         )
         self.assertTrue(
             isinstance(
-                self.aci_contract_relation_vz_any.aci_contract, ACIContract
+                self.aci_contract_relation_epg_vz_any.aci_contract, ACIContract
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_cons.aci_contract, ACIContract
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_prov.aci_contract, ACIContract
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_vz_any.aci_contract, ACIContract
             )
         )
 
@@ -405,23 +503,35 @@ class ACIContractRelationTestCase(TestCase):
         """Test the ACI Contract name associated with ACI Contract Relation."""
         self.assertEqual(
             self.aci_contract_relation_epg_cons.aci_contract.name,
-            self.aci_contract_name,
+            self.aci_contract_epg_name,
         )
         self.assertEqual(
             self.aci_contract_relation_epg_prov.aci_contract.name,
-            self.aci_contract_name,
+            self.aci_contract_epg_name,
         )
         self.assertEqual(
             self.aci_contract_relation_useg_epg_cons.aci_contract.name,
-            self.aci_contract_name,
+            self.aci_contract_epg_name,
         )
         self.assertEqual(
             self.aci_contract_relation_useg_epg_prov.aci_contract.name,
-            self.aci_contract_name,
+            self.aci_contract_epg_name,
         )
         self.assertEqual(
-            self.aci_contract_relation_vz_any.aci_contract.name,
-            self.aci_contract_name,
+            self.aci_contract_relation_epg_vz_any.aci_contract.name,
+            self.aci_contract_epg_name,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_cons.aci_contract.name,
+            self.aci_contract_esg_name,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_prov.aci_contract.name,
+            self.aci_contract_esg_name,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_vz_any.aci_contract.name,
+            self.aci_contract_esg_name,
         )
 
     def test_aci_contract_relation_aci_object_instance(self) -> None:
@@ -451,7 +561,26 @@ class ACIContractRelationTestCase(TestCase):
             )
         )
         self.assertTrue(
-            isinstance(self.aci_contract_relation_vz_any.aci_object, ACIVRF)
+            isinstance(
+                self.aci_contract_relation_epg_vz_any.aci_object, ACIVRF
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_cons.aci_object,
+                ACIEndpointSecurityGroup,
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_prov.aci_object,
+                ACIEndpointSecurityGroup,
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_contract_relation_esg_vz_any.aci_object, ACIVRF
+            )
         )
 
     def test_aci_contract_relation_aci_object_name(self) -> None:
@@ -473,7 +602,19 @@ class ACIContractRelationTestCase(TestCase):
             self.aci_useg_epg2_name,
         )
         self.assertEqual(
-            self.aci_contract_relation_vz_any.aci_object.name,
+            self.aci_contract_relation_epg_vz_any.aci_object.name,
+            self.aci_vrf_name,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_cons.aci_object.name,
+            self.aci_esg1_name,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_prov.aci_object.name,
+            self.aci_esg2_name,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_vz_any.aci_object.name,
             self.aci_vrf_name,
         )
 
@@ -496,7 +637,19 @@ class ACIContractRelationTestCase(TestCase):
             self.aci_contract_relation_role_prov,
         )
         self.assertEqual(
-            self.aci_contract_relation_vz_any.role,
+            self.aci_contract_relation_epg_vz_any.role,
+            self.aci_contract_relation_role_prov,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_cons.role,
+            self.aci_contract_relation_role_cons,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_prov.role,
+            self.aci_contract_relation_role_prov,
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_vz_any.role,
             self.aci_contract_relation_role_prov,
         )
 
@@ -527,7 +680,25 @@ class ACIContractRelationTestCase(TestCase):
             ),
         )
         self.assertEqual(
-            self.aci_contract_relation_vz_any.get_role_color(),
+            self.aci_contract_relation_epg_vz_any.get_role_color(),
+            ContractRelationRoleChoices.colors.get(
+                self.aci_contract_relation_role_prov
+            ),
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_cons.get_role_color(),
+            ContractRelationRoleChoices.colors.get(
+                self.aci_contract_relation_role_cons
+            ),
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_prov.get_role_color(),
+            ContractRelationRoleChoices.colors.get(
+                self.aci_contract_relation_role_prov
+            ),
+        )
+        self.assertEqual(
+            self.aci_contract_relation_esg_vz_any.get_role_color(),
             ContractRelationRoleChoices.colors.get(
                 self.aci_contract_relation_role_prov
             ),
@@ -554,8 +725,18 @@ class ACIContractRelationTestCase(TestCase):
     def test_invalid_aci_contract_relation_aci_object(self) -> None:
         """Test validation of the correct object assignment for Relation."""
         contract_relation = ACIContractRelation(
-            aci_contract=self.aci_contract,
+            aci_contract=self.aci_contract_epg,
             aci_object=self.aci_bd,
+            role=self.aci_contract_relation_role_cons,
+        )
+        with self.assertRaises(ValidationError):
+            contract_relation.full_clean()
+
+    def test_invalid_aci_contract_relation_aci_object_conflict(self) -> None:
+        """Test validation of conflicting object assignment for Relation."""
+        contract_relation = ACIContractRelation(
+            aci_contract=self.aci_contract_epg,
+            aci_object=self.aci_epg1,
             role=self.aci_contract_relation_role_cons,
         )
         with self.assertRaises(ValidationError):
@@ -566,7 +747,7 @@ class ACIContractRelationTestCase(TestCase):
     ) -> None:
         """Test unique constraint of ACI Contract Relation per ACI Contract."""
         duplicate_contract_relation = ACIContractRelation(
-            aci_contract=self.aci_contract,
+            aci_contract=self.aci_contract_epg,
             aci_object=self.aci_epg1,
             role=self.aci_contract_relation_role_cons,
         )

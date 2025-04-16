@@ -11,6 +11,29 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name="acicontractrelation",
+            name="aci_object_type",
+            field=models.ForeignKey(
+                blank=True,
+                limit_choices_to=models.Q(
+                    ("app_label", "netbox_aci_plugin"),
+                    (
+                        "model__in",
+                        (
+                            "aciendpointgroup",
+                            "aciendpointsecuritygroup",
+                            "aciusegendpointgroup",
+                            "acivrf",
+                        ),
+                    ),
+                ),
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="contenttypes.contenttype",
+            ),
+        ),
         migrations.CreateModel(
             name="ACIEndpointSecurityGroup",
             fields=[
@@ -125,12 +148,24 @@ class Migration(migrations.Migration):
                 "verbose_name": "ACI Endpoint Security Group",
                 "ordering": ("aci_app_profile", "name"),
                 "default_related_name": "aci_endpoint_security_groups",
-                "constraints": [
-                    models.UniqueConstraint(
-                        fields=("aci_app_profile", "name"),
-                        name="netbox_aci_plugin_aciendpointsecuritygroup_unique_name_per_aci_app_profile",
-                    )
-                ],
             },
+        ),
+        migrations.AddField(
+            model_name="acicontractrelation",
+            name="_aci_endpoint_security_group",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="_aci_contract_relations",
+                to="netbox_aci_plugin.aciendpointsecuritygroup",
+            ),
+        ),
+        migrations.AddConstraint(
+            model_name="aciendpointsecuritygroup",
+            constraint=models.UniqueConstraint(
+                fields=("aci_app_profile", "name"),
+                name="netbox_aci_plugin_aciendpointsecuritygroup_unique_name_per_aci_app_profile",
+            ),
         ),
     ]

@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
@@ -22,6 +23,7 @@ from ...models.tenant.endpoint_security_groups import (
 from ...tables.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupTable,
 )
+from .contracts import ACIContractRelationChildrenView
 
 #
 # Base children views
@@ -109,6 +111,51 @@ class ACIEndpointSecurityGroupDeleteView(generic.ObjectDeleteView):
         "nb_tenant",
         "tags",
     )
+
+
+@register_model_view(
+    ACIEndpointSecurityGroup, "contractrelations", path="contract-relations"
+)
+class ACIEndpointSecurityGroupContractRelationView(
+    ACIContractRelationChildrenView
+):
+    """Children view of ACI Contract Relation of ACI Endpoint Security Group."""
+
+    queryset = ACIEndpointSecurityGroup.objects.all()
+    template_name = (
+        "netbox_aci_plugin/inc/aciendpointsecuritygroup/contractrelations.html"
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_endpoint_security_group=parent.pk)
+        )
+
+    def get_extra_context(self, request, instance) -> dict:
+        """Return ContentType as extra context."""
+        aci_endpoint_security_group_content_type = (
+            ContentType.objects.get_for_model(ACIEndpointSecurityGroup)
+        )
+
+        return {
+            "content_type_id": aci_endpoint_security_group_content_type.id,
+        }
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI object colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column of ACIContract
+        table.columns.hide("aci_contract_tenant")
+        # Hide ACI object type column
+        table.columns.hide("aci_object_type")
+        # Hide ACI object column
+        table.columns.hide("aci_object")
+
+        return table
 
 
 @register_model_view(

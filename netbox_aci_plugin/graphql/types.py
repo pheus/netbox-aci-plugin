@@ -325,6 +325,14 @@ class ACIEndpointSecurityGroupType(NetBoxObjectType):
         | None
     )
 
+    # Related models
+    aci_contract_relations: List[
+        Annotated[
+            "ACIContractRelationType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
 
 @strawberry_django.type(
     models.ACIContractFilter,
@@ -415,6 +423,7 @@ class ACIContractType(NetBoxObjectType):
         "aci_object_id",
         "aci_object_type",
         "_aci_endpoint_group",
+        "_aci_endpoint_security_group",
         "_aci_useg_endpoint_group",
         "_aci_vrf",
     ],
@@ -436,6 +445,10 @@ class ACIContractRelationType(NetBoxObjectType):
             Union[
                 Annotated[
                     "ACIEndpointGroupType",
+                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
+                ],
+                Annotated[
+                    "ACIEndpointSecurityGroupType",
                     strawberry.lazy("netbox_aci_plugin.graphql.types"),
                 ],
                 Annotated[
