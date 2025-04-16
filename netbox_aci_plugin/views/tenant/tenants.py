@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
@@ -14,12 +15,14 @@ from ...forms.tenant.tenants import (
     ACITenantImportForm,
 )
 from ...models.tenant.endpoint_groups import ACIEndpointGroup
+from ...models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ...models.tenant.tenants import ACITenant
 from ...tables.tenant.tenants import ACITenantTable
 from .app_profiles import ACIAppProfileChildrenView
 from .bridge_domains import ACIBridgeDomainChildrenView
 from .contracts import ACIContractChildrenView
 from .endpoint_groups import ACIEndpointGroupChildrenView
+from .endpoint_security_groups import ACIEndpointSecurityGroupChildrenView
 from .vrfs import ACIVRFChildrenView
 
 #
@@ -40,11 +43,17 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
         """Return related models as extra context."""
 
         # Get extra related models of directly referenced models
-        extra_related_models: tuple[tuple] = (
+        extra_related_models: tuple[tuple[QuerySet, str], ...] = (
             (
                 ACIEndpointGroup.objects.restrict(request.user, "view").filter(
                     aci_app_profile__aci_tenant=instance
                 ),
+                "aci_tenant_id",
+            ),
+            (
+                ACIEndpointSecurityGroup.objects.restrict(
+                    request.user, "view"
+                ).filter(aci_app_profile__aci_tenant=instance),
                 "aci_tenant_id",
             ),
         )
@@ -130,6 +139,47 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
         weight=1000,
     )
     template_name = "netbox_aci_plugin/inc/acitenant/endpointgroups.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_app_profile__aci_tenant=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACITenant colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column
+        table.columns.hide("aci_tenant")
+
+        return table
+
+
+@register_model_view(
+    ACITenant, "endpointsecuritygroups", path="endpoint-security-groups"
+)
+class ACITenantEndpointSecurityGroupView(ACIEndpointSecurityGroupChildrenView):
+    """Children view of ACI Endpoint Security Group of ACI Tenant."""
+
+    queryset = ACITenant.objects.all()
+    tab = ViewTab(
+        label=_("Endpoint Security Groups"),
+        badge=(
+            lambda obj: (
+                ACIEndpointSecurityGroupChildrenView.child_model.objects.filter(
+                    aci_app_profile__aci_tenant=obj.pk
+                ).count()
+            )
+        ),
+        permission="netbox_aci_plugin.view_aciendpointsecuritygroup",
+        weight=1000,
+    )
+    template_name = (
+        "netbox_aci_plugin/inc/acitenant/endpointsecuritygroups.html"
+    )
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
