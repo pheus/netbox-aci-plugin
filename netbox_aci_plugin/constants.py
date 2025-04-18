@@ -35,6 +35,17 @@ ESG_ENDPOINT_GROUP_SELECTORS_MODELS = Q(
     )
 )
 
+# IP Subnet Selectors
+ESG_ENDPOINT_SELECTORS_MODELS = Q(
+    Q(
+        app_label="ipam",
+        model__in=(
+            "prefix",
+            "ipaddress",
+        ),
+    )
+)
+
 
 #
 # uSeg Endpoint Group Attributes

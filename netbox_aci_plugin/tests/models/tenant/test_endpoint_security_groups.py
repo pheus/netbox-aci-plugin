@@ -5,6 +5,7 @@
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from django.test import TestCase
+from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
 
 from ....models.tenant.app_profiles import ACIAppProfile
@@ -16,6 +17,7 @@ from ....models.tenant.endpoint_groups import (
 from ....models.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroup,
     ACIEsgEndpointGroupSelector,
+    ACIEsgEndpointSelector,
 )
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
@@ -668,3 +670,298 @@ class ACIEsgEndpointGroupSelectorTestCase(TestCase):
         )
         with self.assertRaises(IntegrityError):
             duplicate_esg_epg_selector.save()
+
+
+class ACIEsgEndpointSelectorTestCase(TestCase):
+    """Test case for ACIEsgEndpointSelector model."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIEsgEndpointSelector model."""
+        cls.aci_tenant_name = "ACITestTenant"
+        cls.aci_app_profile_name = "ACITestAppProfile"
+        cls.aci_vrf_name = "ACITestVRF"
+        cls.aci_bd_name = "ACITestBD"
+        cls.aci_esg_name = "ACITestESG"
+        cls.aci_esg_ep_sel1_name = "ACITestESGEndpointSelector1"
+        cls.aci_esg_ep_sel2_name = "ACITestESGEndpointSelector2"
+        cls.aci_esg_ep_sel3_name = "ACITestESGEndpointSelector3"
+        cls.aci_esg_ep_sel_alias = "ACITestESGEndpointSelectorAlias"
+        cls.aci_esg_ep_sel_description = (
+            "ACI Test ESG Endpoint Selector for NetBox ACI Plugin"
+        )
+        cls.aci_esg_ep_sel_comments = """
+        ACI ESG Endpoint Selector for NetBox ACI Plugin testing.
+        """
+        cls.nb_tenant_name = "NetBoxTestTenant"
+
+        # Create depending objects
+        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
+        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
+        cls.aci_app_profile = ACIAppProfile.objects.create(
+            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
+        )
+        cls.aci_vrf = ACIVRF.objects.create(
+            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
+        )
+
+        # Create parent objects
+        cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
+            name=cls.aci_esg_name,
+            aci_app_profile=cls.aci_app_profile,
+            aci_vrf=cls.aci_vrf,
+            nb_tenant=cls.nb_tenant,
+        )
+
+        # Create selector objects
+        cls.ip_address1 = IPAddress.objects.create(address="192.168.1.1/24")
+        cls.ip_address2 = IPAddress.objects.create(address="192.168.1.2/24")
+        cls.prefix1 = Prefix.objects.create(prefix="192.168.1.0/24")
+
+        # Create model objects
+        cls.aci_esg_ep_sel1 = ACIEsgEndpointSelector.objects.create(
+            name=cls.aci_esg_ep_sel1_name,
+            name_alias=cls.aci_esg_ep_sel_alias,
+            description=cls.aci_esg_ep_sel_description,
+            comments=cls.aci_esg_ep_sel_comments,
+            aci_endpoint_security_group=cls.aci_esg,
+            ep_object=cls.ip_address1,
+            nb_tenant=cls.nb_tenant,
+        )
+        cls.aci_esg_ep_sel2 = ACIEsgEndpointSelector.objects.create(
+            name=cls.aci_esg_ep_sel2_name,
+            name_alias=cls.aci_esg_ep_sel_alias,
+            description=cls.aci_esg_ep_sel_description,
+            comments=cls.aci_esg_ep_sel_comments,
+            aci_endpoint_security_group=cls.aci_esg,
+            ep_object=cls.ip_address2,
+            nb_tenant=cls.nb_tenant,
+        )
+        cls.aci_esg_ep_sel3 = ACIEsgEndpointSelector.objects.create(
+            name=cls.aci_esg_ep_sel3_name,
+            name_alias=cls.aci_esg_ep_sel_alias,
+            description=cls.aci_esg_ep_sel_description,
+            comments=cls.aci_esg_ep_sel_comments,
+            aci_endpoint_security_group=cls.aci_esg,
+            ep_object=cls.prefix1,
+            nb_tenant=cls.nb_tenant,
+        )
+
+    def test_create_aci_esg_endpoint_selector_instance(self) -> None:
+        """Test type of created ACI ESG Endpoint Selector."""
+        self.assertTrue(
+            isinstance(self.aci_esg_ep_sel1, ACIEsgEndpointSelector)
+        )
+        self.assertTrue(
+            isinstance(self.aci_esg_ep_sel2, ACIEsgEndpointSelector)
+        )
+        self.assertTrue(
+            isinstance(self.aci_esg_ep_sel3, ACIEsgEndpointSelector)
+        )
+
+    def test_aci_esg_endpoint_selector_str(self) -> None:
+        """Test string representation of ACI ESG Endpoint Selector."""
+        self.assertEqual(
+            self.aci_esg_ep_sel1.__str__(),
+            f"{self.aci_esg_ep_sel1_name} "
+            f"({self.aci_esg_ep_sel1.aci_endpoint_security_group.name})",
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel2.__str__(),
+            f"{self.aci_esg_ep_sel2_name} "
+            f"({self.aci_esg_ep_sel2.aci_endpoint_security_group.name})",
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel3.__str__(),
+            f"{self.aci_esg_ep_sel3_name} "
+            f"({self.aci_esg_ep_sel3.aci_endpoint_security_group.name})",
+        )
+
+    def test_aci_esg_endpoint_selector_name_alias(self) -> None:
+        """Test name alias of ACI ESG Endpoint Selector."""
+        self.assertEqual(
+            self.aci_esg_ep_sel1.name_alias, self.aci_esg_ep_sel_alias
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel2.name_alias, self.aci_esg_ep_sel_alias
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel3.name_alias, self.aci_esg_ep_sel_alias
+        )
+
+    def test_aci_esg_endpoint_selector_description(self) -> None:
+        """Test description of ACI ESG Endpoint Selector."""
+        self.assertEqual(
+            self.aci_esg_ep_sel1.description, self.aci_esg_ep_sel_description
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel2.description, self.aci_esg_ep_sel_description
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel3.description, self.aci_esg_ep_sel_description
+        )
+
+    def test_aci_esg_ep_selector_aci_endpoint_security_group_instance(
+        self,
+    ) -> None:
+        """Test the ACI ESG instance associated with ESG Endpoint Selector."""
+        self.assertTrue(
+            isinstance(
+                self.aci_esg_ep_sel1.aci_endpoint_security_group,
+                ACIEndpointSecurityGroup,
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_esg_ep_sel2.aci_endpoint_security_group,
+                ACIEndpointSecurityGroup,
+            )
+        )
+        self.assertTrue(
+            isinstance(
+                self.aci_esg_ep_sel3.aci_endpoint_security_group,
+                ACIEndpointSecurityGroup,
+            )
+        )
+
+    def test_aci_esg_ep_selector_aci_endpoint_security_group_name(
+        self,
+    ) -> None:
+        """Test the ACI ESG name associated with ACI ESG Endpoint Selector."""
+        self.assertEqual(
+            self.aci_esg_ep_sel1.aci_endpoint_security_group.name,
+            self.aci_esg_name,
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel2.aci_endpoint_security_group.name,
+            self.aci_esg_name,
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel3.aci_endpoint_security_group.name,
+            self.aci_esg_name,
+        )
+
+    def test_aci_esg_ep_selector_aci_endpoint_group_instance(self) -> None:
+        """Test the Endpoint instance associated with ESG Endpoint Selector."""
+        self.assertTrue(isinstance(self.aci_esg_ep_sel1.ep_object, IPAddress))
+        self.assertTrue(isinstance(self.aci_esg_ep_sel2.ep_object, IPAddress))
+        self.assertTrue(isinstance(self.aci_esg_ep_sel3.ep_object, Prefix))
+
+    def test_aci_esg_endpoint_selector_nb_tenant_instance(self) -> None:
+        """Test the NetBox tenant instance associated with ESG EP Selector."""
+        self.assertTrue(isinstance(self.aci_esg_ep_sel1.nb_tenant, Tenant))
+        self.assertTrue(isinstance(self.aci_esg_ep_sel2.nb_tenant, Tenant))
+        self.assertTrue(isinstance(self.aci_esg_ep_sel3.nb_tenant, Tenant))
+
+    def test_aci_esg_endpoint_selector_nb_tenant_name(self) -> None:
+        """Test the NetBox tenant name associated with ESG EP Selector."""
+        self.assertEqual(
+            self.aci_esg_ep_sel1.nb_tenant.name, self.nb_tenant_name
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel2.nb_tenant.name, self.nb_tenant_name
+        )
+        self.assertEqual(
+            self.aci_esg_ep_sel3.nb_tenant.name, self.nb_tenant_name
+        )
+
+    def test_invalid_aci_esg_endpoint_selector_name(self) -> None:
+        """Test validation of ACI ESG Endpoint Selector naming."""
+        invalid_esg_ep_sel = ACIEsgEndpointSelector(
+            name="ACI ESG Endpoint Selector Test 1",
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=self.ip_address1,
+        )
+        with self.assertRaises(ValidationError):
+            invalid_esg_ep_sel.full_clean()
+
+    def test_invalid_aci_esg_endpoint_selector_name_length(self) -> None:
+        """Test validation of ACI ESG Endpoint Selector name length."""
+        invalid_esg_ep_sel = ACIEsgEndpointSelector(
+            name="A" * 65,  # Exceeding the maximum length of 64
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=self.ip_address1,
+        )
+        with self.assertRaises(ValidationError):
+            invalid_esg_ep_sel.full_clean()
+
+    def test_invalid_aci_esg_endpoint_selector_name_alias(self) -> None:
+        """Test validation of ACI ESG Endpoint Selector aliasing."""
+        invalid_esg_ep_sel = ACIEsgEndpointSelector(
+            name="ACIESGTest1",
+            name_alias="Invalid Alias",
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=self.ip_address1,
+        )
+        with self.assertRaises(ValidationError):
+            invalid_esg_ep_sel.full_clean()
+
+    def test_invalid_aci_esg_endpoint_selector_name_alias_length(self) -> None:
+        """Test validation of ACI ESG Endpoint Selector name alias length."""
+        invalid_esg_ep_sel = ACIEsgEndpointSelector(
+            name="ACIESGTest1",
+            name_alias="A" * 65,  # Exceeding the maximum length of 64
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=self.ip_address1,
+        )
+        with self.assertRaises(ValidationError):
+            invalid_esg_ep_sel.full_clean()
+
+    def test_invalid_aci_esg_endpoint_selector_description(self) -> None:
+        """Test validation of ACI ESG Endpoint Selector description."""
+        invalid_esg_ep_sel = ACIEsgEndpointSelector(
+            name="ACIESGTest1",
+            description="Invalid Description: ö",
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=self.ip_address1,
+        )
+        with self.assertRaises(ValidationError):
+            invalid_esg_ep_sel.full_clean()
+
+    def test_invalid_aci_esg_endpoint_selector_description_length(
+        self,
+    ) -> None:
+        """Test validation of ACI ESG Endpoint Selector description length."""
+        invalid_esg_ep_sel = ACIEsgEndpointSelector(
+            name="ACIESGTest1",
+            description="A" * 129,  # Exceeding the maximum length of 128
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=self.ip_address1,
+        )
+        with self.assertRaises(ValidationError):
+            invalid_esg_ep_sel.full_clean()
+
+    def test_invalid_aci_esg_ep_selector_aci_epg_object(self) -> None:
+        """Test validation of the object assignment for ESG EP Selector."""
+        invalid_esg_ep_sel = ACIEsgEndpointSelector(
+            name="ACIESGEndpointSelectorInvalidTest1",
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=self.aci_vrf,
+        )
+        with self.assertRaises(ValidationError):
+            invalid_esg_ep_sel.full_clean()
+
+    def test_constraint_unique_aci_esg_ep_selector_name_per_aci_app_profile(
+        self,
+    ) -> None:
+        """Test unique constraint of ESG EP Selector name per App Profile."""
+        prefix2 = Prefix.objects.create(prefix="192.168.2.0/24")
+        duplicate_esg_ep_selector = ACIEsgEndpointSelector(
+            name=self.aci_esg_ep_sel1_name,
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=prefix2,
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_esg_ep_selector.save()
+
+    def test_constraint_unique_aci_esg_ep_selector_epg_per_aci_app_profile(
+        self,
+    ) -> None:
+        """Test unique constraint of ESG EP Selector EP per App Profile."""
+        duplicate_esg_ep_selector = ACIEsgEndpointSelector(
+            name="ACIESGEndpointSelectorDuplicateTest",
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object=self.ip_address1,
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_esg_ep_selector.save()

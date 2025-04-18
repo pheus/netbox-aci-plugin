@@ -10,8 +10,12 @@ from django.contrib.contenttypes.fields import (
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from ipam.models import IPAddress, Prefix
 
-from ...constants import ESG_ENDPOINT_GROUP_SELECTORS_MODELS
+from ...constants import (
+    ESG_ENDPOINT_GROUP_SELECTORS_MODELS,
+    ESG_ENDPOINT_SELECTORS_MODELS,
+)
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .app_profiles import ACIAppProfile
@@ -381,3 +385,165 @@ class ACIEsgEndpointGroupSelector(
     def aci_epg_object_app_profile(self) -> ACIAppProfile:
         """Return the ACIAppProfile instance of related ACI EPG object."""
         return self.aci_epg_object.aci_app_profile
+
+
+#
+# ACI Endpoint Security Group (ESG) Selector for Endpoints (EP)
+#
+
+
+class ACIEsgEndpointSelector(
+    ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMixin
+):
+    """NetBox model for ACI Endpoint Security Group (ESG) Endpoint Selector."""
+
+    ep_object_type = models.ForeignKey(
+        to="contenttypes.ContentType",
+        on_delete=models.PROTECT,
+        related_name="+",
+        limit_choices_to=ESG_ENDPOINT_SELECTORS_MODELS,
+        verbose_name=_("Endpoint Object Type"),
+        blank=True,
+        null=True,
+    )
+    ep_object_id = models.PositiveBigIntegerField(
+        verbose_name=_("Endpoint Object ID"),
+        blank=True,
+        null=True,
+    )
+    ep_object = GenericForeignKey(
+        ct_field="ep_object_type",
+        fk_field="ep_object_id",
+    )
+
+    # Cached related objects by association name for faster access
+    _ip_address = models.ForeignKey(
+        to="ipam.IPAddress",
+        on_delete=models.CASCADE,
+        related_name="_aci_esg_endpoint_selectors",
+        verbose_name=_("IP Address"),
+        blank=True,
+        null=True,
+    )
+    _prefix = models.ForeignKey(
+        to="ipam.Prefix",
+        on_delete=models.CASCADE,
+        related_name="_aci_esg_endpoint_selectors",
+        verbose_name=_("Prefix"),
+        blank=True,
+        null=True,
+    )
+
+    clone_fields: tuple = ACIEsgSelectorBaseModel.clone_fields + (
+        "ep_object_type",
+    )
+
+    # Unique GenericForeignKey validation
+    generic_fk_field = "ep_object"
+    generic_unique_fields = ("aci_endpoint_security_group",)
+
+    class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=(
+                    "name",
+                    "aci_endpoint_security_group",
+                ),
+                name=(
+                    "%(app_label)s_%(class)s_unique_name_"
+                    "per_endpoint_security_group"
+                ),
+            ),
+            models.UniqueConstraint(
+                fields=(
+                    "aci_endpoint_security_group",
+                    "ep_object_type",
+                    "ep_object_id",
+                ),
+                name=(
+                    "%(app_label)s_%(class)s_unique_ep_object_"
+                    "per_endpoint_security_group"
+                ),
+            ),
+        ]
+        default_related_name: str = "aci_esg_endpoint_selectors"
+        indexes: tuple = (
+            models.Index(fields=("ep_object_type", "ep_object_id")),
+        )
+        ordering: tuple = (
+            "name",
+            "aci_endpoint_security_group",
+            "_ip_address",
+            "_prefix",
+        )
+        verbose_name: str = _("ACI ESG Endpoint Selector")
+
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+
+        # Validate Endpoint object assignment before validation of any other
+        # fields
+        if self.ep_object_type and not self.ep_object:
+            ep_model_class = self.ep_object_type.model_class()
+            raise ValidationError(
+                {
+                    "ep_object": _(
+                        "The {ep_object} field is required, if an Endpoint "
+                        "Object Type is selected.".format(
+                            ep_object=ep_model_class._meta.verbose_name
+                        )
+                    )
+                }
+            )
+        if self.ep_object and not self.ep_object_type:
+            raise ValidationError(
+                {
+                    "ep_object_type": _(
+                        "An Endpoint Object Type is required, if an "
+                        "Endpoint Object is provided."
+                    )
+                }
+            )
+
+        super().clean()
+
+        # Perform the mixin's unique constraint validation
+        self._validate_generic_uniqueness()
+
+    def save(self, *args, **kwargs) -> None:
+        """Saves the current instance to the database."""
+        # Cache the related objects for faster access
+        self.cache_related_objects()
+
+        super().save(*args, **kwargs)
+
+    def cache_related_objects(self) -> None:
+        """Cache the related objects for faster access."""
+        self._ip_address = self._prefix = None
+        if self.ep_object_type:
+            ep_object_type = self.ep_object_type.model_class()
+            if ep_object_type == apps.get_model("ipam", "IPAddress"):
+                self._ip_address = self.ep_object
+            elif ep_object_type == apps.get_model("ipam", "Prefix"):
+                self._prefix = self.ep_object
+
+    cache_related_objects.alters_data = True
+
+
+#
+# Generic Relations: ACIEsgEndpointSelector
+#
+
+GenericRelation(
+    to=ACIEsgEndpointSelector,
+    content_type_field="ep_object_type",
+    object_id_field="ep_object_id",
+    related_query_name="ip_address",
+).contribute_to_class(IPAddress, name="aci_esg_endpoint_selectors")
+
+GenericRelation(
+    to=ACIEsgEndpointSelector,
+    content_type_field="ep_object_type",
+    object_id_field="ep_object_id",
+    related_query_name="prefix",
+).contribute_to_class(Prefix, name="aci_esg_endpoint_selectors")
