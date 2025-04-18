@@ -21,6 +21,22 @@ CONTRACT_RELATION_OBJECT_TYPES = Q(
 
 
 #
+# Endpoint Security Group
+#
+
+# Endpoint Group (EPG) Selectors
+ESG_ENDPOINT_GROUP_SELECTORS_MODELS = Q(
+    Q(
+        app_label="netbox_aci_plugin",
+        model__in=(
+            "aciendpointgroup",
+            "aciusegendpointgroup",
+        ),
+    )
+)
+
+
+#
 # uSeg Endpoint Group Attributes
 #
 
