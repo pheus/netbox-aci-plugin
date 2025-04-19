@@ -6,6 +6,8 @@ import django_filters
 from dcim.models import MACAddress
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from ipam.models import VRF, IPAddress, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
@@ -19,6 +21,7 @@ from ...models.tenant.endpoint_groups import (
     ACIUSegEndpointGroup,
     ACIUSegNetworkAttribute,
 )
+from ...models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
 
@@ -85,6 +88,13 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
         null_value=None,
     )
 
+    # Filters extended with a custom filter method
+    shares_aci_vrf_with_aci_esg_id = django_filters.ModelChoiceFilter(
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        method="filter_shares_aci_vrf_with_aci_esg_id",
+        label=_("ACI VRF shared with ACI ESG (ID)"),
+    )
+
     class Meta:
         model = ACIEndpointGroup
         fields: tuple = (
@@ -114,6 +124,17 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_shares_aci_vrf_with_aci_esg_id(
+        self, queryset, name, aci_endpoint_security_group
+    ):
+        """Return a QuerySet filtered by a shared ACI VRF for a given ESG."""
+        if aci_endpoint_security_group is None:
+            return queryset.none
+        return queryset.filter(
+            aci_bridge_domain__aci_vrf=aci_endpoint_security_group.aci_vrf
+        )
 
 
 class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
@@ -178,6 +199,13 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
         null_value=None,
     )
 
+    # Filters extended with a custom filter method
+    shares_aci_vrf_with_aci_esg_id = django_filters.ModelChoiceFilter(
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        method="filter_shares_aci_vrf_with_aci_esg_id",
+        label=_("ACI VRF shared with ACI ESG (ID)"),
+    )
+
     class Meta:
         model = ACIUSegEndpointGroup
         fields: tuple = (
@@ -206,6 +234,17 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_shares_aci_vrf_with_aci_esg_id(
+        self, queryset, name, aci_endpoint_security_group
+    ):
+        """Return a QuerySet filtered by a shared ACI VRF for a given ESG."""
+        if aci_endpoint_security_group is None:
+            return queryset.none
+        return queryset.filter(
+            aci_bridge_domain__aci_vrf=aci_endpoint_security_group.aci_vrf
+        )
 
 
 class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
