@@ -6,6 +6,7 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
+from ipam.models import VRF, IPAddress, Prefix
 from netbox.forms import (
     NetBoxModelBulkEditForm,
     NetBoxModelFilterSetForm,
@@ -30,7 +31,10 @@ from utilities.forms.rendering import FieldSet
 from utilities.forms.widgets import HTMXSelect
 from utilities.templatetags.builtins.filters import bettertitle
 
-from ...constants import ESG_ENDPOINT_GROUP_SELECTORS_MODELS
+from ...constants import (
+    ESG_ENDPOINT_GROUP_SELECTORS_MODELS,
+    ESG_ENDPOINT_SELECTORS_MODELS,
+)
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.endpoint_groups import (
     ACIEndpointGroup,
@@ -39,6 +43,7 @@ from ...models.tenant.endpoint_groups import (
 from ...models.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroup,
     ACIEsgEndpointGroupSelector,
+    ACIEsgEndpointSelector,
 )
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
@@ -881,6 +886,439 @@ class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
 
     class Meta:
         model = ACIEsgEndpointGroupSelector
+        fields: tuple = (
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_app_profile",
+            "aci_endpoint_security_group",
+            "description",
+            "nb_tenant",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        # Limit ACIEndpointSecurityGroup queryset by parent ACI objects
+        if data.get("aci_tenant") and data.get("aci_app_profile"):
+            # Limit ACIAppProfile queryset by parent ACITenant
+            aci_appprofile_queryset = ACIAppProfile.objects.filter(
+                aci_tenant__name=data["aci_tenant"]
+            )
+            self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
+            # Limit ACIEndpointSecurityGroup queryset by parent ACIAppProfile
+            aci_endpoint_security_group_queryset = (
+                ACIEndpointSecurityGroup.objects.filter(
+                    aci_app_profile__name=data["aci_app_profile"]
+                )
+            )
+            self.fields[
+                "aci_endpoint_security_group"
+            ].queryset = aci_endpoint_security_group_queryset
+
+
+#
+# ESG Endpoint Selector forms
+#
+
+
+class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI ESG Endpoint Selector model."""
+
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        initial_params={
+            "aci_app_profiles__aci_endpoint_security_groups": (
+                "$aci_endpoint_security_group"
+            )
+        },
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_app_profile = DynamicModelChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        initial_params={
+            "aci_endpoint_security_groups": "$aci_endpoint_security_group"
+        },
+        required=False,
+        label=_("ACI Application Profile"),
+    )
+    aci_endpoint_security_group = DynamicModelChoiceField(
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        query_params={"aci_app_profile_id": "$aci_app_profile"},
+        label=_("ACI Endpoint Security Group"),
+    )
+    ep_object_type = ContentTypeChoiceField(
+        queryset=ContentType.objects.filter(ESG_ENDPOINT_SELECTORS_MODELS),
+        widget=HTMXSelect(),
+        label=_("Endpoint Object Type"),
+    )
+    ep_object = DynamicModelChoiceField(
+        queryset=IPAddress.objects.none(),  # Initial queryset
+        selector=True,
+        label=_("Endpoint Object"),
+        disabled=True,
+    )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    comments = CommentField()
+
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_app_profile",
+            "aci_endpoint_security_group",
+            "description",
+            "tags",
+            name=_("ACI ESG Endpoint Selector"),
+        ),
+        FieldSet(
+            "ep_object_type",
+            "ep_object",
+            name=_("Endpoint Assignment"),
+        ),
+        FieldSet(
+            "nb_tenant_group",
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+
+    class Meta:
+        model = ACIEsgEndpointSelector
+        fields: tuple = (
+            "name",
+            "name_alias",
+            "aci_endpoint_security_group",
+            "ep_object_type",
+            "description",
+            "nb_tenant",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize the ACI ESG Endpoint Selector form."""
+
+        # Initialize fields with initial values
+        instance = kwargs.get("instance")
+        initial = kwargs.get("initial", {}).copy()
+
+        if instance is not None and instance.ep_object:
+            # Initialize the Endpoint object field
+            initial["ep_object"] = instance.ep_object
+
+        # Check if "comments" is absent, indicating a request with custom
+        # GET parameters for prefilling of the form field "ep_object".
+        prefill_ep_object = "comments" not in initial
+
+        kwargs["initial"] = initial
+
+        super().__init__(*args, **kwargs)
+
+        if ep_object_type_id := get_field_value(self, "ep_object_type"):
+            try:
+                # Retrieve the ContentType model class based on the Endpoint
+                # object type
+                ep_object_type = ContentType.objects.get(pk=ep_object_type_id)
+                ep_model = ep_object_type.model_class()
+
+                # Configure the queryset and label for the ep_object field
+                self.fields["ep_object"].queryset = ep_model.objects.all()
+                self.fields["ep_object"].widget.attrs["selector"] = (
+                    ep_model._meta.label_lower
+                )
+                self.fields["ep_object"].disabled = False
+                self.fields["ep_object"].label = _(
+                    bettertitle(ep_model._meta.verbose_name)
+                )
+            except ObjectDoesNotExist:
+                pass
+
+            # Clears the ep_object field if the selected type changes
+            if (
+                self.instance
+                and ep_object_type_id != self.instance.ep_object_type_id
+                and not prefill_ep_object
+            ):
+                self.initial["ep_object"] = None
+
+    def clean(self):
+        """Validate form fields for the ACI ESG Endpoint Selector form."""
+        super().clean()
+
+        # Ensure the selected Endpoint object gets assigned
+        self.instance.ep_object = self.cleaned_data.get("ep_object")
+
+
+class ACIEsgEndpointSelectorBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for the ACI ESG Endpoint Selector model."""
+
+    name_alias = forms.CharField(
+        max_length=64,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=128,
+        required=False,
+        label=_("Description"),
+    )
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_app_profile = DynamicModelChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant"},
+        required=False,
+        label=_("ACI Application Profile"),
+    )
+    aci_endpoint_security_group = DynamicModelChoiceField(
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        query_params={"aci_app_profile_id": "$aci_app_profile"},
+        required=False,
+        label=_("ACI Endpoint Security Group"),
+    )
+    ep_object_type = ContentTypeChoiceField(
+        queryset=ContentType.objects.filter(ESG_ENDPOINT_SELECTORS_MODELS),
+        required=False,
+        widget=HTMXSelect(method="post", attrs={"hx-select": "#form_fields"}),
+        label=_("Endpoint Object Type"),
+    )
+    ep_object = DynamicModelChoiceField(
+        queryset=IPAddress.objects.none(),  # Initial queryset
+        selector=True,
+        required=False,
+        label=_("Endpoint Object"),
+        disabled=True,
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    comments = CommentField()
+
+    model = ACIEsgEndpointSelector
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant",
+            "aci_app_profile",
+            "aci_endpoint_security_group",
+            "description",
+            "tags",
+            name=_("ACI ESG Endpoint Selector"),
+        ),
+        FieldSet(
+            "ep_object_type",
+            "ep_object",
+            name=_("Endpoint Assignment"),
+        ),
+        FieldSet(
+            "nb_tenant_group",
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+    nullable_fields: tuple = (
+        "name_alias",
+        "description",
+        "nb_tenant",
+        "comments",
+    )
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize the ACI ESG Endpoint Selector bulk edit form."""
+
+        super().__init__(*args, **kwargs)
+
+        if ep_object_type_id := get_field_value(self, "ep_object_type"):
+            try:
+                # Retrieve the ContentType model class based on the Endpoint
+                # object type
+                ep_object_type = ContentType.objects.get(pk=ep_object_type_id)
+                ep_model = ep_object_type.model_class()
+
+                # Configure the queryset and label for the ep_object field
+                self.fields["ep_object"].queryset = ep_model.objects.all()
+                self.fields["ep_object"].widget.attrs["selector"] = (
+                    ep_model._meta.label_lower
+                )
+                self.fields["ep_object"].disabled = False
+                self.fields["ep_object"].label = _(
+                    bettertitle(ep_model._meta.verbose_name)
+                )
+            except ObjectDoesNotExist:
+                pass
+
+
+class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for the ACI ESG Endpoint Selector model."""
+
+    model = ACIEsgEndpointSelector
+    fieldsets: tuple = (
+        FieldSet(
+            "q",
+            "filter_id",
+            "tag",
+        ),
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_tenant_id",
+            "aci_app_profile_id",
+            "aci_endpoint_security_group_id",
+            "description",
+            "tags",
+            name=_("ACI ESG Endpoint Selector"),
+        ),
+        FieldSet(
+            "ip_address_vrf_id",
+            "ip_address_id",
+            "prefix_vrf_id",
+            "prefix_id",
+            name=_("Endpoint Assignment"),
+        ),
+        FieldSet(
+            "nb_tenant_group_id",
+            "nb_tenant_id",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+
+    name = forms.CharField(
+        required=False,
+    )
+    name_alias = forms.CharField(
+        required=False,
+    )
+    description = forms.CharField(
+        required=False,
+    )
+    aci_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_app_profile_id = DynamicModelMultipleChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        required=False,
+        label=_("ACI Application Profile"),
+    )
+    aci_endpoint_security_group_id = DynamicModelMultipleChoiceField(
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        required=False,
+        label=_("ACI Endpoint Security Group"),
+    )
+    ip_address_vrf_id = DynamicModelMultipleChoiceField(
+        queryset=VRF.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("VRF of IP Address"),
+    )
+    ip_address_id = DynamicModelMultipleChoiceField(
+        queryset=IPAddress.objects.all(),
+        query_params={"vrf_id": "$ip_address_vrf_id"},
+        null_option="None",
+        required=False,
+        label=_("IP Address"),
+    )
+    prefix_vrf_id = DynamicModelMultipleChoiceField(
+        queryset=VRF.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("VRF of Prefix"),
+    )
+    prefix_id = DynamicModelMultipleChoiceField(
+        queryset=Prefix.objects.all(),
+        query_params={"vrf_id": "$prefix_vrf_id"},
+        null_option="None",
+        required=False,
+        label=_("Prefix"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    tag = TagFilterField(ACIEsgEndpointSelector)
+
+
+class ACIEsgEndpointSelectorImportForm(NetBoxModelImportForm):
+    """NetBox import form for the ACI ESG Endpoint Selector model."""
+
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+        help_text=_("Parent ACI Tenant of ACI Application Profile"),
+    )
+    aci_app_profile = CSVModelChoiceField(
+        queryset=ACIAppProfile.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Application Profile"),
+        help_text=_("Assigned ACI Application Profile"),
+    )
+    aci_endpoint_security_group = CSVModelChoiceField(
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Endpoint Security Group"),
+        help_text=_("Assigned ACI Endpoint Security Group"),
+    )
+    ep_object_id = forms.IntegerField(
+        required=True,
+        label=_("Endpoint Object ID"),
+    )
+    ep_object_type = CSVContentTypeField(
+        queryset=ContentType.objects.filter(ESG_ENDPOINT_SELECTORS_MODELS),
+        required=True,
+        label=_("Endpoint Object Type (app & model)"),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+
+    class Meta:
+        model = ACIEsgEndpointSelector
         fields: tuple = (
             "name",
             "name_alias",
