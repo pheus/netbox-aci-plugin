@@ -2,12 +2,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 
 from ....forms.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupEditForm,
+    ACIEsgEndpointGroupSelectorEditForm,
 )
 from ....models.tenant.app_profiles import ACIAppProfile
+from ....models.tenant.bridge_domains import ACIBridgeDomain
+from ....models.tenant.endpoint_groups import ACIEndpointGroup
+from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
@@ -70,3 +75,96 @@ class ACIEndpointSecurityGroupFormTestCase(TestCase):
         self.assertEqual(aci_esg_form.errors.get("name"), None)
         self.assertEqual(aci_esg_form.errors.get("name_alias"), None)
         self.assertEqual(aci_esg_form.errors.get("description"), None)
+
+
+class ACIEsgEndpointGroupSelectorFormTestCase(TestCase):
+    """Test case for ACIEsgEndpointGroupSelector form."""
+
+    name_error_message: str = (
+        "Only alphanumeric characters, hyphens, periods and underscores are"
+        " allowed."
+    )
+    description_error_message: str = (
+        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
+    )
+
+    @classmethod
+    def setUp(cls):
+        """Set up required objects for ACIEsgEndpointGroupSelector tests."""
+        cls.aci_tenant = ACITenant.objects.create(name="ACITestTenant")
+        cls.aci_vrf = ACIVRF.objects.create(
+            name="ACITestVRF", aci_tenant=cls.aci_tenant
+        )
+        cls.aci_bd = ACIBridgeDomain.objects.create(
+            name="ACITestBridgeDomain",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+        )
+        cls.aci_app_profile = ACIAppProfile.objects.create(
+            name="ACITestAppProfile", aci_tenant=cls.aci_tenant
+        )
+        cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
+            name="ACIEndpointSecurityGroup1",
+            aci_app_profile=cls.aci_app_profile,
+            aci_vrf=cls.aci_vrf,
+        )
+        cls.aci_epg = ACIEndpointGroup.objects.create(
+            name="ACIEndpointGroup1",
+            aci_app_profile=cls.aci_app_profile,
+            aci_bridge_domain=cls.aci_bd,
+        )
+
+    def test_invalid_aci_esg_epg_selector_field_values(self) -> None:
+        """Test validation of invalid ACI ESG EPG Selector field values."""
+        aci_esg_epg_selector_form = ACIEsgEndpointGroupSelectorEditForm(
+            data={
+                "name": "ACI ESG Endpoint Group Selector Test 1",
+                "name_alias": "ACI Test Alias 1",
+                "description": "Invalid Description: ö",
+                "aci_endpoint_security_group": self.aci_esg,
+                "aci_epg_object_type": ContentType.objects.get_for_model(
+                    self.aci_bd._meta.model
+                ).id,
+                "aci_epg_object": self.aci_bd,
+            }
+        )
+        self.assertFalse(aci_esg_epg_selector_form.is_valid())
+        self.assertEqual(
+            aci_esg_epg_selector_form.errors["name"],
+            [self.name_error_message],
+        )
+        self.assertEqual(
+            aci_esg_epg_selector_form.errors["name_alias"],
+            [self.name_error_message],
+        )
+        self.assertEqual(
+            aci_esg_epg_selector_form.errors["description"],
+            [self.description_error_message],
+        )
+        self.assertIn("aci_epg_object_type", aci_esg_epg_selector_form.errors)
+
+    def test_valid_aci_esg_epg_selector_field_values(self) -> None:
+        """Test validation of valid ACI ESG EPG Selector field values."""
+        aci_esg_epg_selector_form = ACIEsgEndpointGroupSelectorEditForm(
+            data={
+                "name": "ACIEsgEndpointGroupSelector1",
+                "name_alias": "Testing",
+                "description": "ESG Endpoint Group Selector for NetBox ACI Plugin",
+                "aci_endpoint_security_group": self.aci_esg,
+                "aci_epg_object_type": ContentType.objects.get_for_model(
+                    self.aci_epg._meta.model
+                ).id,
+                "aci_epg_object": self.aci_epg,
+            }
+        )
+        self.assertTrue(aci_esg_epg_selector_form.is_valid())
+        self.assertEqual(aci_esg_epg_selector_form.errors.get("name"), None)
+        self.assertEqual(
+            aci_esg_epg_selector_form.errors.get("name_alias"), None
+        )
+        self.assertEqual(
+            aci_esg_epg_selector_form.errors.get("description"), None
+        )
+        self.assertNotIn(
+            "aci_epg_object_type", aci_esg_epg_selector_form.errors
+        )
