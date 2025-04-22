@@ -79,6 +79,11 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorBulkImportView,
     ACIEsgEndpointGroupSelectorEditView,
     ACIEsgEndpointGroupSelectorListView,
+    ACIEsgEndpointSelectorBulkDeleteView,
+    ACIEsgEndpointSelectorBulkEditView,
+    ACIEsgEndpointSelectorBulkImportView,
+    ACIEsgEndpointSelectorEditView,
+    ACIEsgEndpointSelectorListView,
 )
 from .tenant.tenants import (
     ACITenantBulkDeleteView,
@@ -168,6 +173,12 @@ __all__ = (
     "ACIEsgEndpointGroupSelectorBulkImportView",
     "ACIEsgEndpointGroupSelectorEditView",
     "ACIEsgEndpointGroupSelectorListView",
+    # ACIEsgEndpointSelector
+    "ACIEsgEndpointSelectorBulkDeleteView",
+    "ACIEsgEndpointSelectorBulkEditView",
+    "ACIEsgEndpointSelectorBulkImportView",
+    "ACIEsgEndpointSelectorEditView",
+    "ACIEsgEndpointSelectorListView",
     # ACITenant
     "ACITenantBulkDeleteView",
     "ACITenantBulkEditView",

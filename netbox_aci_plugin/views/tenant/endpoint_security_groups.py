@@ -11,6 +11,7 @@ from ...filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ...filtersets.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupFilterSet,
     ACIEsgEndpointGroupSelectorFilterSet,
+    ACIEsgEndpointSelectorFilterSet,
 )
 from ...forms.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupBulkEditForm,
@@ -21,14 +22,20 @@ from ...forms.tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorEditForm,
     ACIEsgEndpointGroupSelectorFilterForm,
     ACIEsgEndpointGroupSelectorImportForm,
+    ACIEsgEndpointSelectorBulkEditForm,
+    ACIEsgEndpointSelectorEditForm,
+    ACIEsgEndpointSelectorFilterForm,
+    ACIEsgEndpointSelectorImportForm,
 )
 from ...models.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroup,
     ACIEsgEndpointGroupSelector,
+    ACIEsgEndpointSelector,
 )
 from ...tables.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupTable,
     ACIEsgEndpointGroupSelectorTable,
+    ACIEsgEndpointSelectorTable,
 )
 from .contracts import ACIContractRelationChildrenView
 
@@ -82,6 +89,31 @@ class ACIEsgEndpointGroupSelectorChildrenView(generic.ObjectChildrenView):
         ).prefetch_related(
             "aci_endpoint_security_group",
             "aci_epg_object",
+            "nb_tenant",
+            "tags",
+        )
+
+
+class ACIEsgEndpointSelectorChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI ESG Endpoint Selector."""
+
+    child_model = ACIEsgEndpointSelector
+    filterset = ACIEsgEndpointSelectorFilterSet
+    tab = ViewTab(
+        label=_("Endpoint Selectors"),
+        badge=lambda obj: obj.aci_esg_endpoint_selectors.count(),
+        permission="netbox_aci_plugin.view_aciesgendpointselector",
+        weight=1000,
+    )
+    table = ACIEsgEndpointSelectorTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIEsgEndpointSelector."""
+        return ACIEsgEndpointSelector.objects.restrict(
+            request.user, "view"
+        ).prefetch_related(
+            "aci_endpoint_security_group",
+            "ep_object",
             "nb_tenant",
             "tags",
         )
@@ -201,6 +233,41 @@ class ACIEndpointSecurityGroupEsgEndpointGroupSelectorView(
     queryset = ACIEndpointSecurityGroup.objects.all()
     template_name = (
         "netbox_aci_plugin/inc/aciendpointsecuritygroup/epgselectors.html"
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_endpoint_security_group=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI EndpointSecurityGroup colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACITenant column of ACIEndpointSecurityGroup
+        table.columns.hide("aci_tenant")
+        # Hide ACI AppProfile column
+        table.columns.hide("aci_app_profile")
+        # Hide ACI EndpointSecurityGroup column
+        table.columns.hide("aci_endpoint_security_group")
+
+        return table
+
+
+@register_model_view(
+    ACIEndpointSecurityGroup, "epselectors", path="ep-selectors"
+)
+class ACIEndpointSecurityGroupEsgEndpointSelectorView(
+    ACIEsgEndpointSelectorChildrenView
+):
+    """Children view of ACI ESG Endpoint Selector of ACI ESG."""
+
+    queryset = ACIEndpointSecurityGroup.objects.all()
+    template_name = (
+        "netbox_aci_plugin/inc/aciendpointsecuritygroup/epselectors.html"
     )
 
     def get_children(self, request, parent):
@@ -349,3 +416,94 @@ class ACIEsgEndpointGroupSelectorBulkDeleteView(generic.BulkDeleteView):
     queryset = ACIEsgEndpointGroupSelector.objects.all()
     filterset = ACIEsgEndpointGroupSelectorFilterSet
     table = ACIEsgEndpointGroupSelectorTable
+
+
+#
+# ESG Endpoint Selector views
+#
+
+
+@register_model_view(ACIEsgEndpointSelector)
+class ACIEsgEndpointSelectorView(generic.ObjectView):
+    """Detail view for displaying a single object of ACI ESG EP Selector."""
+
+    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+        "aci_endpoint_security_group",
+        "ep_object",
+        "nb_tenant",
+        "tags",
+    )
+
+
+@register_model_view(ACIEsgEndpointSelector, "list", path="", detail=False)
+class ACIEsgEndpointSelectorListView(generic.ObjectListView):
+    """List view for listing all objects of ACI ESG Endpoint Selector."""
+
+    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+        "aci_endpoint_security_group",
+        "ep_object",
+        "nb_tenant",
+        "tags",
+    )
+    filterset = ACIEsgEndpointSelectorFilterSet
+    filterset_form = ACIEsgEndpointSelectorFilterForm
+    table = ACIEsgEndpointSelectorTable
+
+
+@register_model_view(ACIEsgEndpointSelector, "add", detail=False)
+@register_model_view(ACIEsgEndpointSelector, "edit")
+class ACIEsgEndpointSelectorEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACI ESG Endpoint Selector."""
+
+    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+        "aci_endpoint_security_group",
+        "ep_object",
+        "nb_tenant",
+        "tags",
+    )
+    form = ACIEsgEndpointSelectorEditForm
+
+
+@register_model_view(ACIEsgEndpointSelector, "delete")
+class ACIEsgEndpointSelectorDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACI ESG Endpoint Selector."""
+
+    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+        "aci_endpoint_security_group",
+        "ep_object",
+        "nb_tenant",
+        "tags",
+    )
+
+
+@register_model_view(
+    ACIEsgEndpointSelector, "bulk_import", path="import", detail=False
+)
+class ACIEsgEndpointSelectorBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ESG EP Selector."""
+
+    queryset = ACIEsgEndpointSelector.objects.all()
+    model_form = ACIEsgEndpointSelectorImportForm
+
+
+@register_model_view(
+    ACIEsgEndpointSelector, "bulk_edit", path="edit", detail=False
+)
+class ACIEsgEndpointSelectorBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI ESG EP Selector."""
+
+    queryset = ACIEsgEndpointSelector.objects.all()
+    filterset = ACIEsgEndpointSelectorFilterSet
+    table = ACIEsgEndpointSelectorTable
+    form = ACIEsgEndpointSelectorBulkEditForm
+
+
+@register_model_view(
+    ACIEsgEndpointSelector, "bulk_delete", path="delete", detail=False
+)
+class ACIEsgEndpointSelectorBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ESG EP Selector."""
+
+    queryset = ACIEsgEndpointSelector.objects.all()
+    filterset = ACIEsgEndpointSelectorFilterSet
+    table = ACIEsgEndpointSelectorTable
