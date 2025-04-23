@@ -86,6 +86,23 @@ urlpatterns: tuple = (
             get_model_urls("netbox_aci_plugin", "aciendpointsecuritygroup")
         ),
     ),
+    # ACI ESG Endpoint Group Selector
+    path(
+        "endpoint-security-groups/epg-selectors/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin",
+                "aciesgendpointgroupselector",
+                detail=False,
+            )
+        ),
+    ),
+    path(
+        "endpoint-security-groups/epg-selectors/<int:pk>/",
+        include(
+            get_model_urls("netbox_aci_plugin", "aciesgendpointgroupselector")
+        ),
+    ),
     # ACI Bridge Domain
     path(
         "bridge-domains/",
