@@ -27,6 +27,7 @@ from ..filtersets.tenant.endpoint_groups import (
 from ..filtersets.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupFilterSet,
     ACIEsgEndpointGroupSelectorFilterSet,
+    ACIEsgEndpointSelectorFilterSet,
 )
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
@@ -53,6 +54,7 @@ from ..models.tenant.endpoint_groups import (
 from ..models.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroup,
     ACIEsgEndpointGroupSelector,
+    ACIEsgEndpointSelector,
 )
 from ..models.tenant.tenants import ACITenant
 from ..models.tenant.vrfs import ACIVRF
@@ -69,6 +71,7 @@ from .serializers import (
     ACIEndpointGroupSerializer,
     ACIEndpointSecurityGroupSerializer,
     ACIEsgEndpointGroupSelectorSerializer,
+    ACIEsgEndpointSelectorSerializer,
     ACITenantSerializer,
     ACIUSegEndpointGroupSerializer,
     ACIUSegNetworkAttributeSerializer,
@@ -201,6 +204,19 @@ class ACIEsgEndpointGroupSelectorListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIEsgEndpointGroupSelectorSerializer
     filterset_class = ACIEsgEndpointGroupSelectorFilterSet
+
+
+class ACIEsgEndpointSelectorListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI ESG Endpoint Selector instances."""
+
+    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+        "aci_endpoint_security_group",
+        "ep_object",
+        "nb_tenant",
+        "tags",
+    )
+    serializer_class = ACIEsgEndpointSelectorSerializer
+    filterset_class = ACIEsgEndpointSelectorFilterSet
 
 
 class ACIContractFilterListViewSet(NetBoxModelViewSet):
