@@ -24,6 +24,7 @@ from .filters import (
     ACIContractSubjectFilterFilter,
     ACIEndpointGroupFilter,
     ACIEndpointSecurityGroupFilter,
+    ACIEsgEndpointGroupSelectorFilter,
     ACITenantFilter,
     ACIUSegEndpointGroupFilter,
     ACIUSegNetworkAttributeFilter,
@@ -332,6 +333,57 @@ class ACIEndpointSecurityGroupType(NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+    aci_esg_endpoint_group_selectors: List[
+        Annotated[
+            "ACIEsgEndpointGroupSelectorType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACIEsgEndpointGroupSelector,
+    exclude=[
+        "aci_epg_object_id",
+        "aci_epg_object_type",
+        "_aci_endpoint_group",
+        "_aci_useg_endpoint_group",
+    ],
+    filters=ACIEsgEndpointGroupSelectorFilter,
+)
+class ACIEsgEndpointGroupSelectorType(NetBoxObjectType):
+    """GraphQL type definition for the ACIEsgEndpointGroupSelector model."""
+
+    # Model fields
+    aci_endpoint_security_group: Annotated[
+        "ACIEndpointSecurityGroupType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    nb_tenant: (
+        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
+        | None
+    )
+
+    @strawberry.field(description="Endpoint Group Object")
+    def aci_epg_object(
+        self,
+    ) -> (
+        Annotated[
+            Union[
+                Annotated[
+                    "ACIEndpointGroupType",
+                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
+                ],
+                Annotated[
+                    "ACIUSegEndpointGroupType",
+                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
+                ],
+            ],
+            strawberry.union("ACIEsgEndpointGroupSelectorObjectType"),
+        ]
+        | None
+    ):
+        return self.aci_epg_object
 
 
 @strawberry_django.type(

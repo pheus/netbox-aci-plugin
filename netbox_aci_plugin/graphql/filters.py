@@ -30,6 +30,7 @@ from ..filtersets.tenant.endpoint_groups import (
 )
 from ..filtersets.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupFilterSet,
+    ACIEsgEndpointGroupSelectorFilterSet,
 )
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
@@ -105,6 +106,14 @@ class ACIUSegNetworkAttributeFilter(BaseFilterMixin):
 @autotype_decorator(ACIEndpointSecurityGroupFilterSet)
 class ACIEndpointSecurityGroupFilter(BaseFilterMixin):
     """GraphQL filter definition for the Endpoint Security Group model."""
+
+    pass
+
+
+@strawberry_django.filter(models.ACIEsgEndpointGroupSelector, lookups=True)
+@autotype_decorator(ACIEsgEndpointGroupSelectorFilterSet)
+class ACIEsgEndpointGroupSelectorFilter(BaseFilterMixin):
+    """GraphQL filter definition for the ESG EPG Selector model."""
 
     pass
 
