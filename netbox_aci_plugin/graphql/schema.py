@@ -20,6 +20,7 @@ from .types import (
     ACIEndpointGroupType,
     ACIEndpointSecurityGroupType,
     ACIEsgEndpointGroupSelectorType,
+    ACIEsgEndpointSelectorType,
     ACITenantType,
     ACIUSegEndpointGroupType,
     ACIUSegNetworkAttributeType,
@@ -86,6 +87,13 @@ class NetBoxACIQuery:
     aci_esg_endpoint_group_selector_list: List[
         ACIEsgEndpointGroupSelectorType
     ] = strawberry_django.field()
+
+    aci_esg_endpoint_selector: ACIEsgEndpointSelectorType = (
+        strawberry_django.field()
+    )
+    aci_esg_endpoint_selector_list: List[ACIEsgEndpointSelectorType] = (
+        strawberry_django.field()
+    )
 
     aci_contract_filter: ACIContractFilterType = strawberry_django.field()
     aci_contract_filter_list: List[ACIContractFilterType] = (
