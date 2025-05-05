@@ -8,7 +8,15 @@ from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
 from ....models.tenant.app_profiles import ACIAppProfile
-from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
+from ....models.tenant.bridge_domains import ACIBridgeDomain
+from ....models.tenant.endpoint_groups import (
+    ACIEndpointGroup,
+    ACIUSegEndpointGroup,
+)
+from ....models.tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroup,
+    ACIEsgEndpointGroupSelector,
+)
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
@@ -132,6 +140,184 @@ class ACIEndpointSecurityGroupAPIViewTestCase(
                 "admin_shutdown": True,
                 "intra_esg_isolation_enabled": False,
                 "preferred_group_member_enabled": False,
+            },
+        ]
+        cls.bulk_update_data = {
+            "description": "New description",
+        }
+
+
+class ACIEsgEndpointGroupSelectorAPIViewTestCase(
+    APIViewTestCases.APIViewTestCase
+):
+    """API view test case for ACI ESG Endpoint Group Selector."""
+
+    model = ACIEsgEndpointGroupSelector
+    view_namespace: str = f"plugins-api:{app_name}"
+    brief_fields: list[str] = [
+        "aci_endpoint_security_group",
+        "aci_epg_object",
+        "aci_epg_object_id",
+        "aci_epg_object_type",
+        "description",
+        "display",
+        "id",
+        "name",
+        "name_alias",
+        "nb_tenant",
+        "url",
+    ]
+    user_permissions = (
+        "netbox_aci_plugin.view_acitenant",
+        "netbox_aci_plugin.view_aciappprofile",
+        "netbox_aci_plugin.view_acibridgedomain",
+        "netbox_aci_plugin.view_aciendpointgroup",
+        "netbox_aci_plugin.view_aciendpointsecuritygroup",
+        "netbox_aci_plugin.view_aciusegendpointgroup",
+        "netbox_aci_plugin.view_acivrf",
+    )
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up ACI ESG Endpoint Group Selector for API view testing."""
+        nb_tenant1 = Tenant.objects.create(
+            name="NetBox Tenant API 1", slug="netbox-tenant-api-1"
+        )
+        nb_tenant2 = Tenant.objects.create(
+            name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
+        )
+        nb_vrf1 = VRF.objects.create(name="VRF1", tenant=nb_tenant1)
+        nb_vrf2 = VRF.objects.create(name="VRF2", tenant=nb_tenant2)
+        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI1")
+        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI2")
+        aci_app_profile1 = ACIAppProfile.objects.create(
+            name="ACITestAppProfileAPI1",
+            aci_tenant=aci_tenant1,
+        )
+        aci_app_profile2 = ACIAppProfile.objects.create(
+            name="ACITestAppProfileAPI2",
+            aci_tenant=aci_tenant2,
+        )
+        aci_vrf1 = ACIVRF.objects.create(
+            name="ACI-VRF-API-1",
+            aci_tenant=aci_tenant1,
+            nb_tenant=nb_tenant1,
+            nb_vrf=nb_vrf1,
+        )
+        aci_vrf2 = ACIVRF.objects.create(
+            name="ACI-VRF-API-2",
+            aci_tenant=aci_tenant2,
+            nb_tenant=nb_tenant2,
+            nb_vrf=nb_vrf2,
+        )
+        aci_bd1 = ACIBridgeDomain.objects.create(
+            name="ACI-BD-API-1",
+            aci_tenant=aci_tenant1,
+            aci_vrf=aci_vrf1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_bd2 = ACIBridgeDomain.objects.create(
+            name="ACI-BD-API-2",
+            aci_tenant=aci_tenant2,
+            aci_vrf=aci_vrf2,
+            nb_tenant=nb_tenant2,
+        )
+        aci_esg1 = ACIEndpointSecurityGroup.objects.create(
+            name="ACIEndpointSecurityGroupTestAPI1",
+            aci_app_profile=aci_app_profile1,
+            aci_vrf=aci_vrf1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_esg2 = ACIEndpointSecurityGroup.objects.create(
+            name="ACIEndpointSecurityGroupTestAPI2",
+            aci_app_profile=aci_app_profile2,
+            aci_vrf=aci_vrf2,
+            nb_tenant=nb_tenant2,
+        )
+
+        # Create attribute objects
+        aci_epg1 = ACIEndpointGroup.objects.create(
+            name="ACIEndpointGroupTestAPI1",
+            aci_app_profile=aci_app_profile1,
+            aci_bridge_domain=aci_bd1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_epg2 = ACIEndpointGroup.objects.create(
+            name="ACIEndpointGroupTestAPI2",
+            aci_app_profile=aci_app_profile2,
+            aci_bridge_domain=aci_bd2,
+            nb_tenant=nb_tenant2,
+        )
+        aci_epg3 = ACIEndpointGroup.objects.create(
+            name="ACIEndpointGroupTestAPI3",
+            aci_app_profile=aci_app_profile1,
+            aci_bridge_domain=aci_bd1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_useg_epg1 = ACIUSegEndpointGroup.objects.create(
+            name="ACIUSegEndpointGroupTestAPI1",
+            aci_app_profile=aci_app_profile1,
+            aci_bridge_domain=aci_bd1,
+            nb_tenant=nb_tenant1,
+        )
+        aci_useg_epg2 = ACIUSegEndpointGroup.objects.create(
+            name="ACIUSegEndpointGroupTestAPI2",
+            aci_app_profile=aci_app_profile2,
+            aci_bridge_domain=aci_bd2,
+            nb_tenant=nb_tenant2,
+        )
+
+        aci_esg_epg_selectors: tuple = (
+            ACIEsgEndpointGroupSelector(
+                name="ACIEsgEndpointGroupSelectorTestAPI1",
+                name_alias="Testing",
+                description="First ACI Test",
+                comments="# ACI Test 1",
+                aci_endpoint_security_group=aci_esg1,
+                aci_epg_object=aci_epg1,
+                nb_tenant=nb_tenant1,
+            ),
+            ACIEsgEndpointGroupSelector(
+                name="ACIEsgEndpointGroupSelectorTestAPI2",
+                name_alias="Testing",
+                description="Second ACI Test",
+                comments="# ACI Test 2",
+                aci_endpoint_security_group=aci_esg2,
+                aci_epg_object=aci_epg2,
+                nb_tenant=nb_tenant2,
+            ),
+            ACIEsgEndpointGroupSelector(
+                name="ACIEsgEndpointGroupSelectorTestAPI3",
+                name_alias="Testing",
+                description="Third ACI Test",
+                comments="# ACI Test 3",
+                aci_endpoint_security_group=aci_esg1,
+                aci_epg_object=aci_useg_epg1,
+                nb_tenant=nb_tenant2,
+            ),
+        )
+        ACIEsgEndpointGroupSelector.objects.bulk_create(aci_esg_epg_selectors)
+
+        cls.create_data: list[dict] = [
+            {
+                "name": "ACIEsgEndpointGroupSelectorTestAPI4",
+                "name_alias": "Testing",
+                "description": "Forth ACI Test",
+                "comments": "# ACI Test 4",
+                "aci_endpoint_security_group": aci_esg1.id,
+                "aci_epg_object_type": "netbox_aci_plugin.aciendpointgroup",
+                "aci_epg_object_id": aci_epg3.id,
+                "nb_tenant": nb_tenant1.id,
+            },
+            {
+                "name": "ACIEsgEndpointGroupSelectorTestAPI5",
+                "name_alias": "Testing",
+                "description": "Fifth ACI Test",
+                "comments": "# ACI Test 5",
+                "aci_endpoint_security_group": aci_esg2.id,
+                "aci_epg_object_type": "netbox_aci_plugin.aciusegendpointgroup",
+                "aci_epg_object_id": aci_useg_epg2.id,
+                "nb_tenant": nb_tenant2.id,
             },
         ]
         cls.bulk_update_data = {

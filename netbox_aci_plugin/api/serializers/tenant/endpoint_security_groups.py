@@ -92,6 +92,7 @@ class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
         default=None,
         allow_null=True,
     )
+    aci_epg_object = serializers.SerializerMethodField(read_only=True)
     nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
@@ -106,6 +107,7 @@ class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
             "aci_endpoint_security_group",
             "aci_epg_object_type",
             "aci_epg_object_id",
+            "aci_epg_object",
             "nb_tenant",
             "comments",
             "tags",
@@ -123,6 +125,7 @@ class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
             "aci_endpoint_security_group",
             "aci_epg_object_type",
             "aci_epg_object_id",
+            "aci_epg_object",
             "nb_tenant",
         )
 
