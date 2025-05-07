@@ -51,6 +51,7 @@ ESG_ENDPOINT_SELECTORS_MODELS = Q(
 # uSeg Endpoint Group Attributes
 #
 
+# Network Attributes
 USEG_NETWORK_ATTRIBUTES_MODELS = Q(
     Q(
         app_label="ipam",
