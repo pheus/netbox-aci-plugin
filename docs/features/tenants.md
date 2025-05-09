@@ -12,6 +12,7 @@ flowchart TD
     USEGATTR(uSeg Attribute)
     ESG(Endpoint Security Group)
     ESGEPGSEL(ESG EPG Selector)
+    ESGEPSEL(ESG EP Selector)
     VRF(VRF)
     BD(Bridge Domain)
     SN(Subnet)
@@ -37,6 +38,7 @@ flowchart TD
         subgraph graphESG [Endpoint Security Group]
             ESG
             ESG -->|1:n| ESGEPGSEL
+            ESG -->|1:n| ESGEPSEL
         end
     end
     subgraph graphNW [Network]
@@ -470,6 +472,35 @@ The *ACIEsgEndpointGroupSelector* model has the following fields:
   associated object.
 - **ACI EPG Object**: references the specific ACI Endpoint Group object to
   which this selector applies.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+## ESG Endpoint Selector
+
+The *ACIEsgEndpointSelector* model represents an endpoint selector associated
+with an Endpoint Security Group.
+This selector is used to match specified endpoints based on network
+parameters — such as IP addresses or network prefix information.
+
+The *ACIEsgEndpointSelector* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the ESG Endpoint Selector name in the ACI.
+- **ACI Endpoint Security Group**: a reference to the Endpoint Security Group
+  associated with this endpoint selector.
+
+*Optional fields*:
+
+- **Name alias**: an alternate name for the ESG Endpoint Selector.
+- **Description**: a description of the ESG Endpoint Selector.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Endpoint Object Type**: defines the type of the associated endpoint object
+  (e.g., *IPAddress*, *Prefix*) in the form `app.model`.
+- **Endpoint Object ID**: represents the (database) identifier for the
+  associated object.
+- **Endpoint Object**: references the specific network object to which this
+  selector applies.
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
 
