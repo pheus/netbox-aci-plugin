@@ -11,6 +11,7 @@ flowchart TD
     USEGEPG(uSeg Endpoint Group)
     USEGATTR(uSeg Attribute)
     ESG(Endpoint Security Group)
+    ESGEPGSEL(ESG EPG Selector)
     VRF(VRF)
     BD(Bridge Domain)
     SN(Subnet)
@@ -24,21 +25,30 @@ flowchart TD
         TN
     end
     subgraph graphAP [Application Profile]
+        AP
         TN -->|1:n| AP
         AP -->|1:n| EPG
         AP -->|1:n| USEGEPG
-        subgraph graphUSEG [uSeg EPG]
+        subgraph graphEPG [Endpoint Group]
+            EPG
             USEGEPG -->|1:n| USEGATTR
         end
         AP -->|1:n| ESG
+        subgraph graphESG [Endpoint Security Group]
+            ESG
+            ESG -->|1:n| ESGEPGSEL
+        end
     end
     subgraph graphNW [Network]
+        TN -->|1:n| VRF
+        subgraph graphVRF [VRF]
+            VRF
+        end
+        BD -.->|n:1| VRF
         subgraph graphBD [Bridge Domain]
             TN -->|1:n| BD
             BD -->|1:n| SN
         end
-        BD -.->|n:1| VRF
-        TN -->|1:n| VRF
     end
     subgraph graphCT [Contract]
         subgraph graphCTS [Contract]
@@ -60,6 +70,7 @@ flowchart TD
     EPG -.->|n:1| BD
     USEGEPG -.->|n:1| BD
     ESG -.->|n:1| VRF
+    ESGEPGSEL -.->|n:1| EPG
 ```
 
 ## Tenant
@@ -429,6 +440,36 @@ The *ACIEndpointSecurityGroup* model has the following fields:
 - **Preferred group member enabled**: a boolean field indicating whether the
   ESG is in the preferred group, allowing communication without contracts.
     - Default: `false`
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+## ESG Endpoint Group (EPG) Selector
+
+The *ACIEsgEndpointGroupSelector* model represents an Endpoint Group selector
+associated with an Endpoint Security Group.
+This selector is used to match Endpoint Groups based on the specified
+Endpoint Groups.
+
+The *ACIEsgEndpointGroupSelector* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the ESG Endpoint Group Selector name in the ACI.
+- **ACI Endpoint Security Group**: a reference to the Endpoint Security Group
+  associated with this endpoint group selector.
+
+*Optional fields*:
+
+- **Name alias**: an alternate name for the ESG Endpoint Group Selector.
+- **Description**: a description of the ESG Endpoint Group Selector.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **ACI EPG Object Type**: defines the type of the associated Endpoint Group
+  object (e.g., *ACIEndpointGroup*, *ACIUSegEndpointGroup*) in the form
+  `app.model`.
+- **ACI EPG Object ID**: represents the (database) identifier for the
+  associated object.
+- **ACI EPG Object**: references the specific ACI Endpoint Group object to
+  which this selector applies.
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
 
