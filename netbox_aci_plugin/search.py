@@ -24,6 +24,11 @@ from .models.tenant.endpoint_groups import (
     ACIUSegEndpointGroup,
     ACIUSegNetworkAttribute,
 )
+from .models.tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroup,
+    ACIEsgEndpointGroupSelector,
+    ACIEsgEndpointSelector,
+)
 from .models.tenant.tenants import ACITenant
 from .models.tenant.vrfs import ACIVRF
 
@@ -197,6 +202,75 @@ class ACIUSegNetworkAttributeIndex(SearchIndex):
 
 
 @register_search
+class ACIEndpointSecurityGroupIndex(SearchIndex):
+    """NetBox search definition for the ACI Endpoint Security Group model."""
+
+    model = ACIEndpointSecurityGroup
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_app_profile",
+        "aci_vrf",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIEsgEndpointGroupSelectorIndex(SearchIndex):
+    """NetBox search definition for the ACI ESG EPG Selector model."""
+
+    model = ACIEsgEndpointGroupSelector
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("aci_endpoint_security_group", 300),
+        ("_aci_endpoint_group", 400),
+        ("_aci_useg_endpoint_group", 400),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_endpoint_security_group",
+        "aci_epg_object",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIEsgEndpointSelectorIndex(SearchIndex):
+    """NetBox search definition for the ACI ESG Endpoint Selector model."""
+
+    model = ACIEsgEndpointSelector
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("aci_endpoint_security_group", 300),
+        ("_ip_address", 400),
+        ("_prefix", 400),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_endpoint_security_group",
+        "ep_object",
+        "nb_tenant",
+    )
+
+
+@register_search
 class ACIContractFilterIndex(SearchIndex):
     """NetBox search definition for the ACI Contract Filter model."""
 
@@ -264,6 +338,7 @@ class ACIContractRelationIndex(SearchIndex):
         ("aci_contract", 100),
         ("_aci_endpoint_group", 300),
         ("_aci_useg_endpoint_group", 300),
+        ("_aci_endpoint_security_group", 300),
         ("_aci_vrf", 400),
     )
     display_attrs: tuple = (

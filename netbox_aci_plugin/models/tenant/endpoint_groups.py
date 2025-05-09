@@ -202,6 +202,12 @@ class ACIEndpointGroup(ACIEndpointGroupBaseModel):
         object_id_field="aci_object_id",
         related_query_name="aci_endpoint_group",
     )
+    aci_esg_endpoint_group_selectors = GenericRelation(
+        to="netbox_aci_plugin.ACIEsgEndpointGroupSelector",
+        content_type_field="aci_epg_object_type",
+        object_id_field="aci_epg_object_id",
+        related_query_name="aci_endpoint_group",
+    )
 
     clone_fields: tuple = ACIEndpointGroupBaseModel.clone_fields + (
         "proxy_arp_enabled",
@@ -241,6 +247,12 @@ class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
         to="netbox_aci_plugin.ACIContractRelation",
         content_type_field="aci_object_type",
         object_id_field="aci_object_id",
+        related_query_name="aci_useg_endpoint_group",
+    )
+    aci_esg_endpoint_group_selectors = GenericRelation(
+        to="netbox_aci_plugin.ACIEsgEndpointGroupSelector",
+        content_type_field="aci_epg_object_type",
+        object_id_field="aci_epg_object_id",
         related_query_name="aci_useg_endpoint_group",
     )
 

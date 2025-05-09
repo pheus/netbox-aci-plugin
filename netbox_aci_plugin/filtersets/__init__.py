@@ -18,6 +18,11 @@ from .tenant.endpoint_groups import (
     ACIUSegEndpointGroupFilterSet,
     ACIUSegNetworkAttributeFilterSet,
 )
+from .tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroupFilterSet,
+    ACIEsgEndpointGroupSelectorFilterSet,
+    ACIEsgEndpointSelectorFilterSet,
+)
 from .tenant.tenants import ACITenantFilterSet
 from .tenant.vrfs import ACIVRFFilterSet
 
@@ -32,6 +37,9 @@ __all__ = (
     "ACIContractFilterFilterSet",
     "ACIContractFilterEntryFilterSet",
     "ACIEndpointGroupFilterSet",
+    "ACIEndpointSecurityGroupFilterSet",
+    "ACIEsgEndpointGroupSelectorFilterSet",
+    "ACIEsgEndpointSelectorFilterSet",
     "ACITenantFilterSet",
     "ACIUSegEndpointGroupFilterSet",
     "ACIUSegNetworkAttributeFilterSet",

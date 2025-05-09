@@ -68,6 +68,23 @@ from .tenant.endpoint_groups import (
     ACIUSegNetworkAttributeEditView,
     ACIUSegNetworkAttributeListView,
 )
+from .tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroupBulkDeleteView,
+    ACIEndpointSecurityGroupBulkEditView,
+    ACIEndpointSecurityGroupBulkImportView,
+    ACIEndpointSecurityGroupEditView,
+    ACIEndpointSecurityGroupListView,
+    ACIEsgEndpointGroupSelectorBulkDeleteView,
+    ACIEsgEndpointGroupSelectorBulkEditView,
+    ACIEsgEndpointGroupSelectorBulkImportView,
+    ACIEsgEndpointGroupSelectorEditView,
+    ACIEsgEndpointGroupSelectorListView,
+    ACIEsgEndpointSelectorBulkDeleteView,
+    ACIEsgEndpointSelectorBulkEditView,
+    ACIEsgEndpointSelectorBulkImportView,
+    ACIEsgEndpointSelectorEditView,
+    ACIEsgEndpointSelectorListView,
+)
 from .tenant.tenants import (
     ACITenantBulkDeleteView,
     ACITenantBulkEditView,
@@ -144,6 +161,24 @@ __all__ = (
     "ACIEndpointGroupBulkImportView",
     "ACIEndpointGroupEditView",
     "ACIEndpointGroupListView",
+    # ACIEndpointSecurityGroup
+    "ACIEndpointSecurityGroupBulkDeleteView",
+    "ACIEndpointSecurityGroupBulkEditView",
+    "ACIEndpointSecurityGroupBulkImportView",
+    "ACIEndpointSecurityGroupEditView",
+    "ACIEndpointSecurityGroupListView",
+    # ACIEsgEndpointGroupSelector
+    "ACIEsgEndpointGroupSelectorBulkDeleteView",
+    "ACIEsgEndpointGroupSelectorBulkEditView",
+    "ACIEsgEndpointGroupSelectorBulkImportView",
+    "ACIEsgEndpointGroupSelectorEditView",
+    "ACIEsgEndpointGroupSelectorListView",
+    # ACIEsgEndpointSelector
+    "ACIEsgEndpointSelectorBulkDeleteView",
+    "ACIEsgEndpointSelectorBulkEditView",
+    "ACIEsgEndpointSelectorBulkImportView",
+    "ACIEsgEndpointSelectorEditView",
+    "ACIEsgEndpointSelectorListView",
     # ACITenant
     "ACITenantBulkDeleteView",
     "ACITenantBulkEditView",
