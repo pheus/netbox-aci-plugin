@@ -377,8 +377,6 @@ class ACIUSegNetworkAttribute(
     _ip_address = models.ForeignKey(
         to="ipam.IPAddress",
         on_delete=models.CASCADE,
-        # Enable a public reverse lookup because a Generic Relation cannot be
-        # added to the core model
         related_name="_aci_useg_network_attributes",
         verbose_name=_("IP Address"),
         blank=True,
@@ -387,8 +385,6 @@ class ACIUSegNetworkAttribute(
     _mac_address = models.ForeignKey(
         to="dcim.MACAddress",
         on_delete=models.CASCADE,
-        # Enable a public reverse lookup because a Generic Relation cannot be
-        # added to the core model
         related_name="_aci_useg_network_attributes",
         verbose_name=_("MAC Address"),
         blank=True,
@@ -397,8 +393,6 @@ class ACIUSegNetworkAttribute(
     _prefix = models.ForeignKey(
         to="ipam.Prefix",
         on_delete=models.CASCADE,
-        # Enable a public reverse lookup because a Generic Relation cannot be
-        # added to the core model
         related_name="_aci_useg_network_attributes",
         verbose_name=_("Prefix"),
         blank=True,
