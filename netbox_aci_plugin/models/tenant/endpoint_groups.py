@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from ipam.models import IPAddress, IPRange, Prefix
+from ipam.models import IPAddress, Prefix
 
 from ...choices import (
     QualityOfServiceClassChoices,
@@ -561,13 +561,6 @@ GenericRelation(
     object_id_field="attr_object_id",
     related_query_name="ip_address",
 ).contribute_to_class(IPAddress, name="aci_useg_network_attributes")
-
-GenericRelation(
-    to=ACIUSegNetworkAttribute,
-    content_type_field="attr_object_type",
-    object_id_field="attr_object_id",
-    related_query_name="ip_range",
-).contribute_to_class(IPRange, name="aci_useg_network_attributes")
 
 GenericRelation(
     to=ACIUSegNetworkAttribute,
