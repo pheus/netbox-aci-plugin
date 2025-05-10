@@ -529,7 +529,7 @@ class ACIUSegNetworkAttribute(
 
     def cache_related_objects(self) -> None:
         """Cache the related objects for faster access."""
-        self._ip_address = self._prefix = self._virtual_machine = None
+        self._ip_address = self._mac_address = self._prefix = None
         if self.attr_object_type:
             attr_object_type = self.attr_object_type.model_class()
             if attr_object_type == apps.get_model("ipam", "IPAddress"):
