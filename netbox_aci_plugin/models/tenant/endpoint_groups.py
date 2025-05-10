@@ -302,6 +302,7 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
     clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_useg_endpoint_group",
     )
+    prerequisite_models: tuple = ("netbox_aci_plugin.ACIUSegEndpointGroup",)
 
     class Meta:
         abstract: bool = True
@@ -310,6 +311,10 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
             "aci_useg_endpoint_group",
             "type",
         )
+
+    def __str__(self) -> str:
+        """Return string representation of the instance."""
+        return f"{self.name} ({self.aci_useg_endpoint_group.name})"
 
     @property
     def parent_object(self) -> ACIBaseModel:
@@ -405,7 +410,6 @@ class ACIUSegNetworkAttribute(
         "attr_object_id",
         "use_epg_subnet",
     )
-    prerequisite_models: tuple = ("netbox_aci_plugin.ACIUSegEndpointGroup",)
 
     # Unique GenericForeignKey validation
     generic_fk_field = "attr_object"
@@ -462,10 +466,6 @@ class ACIUSegNetworkAttribute(
             "_prefix",
         )
         verbose_name: str = _("ACI uSeg Network Attribute")
-
-    def __str__(self) -> str:
-        """Return string representation of the instance."""
-        return f"{self.name} ({self.aci_useg_endpoint_group.name})"
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
