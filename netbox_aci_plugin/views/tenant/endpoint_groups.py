@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
-from ...filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ...filtersets.tenant.endpoint_groups import (
     ACIEndpointGroupFilterSet,
     ACIUSegEndpointGroupFilterSet,
@@ -236,7 +235,7 @@ class ACIEndpointGroupBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI Endpoint Group."""
 
     queryset = ACIEndpointGroup.objects.all()
-    filterset = ACIAppProfileFilterSet
+    filterset = ACIEndpointGroupFilterSet
     table = ACIEndpointGroupTable
     form = ACIEndpointGroupBulkEditForm
 
