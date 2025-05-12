@@ -1117,7 +1117,7 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
         label=_("Attribute Object Type"),
     )
     attr_object = DynamicModelChoiceField(
-        queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
+        queryset=IPAddress.objects.none(),  # Initial queryset
         selector=True,
         required=False,
         label=_("Attribute Object"),
@@ -1279,11 +1279,11 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
         label=_("Attribute Object Type"),
     )
     attr_object = DynamicModelChoiceField(
-        queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
+        queryset=IPAddress.objects.none(),  # Initial queryset
         query_params={"aci_tenant_id": "$aci_tenant"},
         selector=True,
         required=False,
-        label=_("ACI Object"),
+        label=_("Attribute Object"),
         disabled=True,
     )
     nb_tenant = DynamicModelChoiceField(
