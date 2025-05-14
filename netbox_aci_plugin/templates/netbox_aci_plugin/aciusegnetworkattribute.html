@@ -38,7 +38,7 @@
           </tr>
           <tr>
             <th scope="row">{% trans "Type" %}</th>
-            <td>{{ object.type|placeholder }}</td>
+            <td>{% badge object.get_type_display bg_color=object.get_type_color %}</td>
           </tr>
           <tr>
             <th scope="row">{% trans "NetBox Tenant" %}</th>
