@@ -106,7 +106,6 @@ class ACIBridgeDomainSubnetSerializer(NetBoxModelSerializer):
             "aci_bridge_domain",
             "gateway_ip_address",
             "nb_tenant",
-            "description",
             "advertised_externally_enabled",
             "igmp_querier_enabled",
             "ip_data_plane_learning_enabled",

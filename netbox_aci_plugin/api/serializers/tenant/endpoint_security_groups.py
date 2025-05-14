@@ -46,7 +46,6 @@ class ACIEndpointSecurityGroupSerializer(NetBoxModelSerializer):
             "aci_app_profile",
             "aci_vrf",
             "nb_tenant",
-            "description",
             "admin_shutdown",
             "intra_esg_isolation_enabled",
             "preferred_group_member_enabled",
