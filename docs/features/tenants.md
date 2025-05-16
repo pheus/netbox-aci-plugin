@@ -390,7 +390,7 @@ The *ACIUSegNetworkAttribute* model has the following fields:
 
 *Required fields*:
 
-- **Name**: represents the uSeg Endpoint Group name in the ACI.
+- **Name**: represents the uSeg Network Attribute name in the ACI.
 - **ACI uSeg Endpoint Group**: a reference to the uSeg Endpoint Group
   associated with this network attribute.
 
