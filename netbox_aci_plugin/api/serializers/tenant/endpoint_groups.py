@@ -140,6 +140,7 @@ class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
         allow_null=True,
     )
     attr_object = serializers.SerializerMethodField(read_only=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
         model = ACIUSegNetworkAttribute
