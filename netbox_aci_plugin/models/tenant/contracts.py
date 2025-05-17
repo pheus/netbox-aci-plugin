@@ -276,11 +276,16 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         # Validate the assigned ACI Contract and ACI Object shares the same
         # ACI Tenant
         if self.aci_contract.aci_tenant != self.aci_object.aci_tenant:
+            aci_model_class = self.aci_object_type.model_class()
             raise ValidationError(
-                _(
-                    "ACI Contract and ACI Object must belong to the same "
-                    "ACI Tenant."
-                )
+                {
+                    "aci_object": _(
+                        "An assigned {aci_object} must belong to the same "
+                        "ACI Tenant as the ACI Contract.".format(
+                            aci_object=aci_model_class._meta.verbose_name
+                        )
+                    )
+                }
             )
 
         # Perform the mixin's unique constraint validation
