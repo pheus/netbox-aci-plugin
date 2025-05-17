@@ -14,18 +14,20 @@ router.register("bridge-domains", views.ACIBridgeDomainListViewSet)
 router.register(
     "bridge-domain-subnets", views.ACIBridgeDomainSubnetListViewSet
 )
-router.register("endpointgroups", views.ACIEndpointGroupListViewSet)
-router.register("usegendpointgroups", views.ACIUSegEndpointGroupListViewSet)
+router.register("endpoint-groups", views.ACIEndpointGroupListViewSet)
+router.register("useg-endpoint-groups", views.ACIUSegEndpointGroupListViewSet)
 router.register(
-    "usegnetworkattributes", views.ACIUSegNetworkAttributeListViewSet
+    "useg-network-attributes", views.ACIUSegNetworkAttributeListViewSet
 )
 router.register(
-    "endpointsecuritygroups", views.ACIEndpointSecurityGroupListViewSet
+    "endpoint-security-groups", views.ACIEndpointSecurityGroupListViewSet
 )
 router.register(
-    "esgendpointgroupselector", views.ACIEsgEndpointGroupSelectorListViewSet
+    "esg-endpoint-group-selector", views.ACIEsgEndpointGroupSelectorListViewSet
 )
-router.register("esgendpointselector", views.ACIEsgEndpointSelectorListViewSet)
+router.register(
+    "esg-endpoint-selector", views.ACIEsgEndpointSelectorListViewSet
+)
 router.register("vrfs", views.ACIVRFListViewSet)
 router.register("contract-filters", views.ACIContractFilterListViewSet)
 router.register(
