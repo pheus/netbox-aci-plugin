@@ -114,7 +114,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
     ):
         """Return a QuerySet filtered by given ACI Tenant or 'common'."""
         if aci_tenant_id is None:
-            return queryset.none
+            return queryset.none()
         return queryset.filter(
             Q(aci_tenant=aci_tenant_id) | Q(aci_tenant__name="common")
         )

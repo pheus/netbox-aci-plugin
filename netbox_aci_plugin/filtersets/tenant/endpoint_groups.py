@@ -131,7 +131,7 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
     ):
         """Return a QuerySet filtered by a shared ACI VRF for a given ESG."""
         if aci_endpoint_security_group is None:
-            return queryset.none
+            return queryset.none()
         return queryset.filter(
             aci_bridge_domain__aci_vrf=aci_endpoint_security_group.aci_vrf
         )
@@ -241,7 +241,7 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
     ):
         """Return a QuerySet filtered by a shared ACI VRF for a given ESG."""
         if aci_endpoint_security_group is None:
-            return queryset.none
+            return queryset.none()
         return queryset.filter(
             aci_bridge_domain__aci_vrf=aci_endpoint_security_group.aci_vrf
         )
