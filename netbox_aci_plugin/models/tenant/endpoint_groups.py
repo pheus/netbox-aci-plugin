@@ -134,8 +134,8 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         ):
             raise ValidationError(
                 _(
-                    "Assigned ACIBridgeDomain have to belong to the same "
-                    "ACITenant as the ACIAppProfile or to the special "
+                    "An assigned ACIBridgeDomain must belong to the "
+                    "same ACITenant as the ACIAppProfile or to the "
                     "ACITenant 'common'."
                 )
             )
