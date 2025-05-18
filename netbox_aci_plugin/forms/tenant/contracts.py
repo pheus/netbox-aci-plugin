@@ -402,7 +402,6 @@ class ACIContractRelationEditForm(NetBoxModelForm):
         queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
         query_params={"aci_tenant_id": "$aci_tenant"},
         selector=True,
-        required=False,
         label=_("ACI Object"),
         disabled=True,
     )
