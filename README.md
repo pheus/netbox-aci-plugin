@@ -2,7 +2,8 @@
 
 The NetBox plugin for Cisco ACI allows NetBox to document ACI specific objects
 like Tenants (TN), Application Profiles (AP), Endpoint Groups (EPG),
-Bridge Domains (BD) and Contexts (CTX) / Virtual Routing and Forwarding (VRF).
+Endpoint Security Groups (ESG), Bridge Domains (BD) and
+Contexts (CTX) / Virtual Routing and Forwarding (VRF).
 
 Documentation: https://pheus.github.io/netbox-aci-plugin/
 
@@ -11,6 +12,8 @@ Documentation: https://pheus.github.io/netbox-aci-plugin/
 - Tenants
 - Application Profiles
 - Endpoint Groups
+- uSeg Endpoint Groups
+- Endpoint Security Groups
 - Bridge Domains
 - VRF
 - Contracts
@@ -21,7 +24,7 @@ Documentation: https://pheus.github.io/netbox-aci-plugin/
 
 | NetBox Version | Plugin Version |
 |:--------------:|:--------------:|
-|      4.2       |     0.0.11     |
+|      4.2       |     0.0.12     |
 
 ## Installing
 
@@ -64,7 +67,7 @@ PLUGINS_CONFIG = {
 
 This project has just started and provides a minimal set of ACI object features.
 It may contain bugs and it is missing features.
-At the current stage, the plugin should be used in testing environment only.
+At the current stage, the plugin should be used in a testing environment only.
 
 ## Release notes
 
