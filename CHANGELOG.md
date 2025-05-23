@@ -6,6 +6,21 @@
 
 ---
 
+## 0.0.13 (2025-05-23)
+
+### Breaking Changes
+
+* Require NetBox version 4.3.0 or higher
+
+### Enhancements
+
+* Refactored GraphQL filter definitions for NetBox v4.3 compatibility
+
+### Bug Fixes
+
+* Added missing `ACIEndpointSecurityGroup` relations to `ACIVRF` and
+  `ACIAppProfile`
+
 ## 0.0.12 (2025-05-20)
 
 ### Breaking Changes
