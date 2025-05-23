@@ -16,6 +16,7 @@ def create_default_aci_contract_filters(apps, schema_editor) -> None:
     if get_plugin_config(
         ACIConfig.name, "create_default_aci_contract_filters", True
     ):
+        db_alias = schema_editor.connection.alias
         # The model cannot be imported directly as it may be a newer
         # version than this migration expects.
         aci_tenant = apps.get_model(ACIConfig.name, "ACITenant")
@@ -26,9 +27,15 @@ def create_default_aci_contract_filters(apps, schema_editor) -> None:
             ACIConfig.name, "ACIContractFilterEntry"
         )
         # Ensure ACI Tenant "common" exists
-        if not aci_tenant.objects.filter(name="common").exists():
-            aci_tenant.objects.create(name="common")
-        aci_common_tenant = aci_tenant.objects.get(name="common")
+        if (
+            not aci_tenant.objects.using(db_alias)
+            .filter(name="common")
+            .exists()
+        ):
+            aci_tenant.objects.using(db_alias).create(name="common")
+        aci_common_tenant = aci_tenant.objects.using(db_alias).get(
+            name="common"
+        )
 
         # Define default contract filters and their entries
         default_aci_filters = [

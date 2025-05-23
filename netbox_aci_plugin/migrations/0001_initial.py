@@ -11,13 +11,20 @@ from netbox_aci_plugin import ACIConfig
 def create_default_aci_tenants(apps, schema_editor) -> None:
     """Creates default ACI tenants if they do not already exist."""
     if get_plugin_config(ACIConfig.name, "create_default_aci_tenants", True):
+        db_alias = schema_editor.connection.alias
         # The ACITenant model cannot be imported directly as it may be a newer
         # version than this migration expects.
         aci_tenant = apps.get_model(ACIConfig.name, "ACITenant")
         default_aci_tenants = ["common", "infra", "mgmt"]
         for default_aci_tenant in default_aci_tenants:
-            if not aci_tenant.objects.filter(name=default_aci_tenant).exists():
-                aci_tenant.objects.create(name=default_aci_tenant)
+            if (
+                not aci_tenant.objects.using(db_alias)
+                .filter(name=default_aci_tenant)
+                .exists()
+            ):
+                aci_tenant.objects.using(db_alias).create(
+                    name=default_aci_tenant
+                )
 
 
 class Migration(migrations.Migration):
