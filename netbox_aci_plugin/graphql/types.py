@@ -99,6 +99,12 @@ class ACIAppProfileType(NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+    aci_endpoint_security_groups: List[
+        Annotated[
+            "ACIEndpointSecurityGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
     aci_useg_endpoint_groups: List[
         Annotated[
             "ACIUSegEndpointGroupType",
@@ -132,6 +138,12 @@ class ACIVRFType(NetBoxObjectType):
     aci_contract_relations: List[
         Annotated[
             "ACIContractRelationType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_endpoint_security_groups: List[
+        Annotated[
+            "ACIEndpointSecurityGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
