@@ -2,30 +2,35 @@
 # https://www.python.org/dev/peps/pep-0518/
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name =  "netbox-aci-plugin"
 version = "0.0.13"
+requires-python = ">=3.10.0"
 authors = [
+    {name = "Martin Hauser", email = "git@pheus.dev"},
+]
+maintainers = [
     {name = "Martin Hauser", email = "git@pheus.dev"},
 ]
 description = "NetBox plugin for Cisco ACI."
 readme = "README.md"
-license = {file = "LICENSE"}
-
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 classifiers=[
     'Development Status :: 2 - Pre-Alpha',
+    "Framework :: Django",
     'Intended Audience :: Developers',
+    "Intended Audience :: System Administrators",
     'Natural Language :: English',
-    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
 ]
-
-requires-python = ">=3.10.0"
 
 [project.optional-dependencies]
 docs = [
@@ -44,8 +49,8 @@ test = [
 
 [project.urls]
 Documentation = "https://github.com/pheus/netbox-aci-plugin/blob/main/README.md"
-Source = "https://github.com/pheus/netbox-aci-plugin"
-Tracker = "https://github.com/pheus/netbox-aci-plugin/issues"
+Repository = "https://github.com/pheus/netbox-aci-plugin"
+Issues = "https://github.com/pheus/netbox-aci-plugin/issues"
 
 [tool.isort]
 line_length = 79
