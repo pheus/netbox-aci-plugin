@@ -1197,10 +1197,6 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
             # Initialize Attribute object field
             initial["attr_object"] = instance.attr_object
 
-        # Check if "comments" is absent, indicating a request with custom
-        # GET parameters for prefilling of the form field "attr_object".
-        prefill_attr_object = "comments" not in initial
-
         kwargs["initial"] = initial
 
         super().__init__(*args, **kwargs)
@@ -1229,8 +1225,8 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
             # Clears the attr_object field if the selected type changes
             if (
                 self.instance
+                and self.instance.pk
                 and attr_object_type_id != self.instance.attr_object_type_id
-                and not prefill_attr_object
             ):
                 self.initial["attr_object"] = None
 

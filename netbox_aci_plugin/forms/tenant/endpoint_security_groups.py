@@ -560,10 +560,6 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
             # Initialize the Endpoint Group object field
             initial["aci_epg_object"] = instance.aci_epg_object
 
-        # Check if "comments" is absent, indicating a request with custom
-        # GET parameters for prefilling of the form field "aci_epg_object".
-        prefill_aci_epg_object = "comments" not in initial
-
         kwargs["initial"] = initial
 
         super().__init__(*args, **kwargs)
@@ -596,9 +592,9 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
             # Clears the aci_epg_object field if the selected type changes
             if (
                 self.instance
+                and self.instance.pk
                 and aci_epg_object_type_id
                 != self.instance.aci_epg_object_type_id
-                and not prefill_aci_epg_object
             ):
                 self.initial["aci_epg_object"] = None
 
@@ -1027,10 +1023,6 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
             # Initialize the Endpoint object field
             initial["ep_object"] = instance.ep_object
 
-        # Check if "comments" is absent, indicating a request with custom
-        # GET parameters for prefilling of the form field "ep_object".
-        prefill_ep_object = "comments" not in initial
-
         kwargs["initial"] = initial
 
         super().__init__(*args, **kwargs)
@@ -1057,8 +1049,8 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
             # Clears the ep_object field if the selected type changes
             if (
                 self.instance
+                and self.instance.pk
                 and ep_object_type_id != self.instance.ep_object_type_id
-                and not prefill_ep_object
             ):
                 self.initial["ep_object"] = None
 
