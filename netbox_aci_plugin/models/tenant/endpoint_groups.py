@@ -466,7 +466,9 @@ class ACIUSegNetworkAttribute(
 
         # Validate Attribute object assignment before validation of any other
         # fields
-        if self.attr_object_type and not self.attr_object:
+        if self.attr_object_type and not (
+            self.attr_object or self.attr_object_id
+        ):
             attr_model_class = self.attr_object_type.model_class()
             raise ValidationError(
                 {
@@ -475,15 +477,6 @@ class ACIUSegNetworkAttribute(
                         "Object Type is selected.".format(
                             attr_object=attr_model_class._meta.verbose_name
                         )
-                    )
-                }
-            )
-        if self.attr_object and not self.attr_object_type:
-            raise ValidationError(
-                {
-                    "attr_object_type": _(
-                        "An Attribute Object Type is required, if an "
-                        "Attribute Object is provided."
                     )
                 }
             )

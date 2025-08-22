@@ -249,7 +249,9 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         """Override the model's clean method for custom field validation."""
 
         # Validate ACI object assignment before validation of any other fields
-        if self.aci_object_type and not self.aci_object:
+        if self.aci_object_type and not (
+            self.aci_object or self.aci_object_id
+        ):
             aci_model_class = self.aci_object_type.model_class()
             raise ValidationError(
                 {
@@ -258,15 +260,6 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                         "Type is selected.".format(
                             aci_object=aci_model_class._meta.verbose_name
                         )
-                    )
-                }
-            )
-        if self.aci_object and not self.aci_object_type:
-            raise ValidationError(
-                {
-                    "aci_object_type": _(
-                        "An ACI Object Type is required, if an ACI Object is "
-                        "provided."
                     )
                 }
             )

@@ -286,7 +286,9 @@ class ACIEsgEndpointGroupSelector(
 
         # Validate Endpoint Group object assignment before validation of
         # any other fields
-        if self.aci_epg_object_type and not self.aci_epg_object:
+        if self.aci_epg_object_type and not (
+            self.aci_epg_object or self.aci_epg_object_id
+        ):
             aci_epg_model_class = self.aci_epg_object_type.model_class()
             raise ValidationError(
                 {
@@ -295,15 +297,6 @@ class ACIEsgEndpointGroupSelector(
                         "Object Type is selected.".format(
                             aci_epg_object=aci_epg_model_class._meta.verbose_name
                         )
-                    )
-                }
-            )
-        if self.aci_epg_object and not self.aci_epg_object_type:
-            raise ValidationError(
-                {
-                    "aci_epg_object_type": _(
-                        "An Endpoint Object Type is required, if an "
-                        "Endpoint Object is provided."
                     )
                 }
             )
@@ -483,7 +476,7 @@ class ACIEsgEndpointSelector(
 
         # Validate Endpoint object assignment before validation of any other
         # fields
-        if self.ep_object_type and not self.ep_object:
+        if self.ep_object_type and not (self.ep_object or self.ep_object_id):
             ep_model_class = self.ep_object_type.model_class()
             raise ValidationError(
                 {
@@ -492,15 +485,6 @@ class ACIEsgEndpointSelector(
                         "Object Type is selected.".format(
                             ep_object=ep_model_class._meta.verbose_name
                         )
-                    )
-                }
-            )
-        if self.ep_object and not self.ep_object_type:
-            raise ValidationError(
-                {
-                    "ep_object_type": _(
-                        "An Endpoint Object Type is required, if an "
-                        "Endpoint Object is provided."
                     )
                 }
             )
