@@ -30,7 +30,7 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Endpoint Group model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_app_profile__aci_tenant",
+        field_name="aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -42,6 +42,7 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_app_profile = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_app_profile__name",
         queryset=ACIAppProfile.objects.all(),
         to_field_name="name",
         label=_("ACI Application Profile (name)"),
@@ -52,7 +53,7 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI Application Profile (ID)"),
     )
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_bridge_domain__aci_vrf",
+        field_name="aci_bridge_domain__aci_vrf__name",
         queryset=ACIVRF.objects.all(),
         to_field_name="name",
         label=_("ACI VRF (name)"),
@@ -64,6 +65,7 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI VRF (ID)"),
     )
     aci_bridge_domain = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__name",
         queryset=ACIBridgeDomain.objects.all(),
         to_field_name="name",
         label=_("ACI Bridge Domain (name)"),
@@ -74,6 +76,7 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI Bridge Domain (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -141,7 +144,7 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI uSeg Endpoint Group model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_app_profile__aci_tenant",
+        field_name="aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -153,6 +156,7 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_app_profile = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_app_profile__name",
         queryset=ACIAppProfile.objects.all(),
         to_field_name="name",
         label=_("ACI Application Profile (name)"),
@@ -163,7 +167,7 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI Application Profile (ID)"),
     )
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_bridge_domain__aci_vrf",
+        field_name="aci_bridge_domain__aci_vrf__name",
         queryset=ACIVRF.objects.all(),
         to_field_name="name",
         label=_("ACI VRF (name)"),
@@ -175,6 +179,7 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI VRF (ID)"),
     )
     aci_bridge_domain = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__name",
         queryset=ACIBridgeDomain.objects.all(),
         to_field_name="name",
         label=_("ACI Bridge Domain (name)"),
@@ -185,6 +190,7 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI Bridge Domain (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -251,7 +257,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI uSeg Network Attribute model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_useg_endpoint_group__aci_app_profile__aci_tenant",
+        field_name="aci_useg_endpoint_group__aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -263,7 +269,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_app_profile = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_useg_endpoint_group__aci_app_profile",
+        field_name="aci_useg_endpoint_group__aci_app_profile__name",
         queryset=ACIAppProfile.objects.all(),
         to_field_name="name",
         label=_("ACI Application Profile (name)"),
@@ -275,7 +281,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
         label=_("ACI Application Profile (ID)"),
     )
     aci_useg_endpoint_group = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_useg_endpoint_group",
+        field_name="aci_useg_endpoint_group__name",
         queryset=ACIUSegEndpointGroup.objects.all(),
         to_field_name="name",
         label=_("ACI uSeg Endpoint Group (name)"),
@@ -290,6 +296,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
         label=_("Attribute Object Type"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -306,7 +313,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
 
     # Cached related objects filters
     ip_address_vrf = django_filters.ModelMultipleChoiceFilter(
-        field_name="_ip_address__vrf",
+        field_name="_ip_address__vrf__name",
         queryset=VRF.objects.all(),
         to_field_name="name",
         label=_("VRF of IP Address (name)"),
@@ -318,7 +325,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
         label=_("VRF of IP Address (ID)"),
     )
     ip_address = django_filters.ModelMultipleChoiceFilter(
-        field_name="_ip_address",
+        field_name="_ip_address__address",
         queryset=IPAddress.objects.all(),
         to_field_name="address",
         label=_("IP Address (address)"),
@@ -330,7 +337,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
         label=_("IP Address (ID)"),
     )
     mac_address = django_filters.ModelMultipleChoiceFilter(
-        field_name="_mac_address",
+        field_name="_mac_address__mac_address",
         queryset=MACAddress.objects.all(),
         to_field_name="mac_address",
         label=_("MAC Address (MAC Address)"),
@@ -342,7 +349,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
         label=_("MAC Address (ID)"),
     )
     prefix_vrf = django_filters.ModelMultipleChoiceFilter(
-        field_name="_prefix__vrf",
+        field_name="_prefix__vrf__name",
         queryset=VRF.objects.all(),
         to_field_name="name",
         label=_("VRF of Prefix (name)"),
@@ -354,7 +361,7 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
         label=_("VRF of Prefix (ID)"),
     )
     prefix = django_filters.ModelMultipleChoiceFilter(
-        field_name="_prefix",
+        field_name="_prefix__prefix",
         queryset=Prefix.objects.all(),
         to_field_name="prefix",
         label=_("Prefix (Prefix)"),

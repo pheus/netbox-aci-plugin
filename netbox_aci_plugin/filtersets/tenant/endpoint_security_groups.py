@@ -28,7 +28,7 @@ class ACIEndpointSecurityGroupFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Endpoint Security Group model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_app_profile__aci_tenant",
+        field_name="aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -40,6 +40,7 @@ class ACIEndpointSecurityGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_app_profile = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_app_profile__name",
         queryset=ACIAppProfile.objects.all(),
         to_field_name="name",
         label=_("ACI Application Profile (name)"),
@@ -50,6 +51,7 @@ class ACIEndpointSecurityGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI Application Profile (ID)"),
     )
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_vrf__name",
         queryset=ACIVRF.objects.all(),
         to_field_name="name",
         label=_("ACI VRF (name)"),
@@ -60,6 +62,7 @@ class ACIEndpointSecurityGroupFilterSet(NetBoxModelFilterSet):
         label=_("ACI VRF (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -101,7 +104,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI ESG Endpoint Group (EPG) Selector model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_endpoint_security_group__aci_app_profile__aci_tenant",
+        field_name="aci_endpoint_security_group__aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -113,7 +116,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_app_profile = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_endpoint_security_group__aci_app_profile",
+        field_name="aci_endpoint_security_group__aci_app_profile__name",
         queryset=ACIAppProfile.objects.all(),
         to_field_name="name",
         label=_("ACI Application Profile (name)"),
@@ -125,6 +128,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
         label=_("ACI Application Profile (ID)"),
     )
     aci_endpoint_security_group = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_endpoint_security_group__name",
         queryset=ACIEndpointSecurityGroup.objects.all(),
         to_field_name="name",
         label=_("ACI Endpoint Security Group (name)"),
@@ -138,6 +142,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
         label=_("ACI EPG Object Type"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -150,7 +155,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
 
     # Cached related objects filters
     aci_endpoint_group_app_profile = django_filters.ModelMultipleChoiceFilter(
-        field_name="_aci_endpoint_group__aci_app_profile",
+        field_name="_aci_endpoint_group__aci_app_profile__name",
         queryset=ACIAppProfile.objects.all(),
         to_field_name="name",
         label=_("ACI Application Profile (name) of Endpoint Group"),
@@ -164,7 +169,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
         )
     )
     aci_endpoint_group = django_filters.ModelMultipleChoiceFilter(
-        field_name="_aci_endpoint_group",
+        field_name="_aci_endpoint_group__name",
         queryset=ACIEndpointGroup.objects.all(),
         to_field_name="name",
         label=_("ACI Endpoint Group (name)"),
@@ -177,7 +182,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
     )
     aci_useg_endpoint_group_app_profile = (
         django_filters.ModelMultipleChoiceFilter(
-            field_name="_aci_useg_endpoint_group__aci_app_profile",
+            field_name="_aci_useg_endpoint_group__aci_app_profile__name",
             queryset=ACIAppProfile.objects.all(),
             to_field_name="name",
             label=_("ACI Application Profile (name) of uSeg Endpoint Group"),
@@ -192,7 +197,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
         )
     )
     aci_useg_endpoint_group = django_filters.ModelMultipleChoiceFilter(
-        field_name="_aci_useg_endpoint_group",
+        field_name="_aci_useg_endpoint_group__name",
         queryset=ACIUSegEndpointGroup.objects.all(),
         to_field_name="name",
         label=_("ACI uSeg Endpoint Group (name)"),
@@ -235,7 +240,7 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI ESG Endpoint Selector model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_endpoint_security_group__aci_app_profile__aci_tenant",
+        field_name="aci_endpoint_security_group__aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -247,7 +252,7 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_app_profile = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_endpoint_security_group__aci_app_profile",
+        field_name="aci_endpoint_security_group__aci_app_profile__name",
         queryset=ACIAppProfile.objects.all(),
         to_field_name="name",
         label=_("ACI Application Profile (name)"),
@@ -259,6 +264,7 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
         label=_("ACI Application Profile (ID)"),
     )
     aci_endpoint_security_group = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_endpoint_security_group__name",
         queryset=ACIEndpointSecurityGroup.objects.all(),
         to_field_name="name",
         label=_("ACI Endpoint Security Group (name)"),
@@ -272,6 +278,7 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
         label=_("Endpoint Object Type"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -284,7 +291,7 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
 
     # Cached related objects filters
     ip_address_vrf = django_filters.ModelMultipleChoiceFilter(
-        field_name="_ip_address__vrf",
+        field_name="_ip_address__vrf__name",
         queryset=VRF.objects.all(),
         to_field_name="name",
         label=_("VRF of IP Address (name)"),
@@ -296,7 +303,7 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
         label=_("VRF of IP Address (ID)"),
     )
     ip_address = django_filters.ModelMultipleChoiceFilter(
-        field_name="_ip_address",
+        field_name="_ip_address__address",
         queryset=IPAddress.objects.all(),
         to_field_name="address",
         label=_("IP Address (address)"),
@@ -308,7 +315,7 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
         label=_("IP Address (ID)"),
     )
     prefix_vrf = django_filters.ModelMultipleChoiceFilter(
-        field_name="_prefix__vrf",
+        field_name="_prefix__vrf__name",
         queryset=VRF.objects.all(),
         to_field_name="name",
         label=_("VRF of Prefix (name)"),
@@ -320,7 +327,7 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
         label=_("VRF of Prefix (ID)"),
     )
     prefix = django_filters.ModelMultipleChoiceFilter(
-        field_name="_prefix",
+        field_name="_prefix__prefix",
         queryset=Prefix.objects.all(),
         to_field_name="prefix",
         label=_("Prefix (Prefix)"),

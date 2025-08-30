@@ -32,6 +32,7 @@ class ACIContractFilterFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Contract Filter model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -42,6 +43,7 @@ class ACIContractFilterFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -97,7 +99,7 @@ class ACIContractFilterEntryFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Contract Filter Entry model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract_filter__aci_tenant",
+        field_name="aci_contract_filter__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -109,6 +111,7 @@ class ACIContractFilterEntryFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_contract_filter = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_filter__name",
         queryset=ACIContractFilter.objects.all(),
         to_field_name="name",
         label=_("ACI Contract Filter (name)"),
@@ -119,7 +122,7 @@ class ACIContractFilterEntryFilterSet(NetBoxModelFilterSet):
         label=_("ACI Contract Filter (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract_filter__nb_tenant",
+        field_name="aci_contract_filter__nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),

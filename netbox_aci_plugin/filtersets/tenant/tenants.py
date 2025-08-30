@@ -15,6 +15,7 @@ class ACITenantFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Tenant model."""
 
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),

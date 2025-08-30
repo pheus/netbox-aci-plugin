@@ -24,6 +24,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI VRF model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -34,6 +35,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -44,6 +46,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         label=_("NetBox tenant (ID)"),
     )
     nb_vrf = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_vrf__name",
         queryset=VRF.objects.all(),
         to_field_name="name",
         label=_("NetBox VRF (name)"),

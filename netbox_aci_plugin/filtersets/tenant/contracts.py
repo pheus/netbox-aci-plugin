@@ -36,6 +36,7 @@ class ACIContractFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Contract model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -46,6 +47,7 @@ class ACIContractFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -119,7 +121,7 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Contract Relation model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract__aci_tenant",
+        field_name="aci_contract__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant of Contract (name)"),
@@ -131,6 +133,7 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant of Contract (ID)"),
     )
     aci_contract = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__name",
         queryset=ACIContract.objects.all(),
         to_field_name="name",
         label=_("ACI Contract (name)"),
@@ -141,7 +144,7 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         label=_("ACI Contract (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract__nb_tenant",
+        field_name="aci_contract__nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -163,7 +166,7 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
 
     # Cached related objects filters
     aci_endpoint_group_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="_aci_endpoint_group__aci_app_profile__aci_tenant",
+        field_name="_aci_endpoint_group__aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant of Endpoint Group (name)"),
@@ -175,7 +178,7 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant of Endpoint Group (ID)"),
     )
     aci_endpoint_group = django_filters.ModelMultipleChoiceFilter(
-        field_name="_aci_endpoint_group",
+        field_name="_aci_endpoint_group__name",
         queryset=ACIEndpointGroup.objects.all(),
         to_field_name="name",
         label=_("ACI Endpoint Group (name)"),
@@ -187,7 +190,7 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         label=_("ACI Endpoint Group (ID)"),
     )
     aci_vrf_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="_aci_vrf__aci_tenant",
+        field_name="_aci_vrf__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant of VRF (name)"),
@@ -199,7 +202,7 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant of VRF (ID)"),
     )
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
-        field_name="_aci_vrf",
+        field_name="_aci_vrf__name",
         queryset=ACIVRF.objects.all(),
         to_field_name="name",
         label=_("ACI VRF (name)"),
@@ -237,7 +240,7 @@ class ACIContractSubjectFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Contract Subject model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract__aci_tenant",
+        field_name="aci_contract__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -249,6 +252,7 @@ class ACIContractSubjectFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_contract = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__name",
         queryset=ACIContract.objects.all(),
         to_field_name="name",
         label=_("ACI Contract (name)"),
@@ -259,6 +263,7 @@ class ACIContractSubjectFilterSet(NetBoxModelFilterSet):
         label=_("ACI Contract (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
@@ -338,7 +343,7 @@ class ACIContractSubjectFilterFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Contract Subject Filter model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract_subject__aci_contract__aci_tenant",
+        field_name="aci_contract_subject__aci_contract__aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -350,7 +355,7 @@ class ACIContractSubjectFilterFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     aci_contract = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract_subject__aci_contract",
+        field_name="aci_contract_subject__aci_contract__name",
         queryset=ACIContract.objects.all(),
         to_field_name="name",
         label=_("ACI Contract (name)"),
@@ -362,6 +367,7 @@ class ACIContractSubjectFilterFilterSet(NetBoxModelFilterSet):
         label=_("ACI Contract (ID)"),
     )
     aci_contract_subject = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_subject__name",
         queryset=ACIContractSubject.objects.all(),
         to_field_name="name",
         label=_("ACI Contract Subject (name)"),
@@ -372,6 +378,7 @@ class ACIContractSubjectFilterFilterSet(NetBoxModelFilterSet):
         label=_("ACI Contract Subject (ID)"),
     )
     aci_contract_filter = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_filter__name",
         queryset=ACIContractFilter.objects.all(),
         to_field_name="name",
         label=_("ACI Contract Filter (name)"),

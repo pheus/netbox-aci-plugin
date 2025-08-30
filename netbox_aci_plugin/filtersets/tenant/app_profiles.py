@@ -16,6 +16,7 @@ class ACIAppProfileFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Application Profile model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_tenant__name",
         queryset=ACITenant.objects.all(),
         to_field_name="name",
         label=_("ACI Tenant (name)"),
@@ -26,6 +27,7 @@ class ACIAppProfileFilterSet(NetBoxModelFilterSet):
         label=_("ACI Tenant (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="nb_tenant__name",
         queryset=Tenant.objects.all(),
         to_field_name="name",
         label=_("NetBox tenant (name)"),
