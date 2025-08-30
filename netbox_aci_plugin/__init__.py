@@ -12,6 +12,7 @@ class ACIConfig(PluginConfig):
     """NetBox ACI Plugin specific configuration."""
 
     name = "netbox_aci_plugin"
+    label = "netbox_aci_plugin"
     verbose_name = "NetBox ACI"
     description = "NetBox plugin for documenting Cisco ACI specific objects."
     version = __version__
@@ -22,7 +23,7 @@ class ACIConfig(PluginConfig):
     max_version = "4.3.99"
     default_settings = {
         "create_default_aci_tenants": True,
-        "create_default_aci_contracts_filters": True,
+        "create_default_aci_contract_filters": True,
     }
 
 
