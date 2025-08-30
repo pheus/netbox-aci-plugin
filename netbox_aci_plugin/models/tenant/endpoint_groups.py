@@ -119,7 +119,6 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
 
     class Meta:
         abstract: bool = True
-        ordering: tuple = ("aci_app_profile", "name")
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
@@ -221,6 +220,7 @@ class ACIEndpointGroup(ACIEndpointGroupBaseModel):
             ),
         ]
         default_related_name: str = "aci_endpoint_groups"
+        ordering: tuple = ("aci_app_profile", "name")
         verbose_name: str = _("ACI Endpoint Group")
 
 
@@ -268,6 +268,7 @@ class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
             ),
         ]
         default_related_name: str = "aci_useg_endpoint_groups"
+        ordering: tuple = ("aci_app_profile", "name")
         verbose_name: str = _("ACI uSeg Endpoint Group")
 
     def get_match_operator_color(self) -> str:
