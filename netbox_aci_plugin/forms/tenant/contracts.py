@@ -721,7 +721,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
     aci_contract = DynamicModelChoiceField(
         queryset=ACIContract.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant"},
-        required=False,
         label=_("ACI Contract"),
     )
     nb_tenant_group = DynamicModelChoiceField(
