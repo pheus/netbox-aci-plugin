@@ -666,7 +666,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Unknown unicast"),
     )
-    tag = TagFilterField(ACIBridgeDomain)
+    tag = TagFilterField(model)
 
 
 class ACIBridgeDomainImportForm(NetBoxModelImportForm):
@@ -1247,7 +1247,7 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Virtual IP enabled"),
     )
-    tag = TagFilterField(ACIBridgeDomainSubnet)
+    tag = TagFilterField(model)
 
 
 class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):

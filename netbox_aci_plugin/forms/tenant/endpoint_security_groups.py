@@ -353,7 +353,7 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Preferred group member enabled"),
     )
-    tag = TagFilterField(ACIEndpointSecurityGroup)
+    tag = TagFilterField(model)
 
 
 class ACIEndpointSecurityGroupImportForm(NetBoxModelImportForm):
@@ -832,7 +832,7 @@ class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
-    tag = TagFilterField(ACIEsgEndpointGroupSelector)
+    tag = TagFilterField(model)
 
 
 class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
@@ -1265,7 +1265,7 @@ class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
-    tag = TagFilterField(ACIEsgEndpointSelector)
+    tag = TagFilterField(model)
 
 
 class ACIEsgEndpointSelectorImportForm(NetBoxModelImportForm):

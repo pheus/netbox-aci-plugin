@@ -474,7 +474,7 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Proxy ARP enabled"),
     )
-    tag = TagFilterField(ACIEndpointGroup)
+    tag = TagFilterField(model)
 
 
 class ACIEndpointGroupImportForm(NetBoxModelImportForm):
@@ -978,7 +978,7 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Preferred group member enabled"),
     )
-    tag = TagFilterField(ACIUSegEndpointGroup)
+    tag = TagFilterField(model)
 
 
 class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
@@ -1477,7 +1477,7 @@ class ACIUSegNetworkAttributeFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Use EPG subnet"),
     )
-    tag = TagFilterField(ACIUSegNetworkAttribute)
+    tag = TagFilterField(model)
 
 
 class ACIUSegNetworkAttributeImportForm(NetBoxModelImportForm):

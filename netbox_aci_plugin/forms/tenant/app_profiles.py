@@ -176,7 +176,7 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
-    tag = TagFilterField(ACIAppProfile)
+    tag = TagFilterField(model)
 
 
 class ACIAppProfileImportForm(NetBoxModelImportForm):

@@ -152,7 +152,7 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Tenant"),
     )
-    tag = TagFilterField(ACITenant)
+    tag = TagFilterField(model)
 
 
 class ACITenantImportForm(NetBoxModelImportForm):

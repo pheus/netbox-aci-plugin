@@ -294,7 +294,7 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Target DSCP"),
     )
-    tag = TagFilterField(ACIContract)
+    tag = TagFilterField(model)
 
 
 class ACIContractImportForm(NetBoxModelImportForm):
@@ -635,7 +635,7 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Role"),
     )
-    tag = TagFilterField(ACIContractRelation)
+    tag = TagFilterField(model)
 
 
 class ACIContractRelationImportForm(NetBoxModelImportForm):
@@ -1178,7 +1178,7 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Target DSCP (provider to consumer)"),
     )
-    tag = TagFilterField(ACIContractSubject)
+    tag = TagFilterField(model)
 
 
 class ACIContractSubjectImportForm(NetBoxModelImportForm):
@@ -1627,7 +1627,7 @@ class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("(Deny) Priority"),
     )
-    tag = TagFilterField(ACIContractSubjectFilter)
+    tag = TagFilterField(model)
 
 
 class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):

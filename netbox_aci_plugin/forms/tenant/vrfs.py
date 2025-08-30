@@ -440,7 +440,7 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Enabled preferred group"),
     )
-    tag = TagFilterField(ACIVRF)
+    tag = TagFilterField(model)
 
 
 class ACIVRFImportForm(NetBoxModelImportForm):

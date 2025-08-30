@@ -200,7 +200,7 @@ class ACIContractFilterFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
-    tag = TagFilterField(ACIContractFilter)
+    tag = TagFilterField(model)
 
 
 class ACIContractFilterImportForm(NetBoxModelImportForm):
@@ -976,7 +976,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("TCP rules"),
     )
-    tag = TagFilterField(ACIContractFilterEntry)
+    tag = TagFilterField(model)
 
 
 class ACIContractFilterEntryImportForm(NetBoxModelImportForm):
