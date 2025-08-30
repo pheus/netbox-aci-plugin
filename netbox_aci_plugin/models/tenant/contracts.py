@@ -8,7 +8,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
 
@@ -361,13 +360,6 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
     cache_related_objects.alters_data = True
 
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:acicontractrelation",
-            args=[self.pk],
-        )
-
     def get_role_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return ContractRelationRoleChoices.colors.get(self.role)
@@ -680,13 +672,6 @@ class ACIContractSubjectFilter(NetBoxModel):
     def parent_object(self) -> ACIBaseModel:
         """Return the parent object of the instance."""
         return self.aci_contract_subject
-
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            "plugins:netbox_aci_plugin:acicontractsubjectfilter",
-            args=[self.pk],
-        )
 
     def get_action_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""

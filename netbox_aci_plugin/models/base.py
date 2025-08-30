@@ -4,7 +4,6 @@
 
 from django.core.validators import MaxLengthValidator
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
 
@@ -65,13 +64,6 @@ class ACIBaseModel(NetBoxModel):
     def __str__(self) -> str:
         """Return string representation of the instance."""
         return self.name
-
-    def get_absolute_url(self) -> str:
-        """Return the absolute URL of the instance."""
-        return reverse(
-            f"plugins:{self._meta.app_label}:{self._meta.model_name}",
-            args=[self.pk],
-        )
 
     @property
     def parent_object(self) -> NetBoxModel | None:
