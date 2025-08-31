@@ -6,7 +6,7 @@ requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name =  "netbox-aci-plugin"
+name = "netbox-aci-plugin"
 version = "0.0.13"
 requires-python = ">=3.10.0"
 authors = [
@@ -15,18 +15,21 @@ authors = [
 maintainers = [
     {name = "Martin Hauser", email = "git@pheus.dev"},
 ]
-description = "NetBox plugin for Cisco ACI."
-readme = "README.md"
+description = "NetBox plugin for Cisco ACI"
+readme = { file = "README.md", content-type = "text/markdown" }
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
-classifiers=[
+classifiers = [
     'Development Status :: 2 - Pre-Alpha',
     "Framework :: Django",
+    "Framework :: Django :: 5.2",
     'Intended Audience :: Developers',
     "Intended Audience :: System Administrators",
     'Natural Language :: English',
+    "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
@@ -48,9 +51,21 @@ test = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/pheus/netbox-aci-plugin/blob/main/README.md"
-Repository = "https://github.com/pheus/netbox-aci-plugin"
+Homepage = "https://github.com/pheus/netbox-aci-plugin"
+Documentation = "https://pheus.github.io/netbox-aci-plugin/"
+Source = "https://github.com/pheus/netbox-aci-plugin"
 Issues = "https://github.com/pheus/netbox-aci-plugin/issues"
+Changelog = "https://github.com/pheus/netbox-aci-plugin/releases"
+
+[tool.check-manifest]
+ignore = [
+  ".editorconfig",
+  ".markdownlint.yaml",
+  ".pre-commit-config.yaml",
+  ".pypirc",
+  "requirements_dev.txt",
+  "ruff.toml",
+]
 
 [tool.isort]
 line_length = 79
@@ -61,5 +76,22 @@ line-length = 79
 # Always generate Python 3.10-compatible code.
 target_version = "py310"
 
+[tool.ruff.lint.flake8-self]
+ignore-names = ["_meta", "Meta"]
+
+[tool.ruff.lint.pycodestyle]
+# Enforce docstring/comment width
+max-doc-length = 79
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["netbox_aci_plugin*"]
+
 [tool.setuptools.package-data]
-netbox_aci_plugin = ["templates/**"]
+netbox_aci_plugin = [
+  "templates/**",
+  "static/**",
+  "locale/**",
+]
