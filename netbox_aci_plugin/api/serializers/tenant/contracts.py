@@ -114,6 +114,7 @@ class ACIContractRelationSerializer(NetBoxModelSerializer):
 
     @extend_schema_field(serializers.JSONField(allow_null=True))
     def get_aci_object(self, obj):
+        """Return the ACI object as nested JSON."""
         if obj.aci_object_id is None:
             return None
         serializer = get_serializer_for_model(obj.aci_object)

@@ -179,6 +179,7 @@ class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
 
     @extend_schema_field(serializers.JSONField(allow_null=True))
     def get_attr_object(self, obj):
+        """Return the attribute object as nested JSON."""
         if obj.attr_object_id is None:
             return None
         serializer = get_serializer_for_model(obj.attr_object)

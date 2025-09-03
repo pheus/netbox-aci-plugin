@@ -130,6 +130,7 @@ class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
 
     @extend_schema_field(serializers.JSONField(allow_null=True))
     def get_aci_epg_object(self, obj):
+        """Return the ACI EPG object as nested JSON."""
         if obj.aci_epg_object_id is None:
             return None
         serializer = get_serializer_for_model(obj.aci_epg_object)
@@ -199,6 +200,7 @@ class ACIEsgEndpointSelectorSerializer(NetBoxModelSerializer):
 
     @extend_schema_field(serializers.JSONField(allow_null=True))
     def get_ep_object(self, obj):
+        """Return the endpoint object as nested JSON."""
         if obj.ep_object_id is None:
             return None
         serializer = get_serializer_for_model(obj.ep_object)
