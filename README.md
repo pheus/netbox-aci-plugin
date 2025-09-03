@@ -5,6 +5,8 @@ like Tenants (TN), Application Profiles (AP), Endpoint Groups (EPG),
 Endpoint Security Groups (ESG), Bridge Domains (BD) and
 Contexts (CTX) / Virtual Routing and Forwarding (VRF).
 
+[![PyPI version](https://img.shields.io/pypi/v/netbox-aci-plugin.svg)](https://pypi.org/project/netbox-aci-plugin/)
+
 Documentation: https://pheus.github.io/netbox-aci-plugin/
 
 ## Features
@@ -22,31 +24,47 @@ Documentation: https://pheus.github.io/netbox-aci-plugin/
 
 ## Compatibility
 
+The following table details the tested plugin versions for each NetBox version:
+
 | NetBox Version | Plugin Version |
 |:--------------:|:--------------:|
-|      4.3       |     0.0.13     |
+|      4.4       |     0.1.0      |
+|      4.3       |     0.1.0      |
+
+
 
 ## Installing
 
-For adding to a NetBox Docker setup, see
-[the general instructions for using netbox-docker with plugins](https://github.com/netbox-community/netbox-docker/wiki/Using-Netbox-Plugins).
+### For Docker Setups
 
-While this is still in development and not yet on pypi, you can install with
-pip:
+For instructions specific to NetBox Docker setups,
+see the [netbox-docker plugin documentation](https://github.com/netbox-community/netbox-docker/wiki/Using-Netbox-Plugins).
 
-```bash
-pip install git+https://github.com/pheus/netbox-aci-plugin
-```
+### Via PyPI
 
-or by adding to your `local_requirements.txt` or `plugin_requirements.txt`
-(netbox-docker):
+Activate your NetBox Python virtual environment and run:
 
 ```bash
-git+https://github.com/pheus/netbox-aci-plugin
+source /opt/netbox/venv/bin/activate
+
+pip install netbox-aci-plugin
 ```
 
-Enable the plugin in `/opt/netbox/netbox/netbox/configuration.py`,
- or if you use netbox-docker, your `/configuration/plugins.py` file :
+**Important:** When using NetBox's upgrade.sh, the virtual environment is
+deleted and recreated.
+To ensure that the ACI plugin is reinstalled during an upgrade,
+add it to your `local_requirements.txt` (for local installations) or
+`plugin_requirements.txt` (for container-based installations).
+
+```txt
+netbox-aci-plugin
+```
+
+## Configuration
+
+Enable the plugin by editing the NetBox configuration file.
+For local installations, update `/opt/netbox/netbox/netbox/configuration.py`;
+for Docker setups, modify `/configuration/plugins.py`:
 
 ```python
 PLUGINS = [
@@ -63,11 +81,21 @@ PLUGINS_CONFIG = {
 }
 ```
 
+After configuration, apply the changes by running the database migrations:
+
+```bash
+source /opt/netbox/venv/bin/activate
+cd /opt/netbox
+python3 netbox/manage.py migrate
+```
+
 ## Status
 
-This project has just started and provides a minimal set of ACI object features.
-It may contain bugs and it is missing features.
-At the current stage, the plugin should be used in a testing environment only.
+This project is in alpha.
+While core functionality is stable, bugs and missing features may still be
+present.
+Use in testing or non-critical environments, and proceed with caution
+in production.
 
 ## Release notes
 

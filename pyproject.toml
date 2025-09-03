@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "netbox-aci-plugin"
-version = "0.0.13"
+version = "0.1.0"
 requires-python = ">=3.10.0"
 authors = [
     {name = "Martin Hauser", email = "git@pheus.dev"},
@@ -21,19 +21,19 @@ license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 keywords = ["netbox", "netbox-plugin", "cisco", "aci"]
 classifiers = [
-    'Development Status :: 2 - Pre-Alpha',
+    "Development Status :: 3 - Alpha",
     "Framework :: Django",
     "Framework :: Django :: 5.2",
-    'Intended Audience :: Developers',
+    "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
-    'Natural Language :: English',
+    "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 
 [project.optional-dependencies]
