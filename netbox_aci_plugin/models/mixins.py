@@ -8,33 +8,32 @@ from django.utils.translation import gettext as _
 
 
 class UniqueGenericForeignKeyMixin:
-    """
-    Mixin to enforce uniqueness for models that include a GenericForeignKey.
+    """Enforce uniqueness for models with a GenericForeignKey.
 
-    The model should define:
-      - generic_fk_field: the name of the GenericForeignKey attribute
-                          (e.g., "aci_object").
-      - generic_unique_fields: a tuple of additional field names that, together
-                               with the GenericForeignKey, must be unique.
-                               (e.g., ("aci_contract", "role",) ).
+    Attributes:
+        generic_fk_field: Name of the GenericForeignKey attribute (for
+            example, "aci_object").
+        generic_unique_fields: Tuple of additional field names that,
+            together with the GenericForeignKey, must be unique (for
+            example, ("aci_contract", "role")).
 
-    This mixin assumes that the underlying fields for the GenericForeignKey
-    follow the naming convention of '<generic_fk_field>_type'
-    and '<generic_fk_field>_id'.
+    Notes:
+        This mixin assumes the underlying fields for the GenericForeignKey
+        follow the "<generic_fk_field>_type" and "<generic_fk_field>_id"
+        naming convention.
     """
 
     generic_fk_field: str
-    generic_unique_fields: tuple[str] = tuple()
+    generic_unique_fields: tuple[str] = ()
 
     def _validate_generic_uniqueness(self) -> None:
-        """
-        Validate the uniqueness of the instance by ensuring that no other
-        instance exists with the same values for the specified
-        GenericForeignKey and additional fields defined in
-        'generic_unique_fields'.
+        """Validate the uniqueness of the instance.
 
+        Ensure that no other instance exists with the same values for the
+        specified GenericForeignKey and any additional fields defined in
+        generic_unique_fields.
         If a duplicate is found (excluding the current instance on update),
-        a ValidationError is raised.
+        raise a ValidationError.
         """
         if not getattr(self, "generic_fk_field", None):
             raise NotImplementedError(
