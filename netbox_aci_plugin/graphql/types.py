@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Annotated, List, Optional, Union
+from typing import Annotated
 
 import strawberry
 import strawberry_django
@@ -46,31 +46,31 @@ class ACITenantType(NetBoxObjectType):
     )
 
     # Related models
-    aci_app_profiles: List[
+    aci_app_profiles: list[
         Annotated[
             "ACIAppProfileType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_bridge_domains: List[
+    aci_bridge_domains: list[
         Annotated[
             "ACIBridgeDomainType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_contracts: List[
+    aci_contracts: list[
         Annotated[
             "ACIContractType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_contract_filters: List[
+    aci_contract_filters: list[
         Annotated[
             "ACIContractFilterType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_vrfs: List[
+    aci_vrfs: list[
         Annotated[
             "ACIVRFType", strawberry.lazy("netbox_aci_plugin.graphql.types")
         ]
@@ -93,19 +93,19 @@ class ACIAppProfileType(NetBoxObjectType):
     )
 
     # Related models
-    aci_endpoint_groups: List[
+    aci_endpoint_groups: list[
         Annotated[
             "ACIEndpointGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_endpoint_security_groups: List[
+    aci_endpoint_security_groups: list[
         Annotated[
             "ACIEndpointSecurityGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_useg_endpoint_groups: List[
+    aci_useg_endpoint_groups: list[
         Annotated[
             "ACIUSegEndpointGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
@@ -126,22 +126,22 @@ class ACIVRFType(NetBoxObjectType):
         | None
     )
     nb_vrf: Annotated["VRFType", strawberry.lazy("ipam.graphql.types")] | None
-    dns_labels: Optional[List[str]]
+    dns_labels: list[str] | None
 
     # Related models
-    aci_bridge_domains: List[
+    aci_bridge_domains: list[
         Annotated[
             "ACIBridgeDomainType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_contract_relations: List[
+    aci_contract_relations: list[
         Annotated[
             "ACIContractRelationType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_endpoint_security_groups: List[
+    aci_endpoint_security_groups: list[
         Annotated[
             "ACIEndpointSecurityGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
@@ -166,18 +166,18 @@ class ACIBridgeDomainType(NetBoxObjectType):
         Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
         | None
     )
-    dhcp_labels: Optional[List[str]]
-    mac_address: Optional[str]
-    virtual_mac_address: Optional[str]
+    dhcp_labels: list[str] | None
+    mac_address: str | None
+    virtual_mac_address: str | None
 
     # Related models
-    aci_bridge_domain_subnets: List[
+    aci_bridge_domain_subnets: list[
         Annotated[
             "ACIBridgeDomainSubnetType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_endpoint_groups: List[
+    aci_endpoint_groups: list[
         Annotated[
             "ACIEndpointGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
@@ -229,7 +229,7 @@ class ACIEndpointGroupType(NetBoxObjectType):
     )
 
     # Related models
-    aci_contract_relations: List[
+    aci_contract_relations: list[
         Annotated[
             "ACIContractRelationType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
@@ -259,13 +259,13 @@ class ACIUSegEndpointGroupType(NetBoxObjectType):
     )
 
     # Related models
-    aci_contract_relations: List[
+    aci_contract_relations: list[
         Annotated[
             "ACIContractRelationType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_useg_network_attributes: List[
+    aci_useg_network_attributes: list[
         Annotated[
             "ACIUSegNetworkAttributeType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
@@ -302,15 +302,11 @@ class ACIUSegNetworkAttributeType(NetBoxObjectType):
         self,
     ) -> (
         Annotated[
-            Union[
-                Annotated[
-                    "IPAddressType", strawberry.lazy("ipam.graphql.types")
-                ],
-                Annotated[
-                    "MACAddressType", strawberry.lazy("dcim.graphql.types")
-                ],
-                Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")],
-            ],
+            Annotated["IPAddressType", strawberry.lazy("ipam.graphql.types")]
+            | Annotated[
+                "MACAddressType", strawberry.lazy("dcim.graphql.types")
+            ]
+            | Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")],
             strawberry.union("ACIUSegNetworkAttributeObjectType"),
         ]
         | None
@@ -341,19 +337,19 @@ class ACIEndpointSecurityGroupType(NetBoxObjectType):
     )
 
     # Related models
-    aci_contract_relations: List[
+    aci_contract_relations: list[
         Annotated[
             "ACIContractRelationType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_esg_endpoint_group_selectors: List[
+    aci_esg_endpoint_group_selectors: list[
         Annotated[
             "ACIEsgEndpointGroupSelectorType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_esg_endpoint_selectors: List[
+    aci_esg_endpoint_selectors: list[
         Annotated[
             "ACIEsgEndpointSelectorType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
@@ -389,15 +385,13 @@ class ACIEsgEndpointGroupSelectorType(NetBoxObjectType):
         self,
     ) -> (
         Annotated[
-            Union[
-                Annotated[
-                    "ACIEndpointGroupType",
-                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
-                ],
-                Annotated[
-                    "ACIUSegEndpointGroupType",
-                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
-                ],
+            Annotated[
+                "ACIEndpointGroupType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
+            ]
+            | Annotated[
+                "ACIUSegEndpointGroupType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
             ],
             strawberry.union("ACIEsgEndpointGroupSelectorObjectType"),
         ]
@@ -435,12 +429,8 @@ class ACIEsgEndpointSelectorType(NetBoxObjectType):
         self,
     ) -> (
         Annotated[
-            Union[
-                Annotated[
-                    "IPAddressType", strawberry.lazy("ipam.graphql.types")
-                ],
-                Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")],
-            ],
+            Annotated["IPAddressType", strawberry.lazy("ipam.graphql.types")]
+            | Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")],
             strawberry.union("ACIEsgEndpointSelectorObjectType"),
         ]
         | None
@@ -467,13 +457,13 @@ class ACIContractFilterType(NetBoxObjectType):
     )
 
     # Related models
-    aci_contract_filter_entries: List[
+    aci_contract_filter_entries: list[
         Annotated[
             "ACIContractFilterEntryType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_contract_subject_filters: List[
+    aci_contract_subject_filters: list[
         Annotated[
             "ACIContractSubjectFilterType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
@@ -518,13 +508,13 @@ class ACIContractType(NetBoxObjectType):
     )
 
     # Related models
-    aci_contract_relations: List[
+    aci_contract_relations: list[
         Annotated[
             "ACIContractRelationType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
-    aci_contract_subjects: List[
+    aci_contract_subjects: list[
         Annotated[
             "ACIContractSubjectType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
@@ -557,23 +547,21 @@ class ACIContractRelationType(NetBoxObjectType):
         self,
     ) -> (
         Annotated[
-            Union[
-                Annotated[
-                    "ACIEndpointGroupType",
-                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
-                ],
-                Annotated[
-                    "ACIEndpointSecurityGroupType",
-                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
-                ],
-                Annotated[
-                    "ACIUSegEndpointGroupType",
-                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
-                ],
-                Annotated[
-                    "ACIVRFType",
-                    strawberry.lazy("netbox_aci_plugin.graphql.types"),
-                ],
+            Annotated[
+                "ACIEndpointGroupType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
+            ]
+            | Annotated[
+                "ACIEndpointSecurityGroupType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
+            ]
+            | Annotated[
+                "ACIUSegEndpointGroupType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
+            ]
+            | Annotated[
+                "ACIVRFType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
             ],
             strawberry.union("ACIContractRelationObjectType"),
         ]
@@ -601,7 +589,7 @@ class ACIContractSubjectType(NetBoxObjectType):
     )
 
     # Related models
-    aci_contract_subject_filters: List[
+    aci_contract_subject_filters: list[
         Annotated[
             "ACIContractSubjectFilterType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
