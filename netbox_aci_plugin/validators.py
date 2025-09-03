@@ -37,7 +37,6 @@ ACIPolicyDescriptionValidator = RegexValidator(
 
 def validate_contract_filter_ip_protocol(value: str) -> None:
     """Validate the IP protocol value for ContractFilterEntry."""
-
     # Check if the protocol value is a valid choice in the ChoiceSet
     if value in dict(ContractFilterIPProtocolChoices):
         return
@@ -56,18 +55,17 @@ def validate_contract_filter_ip_protocol(value: str) -> None:
         pass
 
     # if neither condition is met, raise a ValidationError
+    valid_choices = ", ".join(dict(ContractFilterIPProtocolChoices).keys())
     raise ValidationError(
         _(
-            "IP Protocol must be a number between 0 and 255 or"
-            " one of the following values: %s"
-            % ", ".join(dict(ContractFilterIPProtocolChoices).keys())
+            f"IP Protocol must be a number between 0 and 255 or"
+            f" one of the following values: {valid_choices}"
         )
     )
 
 
 def validate_contract_filter_port(value: str) -> None:
     """Validate the layer 4 port value for ContractFilterEntry."""
-
     # Check if the port value is a valid choice in the ChoiceSet
     if value in dict(ContractFilterPortChoices):
         return
@@ -81,11 +79,11 @@ def validate_contract_filter_port(value: str) -> None:
         pass
 
     # if neither condition is met, raise a ValidationError
+    valid_choices = ", ".join(dict(ContractFilterPortChoices).keys())
     raise ValidationError(
         _(
-            "Layer 4 Port must be a number between 0 and 65535 or"
-            " one of the following values: %s"
-            % ", ".join(dict(ContractFilterPortChoices).keys())
+            f"Layer 4 Port must be a number between 0 and 65535 or"
+            f" one of the following values: {valid_choices}"
         )
     )
 
