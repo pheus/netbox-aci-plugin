@@ -315,6 +315,7 @@ class ACIUSegNetworkAttributeType(NetBoxObjectType):
         ]
         | None
     ):
+        """Return the attribute object."""
         return self.attr_object
 
 
@@ -402,6 +403,7 @@ class ACIEsgEndpointGroupSelectorType(NetBoxObjectType):
         ]
         | None
     ):
+        """Return the Endpoint Group object."""
         return self.aci_epg_object
 
 
@@ -443,6 +445,7 @@ class ACIEsgEndpointSelectorType(NetBoxObjectType):
         ]
         | None
     ):
+        """Return the Endpoint object."""
         return self.ep_object
 
 
@@ -576,6 +579,7 @@ class ACIContractRelationType(NetBoxObjectType):
         ]
         | None
     ):
+        """Return the ACI object."""
         return self.aci_object
 
 
