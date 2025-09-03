@@ -66,18 +66,6 @@ ignore = [
   "ruff.toml",
 ]
 
-[tool.ruff]
-line-length = 79
-# Always generate Python 3.10-compatible code.
-target_version = "py310"
-
-[tool.ruff.lint.flake8-self]
-ignore-names = ["_meta", "Meta"]
-
-[tool.ruff.lint.pycodestyle]
-# Enforce docstring/comment width
-max-doc-length = 79
-
 [tool.setuptools]
 include-package-data = true
 
