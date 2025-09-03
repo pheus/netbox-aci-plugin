@@ -19,6 +19,7 @@ description = "NetBox plugin for Cisco ACI"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
+keywords = ["netbox", "netbox-plugin", "cisco", "aci"]
 classifiers = [
     'Development Status :: 2 - Pre-Alpha',
     "Framework :: Django",
@@ -58,12 +59,12 @@ Changelog = "https://github.com/pheus/netbox-aci-plugin/releases"
 
 [tool.check-manifest]
 ignore = [
-  ".editorconfig",
-  ".markdownlint.yaml",
-  ".pre-commit-config.yaml",
-  ".pypirc",
-  "requirements_dev.txt",
-  "ruff.toml",
+    ".editorconfig",
+    ".markdownlint.yaml",
+    ".pre-commit-config.yaml",
+    ".pypirc",
+    "requirements_dev.txt",
+    "ruff.toml",
 ]
 
 [tool.setuptools]
@@ -74,7 +75,7 @@ include = ["netbox_aci_plugin*"]
 
 [tool.setuptools.package-data]
 netbox_aci_plugin = [
-  "templates/**",
-  "static/**",
-  "locale/**",
+    "templates/**",
+    "static/**",
+    "locale/**/*.mo"
 ]
