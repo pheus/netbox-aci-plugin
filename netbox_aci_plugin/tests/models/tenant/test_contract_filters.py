@@ -343,7 +343,7 @@ class ACIContractFilterEntryTestCase(TestCase):
     def test_aci_contract_filter_entry_match_only_fragments_enabled(
         self,
     ) -> None:
-        """Test the 'match_only_fragments_enabled' option of Contract Filter Entry."""
+        """Test the 'match_only_fragments_enabled' option of Filter Entry."""
         self.assertEqual(
             self.aci_contract_filter_entry.match_only_fragments_enabled,
             self.aci_contract_filter_entry_match_only_fragments_enabled,

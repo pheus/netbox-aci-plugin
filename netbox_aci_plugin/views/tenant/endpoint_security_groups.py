@@ -125,7 +125,7 @@ class ACIEsgEndpointSelectorChildrenView(generic.ObjectChildrenView):
 
 @register_model_view(ACIEndpointSecurityGroup)
 class ACIEndpointSecurityGroupView(generic.ObjectView):
-    """Detail view for displaying a single object of ACI Endpoint Security Group."""
+    """Detail view for displaying a single object of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.prefetch_related(
         "aci_app_profile",
@@ -182,7 +182,7 @@ class ACIEndpointSecurityGroupDeleteView(generic.ObjectDeleteView):
 class ACIEndpointSecurityGroupContractRelationView(
     ACIContractRelationChildrenView
 ):
-    """Children view of ACI Contract Relation of ACI Endpoint Security Group."""
+    """Children view of ACI Contract Relation of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
     template_name = (
@@ -295,7 +295,7 @@ class ACIEndpointSecurityGroupEsgEndpointSelectorView(
     ACIEndpointSecurityGroup, "bulk_import", path="import", detail=False
 )
 class ACIEndpointSecurityGroupBulkImportView(generic.BulkImportView):
-    """Bulk import view for importing multiple objects of ACIEndpointSecurityGroup."""
+    """Bulk import view for importing multiple objects of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
     model_form = ACIEndpointSecurityGroupImportForm
@@ -305,7 +305,7 @@ class ACIEndpointSecurityGroupBulkImportView(generic.BulkImportView):
     ACIEndpointSecurityGroup, "bulk_edit", path="edit", detail=False
 )
 class ACIEndpointSecurityGroupBulkEditView(generic.BulkEditView):
-    """Bulk edit view for editing multiple objects of ACI Endpoint Security Group."""
+    """Bulk edit view for editing multiple objects of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
     filterset = ACIEndpointSecurityGroupFilterSet
@@ -317,7 +317,7 @@ class ACIEndpointSecurityGroupBulkEditView(generic.BulkEditView):
     ACIEndpointSecurityGroup, "bulk_delete", path="delete", detail=False
 )
 class ACIEndpointSecurityGroupBulkDeleteView(generic.BulkDeleteView):
-    """Bulk delete view for deleting multiple objects of ACI Endpoint Security Group."""
+    """Bulk delete view for deleting multiple objects of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
     filterset = ACIEndpointSecurityGroupFilterSet

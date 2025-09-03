@@ -140,7 +140,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
             )
 
     def save(self, *args, **kwargs) -> None:
-        """Saves the current instance to the database."""
+        """Save the current instance to the database."""
         # Ensure the assigned ACIBrideDomain belongs to either the same
         # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
         if (
@@ -329,7 +329,7 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
 
     @property
     def aci_app_profile(self) -> ACIAppProfile:
-        """Return the ACIAppProfile instance of related ACIUSegEndpointGroup."""
+        """Return the ACIAppProfile of the related ACIUSegEndpointGroup."""
         return self.aci_useg_endpoint_group.aci_app_profile
 
     def get_type_color(self) -> str:
@@ -464,7 +464,6 @@ class ACIUSegNetworkAttribute(
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
-
         # Validate Attribute object assignment before validation of any other
         # fields
         if self.attr_object_type and not (
@@ -506,7 +505,7 @@ class ACIUSegNetworkAttribute(
         self._validate_generic_uniqueness()
 
     def save(self, *args, **kwargs) -> None:
-        """Saves the current instance to the database."""
+        """Save the current instance to the database."""
         # Cache the related objects for faster access
         self.cache_related_objects()
 

@@ -278,7 +278,7 @@ class ACIBridgeDomain(ACIBaseModel):
             )
 
     def save(self, *args, **kwargs) -> None:
-        """Saves the current instance to the database."""
+        """Save the current instance to the database."""
         # Ensure the assigned ACIVRF belongs to either the same ACITenant as
         # the ACIBridgeDomain or to the special ACITenant 'common'
         if (

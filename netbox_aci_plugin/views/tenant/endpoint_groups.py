@@ -258,7 +258,7 @@ class ACIEndpointGroupBulkDeleteView(generic.BulkDeleteView):
 
 @register_model_view(ACIUSegEndpointGroup)
 class ACIUSegEndpointGroupView(generic.ObjectView):
-    """Detail view for displaying a single object of ACI uSeg Endpoint Group."""
+    """Detail view for displaying a single object of ACI uSeg EPG."""
 
     queryset = ACIUSegEndpointGroup.objects.prefetch_related(
         "aci_app_profile",

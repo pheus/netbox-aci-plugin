@@ -536,7 +536,7 @@ class ACIEsgEndpointGroupSelectorTestCase(TestCase):
     def test_invalid_aci_esg_endpoint_group_selector_name_alias_length(
         self,
     ) -> None:
-        """Test validation of ACI ESG Endpoint Group Selector name alias length."""
+        """Test validation of ESG Endpoint Group Selector name alias length."""
         invalid_esg_epg_sel = ACIEsgEndpointGroupSelector(
             name="ACIESGTest1",
             name_alias="A" * 65,  # Exceeding the maximum length of 64

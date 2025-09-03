@@ -182,7 +182,7 @@ class ACIUSegNetworkAttributeFormTestCase(TestCase):
         cls.ip_address = IPAddress.objects.create(address="192.168.1.1/32")
 
     def test_invalid_aci_useg_network_attribute_field_values(self) -> None:
-        """Test validation of invalid ACI uSeg Network Attribute field values."""
+        """Test validation of invalid uSeg Network Attribute field values."""
         aci_useg_network_attr_form = ACIUSegNetworkAttributeEditForm(
             data={
                 "name": "ACI uSeg Network Attribute Test 1",

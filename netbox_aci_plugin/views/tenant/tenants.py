@@ -41,7 +41,6 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
 
     def get_extra_context(self, request, instance) -> dict:
         """Return related models as extra context."""
-
         # Get extra related models of directly referenced models
         extra_related_models: tuple[tuple[QuerySet, str], ...] = (
             (

@@ -526,7 +526,6 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI Contract Filter Entry form."""
-
         # Initialize fields with custom values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()

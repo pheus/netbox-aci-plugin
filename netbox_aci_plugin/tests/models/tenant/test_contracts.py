@@ -1282,7 +1282,7 @@ class ACIContractSubjectFilterTestCase(TestCase):
     def test_aci_contract_subject_filter_policy_compression_enabled(
         self,
     ) -> None:
-        """Test the 'policy_compression_enabled' of ACI Contract Subject Filter."""
+        """Test the 'policy_compression_enabled' of Contract Subject Filter."""
         self.assertEqual(
             self.aci_contract_subject_filter.policy_compression_enabled,
             self.aci_contract_subject_filter_policy_compression_enabled,

@@ -245,7 +245,6 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
-
         # Validate ACI object assignment before validation of any other fields
         if self.aci_object_type and not (
             self.aci_object or self.aci_object_id
@@ -329,7 +328,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
             )
 
     def save(self, *args, **kwargs) -> None:
-        """Saves the current instance to the database."""
+        """Save the current instance to the database."""
         # Cache the related objects for faster access
         self.cache_related_objects()
 

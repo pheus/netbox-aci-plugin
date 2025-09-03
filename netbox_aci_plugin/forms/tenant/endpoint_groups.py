@@ -198,13 +198,14 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
         )
 
     def clean(self):
-        """Cleaning and validation of ACI Endpoint Group Form."""
+        """Clean and validate the ACI Endpoint Group form."""
         super().clean()
 
         aci_app_profile = self.cleaned_data.get("aci_app_profile")
         aci_bridge_domain = self.cleaned_data.get("aci_bridge_domain")
 
-        # Ensure aci_app_profile and aci_bridge_domain are present before validating
+        # Ensure aci_app_profile and aci_bridge_domain are present before
+        # validating
         if aci_app_profile and aci_bridge_domain:
             # Check if the ACI Tenant IDs mismatch
             aci_tenant_mismatch = (
@@ -718,13 +719,14 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
         )
 
     def clean(self):
-        """Cleaning and validation of ACI uSeg Endpoint Group Form."""
+        """Clean and validate the ACI uSeg Endpoint Group form."""
         super().clean()
 
         aci_app_profile = self.cleaned_data.get("aci_app_profile")
         aci_bridge_domain = self.cleaned_data.get("aci_bridge_domain")
 
-        # Ensure aci_app_profile and aci_bridge_domain are present before validating
+        # Ensure aci_app_profile and aci_bridge_domain are present before
+        # validating
         if aci_app_profile and aci_bridge_domain:
             # Check if the ACI Tenant IDs mismatch
             aci_tenant_mismatch = (
@@ -1188,7 +1190,6 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI uSeg Network Attribute form."""
-
         # Initialize fields with initial values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()
@@ -1332,7 +1333,6 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI uSeg Network Attribute bulk edit form."""
-
         super().__init__(*args, **kwargs)
 
         if attr_object_type_id := get_field_value(self, "attr_object_type"):

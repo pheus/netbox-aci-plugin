@@ -151,7 +151,7 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
         )
 
     def clean(self):
-        """Cleaning and validation of ACI Endpoint Security Group Form."""
+        """Clean and validate the ACI Endpoint Security Group form."""
         super().clean()
 
         aci_app_profile = self.cleaned_data.get("aci_app_profile")
@@ -418,7 +418,8 @@ class ACIEndpointSecurityGroupImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit ACIEndpointSecurityGroup queryset by parent ACIAppProfile and ACITenant
+        # Limit ACIEndpointSecurityGroup queryset by parent ACIAppProfile
+        # and ACITenant
         if data.get("aci_tenant") and data.get("aci_app_profile"):
             # Limit ACIAppProfile queryset by parent ACITenant
             aci_appprofile_queryset = ACIAppProfile.objects.filter(
@@ -551,7 +552,6 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI ESG Endpoint Group Selector form."""
-
         # Initialize fields with initial values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()
@@ -599,7 +599,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
                 self.initial["aci_epg_object"] = None
 
     def clean(self):
-        """Validate form fields for the ACI ESG Endpoint Group Selector form."""
+        """Validate fields for the ACI ESG Endpoint Group Selector form."""
         super().clean()
 
         # Ensure the selected Endpoint Group object gets assigned
@@ -704,7 +704,6 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI ESG Endpoint Group Selector bulk edit form."""
-
         super().__init__(*args, **kwargs)
 
         if aci_epg_object_type_id := get_field_value(
@@ -734,7 +733,7 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for the ACI ESG Endpoint Group (EPG) Selector model."""
+    """NetBox filter form for the ACI ESG Endpoint Group Selector model."""
 
     model = ACIEsgEndpointGroupSelector
     fieldsets: tuple = (
@@ -1014,7 +1013,6 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI ESG Endpoint Selector form."""
-
         # Initialize fields with initial values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()
@@ -1144,7 +1142,6 @@ class ACIEsgEndpointSelectorBulkEditForm(NetBoxModelBulkEditForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI ESG Endpoint Selector bulk edit form."""
-
         super().__init__(*args, **kwargs)
 
         if ep_object_type_id := get_field_value(self, "ep_object_type"):

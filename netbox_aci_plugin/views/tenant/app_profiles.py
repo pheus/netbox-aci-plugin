@@ -57,7 +57,7 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
 
 @register_model_view(ACIAppProfile)
 class ACIAppProfileView(generic.ObjectView):
-    """Detail view for displaying a single object of ACI Application Profile."""
+    """Detail view for displaying a single object of ACI App Profile."""
 
     queryset = ACIAppProfile.objects.prefetch_related(
         "aci_tenant",

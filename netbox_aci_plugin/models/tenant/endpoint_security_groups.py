@@ -114,7 +114,7 @@ class ACIEndpointSecurityGroup(ACIBaseModel):
             )
 
     def save(self, *args, **kwargs) -> None:
-        """Saves the current instance to the database."""
+        """Save the current instance to the database."""
         # Ensure the assigned ACIVRF belongs to either the same ACITenant as
         # the ACIAppProfile or to the special ACITenant 'common'
         if (
@@ -283,7 +283,6 @@ class ACIEsgEndpointGroupSelector(
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
-
         # Validate Endpoint Group object assignment before validation of
         # any other fields
         if self.aci_epg_object_type and not (
@@ -347,7 +346,7 @@ class ACIEsgEndpointGroupSelector(
         self._validate_generic_uniqueness()
 
     def save(self, *args, **kwargs) -> None:
-        """Saves the current instance to the database."""
+        """Save the current instance to the database."""
         # Cache the related objects for faster access
         self.cache_related_objects()
 
@@ -473,7 +472,6 @@ class ACIEsgEndpointSelector(
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
-
         # Validate Endpoint object assignment before validation of any other
         # fields
         if self.ep_object_type and not (self.ep_object or self.ep_object_id):
@@ -495,7 +493,7 @@ class ACIEsgEndpointSelector(
         self._validate_generic_uniqueness()
 
     def save(self, *args, **kwargs) -> None:
-        """Saves the current instance to the database."""
+        """Save the current instance to the database."""
         # Cache the related objects for faster access
         self.cache_related_objects()
 

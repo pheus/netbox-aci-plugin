@@ -444,7 +444,6 @@ class ACIContractRelationEditForm(NetBoxModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI Contract Relation form."""
-
         # Initialize fields with initial values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()
@@ -548,7 +547,6 @@ class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI Contract Relation bulk edit form."""
-
         super().__init__(*args, **kwargs)
 
         if aci_object_type_id := get_field_value(self, "aci_object_type"):
@@ -890,7 +888,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI Contract Subject edit form."""
-
         # Initialize fields with initial values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()
