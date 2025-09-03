@@ -323,31 +323,29 @@ class ACIContractFilterEntry(ACIBaseModel):
         if (
             self.ether_type not in ip_ether_types
             or self.ip_protocol != ContractFilterIPProtocolChoices.PROT_ICMP_V4
+        ) and (
+            self.icmp_v4_type
+            != ContractFilterICMPv4TypesChoices.ICMP_V4_UNSPECIFIED
         ):
-            if (
-                self.icmp_v4_type
-                != ContractFilterICMPv4TypesChoices.ICMP_V4_UNSPECIFIED
-            ):
-                validation_errors["icmp_v4_type"] = _(
-                    "ICMPv4 Type must be 'unspecified' when Ethernet Type is "
-                    "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not 'ICMP'."
-                )
+            validation_errors["icmp_v4_type"] = _(
+                "ICMPv4 Type must be 'unspecified' when Ethernet Type is "
+                "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not 'ICMP'."
+            )
 
         # Validate icmp_v6_type for ether_type 'ip', 'ipv4' or 'ipv6'
         # and ip_protocol 'icmpv6'
         if (
             self.ether_type not in ip_ether_types
             or self.ip_protocol != ContractFilterIPProtocolChoices.PROT_ICMP_V6
+        ) and (
+            self.icmp_v6_type
+            != ContractFilterICMPv6TypesChoices.ICMP_V6_UNSPECIFIED
         ):
-            if (
-                self.icmp_v6_type
-                != ContractFilterICMPv6TypesChoices.ICMP_V6_UNSPECIFIED
-            ):
-                validation_errors["icmp_v6_type"] = _(
-                    "ICMPv6 Type must be 'unspecified' when Ethernet Type is "
-                    "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not "
-                    "'ICMPv6'."
-                )
+            validation_errors["icmp_v6_type"] = _(
+                "ICMPv6 Type must be 'unspecified' when Ethernet Type is "
+                "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not "
+                "'ICMPv6'."
+            )
 
         # Validate match_dscp for ether_type 'ip', 'ipv4' or 'ipv6'
         if (
