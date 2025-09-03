@@ -93,8 +93,7 @@ class ACIContract(ACIBaseModel):
         """Return string representation of the instance."""
         if self.aci_tenant.name == "common":
             return f"{self.name} ({self.aci_tenant.name})"
-        else:
-            return self.name
+        return self.name
 
     @property
     def parent_object(self) -> ACIBaseModel:
@@ -525,8 +524,7 @@ class ACIContractSubject(ACIBaseModel):
         """Return string representation of the instance."""
         if self.aci_tenant.name == "common":
             return f"{self.name} ({self.aci_tenant.name})"
-        else:
-            return self.name
+        return self.name
 
     @property
     def aci_tenant(self) -> ACITenant:

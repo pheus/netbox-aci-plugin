@@ -130,8 +130,7 @@ class ACIContractRelationTable(NetBoxTable):
                 f"{record.aci_object.aci_app_profile} "
                 f"| {record.aci_object.name}"
             )
-        else:
-            return record.aci_object.name
+        return record.aci_object.name
 
 
 class ACIContractSubjectTable(NetBoxTable):
