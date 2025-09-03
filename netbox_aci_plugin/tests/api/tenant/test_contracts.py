@@ -669,6 +669,4 @@ class ACIContractSubjectFilterAPIViewTestCase(
                 "priority": "default",
             },
         ]
-        cls.bulk_update_data = {
-            "log_enabled": False,
-        }
+        cls.bulk_update_data = {"priority": "level2"}
