@@ -10,6 +10,7 @@ nav:
       - Tenants: features/tenants.md
   - Development:
       - Contributing: development/contributing.md
+      - Releasing: development/releasing.md
   - Changelog: changelog.md
 theme:
   name: material

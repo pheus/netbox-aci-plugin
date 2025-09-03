@@ -133,9 +133,6 @@ Before you submit a pull request, check that it meets these guidelines:
 
 ## Deploying
 
-A reminder for the maintainers on how to deploy.
-Make sure all your changes are committed (including an entry in CHANGELOG.md)
-and that all tests pass.
-Then in the GitHub project go to `Releases` and create a new release with a new
-tag.
-This will automatically upload the release to pypi.
+See **[Releasing guide](docs/development/releasing.md)** for the versioning, tagging,
+and publish process (Trusted Publishing to PyPI and a draft GitHub Release
+on tag push).
