@@ -8,7 +8,8 @@ nav:
   - Home: index.md
   - Features:
       - Tenants: features/tenants.md
-  - Contributing: contributing.md
+  - Development:
+      - Contributing: development/contributing.md
   - Changelog: changelog.md
 theme:
   name: material
