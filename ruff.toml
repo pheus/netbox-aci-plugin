@@ -35,13 +35,39 @@ exclude = [
 line-length = 79
 indent-width = 4
 
+# Groups diagnostics by file and rule for readability
+# output-format = "grouped"
+
+# Ignores anything in .gitignore
+respect-gitignore = true
+
+# When running with --fix, shows which fixes are applied/available
+show-fixes = true
+
 # Always generate Python 3.10-compatible code.
 target-version = "py310"
 
 [lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
 select = ["E4", "E7", "E9", "F"]
-ignore = []
+extend-select = [
+    "D",    # pydocstyle
+    "I",    # import sorting (isort-equivalent)
+    "C4",   # flake8-comprehensions
+    "ISC",  # implicit str concat checks
+    "RET",  # return semantics
+    "SIM",  # simplifications
+    "PTH",  # pathlib over os.path
+    "SLF",  # flake8-self
+    "W505", # docstring line-length (paired with max-doc-length)
+]
+ignore = [
+    "D100", # missing docstring in public module
+    "D104", # missing docstring in public package (__init__.py)
+    "D106", # missing docstring in nested classes
+    "D105", # missing docstring in magic method
+    "D107", # missing docstring in __init__
+]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -49,6 +75,21 @@ unfixable = []
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.flake8-self]
+ignore-names = ["_meta", "Meta"]
+
+[lint.per-file-ignores]
+"**/tests/*.py" = ["D"]
+"**/migrations/*.py" = ["D"]   # For Django/NetBox plugin migrations
+"**/__init__.py"   = ["D104"]  # missing docstring in public package (__init__.py)
+
+[lint.pycodestyle]
+max-doc-length = 79
+
+[lint.pydocstyle]
+# Choose a docstring style (one of: "google", "numpy", "pep257").
+convention = "pep257"
 
 [format]
 # Like Black, use double quotes for strings.
@@ -62,3 +103,6 @@ skip-magic-trailing-comma = false
 
 # Enforce UNIX line ending
 line-ending = "lf"
+
+# Format Python code blocks found inside docstrings
+docstring-code-format = true
