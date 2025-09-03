@@ -160,9 +160,7 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
         # Ensure aci_app_profile and aci_vrf are present before validating
         if aci_app_profile and aci_vrf:
             # Check if the ACI Tenant IDs mismatch
-            aci_tenant_mismatch = (
-                aci_app_profile.aci_tenant.id != aci_vrf.aci_tenant.id
-            )
+            aci_tenant_mismatch = aci_app_profile.aci_tenant.id != aci_vrf.aci_tenant.id
             # Check if the ACI VRF Tenant name is not 'common'
             not_aci_tenant_common = aci_vrf.aci_tenant.name != "common"
             # Raise the validation error if both conditions are met
@@ -461,9 +459,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
     aci_app_profile = DynamicModelChoiceField(
         queryset=ACIAppProfile.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant"},
-        initial_params={
-            "aci_endpoint_security_groups": "$aci_endpoint_security_group"
-        },
+        initial_params={"aci_endpoint_security_groups": "$aci_endpoint_security_group"},
         required=False,
         label=_("ACI Application Profile"),
     )
@@ -482,9 +478,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
         label=_("ACI Application Profile of Endpoint Group"),
     )
     aci_epg_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(
-            ESG_ENDPOINT_GROUP_SELECTORS_MODELS
-        ),
+        queryset=ContentType.objects.filter(ESG_ENDPOINT_GROUP_SELECTORS_MODELS),
         widget=HTMXSelect(),
         label=_("ACI EPG Object Type"),
     )
@@ -564,21 +558,15 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
 
         super().__init__(*args, **kwargs)
 
-        if aci_epg_object_type_id := get_field_value(
-            self, "aci_epg_object_type"
-        ):
+        if aci_epg_object_type_id := get_field_value(self, "aci_epg_object_type"):
             try:
                 # Retrieve the ContentType model class based on the
                 # Endpoint Group object type
-                aci_epg_object_type = ContentType.objects.get(
-                    pk=aci_epg_object_type_id
-                )
+                aci_epg_object_type = ContentType.objects.get(pk=aci_epg_object_type_id)
                 aci_epg_model = aci_epg_object_type.model_class()
 
                 # Configure the queryset and label for the aci_epg_object field
-                self.fields[
-                    "aci_epg_object"
-                ].queryset = aci_epg_model.objects.all()
+                self.fields["aci_epg_object"].queryset = aci_epg_model.objects.all()
                 self.fields["aci_epg_object"].widget.attrs["selector"] = (
                     aci_epg_model._meta.label_lower
                 )
@@ -593,8 +581,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
             if (
                 self.instance
                 and self.instance.pk
-                and aci_epg_object_type_id
-                != self.instance.aci_epg_object_type_id
+                and aci_epg_object_type_id != self.instance.aci_epg_object_type_id
             ):
                 self.initial["aci_epg_object"] = None
 
@@ -646,9 +633,7 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
         label=_("ACI Application Profile of Endpoint Group"),
     )
     aci_epg_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(
-            ESG_ENDPOINT_GROUP_SELECTORS_MODELS
-        ),
+        queryset=ContentType.objects.filter(ESG_ENDPOINT_GROUP_SELECTORS_MODELS),
         required=False,
         widget=HTMXSelect(method="post", attrs={"hx-select": "#form_fields"}),
         label=_("ACI EPG Object Type"),
@@ -706,21 +691,15 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
         """Initialize the ACI ESG Endpoint Group Selector bulk edit form."""
         super().__init__(*args, **kwargs)
 
-        if aci_epg_object_type_id := get_field_value(
-            self, "aci_epg_object_type"
-        ):
+        if aci_epg_object_type_id := get_field_value(self, "aci_epg_object_type"):
             try:
                 # Retrieve the ContentType model class based on the
                 # Endpoint Group object type
-                aci_epg_object_type = ContentType.objects.get(
-                    pk=aci_epg_object_type_id
-                )
+                aci_epg_object_type = ContentType.objects.get(pk=aci_epg_object_type_id)
                 aci_epg_model = aci_epg_object_type.model_class()
 
                 # Configure the queryset and label for the aci_epg_object field
-                self.fields[
-                    "aci_epg_object"
-                ].queryset = aci_epg_model.objects.all()
+                self.fields["aci_epg_object"].queryset = aci_epg_model.objects.all()
                 self.fields["aci_epg_object"].widget.attrs["selector"] = (
                     aci_epg_model._meta.label_lower
                 )
@@ -849,9 +828,7 @@ class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
         to_field_name="name",
         required=True,
         label=_("ACI Application Profile"),
-        help_text=_(
-            "Parent ACI Application Profile of ACI Endpoint Security Group"
-        ),
+        help_text=_("Parent ACI Application Profile of ACI Endpoint Security Group"),
     )
     aci_endpoint_security_group = CSVModelChoiceField(
         queryset=ACIEndpointSecurityGroup.objects.all(),
@@ -865,9 +842,7 @@ class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
         label=_("ACI Endpoint Group Object ID"),
     )
     aci_epg_object_type = CSVContentTypeField(
-        queryset=ContentType.objects.filter(
-            ESG_ENDPOINT_GROUP_SELECTORS_MODELS
-        ),
+        queryset=ContentType.objects.filter(ESG_ENDPOINT_GROUP_SELECTORS_MODELS),
         required=True,
         label=_("ACI Endpoint Group Object Type (app & model)"),
     )
@@ -939,9 +914,7 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
     aci_app_profile = DynamicModelChoiceField(
         queryset=ACIAppProfile.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant"},
-        initial_params={
-            "aci_endpoint_security_groups": "$aci_endpoint_security_group"
-        },
+        initial_params={"aci_endpoint_security_groups": "$aci_endpoint_security_group"},
         required=False,
         label=_("ACI Application Profile"),
     )

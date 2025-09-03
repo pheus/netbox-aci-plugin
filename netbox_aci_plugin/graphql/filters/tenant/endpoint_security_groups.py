@@ -46,9 +46,7 @@ class ACIEndpointSecurityGroupFilter(ACIBaseFilterMixin):
         | None
     ) = strawberry_django.filter_field()
     aci_vrf_id: ID | None = strawberry_django.filter_field()
-    admin_shutdown: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    admin_shutdown: FilterLookup[bool] | None = strawberry_django.filter_field()
     intra_esg_isolation_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
@@ -68,9 +66,7 @@ class ACIEsgSelectorBaseFilterMixin(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
-    aci_endpoint_security_group_id: ID | None = (
-        strawberry_django.filter_field()
-    )
+    aci_endpoint_security_group_id: ID | None = strawberry_django.filter_field()
 
 
 @strawberry_django.filter(models.ACIEsgEndpointGroupSelector, lookups=True)
@@ -78,8 +74,7 @@ class ACIEsgEndpointGroupSelectorFilter(ACIEsgSelectorBaseFilterMixin):
     """GraphQL filter definition for the ACIEsgEndpointGroupSelector model."""
 
     aci_epg_object_type: (
-        Annotated["ContentTypeFilter", strawberry.lazy("core.graphql.filters")]
-        | None
+        Annotated["ContentTypeFilter", strawberry.lazy("core.graphql.filters")] | None
     ) = strawberry_django.filter_field()
     aci_epg_object_id: ID | None = strawberry_django.filter_field()
 
@@ -89,7 +84,6 @@ class ACIEsgEndpointSelectorFilter(ACIEsgSelectorBaseFilterMixin):
     """GraphQL filter definition for the ACIEsgEndpointSelector model."""
 
     ep_object_type: (
-        Annotated["ContentTypeFilter", strawberry.lazy("core.graphql.filters")]
-        | None
+        Annotated["ContentTypeFilter", strawberry.lazy("core.graphql.filters")] | None
     ) = strawberry_django.filter_field()
     ep_object_id: ID | None = strawberry_django.filter_field()

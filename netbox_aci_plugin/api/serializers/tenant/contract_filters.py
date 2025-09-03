@@ -55,12 +55,9 @@ class ACIContractFilterEntrySerializer(NetBoxModelSerializer):
     """Serializer for the ACI Contract Filter Entry model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_aci_plugin-api:"
-        "acicontractfilterentry-detail"
+        view_name="plugins-api:netbox_aci_plugin-api:acicontractfilterentry-detail"
     )
-    aci_contract_filter = ACIContractFilterSerializer(
-        nested=True, required=True
-    )
+    aci_contract_filter = ACIContractFilterSerializer(nested=True, required=True)
 
     class Meta:
         model = ACIContractFilterEntry

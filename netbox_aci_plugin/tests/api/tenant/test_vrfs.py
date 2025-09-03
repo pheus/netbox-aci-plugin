@@ -38,12 +38,8 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         nb_tenant2 = Tenant.objects.create(
             name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
         )
-        nb_vrf1 = VRF.objects.create(
-            name="NetBox-VRF-API-1", tenant=nb_tenant1
-        )
-        nb_vrf2 = VRF.objects.create(
-            name="NetBox-VRF-API-2", tenant=nb_tenant2
-        )
+        nb_vrf1 = VRF.objects.create(name="NetBox-VRF-API-1", tenant=nb_tenant1)
+        nb_vrf2 = VRF.objects.create(name="NetBox-VRF-API-2", tenant=nb_tenant2)
         aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
         aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
 

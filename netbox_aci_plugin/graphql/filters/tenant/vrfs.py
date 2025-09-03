@@ -38,13 +38,11 @@ class ACIVRFFilter(ACIBaseFilterMixin):
         | None
     ) = strawberry_django.filter_field()
     aci_tenant_id: ID | None = strawberry_django.filter_field()
-    nb_vrf: (
-        Annotated["VRFFilter", strawberry.lazy("ipam.graphql.filters")] | None
-    ) = strawberry_django.filter_field()
-    nb_vrf_id: ID | None = strawberry_django.filter_field()
-    bd_enforcement_enabled: FilterLookup[bool] | None = (
+    nb_vrf: Annotated["VRFFilter", strawberry.lazy("ipam.graphql.filters")] | None = (
         strawberry_django.filter_field()
     )
+    nb_vrf_id: ID | None = strawberry_django.filter_field()
+    bd_enforcement_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     dns_labels: (
         Annotated[
             "StringArrayLookup",
@@ -69,12 +67,8 @@ class ACIVRFFilter(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
-    pim_ipv4_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
-    pim_ipv6_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    pim_ipv4_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
+    pim_ipv6_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     preferred_group_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )

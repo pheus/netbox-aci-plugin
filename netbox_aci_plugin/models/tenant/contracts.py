@@ -213,9 +213,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                 name="%(app_label)s_%(class)s_unique_per_aci_contract_role",
             ),
         ]
-        indexes: tuple = (
-            models.Index(fields=("aci_object_type", "aci_object_id")),
-        )
+        indexes: tuple = (models.Index(fields=("aci_object_type", "aci_object_id")),)
         ordering: tuple = (
             "aci_contract",
             "_aci_endpoint_group",
@@ -246,9 +244,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
         # Validate ACI object assignment before validation of any other fields
-        if self.aci_object_type and not (
-            self.aci_object or self.aci_object_id
-        ):
+        if self.aci_object_type and not (self.aci_object or self.aci_object_id):
             aci_model_class = self.aci_object_type.model_class()
             raise ValidationError(
                 {
@@ -289,9 +285,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
     def _validate_aci_object_conflict(self) -> None:
         """Validate that this does not conflict with an existing ACI Object."""
         endpoint_group_ct = ContentType.objects.get_for_model(ACIEndpointGroup)
-        useg_endpoint_group_ct = ContentType.objects.get_for_model(
-            ACIUSegEndpointGroup
-        )
+        useg_endpoint_group_ct = ContentType.objects.get_for_model(ACIUSegEndpointGroup)
         endpoint_security_group_ct = ContentType.objects.get_for_model(
             ACIEndpointSecurityGroup
         )
@@ -351,9 +345,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                 "netbox_aci_plugin", "ACIUSegEndpointGroup"
             ):
                 self._aci_useg_endpoint_group = self.aci_object
-            elif aci_object_type == apps.get_model(
-                "netbox_aci_plugin", "ACIVRF"
-            ):
+            elif aci_object_type == apps.get_model("netbox_aci_plugin", "ACIVRF"):
                 self._aci_vrf = self.aci_object
 
     cache_related_objects.alters_data = True
@@ -541,15 +533,11 @@ class ACIContractSubject(ACIBaseModel):
 
     def get_qos_class_cons_to_prov_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
-        return QualityOfServiceClassChoices.colors.get(
-            self.qos_class_cons_to_prov
-        )
+        return QualityOfServiceClassChoices.colors.get(self.qos_class_cons_to_prov)
 
     def get_qos_class_prov_to_cons_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
-        return QualityOfServiceClassChoices.colors.get(
-            self.qos_class_prov_to_cons
-        )
+        return QualityOfServiceClassChoices.colors.get(self.qos_class_prov_to_cons)
 
 
 class ACIContractSubjectFilter(NetBoxModel):
@@ -592,9 +580,7 @@ class ACIContractSubjectFilter(NetBoxModel):
     log_enabled = models.BooleanField(
         verbose_name=_("logging enabled"),
         default=False,
-        help_text=_(
-            "Enables logging for the matched traffic. Default is disabled."
-        ),
+        help_text=_("Enables logging for the matched traffic. Default is disabled."),
     )
     policy_compression_enabled = models.BooleanField(
         verbose_name=_("policy compression enabled"),
@@ -646,9 +632,7 @@ class ACIContractSubjectFilter(NetBoxModel):
 
     def __str__(self) -> str:
         """Return string representation of the instance."""
-        return (
-            f"{self.aci_contract_subject.name}-{self.aci_contract_filter.name}"
-        )
+        return f"{self.aci_contract_subject.name}-{self.aci_contract_filter.name}"
 
     @property
     def aci_contract(self) -> ACIContract:

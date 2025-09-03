@@ -83,8 +83,7 @@ class ACIContractRelationFilter(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
     aci_contract_id: ID | None = strawberry_django.filter_field()
     aci_object_type: (
-        Annotated["ContentTypeFilter", strawberry.lazy("core.graphql.filters")]
-        | None
+        Annotated["ContentTypeFilter", strawberry.lazy("core.graphql.filters")] | None
     ) = strawberry_django.filter_field()
     aci_object_id: ID | None = strawberry_django.filter_field()
     role: (
@@ -135,9 +134,7 @@ class ACIContractSubjectFilter(ACIBaseFilterMixin):
     reverse_filter_ports_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    service_graph_name: FilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
+    service_graph_name: FilterLookup[str] | None = strawberry_django.filter_field()
     service_graph_name_cons_to_prov: FilterLookup[str] | None = (
         strawberry_django.filter_field()
     )

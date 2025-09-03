@@ -194,9 +194,7 @@ class Migration(migrations.Migration):
                 ("comments", models.TextField(blank=True)),
                 (
                     "type",
-                    models.CharField(
-                        default="mac", editable=False, max_length=3
-                    ),
+                    models.CharField(default="mac", editable=False, max_length=3),
                 ),
                 (
                     "attr_object_id",
@@ -366,9 +364,7 @@ class Migration(migrations.Migration):
                             ("app_label", "ipam"),
                             ("model__in", ("prefix", "ipaddress")),
                         ),
-                        models.Q(
-                            ("app_label", "dcim"), ("model", "macaddress")
-                        ),
+                        models.Q(("app_label", "dcim"), ("model", "macaddress")),
                         _connector="OR",
                     )
                 ),

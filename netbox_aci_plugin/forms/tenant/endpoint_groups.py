@@ -136,9 +136,7 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
     proxy_arp_enabled = forms.BooleanField(
         required=False,
         label=_("Proxy ARP enabled"),
-        help_text=_(
-            "Whether proxy ARP is enabled for the EPG. Default is disabled."
-        ),
+        help_text=_("Whether proxy ARP is enabled for the EPG. Default is disabled."),
     )
     comments = CommentField()
 
@@ -209,13 +207,10 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
         if aci_app_profile and aci_bridge_domain:
             # Check if the ACI Tenant IDs mismatch
             aci_tenant_mismatch = (
-                aci_app_profile.aci_tenant.id
-                != aci_bridge_domain.aci_tenant.id
+                aci_app_profile.aci_tenant.id != aci_bridge_domain.aci_tenant.id
             )
             # Check if the ACI Bridge Domain Tenant name is not 'common'
-            not_aci_tenant_common = (
-                aci_bridge_domain.aci_tenant.name != "common"
-            )
+            not_aci_tenant_common = aci_bridge_domain.aci_tenant.name != "common"
             # Raise the validation error if both conditions are met
             if aci_tenant_mismatch and not_aci_tenant_common:
                 self.add_error(
@@ -563,9 +558,7 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
 
         # Limit ACIBridgeDomain queryset by "common" ACITenant
         if data.get("is_aci_bd_in_common") == "true":
-            aci_bd_queryset = ACIBridgeDomain.objects.filter(
-                aci_tenant__name="common"
-            )
+            aci_bd_queryset = ACIBridgeDomain.objects.filter(aci_tenant__name="common")
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset
         # Limit ACIBridgeDomain queryset by ACITenant
         elif data.get("aci_tenant") and data.get("aci_bridge_domain"):
@@ -730,13 +723,10 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
         if aci_app_profile and aci_bridge_domain:
             # Check if the ACI Tenant IDs mismatch
             aci_tenant_mismatch = (
-                aci_app_profile.aci_tenant.id
-                != aci_bridge_domain.aci_tenant.id
+                aci_app_profile.aci_tenant.id != aci_bridge_domain.aci_tenant.id
             )
             # Check if the ACI Bridge Domain Tenant name is not 'common'
-            not_aci_tenant_common = (
-                aci_bridge_domain.aci_tenant.name != "common"
-            )
+            not_aci_tenant_common = aci_bridge_domain.aci_tenant.name != "common"
             # Raise the validation error if both conditions are met
             if aci_tenant_mismatch and not_aci_tenant_common:
                 self.add_error(
@@ -1067,9 +1057,7 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
 
         # Limit ACIBridgeDomain queryset by "common" ACITenant
         if data.get("is_aci_bd_in_common") == "true":
-            aci_bd_queryset = ACIBridgeDomain.objects.filter(
-                aci_tenant__name="common"
-            )
+            aci_bd_queryset = ACIBridgeDomain.objects.filter(aci_tenant__name="common")
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset
         # Limit ACIBridgeDomain queryset by ACITenant
         elif data.get("aci_tenant") and data.get("aci_bridge_domain"):
@@ -1091,9 +1079,7 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
         initial_params={
-            "aci_app_profiles__aci_useg_endpoint_groups": (
-                "$aci_useg_endpoint_group"
-            )
+            "aci_app_profiles__aci_useg_endpoint_groups": ("$aci_useg_endpoint_group")
         },
         required=False,
         label=_("ACI Tenant"),
@@ -1101,9 +1087,7 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
     aci_app_profile = DynamicModelChoiceField(
         queryset=ACIAppProfile.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant"},
-        initial_params={
-            "aci_useg_endpoint_groups": "$aci_useg_endpoint_group"
-        },
+        initial_params={"aci_useg_endpoint_groups": "$aci_useg_endpoint_group"},
         required=False,
         label=_("ACI Application Profile"),
     )
@@ -1141,8 +1125,7 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
         required=False,
         label=_("Use EPG subnet"),
         help_text=_(
-            "Whether the EPG subnet is applied as uSeg attribute. "
-            "Default is disabled."
+            "Whether the EPG subnet is applied as uSeg attribute. Default is disabled."
         ),
     )
     comments = CommentField()
@@ -1206,9 +1189,7 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
             try:
                 # Retrieve the ContentType model class based on the Attribute
                 # object type
-                attr_object_type = ContentType.objects.get(
-                    pk=attr_object_type_id
-                )
+                attr_object_type = ContentType.objects.get(pk=attr_object_type_id)
                 attr_model = attr_object_type.model_class()
 
                 # Configure the queryset and label for the attr_object field
@@ -1339,9 +1320,7 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
             try:
                 # Retrieve the ContentType model class based on the Attribute
                 # object type
-                attr_object_type = ContentType.objects.get(
-                    pk=attr_object_type_id
-                )
+                attr_object_type = ContentType.objects.get(pk=attr_object_type_id)
                 attr_model = attr_object_type.model_class()
 
                 # Configure the queryset and label for the attr_object field
@@ -1551,10 +1530,8 @@ class ACIUSegNetworkAttributeImportForm(NetBoxModelImportForm):
             )
             self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
             # Limit ACIUSegEndpointGroup queryset by parent ACIAppProfile
-            aci_useg_endpoint_group_queryset = (
-                ACIUSegEndpointGroup.objects.filter(
-                    aci_app_profile__name=data["aci_app_profile"]
-                )
+            aci_useg_endpoint_group_queryset = ACIUSegEndpointGroup.objects.filter(
+                aci_app_profile__name=data["aci_app_profile"]
             )
             self.fields[
                 "aci_useg_endpoint_group"

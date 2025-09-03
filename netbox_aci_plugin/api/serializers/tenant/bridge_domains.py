@@ -86,9 +86,7 @@ class ACIBridgeDomainSubnetSerializer(NetBoxModelSerializer):
     """Serializer for the ACI Bridge Domain Subnet model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name=(
-            "plugins-api:netbox_aci_plugin-api:acibridgedomainsubnet-detail"
-        )
+        view_name=("plugins-api:netbox_aci_plugin-api:acibridgedomainsubnet-detail")
     )
     aci_bridge_domain = ACIBridgeDomainSerializer(nested=True, required=True)
     gateway_ip_address = IPAddressSerializer(nested=True, required=True)

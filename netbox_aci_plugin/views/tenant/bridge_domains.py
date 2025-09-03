@@ -51,9 +51,7 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIBridgeDomain."""
-        return ACIBridgeDomain.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
+        return ACIBridgeDomain.objects.restrict(request.user, "view").prefetch_related(
             "aci_tenant",
             "aci_vrf",
             "nb_tenant",
@@ -165,11 +163,7 @@ class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_bridge_domain=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_bridge_domain=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return table with ACIBridgeDomain colum hidden."""
@@ -190,11 +184,7 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_bridge_domain=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_bridge_domain=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return table with ACIBridgeDomain colum hidden."""
@@ -206,9 +196,7 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
         return table
 
 
-@register_model_view(
-    ACIBridgeDomain, "bulk_import", path="import", detail=False
-)
+@register_model_view(ACIBridgeDomain, "bulk_import", path="import", detail=False)
 class ACIBridgeDomainBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI Bridge Domain."""
 
@@ -226,9 +214,7 @@ class ACIBridgeDomainBulkEditView(generic.BulkEditView):
     form = ACIBridgeDomainBulkEditForm
 
 
-@register_model_view(
-    ACIBridgeDomain, "bulk_delete", path="delete", detail=False
-)
+@register_model_view(ACIBridgeDomain, "bulk_delete", path="delete", detail=False)
 class ACIBridgeDomainBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI Bridge Domain."""
 
@@ -295,9 +281,7 @@ class ACIBridgeDomainSubnetDeleteView(generic.ObjectDeleteView):
     )
 
 
-@register_model_view(
-    ACIBridgeDomainSubnet, "bulk_import", path="import", detail=False
-)
+@register_model_view(ACIBridgeDomainSubnet, "bulk_import", path="import", detail=False)
 class ACIBridgeDomainSubnetBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI BD Subnet."""
 
@@ -305,9 +289,7 @@ class ACIBridgeDomainSubnetBulkImportView(generic.BulkImportView):
     model_form = ACIBridgeDomainSubnetImportForm
 
 
-@register_model_view(
-    ACIBridgeDomainSubnet, "bulk_edit", path="edit", detail=False
-)
+@register_model_view(ACIBridgeDomainSubnet, "bulk_edit", path="edit", detail=False)
 class ACIBridgeDomainSubnetBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI BD Subnet."""
 
@@ -317,9 +299,7 @@ class ACIBridgeDomainSubnetBulkEditView(generic.BulkEditView):
     form = ACIBridgeDomainSubnetBulkEditForm
 
 
-@register_model_view(
-    ACIBridgeDomainSubnet, "bulk_delete", path="delete", detail=False
-)
+@register_model_view(ACIBridgeDomainSubnet, "bulk_delete", path="delete", detail=False)
 class ACIBridgeDomainSubnetBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI BD Subnet."""
 

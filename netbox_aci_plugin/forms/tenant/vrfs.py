@@ -72,8 +72,7 @@ class ACIVRFEditForm(NetBoxModelForm):
         required=False,
         label=_("IP data plane learning enabled"),
         help_text=_(
-            "Whether IP data plane learning is enabled for VRF. "
-            "Default is enabled."
+            "Whether IP data plane learning is enabled for VRF. Default is enabled."
         ),
     )
     pc_enforcement_direction = forms.ChoiceField(
@@ -81,8 +80,7 @@ class ACIVRFEditForm(NetBoxModelForm):
         required=False,
         label=_("Enforcement direction"),
         help_text=_(
-            "Controls policy enforcement direction for VRF. "
-            "Default is 'ingress'."
+            "Controls policy enforcement direction for VRF. Default is 'ingress'."
         ),
     )
     pc_enforcement_preference = forms.ChoiceField(
@@ -90,23 +88,18 @@ class ACIVRFEditForm(NetBoxModelForm):
         required=False,
         label=_("Enforcement preference"),
         help_text=_(
-            "Controls policy enforcement preference for VRF. "
-            "Default is 'enforced'."
+            "Controls policy enforcement preference for VRF. Default is 'enforced'."
         ),
     )
     pim_ipv4_enabled = forms.BooleanField(
         required=False,
         label=_("PIM (multicast) IPv4 enabled"),
-        help_text=_(
-            "Multicast routing enabled for the VRF. Default is disabled."
-        ),
+        help_text=_("Multicast routing enabled for the VRF. Default is disabled."),
     )
     pim_ipv6_enabled = forms.BooleanField(
         required=False,
         label=_("PIM (multicast) IPv6 enabled"),
-        help_text=_(
-            "Multicast routing enabled for the VRF. Default is disabled."
-        ),
+        help_text=_("Multicast routing enabled for the VRF. Default is disabled."),
     )
     preferred_group_enabled = forms.BooleanField(
         required=False,

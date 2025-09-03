@@ -155,12 +155,8 @@ class ACIEsgSelectorBaseModel(ACIBaseModel):
         verbose_name=_("ACI Endpoint Security Group"),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
-        "aci_endpoint_security_group",
-    )
-    prerequisite_models: tuple = (
-        "netbox_aci_plugin.ACIEndpointSecurityGroup",
-    )
+    clone_fields: tuple = ACIBaseModel.clone_fields + ("aci_endpoint_security_group",)
+    prerequisite_models: tuple = ("netbox_aci_plugin.ACIEndpointSecurityGroup",)
 
     class Meta:
         abstract: bool = True
@@ -253,8 +249,7 @@ class ACIEsgEndpointGroupSelector(
                     "aci_endpoint_security_group",
                 ),
                 name=(
-                    "%(app_label)s_%(class)s_unique_name_"
-                    "per_endpoint_security_group"
+                    "%(app_label)s_%(class)s_unique_name_per_endpoint_security_group"
                 ),
             ),
             models.UniqueConstraint(
@@ -326,8 +321,7 @@ class ACIEsgEndpointGroupSelector(
         # ACIVRF as the ACIEndpointSecurityGroup
         if (
             hasattr(self.aci_epg_object, "aci_vrf")
-            and self.aci_endpoint_security_group.aci_vrf
-            != self.aci_epg_object.aci_vrf
+            and self.aci_endpoint_security_group.aci_vrf != self.aci_epg_object.aci_vrf
         ):
             aci_model_class = self.aci_epg_object_type.model_class()
             raise ValidationError(
@@ -384,9 +378,7 @@ class ACIEsgEndpointGroupSelector(
 #
 
 
-class ACIEsgEndpointSelector(
-    ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMixin
-):
+class ACIEsgEndpointSelector(ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMixin):
     """NetBox model for ACI Endpoint Security Group (ESG) Endpoint Selector."""
 
     ep_object_type = models.ForeignKey(
@@ -426,9 +418,7 @@ class ACIEsgEndpointSelector(
         null=True,
     )
 
-    clone_fields: tuple = ACIEsgSelectorBaseModel.clone_fields + (
-        "ep_object_type",
-    )
+    clone_fields: tuple = ACIEsgSelectorBaseModel.clone_fields + ("ep_object_type",)
 
     # Unique GenericForeignKey validation
     generic_fk_field = "ep_object"
@@ -442,8 +432,7 @@ class ACIEsgEndpointSelector(
                     "aci_endpoint_security_group",
                 ),
                 name=(
-                    "%(app_label)s_%(class)s_unique_name_"
-                    "per_endpoint_security_group"
+                    "%(app_label)s_%(class)s_unique_name_per_endpoint_security_group"
                 ),
             ),
             models.UniqueConstraint(
@@ -459,9 +448,7 @@ class ACIEsgEndpointSelector(
             ),
         ]
         default_related_name: str = "aci_esg_endpoint_selectors"
-        indexes: tuple = (
-            models.Index(fields=("ep_object_type", "ep_object_id")),
-        )
+        indexes: tuple = (models.Index(fields=("ep_object_type", "ep_object_id")),)
         ordering: tuple = (
             "name",
             "aci_endpoint_security_group",

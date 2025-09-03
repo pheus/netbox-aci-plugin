@@ -126,10 +126,7 @@ class ACIContractRelationTable(NetBoxTable):
     def render_aci_object(self, record) -> str | None:
         """Render the ACI object name."""
         if isinstance(record.aci_object.parent_object, ACIAppProfile):
-            return (
-                f"{record.aci_object.aci_app_profile} "
-                f"| {record.aci_object.name}"
-            )
+            return f"{record.aci_object.aci_app_profile} | {record.aci_object.name}"
         return record.aci_object.name
 
 

@@ -48,9 +48,7 @@ class ACITenantTestCase(TestCase):
 
     def test_aci_tenant_description(self) -> None:
         """Test description of ACI Tenant."""
-        self.assertEqual(
-            self.aci_tenant.description, self.aci_tenant_description
-        )
+        self.assertEqual(self.aci_tenant.description, self.aci_tenant_description)
 
     def test_aci_tenant_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant associated with ACI Tenant."""
@@ -91,9 +89,7 @@ class ACITenantTestCase(TestCase):
 
     def test_invalid_aci_tenant_description(self) -> None:
         """Test validation of ACI Tenant description."""
-        tenant = ACITenant(
-            name="ACITestTenant1", description="Invalid Description: ö"
-        )
+        tenant = ACITenant(name="ACITestTenant1", description="Invalid Description: ö")
         with self.assertRaises(ValidationError):
             tenant.full_clean()
 

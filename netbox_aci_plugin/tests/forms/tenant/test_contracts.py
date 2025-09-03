@@ -14,8 +14,7 @@ class ACIContractFormTestCase(TestCase):
     """Test case for ACIContract form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -30,12 +29,8 @@ class ACIContractFormTestCase(TestCase):
                 "description": "Invalid Description: ö",
             }
         )
-        self.assertEqual(
-            aci_contract.errors["name"], [self.name_error_message]
-        )
-        self.assertEqual(
-            aci_contract.errors["name_alias"], [self.name_error_message]
-        )
+        self.assertEqual(aci_contract.errors["name"], [self.name_error_message])
+        self.assertEqual(aci_contract.errors["name_alias"], [self.name_error_message])
         self.assertEqual(
             aci_contract.errors["description"],
             [self.description_error_message],
@@ -59,8 +54,7 @@ class ACIContractSubjectFormTestCase(TestCase):
     """Test case for ACIContractSubject form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -75,9 +69,7 @@ class ACIContractSubjectFormTestCase(TestCase):
                 "description": "Invalid Description: ö",
             }
         )
-        self.assertEqual(
-            aci_contract_subject.errors["name"], [self.name_error_message]
-        )
+        self.assertEqual(aci_contract_subject.errors["name"], [self.name_error_message])
         self.assertEqual(
             aci_contract_subject.errors["name_alias"],
             [self.name_error_message],

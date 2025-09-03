@@ -51,15 +51,9 @@ class ACIEndpointGroupBaseFilterMixin(ACIBaseFilterMixin):
         | None
     ) = strawberry_django.filter_field()
     aci_bridge_domain_id: ID | None = strawberry_django.filter_field()
-    admin_shutdown: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
-    custom_qos_policy_name: FilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    flood_in_encap_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    admin_shutdown: FilterLookup[bool] | None = strawberry_django.filter_field()
+    custom_qos_policy_name: FilterLookup[str] | None = strawberry_django.filter_field()
+    flood_in_encap_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     intra_epg_isolation_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
@@ -79,9 +73,7 @@ class ACIEndpointGroupBaseFilterMixin(ACIBaseFilterMixin):
 class ACIEndpointGroupFilter(ACIEndpointGroupBaseFilterMixin):
     """GraphQL filter definition for the ACIEndpointGroup model."""
 
-    proxy_arp_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    proxy_arp_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
 
 
 @strawberry_django.filter(models.ACIUSegEndpointGroup, lookups=True)
@@ -123,10 +115,7 @@ class ACIUSegNetworkAttributeFilter(ACIUSegAttributeBaseFilterMixin):
     """GraphQL filter definition for the ACIUSegNetworkAttribute model."""
 
     attr_object_type: (
-        Annotated["ContentTypeFilter", strawberry.lazy("core.graphql.filters")]
-        | None
+        Annotated["ContentTypeFilter", strawberry.lazy("core.graphql.filters")] | None
     ) = strawberry_django.filter_field()
     attr_object_id: ID | None = strawberry_django.filter_field()
-    use_epg_subnet: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    use_epg_subnet: FilterLookup[bool] | None = strawberry_django.filter_field()

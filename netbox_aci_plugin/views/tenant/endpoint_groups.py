@@ -58,9 +58,7 @@ class ACIEndpointGroupChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIEndpointGroup."""
-        return ACIEndpointGroup.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
+        return ACIEndpointGroup.objects.restrict(request.user, "view").prefetch_related(
             "aci_app_profile",
             "aci_bridge_domain",
             "nb_tenant",
@@ -177,23 +175,17 @@ class ACIEndpointGroupDeleteView(generic.ObjectDeleteView):
     )
 
 
-@register_model_view(
-    ACIEndpointGroup, "contractrelations", path="contract-relations"
-)
+@register_model_view(ACIEndpointGroup, "contractrelations", path="contract-relations")
 class ACIEndpointGroupContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI Endpoint Group."""
 
     queryset = ACIEndpointGroup.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciendpointgroup/contractrelations.html"
-    )
+    template_name = "netbox_aci_plugin/inc/aciendpointgroup/contractrelations.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
         return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_endpoint_group=parent.pk)
+            super().get_children(request, parent).filter(aci_endpoint_group=parent.pk)
         )
 
     def get_extra_context(self, request, instance) -> dict:
@@ -220,9 +212,7 @@ class ACIEndpointGroupContractRelationView(ACIContractRelationChildrenView):
         return table
 
 
-@register_model_view(
-    ACIEndpointGroup, "bulk_import", path="import", detail=False
-)
+@register_model_view(ACIEndpointGroup, "bulk_import", path="import", detail=False)
 class ACIEndpointGroupBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACIEndpointGroup."""
 
@@ -240,9 +230,7 @@ class ACIEndpointGroupBulkEditView(generic.BulkEditView):
     form = ACIEndpointGroupBulkEditForm
 
 
-@register_model_view(
-    ACIEndpointGroup, "bulk_delete", path="delete", detail=False
-)
+@register_model_view(ACIEndpointGroup, "bulk_delete", path="delete", detail=False)
 class ACIEndpointGroupBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ACI Endpoint Group."""
 
@@ -312,15 +300,11 @@ class ACIUSegEndpointGroupDeleteView(generic.ObjectDeleteView):
 @register_model_view(
     ACIUSegEndpointGroup, "contractrelations", path="contract-relations"
 )
-class ACIUSegEndpointGroupContractRelationView(
-    ACIContractRelationChildrenView
-):
+class ACIUSegEndpointGroupContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI uSeg Endpoint Group."""
 
     queryset = ACIUSegEndpointGroup.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciusegendpointgroup/contractrelations.html"
-    )
+    template_name = "netbox_aci_plugin/inc/aciusegendpointgroup/contractrelations.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -332,8 +316,8 @@ class ACIUSegEndpointGroupContractRelationView(
 
     def get_extra_context(self, request, instance) -> dict:
         """Return ContentType as extra context."""
-        aci_useg_endpoint_group_content_type = (
-            ContentType.objects.get_for_model(ACIUSegEndpointGroup)
+        aci_useg_endpoint_group_content_type = ContentType.objects.get_for_model(
+            ACIUSegEndpointGroup
         )
 
         return {
@@ -357,15 +341,11 @@ class ACIUSegEndpointGroupContractRelationView(
 @register_model_view(
     ACIUSegEndpointGroup, "usegnetworkattributes", path="network-attributes"
 )
-class ACIUSegEndpointGroupUSegNetworkAttributeView(
-    ACIUSegNetworkAttributeChildrenView
-):
+class ACIUSegEndpointGroupUSegNetworkAttributeView(ACIUSegNetworkAttributeChildrenView):
     """Children view of ACI uSeg Network Attribute of uSeg Endpoint Group."""
 
     queryset = ACIUSegEndpointGroup.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciusegendpointgroup/networkattributes.html"
-    )
+    template_name = "netbox_aci_plugin/inc/aciusegendpointgroup/networkattributes.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -387,9 +367,7 @@ class ACIUSegEndpointGroupUSegNetworkAttributeView(
         return table
 
 
-@register_model_view(
-    ACIUSegEndpointGroup, "bulk_import", path="import", detail=False
-)
+@register_model_view(ACIUSegEndpointGroup, "bulk_import", path="import", detail=False)
 class ACIUSegEndpointGroupBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of uSegEndpointGroup."""
 
@@ -397,9 +375,7 @@ class ACIUSegEndpointGroupBulkImportView(generic.BulkImportView):
     model_form = ACIUSegEndpointGroupImportForm
 
 
-@register_model_view(
-    ACIUSegEndpointGroup, "bulk_edit", path="edit", detail=False
-)
+@register_model_view(ACIUSegEndpointGroup, "bulk_edit", path="edit", detail=False)
 class ACIUSegEndpointGroupBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of uSegEndpointGroup."""
 
@@ -409,9 +385,7 @@ class ACIUSegEndpointGroupBulkEditView(generic.BulkEditView):
     form = ACIUSegEndpointGroupBulkEditForm
 
 
-@register_model_view(
-    ACIUSegEndpointGroup, "bulk_delete", path="delete", detail=False
-)
+@register_model_view(ACIUSegEndpointGroup, "bulk_delete", path="delete", detail=False)
 class ACIUSegEndpointGroupBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of uSegEndpointGroup."""
 
@@ -488,9 +462,7 @@ class ACIUSegNetworkAttributeBulkImportView(generic.BulkImportView):
     model_form = ACIUSegNetworkAttributeImportForm
 
 
-@register_model_view(
-    ACIUSegNetworkAttribute, "bulk_edit", path="edit", detail=False
-)
+@register_model_view(ACIUSegNetworkAttribute, "bulk_edit", path="edit", detail=False)
 class ACIUSegNetworkAttributeBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of Network Attribute."""
 

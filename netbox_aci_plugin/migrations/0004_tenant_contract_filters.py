@@ -13,29 +13,19 @@ from netbox_aci_plugin import ACIConfig
 
 def create_default_aci_contract_filters(apps, schema_editor) -> None:
     """Creates default ACI Contract Filters if they do not already exist."""
-    if get_plugin_config(
-        ACIConfig.name, "create_default_aci_contract_filters", True
-    ):
+    if get_plugin_config(ACIConfig.name, "create_default_aci_contract_filters", True):
         db_alias = schema_editor.connection.alias
         # The model cannot be imported directly as it may be a newer
         # version than this migration expects.
         aci_tenant = apps.get_model(ACIConfig.name, "ACITenant")
-        aci_contract_filter = apps.get_model(
-            ACIConfig.name, "ACIContractFilter"
-        )
+        aci_contract_filter = apps.get_model(ACIConfig.name, "ACIContractFilter")
         aci_contract_filter_entry = apps.get_model(
             ACIConfig.name, "ACIContractFilterEntry"
         )
         # Ensure ACI Tenant "common" exists
-        if (
-            not aci_tenant.objects.using(db_alias)
-            .filter(name="common")
-            .exists()
-        ):
+        if not aci_tenant.objects.using(db_alias).filter(name="common").exists():
             aci_tenant.objects.using(db_alias).create(name="common")
-        aci_common_tenant = aci_tenant.objects.using(db_alias).get(
-            name="common"
-        )
+        aci_common_tenant = aci_tenant.objects.using(db_alias).get(name="common")
 
         # Define default contract filters and their entries
         default_aci_filters = [

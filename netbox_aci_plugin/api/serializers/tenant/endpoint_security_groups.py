@@ -27,8 +27,7 @@ class ACIEndpointSecurityGroupSerializer(NetBoxModelSerializer):
     """Serializer for the ACI Endpoint Security Group model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_aci_plugin-api:"
-        "aciendpointsecuritygroup-detail"
+        view_name="plugins-api:netbox_aci_plugin-api:aciendpointsecuritygroup-detail"
     )
     aci_app_profile = ACIAppProfileSerializer(nested=True, required=True)
     aci_vrf = ACIVRFSerializer(nested=True, required=True)
@@ -72,16 +71,13 @@ class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
     """Serializer for the ACI ESG Endpoint Group (EPG) Selector model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_aci_plugin-api:"
-        "aciesgendpointgroupselector-detail"
+        view_name="plugins-api:netbox_aci_plugin-api:aciesgendpointgroupselector-detail"
     )
     aci_endpoint_security_group = ACIEndpointSecurityGroupSerializer(
         nested=True, required=True
     )
     aci_epg_object_type = ContentTypeField(
-        queryset=ContentType.objects.filter(
-            ESG_ENDPOINT_GROUP_SELECTORS_MODELS
-        ),
+        queryset=ContentType.objects.filter(ESG_ENDPOINT_GROUP_SELECTORS_MODELS),
         required=False,
         default=None,
         allow_null=True,
@@ -135,17 +131,14 @@ class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
             return None
         serializer = get_serializer_for_model(obj.aci_epg_object)
         context = {"request": self.context["request"]}
-        return serializer(
-            obj.aci_epg_object, nested=True, context=context
-        ).data
+        return serializer(obj.aci_epg_object, nested=True, context=context).data
 
 
 class ACIEsgEndpointSelectorSerializer(NetBoxModelSerializer):
     """Serializer for the ACI ESG Endpoint Selector model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_aci_plugin-api:"
-        "aciesgendpointselector-detail"
+        view_name="plugins-api:netbox_aci_plugin-api:aciesgendpointselector-detail"
     )
     aci_endpoint_security_group = ACIEndpointSecurityGroupSerializer(
         nested=True, required=True

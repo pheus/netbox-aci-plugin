@@ -46,15 +46,11 @@ class ACIAppProfileTestCase(TestCase):
 
     def test_aci_app_profile_str(self) -> None:
         """Test string value of created ACI Application Profile."""
-        self.assertEqual(
-            self.aci_app_profile.__str__(), self.aci_app_profile.name
-        )
+        self.assertEqual(self.aci_app_profile.__str__(), self.aci_app_profile.name)
 
     def test_aci_app_profile_alias(self) -> None:
         """Test alias of ACI Application Profile."""
-        self.assertEqual(
-            self.aci_app_profile.name_alias, self.aci_app_profile_alias
-        )
+        self.assertEqual(self.aci_app_profile.name_alias, self.aci_app_profile_alias)
 
     def test_aci_app_profile_description(self) -> None:
         """Test description of ACI Application Profile."""
@@ -68,9 +64,7 @@ class ACIAppProfileTestCase(TestCase):
 
     def test_aci_app_profile_aci_tenant_name(self) -> None:
         """Test the ACI Tenant name associated with ACI Application Profile."""
-        self.assertEqual(
-            self.aci_app_profile.aci_tenant.name, self.aci_tenant_name
-        )
+        self.assertEqual(self.aci_app_profile.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_app_profile_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant associated with ACI Application Profile."""
@@ -78,9 +72,7 @@ class ACIAppProfileTestCase(TestCase):
 
     def test_aci_app_profile_nb_tenant_name(self) -> None:
         """Test the NetBox tenant name associated with ACI App Profile."""
-        self.assertEqual(
-            self.aci_app_profile.nb_tenant.name, self.nb_tenant_name
-        )
+        self.assertEqual(self.aci_app_profile.nb_tenant.name, self.nb_tenant_name)
 
     def test_invalid_aci_app_profile_name(self) -> None:
         """Test validation of ACI Application Profile naming."""

@@ -22,8 +22,7 @@ class ACIEndpointGroupFormTestCase(TestCase):
     """Test case for ACIEndpointGroup form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -56,12 +55,8 @@ class ACIEndpointGroupFormTestCase(TestCase):
                 "aci_bridge_domain": self.aci_bd,
             }
         )
-        self.assertEqual(
-            aci_epg_form.errors["name"], [self.name_error_message]
-        )
-        self.assertEqual(
-            aci_epg_form.errors["name_alias"], [self.name_error_message]
-        )
+        self.assertEqual(aci_epg_form.errors["name"], [self.name_error_message])
+        self.assertEqual(aci_epg_form.errors["name_alias"], [self.name_error_message])
         self.assertEqual(
             aci_epg_form.errors["description"],
             [self.description_error_message],
@@ -87,8 +82,7 @@ class ACIUSegEndpointGroupFormTestCase(TestCase):
     """Test case for ACIUSegEndpointGroup form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -121,9 +115,7 @@ class ACIUSegEndpointGroupFormTestCase(TestCase):
                 "aci_bridge_domain": self.aci_bd,
             }
         )
-        self.assertEqual(
-            aci_useg_epg_form.errors["name"], [self.name_error_message]
-        )
+        self.assertEqual(aci_useg_epg_form.errors["name"], [self.name_error_message])
         self.assertEqual(
             aci_useg_epg_form.errors["name_alias"], [self.name_error_message]
         )
@@ -152,8 +144,7 @@ class ACIUSegNetworkAttributeFormTestCase(TestCase):
     """Test case for ACIUSegNetworkAttribute form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -226,10 +217,6 @@ class ACIUSegNetworkAttributeFormTestCase(TestCase):
         )
         self.assertTrue(aci_useg_network_attr_form.is_valid())
         self.assertEqual(aci_useg_network_attr_form.errors.get("name"), None)
-        self.assertEqual(
-            aci_useg_network_attr_form.errors.get("name_alias"), None
-        )
-        self.assertEqual(
-            aci_useg_network_attr_form.errors.get("description"), None
-        )
+        self.assertEqual(aci_useg_network_attr_form.errors.get("name_alias"), None)
+        self.assertEqual(aci_useg_network_attr_form.errors.get("description"), None)
         self.assertNotIn("attr_object_type", aci_useg_network_attr_form.errors)

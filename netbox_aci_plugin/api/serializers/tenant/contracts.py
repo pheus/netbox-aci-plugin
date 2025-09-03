@@ -67,8 +67,7 @@ class ACIContractRelationSerializer(NetBoxModelSerializer):
     """Serializer for the ACI Contract Relation model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_aci_plugin-api:"
-        "acicontractrelation-detail"
+        view_name="plugins-api:netbox_aci_plugin-api:acicontractrelation-detail"
     )
     aci_contract = ACIContractSerializer(nested=True, required=True)
     aci_object_type = ContentTypeField(
@@ -175,15 +174,10 @@ class ACIContractSubjectFilterSerializer(NetBoxModelSerializer):
     """Serializer for the ACI Contract Subject Filter model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_aci_plugin-api:"
-        "acicontractsubjectfilter-detail"
+        view_name="plugins-api:netbox_aci_plugin-api:acicontractsubjectfilter-detail"
     )
-    aci_contract_filter = ACIContractFilterSerializer(
-        nested=True, required=True
-    )
-    aci_contract_subject = ACIContractSubjectSerializer(
-        nested=True, required=True
-    )
+    aci_contract_filter = ACIContractFilterSerializer(nested=True, required=True)
+    aci_contract_subject = ACIContractSubjectSerializer(nested=True, required=True)
 
     class Meta:
         model = ACIContractSubjectFilter

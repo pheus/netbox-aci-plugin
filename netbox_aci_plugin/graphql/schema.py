@@ -35,40 +35,28 @@ class NetBoxACIQuery:
     aci_tenant_list: list[ACITenantType] = strawberry_django.field()
 
     aci_application_profile: ACIAppProfileType = strawberry_django.field()
-    aci_application_profile_list: list[ACIAppProfileType] = (
-        strawberry_django.field()
-    )
+    aci_application_profile_list: list[ACIAppProfileType] = strawberry_django.field()
 
     aci_vrf: ACIVRFType = strawberry_django.field()
     aci_vrf_list: list[ACIVRFType] = strawberry_django.field()
 
     aci_bridge_domain: ACIBridgeDomainType = strawberry_django.field()
-    aci_bridge_domain_list: list[ACIBridgeDomainType] = (
-        strawberry_django.field()
-    )
+    aci_bridge_domain_list: list[ACIBridgeDomainType] = strawberry_django.field()
 
-    aci_bridge_domain_subnet: ACIBridgeDomainSubnetType = (
-        strawberry_django.field()
-    )
+    aci_bridge_domain_subnet: ACIBridgeDomainSubnetType = strawberry_django.field()
     aci_bridge_domain_subnet_list: list[ACIBridgeDomainSubnetType] = (
         strawberry_django.field()
     )
 
     aci_endpoint_group: ACIEndpointGroupType = strawberry_django.field()
-    aci_endpoint_group_list: list[ACIEndpointGroupType] = (
-        strawberry_django.field()
-    )
+    aci_endpoint_group_list: list[ACIEndpointGroupType] = strawberry_django.field()
 
-    aci_useg_endpoint_group: ACIUSegEndpointGroupType = (
-        strawberry_django.field()
-    )
+    aci_useg_endpoint_group: ACIUSegEndpointGroupType = strawberry_django.field()
     aci_useg_endpoint_group_list: list[ACIUSegEndpointGroupType] = (
         strawberry_django.field()
     )
 
-    aci_useg_network_attribute: ACIUSegNetworkAttributeType = (
-        strawberry_django.field()
-    )
+    aci_useg_network_attribute: ACIUSegNetworkAttributeType = strawberry_django.field()
     aci_useg_network_attribute_list: list[ACIUSegNetworkAttributeType] = (
         strawberry_django.field()
     )
@@ -83,25 +71,19 @@ class NetBoxACIQuery:
     aci_esg_endpoint_group_selector: ACIEsgEndpointGroupSelectorType = (
         strawberry_django.field()
     )
-    aci_esg_endpoint_group_selector_list: list[
-        ACIEsgEndpointGroupSelectorType
-    ] = strawberry_django.field()
-
-    aci_esg_endpoint_selector: ACIEsgEndpointSelectorType = (
+    aci_esg_endpoint_group_selector_list: list[ACIEsgEndpointGroupSelectorType] = (
         strawberry_django.field()
     )
+
+    aci_esg_endpoint_selector: ACIEsgEndpointSelectorType = strawberry_django.field()
     aci_esg_endpoint_selector_list: list[ACIEsgEndpointSelectorType] = (
         strawberry_django.field()
     )
 
     aci_contract_filter: ACIContractFilterType = strawberry_django.field()
-    aci_contract_filter_list: list[ACIContractFilterType] = (
-        strawberry_django.field()
-    )
+    aci_contract_filter_list: list[ACIContractFilterType] = strawberry_django.field()
 
-    aci_contract_filter_entry: ACIContractFilterEntryType = (
-        strawberry_django.field()
-    )
+    aci_contract_filter_entry: ACIContractFilterEntryType = strawberry_django.field()
     aci_contract_filter_entry_list: list[ACIContractFilterEntryType] = (
         strawberry_django.field()
     )
@@ -115,9 +97,7 @@ class NetBoxACIQuery:
     )
 
     aci_contract_subject: ACIContractSubjectType = strawberry_django.field()
-    aci_contract_subject_list: list[ACIContractSubjectType] = (
-        strawberry_django.field()
-    )
+    aci_contract_subject_list: list[ACIContractSubjectType] = strawberry_django.field()
 
     aci_contract_subject_filter: ACIContractSubjectFilterType = (
         strawberry_django.field()

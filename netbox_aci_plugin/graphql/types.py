@@ -33,17 +33,12 @@ from .filters import (
 )
 
 
-@strawberry_django.type(
-    models.ACITenant, fields="__all__", filters=ACITenantFilter
-)
+@strawberry_django.type(models.ACITenant, fields="__all__", filters=ACITenantFilter)
 class ACITenantType(NetBoxObjectType):
     """GraphQL type definition for the ACITenant model."""
 
     # Model fields
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
     aci_app_profiles: list[
@@ -71,9 +66,7 @@ class ACITenantType(NetBoxObjectType):
         ]
     ]
     aci_vrfs: list[
-        Annotated[
-            "ACIVRFType", strawberry.lazy("netbox_aci_plugin.graphql.types")
-        ]
+        Annotated["ACIVRFType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
     ]
 
 
@@ -87,10 +80,7 @@ class ACIAppProfileType(NetBoxObjectType):
     aci_tenant: Annotated[
         "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
     aci_endpoint_groups: list[
@@ -121,10 +111,7 @@ class ACIVRFType(NetBoxObjectType):
     aci_tenant: Annotated[
         "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     nb_vrf: Annotated["VRFType", strawberry.lazy("ipam.graphql.types")] | None
     dns_labels: list[str] | None
 
@@ -159,13 +146,8 @@ class ACIBridgeDomainType(NetBoxObjectType):
     aci_tenant: Annotated[
         "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
-    aci_vrf: Annotated[
-        "ACIVRFType", strawberry.lazy("netbox_aci_plugin.graphql.types")
-    ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    aci_vrf: Annotated["ACIVRFType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     dhcp_labels: list[str] | None
     mac_address: str | None
     virtual_mac_address: str | None
@@ -201,10 +183,7 @@ class ACIBridgeDomainSubnetType(NetBoxObjectType):
     gateway_ip_address: Annotated[
         "IPAddressType", strawberry.lazy("ipam.graphql.types")
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
 
 @strawberry_django.type(
@@ -223,10 +202,7 @@ class ACIEndpointGroupType(NetBoxObjectType):
         "ACIBridgeDomainType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
     aci_contract_relations: list[
@@ -253,10 +229,7 @@ class ACIUSegEndpointGroupType(NetBoxObjectType):
         "ACIBridgeDomainType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
     aci_contract_relations: list[
@@ -292,10 +265,7 @@ class ACIUSegNetworkAttributeType(NetBoxObjectType):
         "ACIUSegEndpointGroupType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     @strawberry.field(description="Attribute Object")
     def attr_object(
@@ -303,9 +273,7 @@ class ACIUSegNetworkAttributeType(NetBoxObjectType):
     ) -> (
         Annotated[
             Annotated["IPAddressType", strawberry.lazy("ipam.graphql.types")]
-            | Annotated[
-                "MACAddressType", strawberry.lazy("dcim.graphql.types")
-            ]
+            | Annotated["MACAddressType", strawberry.lazy("dcim.graphql.types")]
             | Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")],
             strawberry.union("ACIUSegNetworkAttributeObjectType"),
         ]
@@ -331,10 +299,7 @@ class ACIEndpointSecurityGroupType(NetBoxObjectType):
         "ACIVRFType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
     aci_contract_relations: list[
@@ -375,10 +340,7 @@ class ACIEsgEndpointGroupSelectorType(NetBoxObjectType):
         "ACIEndpointSecurityGroupType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     @strawberry.field(description="Endpoint Group Object")
     def aci_epg_object(
@@ -419,10 +381,7 @@ class ACIEsgEndpointSelectorType(NetBoxObjectType):
         "ACIEndpointSecurityGroupType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     @strawberry.field(description="Endpoint Object")
     def ep_object(
@@ -451,10 +410,7 @@ class ACIContractFilterType(NetBoxObjectType):
     aci_tenant: Annotated[
         "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
     aci_contract_filter_entries: list[
@@ -484,10 +440,7 @@ class ACIContractFilterEntryType(NetBoxObjectType):
         "ACIContractFilterType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
 
 @strawberry_django.type(
@@ -502,10 +455,7 @@ class ACIContractType(NetBoxObjectType):
     aci_tenant: Annotated[
         "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
     aci_contract_relations: list[
@@ -583,10 +533,7 @@ class ACIContractSubjectType(NetBoxObjectType):
     aci_contract: Annotated[
         "ACIContractType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
-    nb_tenant: (
-        Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")]
-        | None
-    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
     aci_contract_subject_filters: list[

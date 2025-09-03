@@ -424,12 +424,8 @@ class ACIUSegNetworkAttributeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         # Create attribute objects
         ip_address1 = IPAddress.objects.create(address="192.168.1.1/24")
         ip_address2 = IPAddress.objects.create(address="192.168.1.2/24")
-        mac_address1 = MACAddress.objects.create(
-            mac_address="00:00:00:00:00:01"
-        )
-        mac_address2 = MACAddress.objects.create(
-            mac_address="00:00:00:00:00:02"
-        )
+        mac_address1 = MACAddress.objects.create(mac_address="00:00:00:00:00:01")
+        mac_address2 = MACAddress.objects.create(mac_address="00:00:00:00:00:02")
         prefix1 = Prefix.objects.create(prefix="192.168.1.0/24")
         prefix2 = Prefix.objects.create(prefix="192.168.2.0/24")
 
@@ -472,9 +468,7 @@ class ACIUSegNetworkAttributeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 use_epg_subnet=True,
             ),
         )
-        ACIUSegNetworkAttribute.objects.bulk_create(
-            aci_useg_network_attributes
-        )
+        ACIUSegNetworkAttribute.objects.bulk_create(aci_useg_network_attributes)
 
         cls.create_data: list[dict] = [
             {

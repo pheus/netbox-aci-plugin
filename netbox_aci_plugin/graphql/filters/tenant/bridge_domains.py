@@ -54,9 +54,7 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
     advertise_host_routes_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    arp_flooding_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    arp_flooding_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     clear_remote_mac_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
@@ -79,9 +77,7 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
     ip_data_plane_learning_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    limit_ip_learn_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    limit_ip_learn_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     mac_address: FilterLookup[str] | None = strawberry_django.filter_field()
     multi_destination_flooding: (
         Annotated[
@@ -90,24 +86,16 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
-    pim_ipv4_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    pim_ipv4_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     pim_ipv4_destination_filter: FilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
-    pim_ipv4_source_filter: FilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    pim_ipv6_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    pim_ipv4_source_filter: FilterLookup[str] | None = strawberry_django.filter_field()
+    pim_ipv6_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     pim_ipv6_destination_filter: FilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
-    pim_ipv6_source_filter: FilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
+    pim_ipv6_source_filter: FilterLookup[str] | None = strawberry_django.filter_field()
     unknown_ipv4_multicast: (
         Annotated[
             "BDUnknownMulticastEnum",
@@ -129,9 +117,7 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
-    virtual_mac_address: FilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
+    virtual_mac_address: FilterLookup[str] | None = strawberry_django.filter_field()
 
 
 @strawberry_django.filter(models.ACIBridgeDomainSubnet, lookups=True)
@@ -147,22 +133,17 @@ class ACIBridgeDomainSubnetFilter(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
     aci_bridge_domain_id: ID | None = strawberry_django.filter_field()
     gateway_ip_address: (
-        Annotated["IPAddressFilter", strawberry.lazy("ipam.graphql.filters")]
-        | None
+        Annotated["IPAddressFilter", strawberry.lazy("ipam.graphql.filters")] | None
     ) = strawberry_django.filter_field()
     gateway_ip_address_id: ID | None = strawberry_django.filter_field()
     advertise_externally_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    igmp_querier_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    igmp_querier_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     ip_data_plane_learning_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    no_default_gateway: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    no_default_gateway: FilterLookup[bool] | None = strawberry_django.filter_field()
     nd_ra_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     nd_ra_prefix_policy_name: FilterLookup[str] | None = (
         strawberry_django.filter_field()
@@ -170,9 +151,5 @@ class ACIBridgeDomainSubnetFilter(ACIBaseFilterMixin):
     preferred_ip_address_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    shared_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
-    virtual_ip_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
+    shared_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
+    virtual_ip_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()

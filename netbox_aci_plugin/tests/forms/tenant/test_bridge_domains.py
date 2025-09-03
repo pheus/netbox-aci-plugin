@@ -16,8 +16,7 @@ class ACIBridgeDomainFormTestCase(TestCase):
     """Test case for ACIBridgeDomain form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -43,9 +42,7 @@ class ACIBridgeDomainFormTestCase(TestCase):
             }
         )
         self.assertEqual(aci_bd_form.errors["name"], [self.name_error_message])
-        self.assertEqual(
-            aci_bd_form.errors["name_alias"], [self.name_error_message]
-        )
+        self.assertEqual(aci_bd_form.errors["name_alias"], [self.name_error_message])
         self.assertEqual(
             aci_bd_form.errors["description"],
             [self.description_error_message],
@@ -71,8 +68,7 @@ class ACIBridgeDomainSubnetFormTestCase(TestCase):
     """Test case for ACIBridgeDomainSubnet form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -87,9 +83,7 @@ class ACIBridgeDomainSubnetFormTestCase(TestCase):
                 "description": "Invalid Description: ö",
             }
         )
-        self.assertEqual(
-            aci_bd_subnet_form.errors["name"], [self.name_error_message]
-        )
+        self.assertEqual(aci_bd_subnet_form.errors["name"], [self.name_error_message])
         self.assertEqual(
             aci_bd_subnet_form.errors["name_alias"], [self.name_error_message]
         )

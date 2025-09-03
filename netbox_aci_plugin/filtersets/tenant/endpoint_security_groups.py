@@ -160,13 +160,11 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
         to_field_name="name",
         label=_("ACI Application Profile (name) of Endpoint Group"),
     )
-    aci_endpoint_group_app_profile_id = (
-        django_filters.ModelMultipleChoiceFilter(
-            field_name="_aci_endpoint_group__aci_app_profile",
-            queryset=ACIAppProfile.objects.all(),
-            to_field_name="id",
-            label=_("ACI Application Profile (ID) of Endpoint Group"),
-        )
+    aci_endpoint_group_app_profile_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_group__aci_app_profile",
+        queryset=ACIAppProfile.objects.all(),
+        to_field_name="id",
+        label=_("ACI Application Profile (ID) of Endpoint Group"),
     )
     aci_endpoint_group = django_filters.ModelMultipleChoiceFilter(
         field_name="_aci_endpoint_group__name",
@@ -180,21 +178,17 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("ACI Endpoint Group (ID)"),
     )
-    aci_useg_endpoint_group_app_profile = (
-        django_filters.ModelMultipleChoiceFilter(
-            field_name="_aci_useg_endpoint_group__aci_app_profile__name",
-            queryset=ACIAppProfile.objects.all(),
-            to_field_name="name",
-            label=_("ACI Application Profile (name) of uSeg Endpoint Group"),
-        )
+    aci_useg_endpoint_group_app_profile = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_useg_endpoint_group__aci_app_profile__name",
+        queryset=ACIAppProfile.objects.all(),
+        to_field_name="name",
+        label=_("ACI Application Profile (name) of uSeg Endpoint Group"),
     )
-    aci_useg_endpoint_group_app_profile_id = (
-        django_filters.ModelMultipleChoiceFilter(
-            field_name="_aci_useg_endpoint_group__aci_app_profile",
-            queryset=ACIAppProfile.objects.all(),
-            to_field_name="id",
-            label=_("ACI Application Profile (ID) of uSeg Endpoint Group"),
-        )
+    aci_useg_endpoint_group_app_profile_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_useg_endpoint_group__aci_app_profile",
+        queryset=ACIAppProfile.objects.all(),
+        to_field_name="id",
+        label=_("ACI Application Profile (ID) of uSeg Endpoint Group"),
     )
     aci_useg_endpoint_group = django_filters.ModelMultipleChoiceFilter(
         field_name="_aci_useg_endpoint_group__name",

@@ -110,8 +110,7 @@ class ACIBridgeDomain(ACIBaseModel):
         verbose_name=_("limit IP learning to subnet enabled"),
         default=True,
         help_text=_(
-            "IP learning is limited to the Bridge Domain's subnets. "
-            "Default is enabled."
+            "IP learning is limited to the Bridge Domain's subnets. Default is enabled."
         ),
     )
     mac_address = MACAddressField(
@@ -137,8 +136,7 @@ class ACIBridgeDomain(ACIBaseModel):
         verbose_name=_("PIM (multicast) IPv4 enabled"),
         default=False,
         help_text=_(
-            "Multicast routing enabled for the Bridge Domain. "
-            "Default is disabled."
+            "Multicast routing enabled for the Bridge Domain. Default is disabled."
         ),
     )
     pim_ipv4_destination_filter = models.CharField(
@@ -163,8 +161,7 @@ class ACIBridgeDomain(ACIBaseModel):
         verbose_name=_("PIM (multicast) IPv6 enabled"),
         default=False,
         help_text=_(
-            "Multicast routing enabled for the Bridge Domain. "
-            "Default is disabled."
+            "Multicast routing enabled for the Bridge Domain. Default is disabled."
         ),
     )
     unicast_routing_enabled = models.BooleanField(
@@ -181,8 +178,7 @@ class ACIBridgeDomain(ACIBaseModel):
         default=BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD,
         choices=BDUnknownMulticastChoices,
         help_text=_(
-            "Defines the IPv4 unknown multicast forwarding method. "
-            "Default is 'flood'."
+            "Defines the IPv4 unknown multicast forwarding method. Default is 'flood'."
         ),
     )
     unknown_ipv6_multicast = models.CharField(
@@ -191,8 +187,7 @@ class ACIBridgeDomain(ACIBaseModel):
         default=BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD,
         choices=BDUnknownMulticastChoices,
         help_text=_(
-            "Defines the IPv6 unknown multicast forwarding method. "
-            "Default is 'flood'."
+            "Defines the IPv6 unknown multicast forwarding method. Default is 'flood'."
         ),
     )
     unknown_unicast = models.CharField(
@@ -201,8 +196,7 @@ class ACIBridgeDomain(ACIBaseModel):
         default=BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY,
         choices=BDUnknownUnicastChoices,
         help_text=_(
-            "Defines the layer 2 unknown unicast forwarding method. "
-            "Default is 'proxy'."
+            "Defines the layer 2 unknown unicast forwarding method. Default is 'proxy'."
         ),
     )
     virtual_mac_address = MACAddressField(
@@ -307,15 +301,11 @@ class ACIBridgeDomain(ACIBaseModel):
 
     def get_unknown_ipv4_multicast_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
-        return BDUnknownMulticastChoices.colors.get(
-            self.unknown_ipv4_multicast
-        )
+        return BDUnknownMulticastChoices.colors.get(self.unknown_ipv4_multicast)
 
     def get_unknown_ipv6_multicast_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
-        return BDUnknownMulticastChoices.colors.get(
-            self.unknown_ipv6_multicast
-        )
+        return BDUnknownMulticastChoices.colors.get(self.unknown_ipv6_multicast)
 
     def get_unknown_unicast_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
@@ -349,8 +339,7 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
         verbose_name=_("IGMP querier enabled"),
         default=False,
         help_text=_(
-            "Treat the gateway IP as an IGMP querier source IP. "
-            "Default is disabled."
+            "Treat the gateway IP as an IGMP querier source IP. Default is disabled."
         ),
     )
     ip_data_plane_learning_enabled = models.BooleanField(
@@ -382,8 +371,7 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
         max_length=64,
         blank=True,
         help_text=_(
-            "IPv6 Neighbor Discovery Prefix Policy to associate with the "
-            "Subnet."
+            "IPv6 Neighbor Discovery Prefix Policy to associate with the Subnet."
         ),
         validators=[
             MaxLengthValidator(64),
@@ -409,9 +397,7 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
     virtual_ip_enabled = models.BooleanField(
         verbose_name=_("virtual IP enabled"),
         default=False,
-        help_text=_(
-            "Treat the gateway IP as virtual IP. Default is disabled."
-        ),
+        help_text=_("Treat the gateway IP as virtual IP. Default is disabled."),
     )
 
     clone_fields: tuple = ACIBaseModel.clone_fields + (

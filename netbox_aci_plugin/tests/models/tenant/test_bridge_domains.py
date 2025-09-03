@@ -78,9 +78,7 @@ class ACIBridgeDomainTestCase(TestCase):
             aci_tenant=cls.aci_tenant,
             aci_vrf=cls.aci_vrf,
             nb_tenant=cls.nb_tenant,
-            advertise_host_routes_enabled=(
-                cls.aci_bd_advertise_host_routes_enabled
-            ),
+            advertise_host_routes_enabled=(cls.aci_bd_advertise_host_routes_enabled),
             arp_flooding_enabled=cls.aci_bd_arp_flooding_enabled,
             clear_remote_mac_enabled=cls.aci_bd_clear_remote_mac_enabled,
             dhcp_labels=cls.aci_bd_dhcp_labels,
@@ -214,9 +212,7 @@ class ACIBridgeDomainTestCase(TestCase):
 
     def test_aci_bd_pim_ipv4_enabled(self) -> None:
         """Test the 'PIM IPv4 enabled' option of ACI Bridge Domain."""
-        self.assertEqual(
-            self.aci_bd.pim_ipv4_enabled, self.aci_bd_pim_ipv4_enabled
-        )
+        self.assertEqual(self.aci_bd.pim_ipv4_enabled, self.aci_bd_pim_ipv4_enabled)
 
     def test_aci_bd_pim_ipv4_destination_filter(self) -> None:
         """Test the 'PIM IPv4 destination filter' option of ACI BD."""
@@ -234,9 +230,7 @@ class ACIBridgeDomainTestCase(TestCase):
 
     def test_aci_bd_pim_ipv6_enabled(self) -> None:
         """Test the 'PIM IPv6 enabled' option of ACI Bridge Domain."""
-        self.assertEqual(
-            self.aci_bd.pim_ipv6_enabled, self.aci_bd_pim_ipv6_enabled
-        )
+        self.assertEqual(self.aci_bd.pim_ipv6_enabled, self.aci_bd_pim_ipv6_enabled)
 
     def test_aci_bd_unicast_routing_enabled(self) -> None:
         """Test the 'unicast routing enabled' option of ACI BD."""
@@ -261,9 +255,7 @@ class ACIBridgeDomainTestCase(TestCase):
 
     def test_aci_bd_unknown_unicast(self) -> None:
         """Test the 'unknown unicast' option of ACI Bridge Domain."""
-        self.assertEqual(
-            self.aci_bd.unknown_unicast, self.aci_bd_unknown_unicast
-        )
+        self.assertEqual(self.aci_bd.unknown_unicast, self.aci_bd_unknown_unicast)
 
     def test_aci_bd_virtual_mac_address(self) -> None:
         """Test ACI Bridge Domain's virtual MAC address."""
@@ -378,9 +370,7 @@ class ACIBridgeDomainTestCase(TestCase):
     ) -> None:
         """Test valid assignment of ACI VRF from ACI Tenant 'common'."""
         tenant_common = ACITenant.objects.get_or_create(name="common")[0]
-        vrf_common = ACIVRF.objects.create(
-            name="common_vrf", aci_tenant=tenant_common
-        )
+        vrf_common = ACIVRF.objects.create(name="common_vrf", aci_tenant=tenant_common)
         bd = ACIBridgeDomain(
             name="ACIBDTest1",
             aci_tenant=self.aci_tenant,
@@ -395,9 +385,7 @@ class ACIBridgeDomainTestCase(TestCase):
     ) -> None:
         """Test invalid assignment of ACI VRF from ACI Tenant 'other'."""
         tenant_other = ACITenant.objects.get_or_create(name="other")[0]
-        vrf_other = ACIVRF.objects.create(
-            name="other_vrf", aci_tenant=tenant_other
-        )
+        vrf_other = ACIVRF.objects.create(name="other_vrf", aci_tenant=tenant_other)
         bd = ACIBridgeDomain(
             name="ACIBDTest1",
             aci_tenant=self.aci_tenant,
@@ -475,14 +463,10 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
                 cls.aci_bd_subnet_advertised_externally_enabled
             ),
             igmp_querier_enabled=cls.aci_bd_subnet_igmp_querier_enabled,
-            ip_data_plane_learning_enabled=(
-                cls.aci_bd_subnet_ip_dp_learning_enabled
-            ),
+            ip_data_plane_learning_enabled=(cls.aci_bd_subnet_ip_dp_learning_enabled),
             no_default_gateway=cls.aci_bd_subnet_no_default_gateway,
             nd_ra_enabled=cls.aci_bd_subnet_nd_ra_enabled,
-            nd_ra_prefix_policy_name=(
-                cls.aci_bd_subnet_nd_ra_prefix_policy_name
-            ),
+            nd_ra_prefix_policy_name=(cls.aci_bd_subnet_nd_ra_prefix_policy_name),
             preferred_ip_address_enabled=(
                 cls.aci_bd_subnet_preferred_ip_address_enabled
             ),
@@ -500,15 +484,11 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
 
     def test_aci_bd_subnet_name_alias(self) -> None:
         """Test ACI Bridge Domain Subnet name alias."""
-        self.assertEqual(
-            self.aci_bd_subnet.name_alias, self.aci_bd_subnet_alias
-        )
+        self.assertEqual(self.aci_bd_subnet.name_alias, self.aci_bd_subnet_alias)
 
     def test_aci_bd_subnet_description(self) -> None:
         """Test ACI Bridge Domain Subnet description."""
-        self.assertEqual(
-            self.aci_bd_subnet.description, self.aci_bd_subnet_description
-        )
+        self.assertEqual(self.aci_bd_subnet.description, self.aci_bd_subnet_description)
 
     def test_aci_bd_subnet_aci_tenant_instance(self) -> None:
         """Test ACI Tenant instance in ACI Bridge Domain Subnet."""
@@ -516,9 +496,7 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
 
     def test_aci_bd_subnet_aci_tenant_name(self) -> None:
         """Test ACI Tenant name of ACI Bridge Domain Subnet."""
-        self.assertEqual(
-            self.aci_bd_subnet.aci_tenant.name, self.aci_tenant_name
-        )
+        self.assertEqual(self.aci_bd_subnet.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_bd_subnet_aci_vrf_instance(self) -> None:
         """Test ACI VRF instance in ACI Bridge Domain Subnet."""
@@ -536,15 +514,11 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
 
     def test_aci_bd_subnet_aci_bridge_domain_name(self) -> None:
         """Test ACI Bridge Domain name of ACI Bridge Domain Subnet."""
-        self.assertEqual(
-            self.aci_bd_subnet.aci_bridge_domain.name, self.aci_bd_name
-        )
+        self.assertEqual(self.aci_bd_subnet.aci_bridge_domain.name, self.aci_bd_name)
 
     def test_aci_bd_subnet_gateway_ip_address_instance(self) -> None:
         """Test gateway IP address instance associated with ACI BD Subnet."""
-        self.assertTrue(
-            isinstance(self.aci_bd_subnet.gateway_ip_address, IPAddress)
-        )
+        self.assertTrue(isinstance(self.aci_bd_subnet.gateway_ip_address, IPAddress))
 
     def test_aci_bd_subnet_gateway_ip_address(self) -> None:
         """Test gateway IP address of ACI Bridge Domain Subnet."""
@@ -559,9 +533,7 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
 
     def test_aci_bd_subnet_nb_tenant_name(self) -> None:
         """Test NetBox tenant name of ACI Bridge Domain Subnet."""
-        self.assertEqual(
-            self.aci_bd_subnet.nb_tenant.name, self.nb_tenant_name
-        )
+        self.assertEqual(self.aci_bd_subnet.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_bd_subnet_advertised_externally_enabled(self) -> None:
         """Test 'advertised externally enabled' option in ACI BD Subnet."""

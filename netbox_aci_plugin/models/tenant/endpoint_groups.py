@@ -59,8 +59,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         max_length=64,
         blank=True,
         help_text=_(
-            "Custom quality of service (QoS) policy name associate with the "
-            "EPG."
+            "Custom quality of service (QoS) policy name associate with the EPG."
         ),
         validators=[
             MaxLengthValidator(64),
@@ -127,8 +126,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         # Validate the assigned ACIBrideDomain belongs to either the same
         # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
         if (
-            self.aci_bridge_domain.aci_tenant
-            != self.aci_app_profile.aci_tenant
+            self.aci_bridge_domain.aci_tenant != self.aci_app_profile.aci_tenant
             and self.aci_bridge_domain.aci_tenant.name != "common"
         ):
             raise ValidationError(
@@ -144,8 +142,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         # Ensure the assigned ACIBrideDomain belongs to either the same
         # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
         if (
-            self.aci_bridge_domain.aci_tenant
-            != self.aci_app_profile.aci_tenant
+            self.aci_bridge_domain.aci_tenant != self.aci_app_profile.aci_tenant
             and self.aci_bridge_domain.aci_tenant.name != "common"
         ):
             raise ValidationError(
@@ -189,9 +186,7 @@ class ACIEndpointGroup(ACIEndpointGroupBaseModel):
     proxy_arp_enabled = models.BooleanField(
         verbose_name=_("proxy ARP enabled"),
         default=False,
-        help_text=_(
-            "Whether proxy ARP is enabled for the EPG. Default is disabled."
-        ),
+        help_text=_("Whether proxy ARP is enabled for the EPG. Default is disabled."),
     )
 
     # Generic relations
@@ -237,9 +232,7 @@ class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
         max_length=3,
         default=USegAttributeMatchOperatorChoices.MATCH_ANY,
         choices=USegAttributeMatchOperatorChoices,
-        help_text=_(
-            "Operator to match the related uSeg attributes. Default is 'any'."
-        ),
+        help_text=_("Operator to match the related uSeg attributes. Default is 'any'."),
     )
 
     # Generic relations
@@ -256,9 +249,7 @@ class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
         related_query_name="aci_useg_endpoint_group",
     )
 
-    clone_fields: tuple = ACIEndpointGroupBaseModel.clone_fields + (
-        "match_operator",
-    )
+    clone_fields: tuple = ACIEndpointGroupBaseModel.clone_fields + ("match_operator",)
 
     class Meta:
         constraints: list[models.UniqueConstraint] = [
@@ -273,9 +264,7 @@ class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
 
     def get_match_operator_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
-        return USegAttributeMatchOperatorChoices.colors.get(
-            self.match_operator
-        )
+        return USegAttributeMatchOperatorChoices.colors.get(self.match_operator)
 
 
 #
@@ -300,9 +289,7 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
         help_text=_("Type of the uSeg attribute. Default is 'mac'."),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
-        "aci_useg_endpoint_group",
-    )
+    clone_fields: tuple = ACIBaseModel.clone_fields + ("aci_useg_endpoint_group",)
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIUSegEndpointGroup",)
 
     class Meta:
@@ -342,9 +329,7 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
 #
 
 
-class ACIUSegNetworkAttribute(
-    ACIUSegAttributeBaseModel, UniqueGenericForeignKeyMixin
-):
+class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKeyMixin):
     """NetBox model for ACI uSeg Network Attribute."""
 
     attr_object_type = models.ForeignKey(
@@ -369,8 +354,7 @@ class ACIUSegNetworkAttribute(
         verbose_name=_("use EPG subnet"),
         default=False,
         help_text=_(
-            "Whether the EPG subnet is applied as uSeg attribute. "
-            "Default is disabled."
+            "Whether the EPG subnet is applied as uSeg attribute. Default is disabled."
         ),
     )
 
@@ -417,10 +401,7 @@ class ACIUSegNetworkAttribute(
                     "name",
                     "aci_useg_endpoint_group",
                 ),
-                name=(
-                    "%(app_label)s_%(class)s_unique_name_"
-                    "per_useg_endpoint_group"
-                ),
+                name=("%(app_label)s_%(class)s_unique_name_per_useg_endpoint_group"),
             ),
             models.UniqueConstraint(
                 fields=(
@@ -429,8 +410,7 @@ class ACIUSegNetworkAttribute(
                     "attr_object_id",
                 ),
                 name=(
-                    "%(app_label)s_%(class)s_unique_attr_object_"
-                    "per_useg_endpoint_group"
+                    "%(app_label)s_%(class)s_unique_attr_object_per_useg_endpoint_group"
                 ),
             ),
             models.UniqueConstraint(
@@ -450,9 +430,7 @@ class ACIUSegNetworkAttribute(
             ),
         ]
         default_related_name: str = "aci_useg_network_attributes"
-        indexes: tuple = (
-            models.Index(fields=("attr_object_type", "attr_object_id")),
-        )
+        indexes: tuple = (models.Index(fields=("attr_object_type", "attr_object_id")),)
         ordering: tuple = (
             "name",
             "aci_useg_endpoint_group",
@@ -466,9 +444,7 @@ class ACIUSegNetworkAttribute(
         """Override the model's clean method for custom field validation."""
         # Validate Attribute object assignment before validation of any other
         # fields
-        if self.attr_object_type and not (
-            self.attr_object or self.attr_object_id
-        ):
+        if self.attr_object_type and not (self.attr_object or self.attr_object_id):
             attr_model_class = self.attr_object_type.model_class()
             raise ValidationError(
                 {
@@ -488,17 +464,11 @@ class ACIUSegNetworkAttribute(
         if self.use_epg_subnet:
             if self.attr_object_type:
                 raise ValidationError(
-                    _(
-                        "Cannot set attr_object_type with "
-                        "'use_epg_subnet = True'."
-                    )
+                    _("Cannot set attr_object_type with 'use_epg_subnet = True'.")
                 )
             if self.attr_object_id:
                 raise ValidationError(
-                    _(
-                        "Cannot set attr_object_id with "
-                        "'use_epg_subnet = True'."
-                    )
+                    _("Cannot set attr_object_id with 'use_epg_subnet = True'.")
                 )
 
         # Perform the mixin's unique constraint validation

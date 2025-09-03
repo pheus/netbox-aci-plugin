@@ -258,9 +258,7 @@ class ACIBridgeDomainSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         gw_ip2 = IPAddress.objects.create(address="10.0.1.1/24", vrf=nb_vrf1)
         gw_ip3 = IPAddress.objects.create(address="172.16.0.1/24", vrf=nb_vrf2)
         gw_ip4 = IPAddress.objects.create(address="172.16.1.1/24", vrf=nb_vrf2)
-        gw_ip5 = IPAddress.objects.create(
-            address="192.168.0.1/24", vrf=nb_vrf2
-        )
+        gw_ip5 = IPAddress.objects.create(address="192.168.0.1/24", vrf=nb_vrf2)
 
         aci_bd_subnets: tuple = (
             ACIBridgeDomainSubnet(

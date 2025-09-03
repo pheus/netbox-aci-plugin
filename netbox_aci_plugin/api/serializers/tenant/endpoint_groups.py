@@ -72,9 +72,7 @@ class ACIUSegEndpointGroupSerializer(NetBoxModelSerializer):
     """Serializer for the ACI Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name=(
-            "plugins-api:netbox_aci_plugin-api:aciusegendpointgroup-detail"
-        )
+        view_name=("plugins-api:netbox_aci_plugin-api:aciusegendpointgroup-detail")
     )
     aci_app_profile = ACIAppProfileSerializer(nested=True, required=True)
     aci_bridge_domain = ACIBridgeDomainSerializer(nested=True, required=True)
@@ -122,12 +120,9 @@ class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
     """Serializer for the ACI uSeg Network Attribute model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name="plugins-api:netbox_aci_plugin-api:"
-        "aciusegnetworkattribute-detail"
+        view_name="plugins-api:netbox_aci_plugin-api:aciusegnetworkattribute-detail"
     )
-    aci_useg_endpoint_group = ACIUSegEndpointGroupSerializer(
-        nested=True, required=True
-    )
+    aci_useg_endpoint_group = ACIUSegEndpointGroupSerializer(nested=True, required=True)
     attr_object_type = ContentTypeField(
         queryset=ContentType.objects.filter(USEG_NETWORK_ATTRIBUTES_MODELS),
         required=False,

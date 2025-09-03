@@ -59,8 +59,7 @@ class ACIVRF(ACIBaseModel):
         verbose_name=_("IP data plane learning enabled"),
         default=True,
         help_text=_(
-            "Whether IP data plane learning is enabled for VRF. "
-            "Default is enabled."
+            "Whether IP data plane learning is enabled for VRF. Default is enabled."
         ),
     )
     pc_enforcement_direction = models.CharField(
@@ -69,8 +68,7 @@ class ACIVRF(ACIBaseModel):
         default=VRFPCEnforcementDirectionChoices.DIR_INGRESS,
         choices=VRFPCEnforcementDirectionChoices,
         help_text=_(
-            "Controls policy enforcement direction for VRF. "
-            "Default is 'ingress'."
+            "Controls policy enforcement direction for VRF. Default is 'ingress'."
         ),
     )
     pc_enforcement_preference = models.CharField(
@@ -79,23 +77,18 @@ class ACIVRF(ACIBaseModel):
         default=VRFPCEnforcementPreferenceChoices.PREF_ENFORCED,
         choices=VRFPCEnforcementPreferenceChoices,
         help_text=_(
-            "Controls policy enforcement preference for VRF. "
-            "Default is 'enforced'."
+            "Controls policy enforcement preference for VRF. Default is 'enforced'."
         ),
     )
     pim_ipv4_enabled = models.BooleanField(
         verbose_name=_("PIM (multicast) IPv4 enabled"),
         default=False,
-        help_text=_(
-            "Multicast routing enabled for the VRF. Default is disabled."
-        ),
+        help_text=_("Multicast routing enabled for the VRF. Default is disabled."),
     )
     pim_ipv6_enabled = models.BooleanField(
         verbose_name=_("PIM (multicast) IPv6 enabled"),
         default=False,
-        help_text=_(
-            "Multicast routing enabled for the VRF. Default is disabled."
-        ),
+        help_text=_("Multicast routing enabled for the VRF. Default is disabled."),
     )
     preferred_group_enabled = models.BooleanField(
         verbose_name=_("preferred group enabled"),

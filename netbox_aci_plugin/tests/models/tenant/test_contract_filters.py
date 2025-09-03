@@ -55,9 +55,7 @@ class ACIContractFilterTestCase(TestCase):
 
     def test_aci_contract_filter_instance(self) -> None:
         """Test type of created ACI Contract Filter."""
-        self.assertTrue(
-            isinstance(self.aci_contract_filter, ACIContractFilter)
-        )
+        self.assertTrue(isinstance(self.aci_contract_filter, ACIContractFilter))
 
     def test_aci_contract_filter_str(self) -> None:
         """Test string value of created ACI Contract Filter."""
@@ -80,15 +78,11 @@ class ACIContractFilterTestCase(TestCase):
 
     def test_aci_contract_filter_aci_tenant_instance(self) -> None:
         """Test the ACI Tenant instance associated with ACI Contract Filter."""
-        self.assertTrue(
-            isinstance(self.aci_contract_filter.aci_tenant, ACITenant)
-        )
+        self.assertTrue(isinstance(self.aci_contract_filter.aci_tenant, ACITenant))
 
     def test_aci_contract_filter_aci_tenant_name(self) -> None:
         """Test the ACI Tenant name associated with ACI Contract Filter."""
-        self.assertEqual(
-            self.aci_contract_filter.aci_tenant.name, self.aci_tenant_name
-        )
+        self.assertEqual(self.aci_contract_filter.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_contract_filter_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant instance associated with Contract Filter."""
@@ -96,9 +90,7 @@ class ACIContractFilterTestCase(TestCase):
 
     def test_aci_contract_filter_nb_tenant_name(self) -> None:
         """Test the NetBox tenant name associated with ACI Contract Filter."""
-        self.assertEqual(
-            self.aci_contract_filter.nb_tenant.name, self.nb_tenant_name
-        )
+        self.assertEqual(self.aci_contract_filter.nb_tenant.name, self.nb_tenant_name)
 
     def test_invalid_aci_contract_filter_name(self) -> None:
         """Test validation of ACI Contract Filter naming."""
@@ -182,9 +174,7 @@ class ACIContractFilterEntryTestCase(TestCase):
         cls.aci_contract_filter_entry_dest_from_port = (
             ContractFilterPortChoices.PORT_SSH
         )
-        cls.aci_contract_filter_entry_dest_to_port = (
-            ContractFilterPortChoices.PORT_DNS
-        )
+        cls.aci_contract_filter_entry_dest_to_port = ContractFilterPortChoices.PORT_DNS
         cls.aci_contract_filter_entry_ether_type = (
             ContractFilterEtherTypeChoices.TYPE_IP
         )
@@ -197,9 +187,7 @@ class ACIContractFilterEntryTestCase(TestCase):
         cls.aci_contract_filter_entry_ip_protocol = (
             ContractFilterIPProtocolChoices.PROT_TCP
         )
-        cls.aci_contract_filter_entry_match_dscp = (
-            QualityOfServiceDSCPChoices.DSCP_AF42
-        )
+        cls.aci_contract_filter_entry_match_dscp = QualityOfServiceDSCPChoices.DSCP_AF42
         cls.aci_contract_filter_entry_match_only_fragments_enabled = False
         cls.aci_contract_filter_entry_src_from_port = 0
         cls.aci_contract_filter_entry_src_to_port = 65535
@@ -248,8 +236,7 @@ class ACIContractFilterEntryTestCase(TestCase):
         """Test string value of created ACI Contract Filter Entry."""
         self.assertEqual(
             self.aci_contract_filter_entry.__str__(),
-            f"{self.aci_contract_filter_entry_name} "
-            f"({self.aci_contract_filter_name})",
+            f"{self.aci_contract_filter_entry_name} ({self.aci_contract_filter_name})",
         )
 
     def test_aci_contract_filter_entry_alias(self) -> None:

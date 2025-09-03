@@ -112,9 +112,7 @@ class ACIVRFFilterSet(NetBoxModelFilterSet):
         return queryset.filter(queryset_filter)
 
     @extend_schema_field(OpenApiTypes.INT)
-    def filter_present_in_aci_tenant_or_common_id(
-        self, queryset, name, aci_tenant_id
-    ):
+    def filter_present_in_aci_tenant_or_common_id(self, queryset, name, aci_tenant_id):
         """Return a QuerySet filtered by given ACI Tenant or 'common'."""
         if aci_tenant_id is None:
             return queryset.none()

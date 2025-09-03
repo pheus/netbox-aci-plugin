@@ -530,9 +530,7 @@ class ACIContractSubjectAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         }
 
 
-class ACIContractSubjectFilterAPIViewTestCase(
-    APIViewTestCases.APIViewTestCase
-):
+class ACIContractSubjectFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     """API view test case for ACI Contract Subject Filter."""
 
     model = ACIContractSubjectFilter
@@ -645,9 +643,7 @@ class ACIContractSubjectFilterAPIViewTestCase(
                 priority="level3",
             ),
         )
-        ACIContractSubjectFilter.objects.bulk_create(
-            aci_contract_subject_filters
-        )
+        ACIContractSubjectFilter.objects.bulk_create(aci_contract_subject_filters)
 
         cls.create_data: list[dict] = [
             {

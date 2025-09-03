@@ -29,9 +29,7 @@ class ACIVRFTable(NetBoxTable):
     nb_vrf = tables.Column(
         linkify=True,
     )
-    bd_enforcement_enabled = columns.BooleanColumn(
-        verbose_name=_("BD enforcement")
-    )
+    bd_enforcement_enabled = columns.BooleanColumn(verbose_name=_("BD enforcement"))
     dns_labels = columns.ArrayColumn()
     ip_data_plane_learning_enabled = columns.BooleanColumn(
         verbose_name=_("DP learning"),

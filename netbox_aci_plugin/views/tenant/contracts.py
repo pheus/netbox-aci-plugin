@@ -65,9 +65,7 @@ class ACIContractChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIContract."""
-        return ACIContract.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
+        return ACIContract.objects.restrict(request.user, "view").prefetch_related(
             "aci_tenant",
             "nb_tenant",
             "tags",
@@ -227,11 +225,7 @@ class ACIContractContractRelationView(ACIContractRelationChildrenView):
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_contract=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_contract=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACIContract colum hidden."""
@@ -254,11 +248,7 @@ class ACIContractContractSubjectView(ACIContractSubjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_contract=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_contract=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACIContract colum hidden."""
@@ -353,9 +343,7 @@ class ACIContractRelationDeleteView(generic.ObjectDeleteView):
     )
 
 
-@register_model_view(
-    ACIContractRelation, "bulk_import", path="import", detail=False
-)
+@register_model_view(ACIContractRelation, "bulk_import", path="import", detail=False)
 class ACIContractRelationBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of Contract Relation."""
 
@@ -363,9 +351,7 @@ class ACIContractRelationBulkImportView(generic.BulkImportView):
     model_form = ACIContractRelationImportForm
 
 
-@register_model_view(
-    ACIContractRelation, "bulk_edit", path="edit", detail=False
-)
+@register_model_view(ACIContractRelation, "bulk_edit", path="edit", detail=False)
 class ACIContractRelationBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of Contract Relation."""
 
@@ -375,9 +361,7 @@ class ACIContractRelationBulkEditView(generic.BulkEditView):
     form = ACIContractRelationBulkEditForm
 
 
-@register_model_view(
-    ACIContractRelation, "bulk_delete", path="delete", detail=False
-)
+@register_model_view(ACIContractRelation, "bulk_delete", path="delete", detail=False)
 class ACIContractRelationBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of Contract Subject."""
 
@@ -451,25 +435,17 @@ class ACIContractSubjectDeleteView(generic.ObjectDeleteView):
     )
 
 
-@register_model_view(
-    ACIContractSubject, "contractsubjectfilters", path="filters"
-)
-class ACIContractContractSubjectFilterView(
-    ACIContractSubjectFilterChildrenView
-):
+@register_model_view(ACIContractSubject, "contractsubjectfilters", path="filters")
+class ACIContractContractSubjectFilterView(ACIContractSubjectFilterChildrenView):
     """Children view of ACI Contract Subject Filter of ACI Contract Subject."""
 
     queryset = ACIContractSubject.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/acicontractsubject/subjectfilters.html"
-    )
+    template_name = "netbox_aci_plugin/inc/acicontractsubject/subjectfilters.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
         return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_contract_subject=parent.pk)
+            super().get_children(request, parent).filter(aci_contract_subject=parent.pk)
         )
 
     def get_table(self, *args, **kwargs):
@@ -484,9 +460,7 @@ class ACIContractContractSubjectFilterView(
         return table
 
 
-@register_model_view(
-    ACIContractSubject, "bulk_import", path="import", detail=False
-)
+@register_model_view(ACIContractSubject, "bulk_import", path="import", detail=False)
 class ACIContractSubjectBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of Contract Subject."""
 
@@ -494,9 +468,7 @@ class ACIContractSubjectBulkImportView(generic.BulkImportView):
     model_form = ACIContractSubjectImportForm
 
 
-@register_model_view(
-    ACIContractSubject, "bulk_edit", path="edit", detail=False
-)
+@register_model_view(ACIContractSubject, "bulk_edit", path="edit", detail=False)
 class ACIContractSubjectBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of Contract Subject."""
 
@@ -506,9 +478,7 @@ class ACIContractSubjectBulkEditView(generic.BulkEditView):
     form = ACIContractSubjectBulkEditForm
 
 
-@register_model_view(
-    ACIContractSubject, "bulk_delete", path="delete", detail=False
-)
+@register_model_view(ACIContractSubject, "bulk_delete", path="delete", detail=False)
 class ACIContractSubjectBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of Contract Subject."""
 
@@ -581,9 +551,7 @@ class ACIContractSubjectFilterBulkImportView(generic.BulkImportView):
     model_form = ACIContractSubjectFilterImportForm
 
 
-@register_model_view(
-    ACIContractSubjectFilter, "bulk_edit", path="edit", detail=False
-)
+@register_model_view(ACIContractSubjectFilter, "bulk_edit", path="edit", detail=False)
 class ACIContractSubjectFilterBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of Subject Filter."""
 

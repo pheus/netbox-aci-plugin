@@ -43,16 +43,10 @@ class ACIBridgeDomainTable(NetBoxTable):
     advertise_host_routes_enabled = columns.BooleanColumn(
         verbose_name=_("Advertise host routes")
     )
-    arp_flooding_enabled = columns.BooleanColumn(
-        verbose_name=_("ARP flooding")
-    )
-    clear_remote_mac_enabled = columns.BooleanColumn(
-        verbose_name=_("Clear remote MAC")
-    )
+    arp_flooding_enabled = columns.BooleanColumn(verbose_name=_("ARP flooding"))
+    clear_remote_mac_enabled = columns.BooleanColumn(verbose_name=_("Clear remote MAC"))
     dhcp_labels = columns.ArrayColumn()
-    ep_move_detection_enabled = columns.BooleanColumn(
-        verbose_name=_("EP move detect")
-    )
+    ep_move_detection_enabled = columns.BooleanColumn(verbose_name=_("EP move detect"))
     ip_data_plane_learning_enabled = columns.BooleanColumn(
         verbose_name=_("DP learning"),
     )
@@ -166,9 +160,7 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
     advertised_externally_enabled = columns.BooleanColumn(
         verbose_name=_("Advertised externally")
     )
-    igmp_querier_enabled = columns.BooleanColumn(
-        verbose_name=_("IGMP querier")
-    )
+    igmp_querier_enabled = columns.BooleanColumn(verbose_name=_("IGMP querier"))
     ip_data_plane_learning_enabled = columns.BooleanColumn(
         verbose_name=_("DP learning"),
     )

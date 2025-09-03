@@ -25,9 +25,7 @@ class PluginTest(TestCase):
 
     def test_configuration(self) -> None:
         """Test for plugin configuration in NetBox."""
-        self.assertIn(
-            f"netbox_aci_plugin.{self.config_name}", settings.INSTALLED_APPS
-        )
+        self.assertIn(f"netbox_aci_plugin.{self.config_name}", settings.INSTALLED_APPS)
 
     def test_menu(self) -> None:
         """Test for the main menu entry of the plugin in NetBox UI."""
@@ -49,24 +47,18 @@ class PluginTest(TestCase):
             len(menu_plugin_reg_groups[0].items),
             self.menu_group_tenants_item_count,
         )
-        self.assertIsInstance(
-            menu_plugin_reg_groups[0].items[0], PluginMenuItem
-        )
+        self.assertIsInstance(menu_plugin_reg_groups[0].items[0], PluginMenuItem)
 
     def test_menu_group_tenant_appprofiles_items(self) -> None:
         """Test for group 1 submenu entries of the plugin in NetBox UI."""
         menu_plugin_reg_groups = registry["plugins"]["menus"][0].groups
         # Menu group: Tenants
-        self.assertEqual(
-            menu_plugin_reg_groups[1].label, "Tenant Application Profiles"
-        )
+        self.assertEqual(menu_plugin_reg_groups[1].label, "Tenant Application Profiles")
         self.assertEqual(
             len(menu_plugin_reg_groups[1].items),
             self.menu_group_tenant_app_profiles_item_count,
         )
-        self.assertIsInstance(
-            menu_plugin_reg_groups[1].items[0], PluginMenuItem
-        )
+        self.assertIsInstance(menu_plugin_reg_groups[1].items[0], PluginMenuItem)
 
     def test_menu_group_tenant_networking_items(self) -> None:
         """Test for group 2 submenu entries of the plugin in NetBox UI."""
@@ -77,9 +69,7 @@ class PluginTest(TestCase):
             len(menu_plugin_reg_groups[2].items),
             self.menu_group_tenant_networking_item_count,
         )
-        self.assertIsInstance(
-            menu_plugin_reg_groups[2].items[0], PluginMenuItem
-        )
+        self.assertIsInstance(menu_plugin_reg_groups[2].items[0], PluginMenuItem)
 
     def test_menu_group_tenant_contracts_items(self) -> None:
         """Test for group 3 submenu entries of the plugin in NetBox UI."""
@@ -90,6 +80,4 @@ class PluginTest(TestCase):
             len(menu_plugin_reg_groups[3].items),
             self.menu_group_tenant_contracts_item_count,
         )
-        self.assertIsInstance(
-            menu_plugin_reg_groups[3].items[0], PluginMenuItem
-        )
+        self.assertIsInstance(menu_plugin_reg_groups[3].items[0], PluginMenuItem)

@@ -69,9 +69,7 @@ BDUnknownUnicastEnum = strawberry.enum(BDUnknownUnicastChoices.as_enum())
 ContractFilterARPOpenPeripheralCodesEnum = strawberry.enum(
     ContractFilterARPOpenPeripheralCodesChoices.as_enum()
 )
-ContractFilterEtherTypeEnum = strawberry.enum(
-    ContractFilterEtherTypeChoices.as_enum()
-)
+ContractFilterEtherTypeEnum = strawberry.enum(ContractFilterEtherTypeChoices.as_enum())
 ContractFilterICMPv4TypesEnum = strawberry.enum(
     ContractFilterICMPv4TypesChoices.as_enum()
 )
@@ -82,9 +80,7 @@ ContractFilterIPProtocolEnum = strawberry.enum(
     ContractFilterIPProtocolChoices.as_enum()
 )
 ContractFilterPortEnum = strawberry.enum(ContractFilterPortChoices.as_enum())
-ContractFilterTCPRulesEnum = strawberry.enum(
-    ContractFilterTCPRulesChoices.as_enum()
-)
+ContractFilterTCPRulesEnum = strawberry.enum(ContractFilterTCPRulesChoices.as_enum())
 
 #
 # Contract
@@ -96,9 +92,7 @@ ContractScopeEnum = strawberry.enum(ContractScopeChoices.as_enum())
 # Contract Relation
 #
 
-ContractRelationRoleEnum = strawberry.enum(
-    ContractRelationRoleChoices.as_enum()
-)
+ContractRelationRoleEnum = strawberry.enum(ContractRelationRoleChoices.as_enum())
 
 #
 # Contract Subject Filter
@@ -118,12 +112,8 @@ ContractSubjectFilterPriorityEnum = strawberry.enum(
 # Quality of Service (QoS)
 #
 
-QualityOfServiceClassEnum = strawberry.enum(
-    QualityOfServiceClassChoices.as_enum()
-)
-QualityOfServiceDSCPEnum = strawberry.enum(
-    QualityOfServiceDSCPChoices.as_enum()
-)
+QualityOfServiceClassEnum = strawberry.enum(QualityOfServiceClassChoices.as_enum())
+QualityOfServiceDSCPEnum = strawberry.enum(QualityOfServiceDSCPChoices.as_enum())
 
 #
 # uSeg EPG

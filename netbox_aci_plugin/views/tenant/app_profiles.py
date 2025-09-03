@@ -41,9 +41,7 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIAppProfile."""
-        return ACIAppProfile.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
+        return ACIAppProfile.objects.restrict(request.user, "view").prefetch_related(
             "aci_tenant",
             "nb_tenant",
             "tags",
@@ -113,11 +111,7 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_app_profile=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_app_profile=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACIAppProfile colum hidden."""
@@ -129,24 +123,16 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
         return table
 
 
-@register_model_view(
-    ACIAppProfile, "usegendpointgroups", path="useg-endpoint-groups"
-)
+@register_model_view(ACIAppProfile, "usegendpointgroups", path="useg-endpoint-groups")
 class ACIAppProfileUSegEndpointGroupView(ACIUSegEndpointGroupChildrenView):
     """Children view of ACI uSeg Endpoint Group of ACI Application Profile."""
 
     queryset = ACIAppProfile.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciappprofile/usegendpointgroups.html"
-    )
+    template_name = "netbox_aci_plugin/inc/aciappprofile/usegendpointgroups.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_app_profile=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_app_profile=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACIAppProfile colum hidden."""
@@ -161,23 +147,15 @@ class ACIAppProfileUSegEndpointGroupView(ACIUSegEndpointGroupChildrenView):
 @register_model_view(
     ACIAppProfile, "endpointsecuritygroups", path="endpoint-security-groups"
 )
-class ACIAppProfileEndpointSecurityGroupView(
-    ACIEndpointSecurityGroupChildrenView
-):
+class ACIAppProfileEndpointSecurityGroupView(ACIEndpointSecurityGroupChildrenView):
     """Children view of ACI Endpoint Security Group of ACI App Profile."""
 
     queryset = ACIAppProfile.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciappprofile/endpointsecuritygroups.html"
-    )
+    template_name = "netbox_aci_plugin/inc/aciappprofile/endpointsecuritygroups.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_app_profile=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_app_profile=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACIAppProfile colum hidden."""

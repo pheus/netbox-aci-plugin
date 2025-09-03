@@ -258,8 +258,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
         required=False,
         label=_("ARP open peripheral codes"),
         help_text=_(
-            "Specifies the ARP flag (for ether type 'ARP'). "
-            "Default is 'unspecified'."
+            "Specifies the ARP flag (for ether type 'ARP'). Default is 'unspecified'."
         ),
     )
     destination_from_port = forms.ChoiceField(
@@ -307,8 +306,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
         required=False,
         label=_("Ether type"),
         help_text=_(
-            "Specify the Ethernet type for the filter entry. "
-            "Default is 'unspecified'."
+            "Specify the Ethernet type for the filter entry. Default is 'unspecified'."
         ),
     )
     icmp_v4_type = forms.ChoiceField(
@@ -540,14 +538,10 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             port_choices = dict(ContractFilterPortChoices)
             if instance.destination_from_port not in port_choices:
                 initial["destination_from_port"] = None
-                initial["destination_from_port_custom"] = (
-                    instance.destination_from_port
-                )
+                initial["destination_from_port_custom"] = instance.destination_from_port
             if instance.destination_to_port not in port_choices:
                 initial["destination_to_port"] = None
-                initial["destination_to_port_custom"] = (
-                    instance.destination_to_port
-                )
+                initial["destination_to_port_custom"] = instance.destination_to_port
             if instance.source_from_port not in port_choices:
                 initial["source_from_port"] = None
                 initial["source_from_port_custom"] = instance.source_from_port
@@ -574,29 +568,21 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
                 "destination_from_port_custom"
             )
             validate_contract_filter_port(destination_from_port_custom)
-            self.cleaned_data["destination_from_port"] = (
-                destination_from_port_custom
-            )
+            self.cleaned_data["destination_from_port"] = destination_from_port_custom
         if not self.cleaned_data.get("destination_to_port"):
             destination_to_port_custom = self.cleaned_data.get(
                 "destination_to_port_custom"
             )
             validate_contract_filter_port(destination_to_port_custom)
-            self.cleaned_data["destination_to_port"] = (
-                destination_to_port_custom
-            )
+            self.cleaned_data["destination_to_port"] = destination_to_port_custom
 
         # Validate source ports
         if not self.cleaned_data.get("source_from_port"):
-            source_from_port_custom = self.cleaned_data.get(
-                "source_from_port_custom"
-            )
+            source_from_port_custom = self.cleaned_data.get("source_from_port_custom")
             validate_contract_filter_port(source_from_port_custom)
             self.cleaned_data["source_from_port"] = source_from_port_custom
         if not self.cleaned_data.get("source_to_port"):
-            source_to_port_custom = self.cleaned_data.get(
-                "source_to_port_custom"
-            )
+            source_to_port_custom = self.cleaned_data.get("source_to_port_custom")
             validate_contract_filter_port(source_to_port_custom)
             self.cleaned_data["source_to_port"] = source_to_port_custom
 
@@ -673,8 +659,7 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("IP protocol"),
         help_text=_(
-            "Set the Layer 3 IP protocol (for ether type 'IP'). "
-            "(Valid values 1-255)."
+            "Set the Layer 3 IP protocol (for ether type 'IP'). (Valid values 1-255)."
         ),
         widget=TextInputWithOptions(
             options=ContractFilterIPProtocolChoices,
@@ -1000,8 +985,7 @@ class ACIContractFilterEntryImportForm(NetBoxModelImportForm):
         required=False,
         label=_("ARP open peripheral codes"),
         help_text=_(
-            "Specifies the ARP flag (for ether type 'ARP'). "
-            "Default is 'unspecified'."
+            "Specifies the ARP flag (for ether type 'ARP'). Default is 'unspecified'."
         ),
     )
     destination_from_port = forms.CharField(
@@ -1027,8 +1011,7 @@ class ACIContractFilterEntryImportForm(NetBoxModelImportForm):
         required=False,
         label=_("Ether type"),
         help_text=_(
-            "Specify the Ethernet type for the filter entry. "
-            "Default is 'unspecified'."
+            "Specify the Ethernet type for the filter entry. Default is 'unspecified'."
         ),
     )
     ip_protocol = forms.CharField(

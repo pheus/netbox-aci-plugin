@@ -22,9 +22,7 @@ from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
 
-class ACIEndpointSecurityGroupAPIViewTestCase(
-    APIViewTestCases.APIViewTestCase
-):
+class ACIEndpointSecurityGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     """API view test case for ACI Endpoint Security Group."""
 
     model = ACIEndpointSecurityGroup
@@ -148,9 +146,7 @@ class ACIEndpointSecurityGroupAPIViewTestCase(
         }
 
 
-class ACIEsgEndpointGroupSelectorAPIViewTestCase(
-    APIViewTestCases.APIViewTestCase
-):
+class ACIEsgEndpointGroupSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     """API view test case for ACI ESG Endpoint Group Selector."""
 
     model = ACIEsgEndpointGroupSelector

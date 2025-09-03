@@ -108,8 +108,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
         required=False,
         label=_("Limit IP learning to subnet"),
         help_text=_(
-            "IP learning is limited to the Bridge Domain's subnets. "
-            "Default is enabled."
+            "IP learning is limited to the Bridge Domain's subnets. Default is enabled."
         ),
     )
     multi_destination_flooding = forms.ChoiceField(
@@ -125,16 +124,14 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
         label=_("PIM (multicast) IPv4 enabled"),
         required=False,
         help_text=_(
-            "Multicast routing enabled for the Bridge Domain. "
-            "Default is disabled."
+            "Multicast routing enabled for the Bridge Domain. Default is disabled."
         ),
     )
     pim_ipv6_enabled = forms.BooleanField(
         label=_("PIM (multicast) IPv6 enabled"),
         required=False,
         help_text=_(
-            "Multicast routing enabled for the Bridge Domain. "
-            "Default is disabled."
+            "Multicast routing enabled for the Bridge Domain. Default is disabled."
         ),
     )
     unicast_routing_enabled = forms.BooleanField(
@@ -150,8 +147,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
         required=False,
         label=_("Unknown IPv4 multicast"),
         help_text=_(
-            "Defines the IPv4 unknown multicast forwarding method. "
-            "Default is 'flood'."
+            "Defines the IPv4 unknown multicast forwarding method. Default is 'flood'."
         ),
     )
     unknown_ipv6_multicast = forms.ChoiceField(
@@ -159,8 +155,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
         required=False,
         label=_("Unknown IPv6 multicast"),
         help_text=_(
-            "Defines the IPv6 unknown multicast forwarding method. "
-            "Default is 'flood'."
+            "Defines the IPv6 unknown multicast forwarding method. Default is 'flood'."
         ),
     )
     unknown_unicast = forms.ChoiceField(
@@ -168,8 +163,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
         required=False,
         label=_("Unknown unicast"),
         help_text=_(
-            "Defines the layer 2 unknown unicast forwarding method. "
-            "Default is 'proxy'."
+            "Defines the layer 2 unknown unicast forwarding method. Default is 'proxy'."
         ),
     )
     comments = CommentField()
@@ -703,8 +697,7 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         required=True,
         label=_("Multi destination flooding"),
         help_text=_(
-            "Forwarding method for L2 multicast, broadcast, and link layer "
-            "traffic."
+            "Forwarding method for L2 multicast, broadcast, and link layer traffic."
         ),
     )
     unknown_ipv4_multicast = CSVChoiceField(
@@ -890,9 +883,7 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
     virtual_ip_enabled = forms.BooleanField(
         required=False,
         label=_("Virtual IP enabled"),
-        help_text=_(
-            "Treat the gateway IP as virtual IP. Default is disabled."
-        ),
+        help_text=_("Treat the gateway IP as virtual IP. Default is disabled."),
     )
     comments = CommentField()
 

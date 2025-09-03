@@ -46,9 +46,7 @@ class ACIVRFTestCase(TestCase):
 
         # Create objects
         cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.nb_vrf = VRF.objects.create(
-            name=cls.nb_vrf_name, tenant=cls.nb_tenant
-        )
+        cls.nb_vrf = VRF.objects.create(name=cls.nb_vrf_name, tenant=cls.nb_tenant)
         cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
         cls.aci_vrf = ACIVRF.objects.create(
             name=cls.aci_vrf_name,
@@ -142,15 +140,11 @@ class ACIVRFTestCase(TestCase):
 
     def test_aci_vrf_pim_ipv4_enabled(self) -> None:
         """Test the 'PIM IPv4 enabled' option of ACI VRF."""
-        self.assertEqual(
-            self.aci_vrf.pim_ipv4_enabled, self.aci_vrf_pim_ipv4_enabled
-        )
+        self.assertEqual(self.aci_vrf.pim_ipv4_enabled, self.aci_vrf_pim_ipv4_enabled)
 
     def test_aci_vrf_pim_ipv6_enabled(self) -> None:
         """Test the 'PIM IPv6 enabled' option of ACI VRF."""
-        self.assertEqual(
-            self.aci_vrf.pim_ipv6_enabled, self.aci_vrf_pim_ipv6_enabled
-        )
+        self.assertEqual(self.aci_vrf.pim_ipv6_enabled, self.aci_vrf_pim_ipv6_enabled)
 
     def test_aci_vrf_preferred_group_enabled(self) -> None:
         """Test the 'preferred group enabled' option of ACI VRF."""

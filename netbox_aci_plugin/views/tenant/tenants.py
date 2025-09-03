@@ -50,9 +50,9 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
                 "aci_tenant_id",
             ),
             (
-                ACIEndpointSecurityGroup.objects.restrict(
-                    request.user, "view"
-                ).filter(aci_app_profile__aci_tenant=instance),
+                ACIEndpointSecurityGroup.objects.restrict(request.user, "view").filter(
+                    aci_app_profile__aci_tenant=instance
+                ),
                 "aci_tenant_id",
             ),
         )
@@ -108,11 +108,7 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
 
     def get_children(self, request, parent):
         """Return all ACIAppProfile objects for the current ACITenant."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_tenant_id=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_tenant_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACITenant colum hidden."""
@@ -176,9 +172,7 @@ class ACITenantEndpointSecurityGroupView(ACIEndpointSecurityGroupChildrenView):
         permission="netbox_aci_plugin.view_aciendpointsecuritygroup",
         weight=1000,
     )
-    template_name = (
-        "netbox_aci_plugin/inc/acitenant/endpointsecuritygroups.html"
-    )
+    template_name = "netbox_aci_plugin/inc/acitenant/endpointsecuritygroups.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -207,11 +201,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_tenant_id=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_tenant_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACITenant colum hidden."""
@@ -232,11 +222,7 @@ class ACITenantVRFView(ACIVRFChildrenView):
 
     def get_children(self, request, parent):
         """Return all ACIVRF objects for current ACITenant."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_tenant_id=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_tenant_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACITenant colum hidden."""
@@ -257,11 +243,7 @@ class ACITenantContractView(ACIContractChildrenView):
 
     def get_children(self, request, parent):
         """Return all ACIContract objects for the current ACITenant."""
-        return (
-            super()
-            .get_children(request, parent)
-            .filter(aci_tenant_id=parent.pk)
-        )
+        return super().get_children(request, parent).filter(aci_tenant_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACITenant colum hidden."""

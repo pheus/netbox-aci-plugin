@@ -83,8 +83,7 @@ class ACIContractFilterEntry(ACIBaseModel):
         default=ContractFilterARPOpenPeripheralCodesChoices.OPC_UNSPECIFIED,
         choices=ContractFilterARPOpenPeripheralCodesChoices,
         help_text=_(
-            "Specifies the ARP flag (for ether type 'ARP'). "
-            "Default is 'unspecified'."
+            "Specifies the ARP flag (for ether type 'ARP'). Default is 'unspecified'."
         ),
     )
     destination_from_port = models.CharField(
@@ -113,8 +112,7 @@ class ACIContractFilterEntry(ACIBaseModel):
         default=ContractFilterEtherTypeChoices.TYPE_UNSPECIFIED,
         choices=ContractFilterEtherTypeChoices,
         help_text=_(
-            "Specify the Ethernet type for the filter entry. "
-            "Default is 'unspecified'."
+            "Specify the Ethernet type for the filter entry. Default is 'unspecified'."
         ),
     )
     icmp_v4_type = models.CharField(
@@ -267,8 +265,7 @@ class ACIContractFilterEntry(ACIBaseModel):
         # Validate ip_protocol for ether_type 'ip', 'ipv4' or 'ipv6'
         if (
             self.ether_type not in ip_ether_types
-            and self.ip_protocol
-            != ContractFilterIPProtocolChoices.PROT_UNSPECIFIED
+            and self.ip_protocol != ContractFilterIPProtocolChoices.PROT_UNSPECIFIED
         ):
             validation_errors["ip_protocol"] = _(
                 "IP protocol must be 'unspecified' when Ethernet Type is not "
@@ -281,37 +278,25 @@ class ACIContractFilterEntry(ACIBaseModel):
             ContractFilterIPProtocolChoices.PROT_TCP,
             ContractFilterIPProtocolChoices.PROT_UDP,
         ]:
-            if (
-                self.destination_from_port
-                != ContractFilterPortChoices.PORT_UNSPECIFIED
-            ):
+            if self.destination_from_port != ContractFilterPortChoices.PORT_UNSPECIFIED:
                 validation_errors["destination_from_port"] = _(
                     "Destination from-port must be set to 'unspecified' when "
                     "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
                     "IP Protocol is not 'TCP' or 'UDP'."
                 )
-            if (
-                self.destination_to_port
-                != ContractFilterPortChoices.PORT_UNSPECIFIED
-            ):
+            if self.destination_to_port != ContractFilterPortChoices.PORT_UNSPECIFIED:
                 validation_errors["destination_to_port"] = _(
                     "Destination to-port must be set to 'unspecified' when "
                     "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
                     "IP Protocol is not 'TCP' or 'UDP'."
                 )
-            if (
-                self.source_from_port
-                != ContractFilterPortChoices.PORT_UNSPECIFIED
-            ):
+            if self.source_from_port != ContractFilterPortChoices.PORT_UNSPECIFIED:
                 validation_errors["source_from_port"] = _(
                     "Source from-port must be set to 'unspecified' when "
                     "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
                     "IP Protocol is not 'TCP' or 'UDP'."
                 )
-            if (
-                self.source_to_port
-                != ContractFilterPortChoices.PORT_UNSPECIFIED
-            ):
+            if self.source_to_port != ContractFilterPortChoices.PORT_UNSPECIFIED:
                 validation_errors["source_to_port"] = _(
                     "Source to-port must be set to 'unspecified' when "
                     "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
@@ -324,8 +309,7 @@ class ACIContractFilterEntry(ACIBaseModel):
             self.ether_type not in ip_ether_types
             or self.ip_protocol != ContractFilterIPProtocolChoices.PROT_ICMP_V4
         ) and (
-            self.icmp_v4_type
-            != ContractFilterICMPv4TypesChoices.ICMP_V4_UNSPECIFIED
+            self.icmp_v4_type != ContractFilterICMPv4TypesChoices.ICMP_V4_UNSPECIFIED
         ):
             validation_errors["icmp_v4_type"] = _(
                 "ICMPv4 Type must be 'unspecified' when Ethernet Type is "
@@ -338,8 +322,7 @@ class ACIContractFilterEntry(ACIBaseModel):
             self.ether_type not in ip_ether_types
             or self.ip_protocol != ContractFilterIPProtocolChoices.PROT_ICMP_V6
         ) and (
-            self.icmp_v6_type
-            != ContractFilterICMPv6TypesChoices.ICMP_V6_UNSPECIFIED
+            self.icmp_v6_type != ContractFilterICMPv6TypesChoices.ICMP_V6_UNSPECIFIED
         ):
             validation_errors["icmp_v6_type"] = _(
                 "ICMPv6 Type must be 'unspecified' when Ethernet Type is "
@@ -359,10 +342,7 @@ class ACIContractFilterEntry(ACIBaseModel):
 
         # Validate match_only_fragments_enabled for ether_type 'ip', 'ipv4'
         # or 'ipv6'
-        if (
-            self.ether_type not in ip_ether_types
-            and self.match_only_fragments_enabled
-        ):
+        if self.ether_type not in ip_ether_types and self.match_only_fragments_enabled:
             validation_errors["match_only_fragments_enabled"] = _(
                 "Match only fragments enabled must be false when "
                 "Ethernet Type is not 'IP', 'IPv4', or 'IPv6'."
@@ -427,9 +407,7 @@ class ACIContractFilterEntry(ACIBaseModel):
     def get_source_to_port_display(self) -> str:
         """Return the associated string representation from the ChoiceSet."""
         source_to_port_choices = dict(ContractFilterPortChoices)
-        return source_to_port_choices.get(
-            self.source_to_port, self.source_to_port
-        )
+        return source_to_port_choices.get(self.source_to_port, self.source_to_port)
 
     def get_tcp_rules_display(self) -> list[str]:
         """Return the associated string representation from the ChoiceSet."""

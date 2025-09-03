@@ -179,9 +179,7 @@ class ACIEndpointSecurityGroupDeleteView(generic.ObjectDeleteView):
 @register_model_view(
     ACIEndpointSecurityGroup, "contractrelations", path="contract-relations"
 )
-class ACIEndpointSecurityGroupContractRelationView(
-    ACIContractRelationChildrenView
-):
+class ACIEndpointSecurityGroupContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
@@ -199,8 +197,8 @@ class ACIEndpointSecurityGroupContractRelationView(
 
     def get_extra_context(self, request, instance) -> dict:
         """Return ContentType as extra context."""
-        aci_endpoint_security_group_content_type = (
-            ContentType.objects.get_for_model(ACIEndpointSecurityGroup)
+        aci_endpoint_security_group_content_type = ContentType.objects.get_for_model(
+            ACIEndpointSecurityGroup
         )
 
         return {
@@ -221,18 +219,14 @@ class ACIEndpointSecurityGroupContractRelationView(
         return table
 
 
-@register_model_view(
-    ACIEndpointSecurityGroup, "epgselectors", path="epg-selectors"
-)
+@register_model_view(ACIEndpointSecurityGroup, "epgselectors", path="epg-selectors")
 class ACIEndpointSecurityGroupEsgEndpointGroupSelectorView(
     ACIEsgEndpointGroupSelectorChildrenView
 ):
     """Children view of ACI ESG Endpoint Group Selector of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciendpointsecuritygroup/epgselectors.html"
-    )
+    template_name = "netbox_aci_plugin/inc/aciendpointsecuritygroup/epgselectors.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -256,18 +250,14 @@ class ACIEndpointSecurityGroupEsgEndpointGroupSelectorView(
         return table
 
 
-@register_model_view(
-    ACIEndpointSecurityGroup, "epselectors", path="ep-selectors"
-)
+@register_model_view(ACIEndpointSecurityGroup, "epselectors", path="ep-selectors")
 class ACIEndpointSecurityGroupEsgEndpointSelectorView(
     ACIEsgEndpointSelectorChildrenView
 ):
     """Children view of ACI ESG Endpoint Selector of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciendpointsecuritygroup/epselectors.html"
-    )
+    template_name = "netbox_aci_plugin/inc/aciendpointsecuritygroup/epselectors.html"
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -301,9 +291,7 @@ class ACIEndpointSecurityGroupBulkImportView(generic.BulkImportView):
     model_form = ACIEndpointSecurityGroupImportForm
 
 
-@register_model_view(
-    ACIEndpointSecurityGroup, "bulk_edit", path="edit", detail=False
-)
+@register_model_view(ACIEndpointSecurityGroup, "bulk_edit", path="edit", detail=False)
 class ACIEndpointSecurityGroupBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI ESG."""
 
@@ -341,9 +329,7 @@ class ACIEsgEndpointGroupSelectorView(generic.ObjectView):
     )
 
 
-@register_model_view(
-    ACIEsgEndpointGroupSelector, "list", path="", detail=False
-)
+@register_model_view(ACIEsgEndpointGroupSelector, "list", path="", detail=False)
 class ACIEsgEndpointGroupSelectorListView(generic.ObjectListView):
     """List view for listing all objects of ACI ESG EPG Selector."""
 
@@ -475,9 +461,7 @@ class ACIEsgEndpointSelectorDeleteView(generic.ObjectDeleteView):
     )
 
 
-@register_model_view(
-    ACIEsgEndpointSelector, "bulk_import", path="import", detail=False
-)
+@register_model_view(ACIEsgEndpointSelector, "bulk_import", path="import", detail=False)
 class ACIEsgEndpointSelectorBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ESG EP Selector."""
 
@@ -485,9 +469,7 @@ class ACIEsgEndpointSelectorBulkImportView(generic.BulkImportView):
     model_form = ACIEsgEndpointSelectorImportForm
 
 
-@register_model_view(
-    ACIEsgEndpointSelector, "bulk_edit", path="edit", detail=False
-)
+@register_model_view(ACIEsgEndpointSelector, "bulk_edit", path="edit", detail=False)
 class ACIEsgEndpointSelectorBulkEditView(generic.BulkEditView):
     """Bulk edit view for editing multiple objects of ACI ESG EP Selector."""
 
@@ -497,9 +479,7 @@ class ACIEsgEndpointSelectorBulkEditView(generic.BulkEditView):
     form = ACIEsgEndpointSelectorBulkEditForm
 
 
-@register_model_view(
-    ACIEsgEndpointSelector, "bulk_delete", path="delete", detail=False
-)
+@register_model_view(ACIEsgEndpointSelector, "bulk_delete", path="delete", detail=False)
 class ACIEsgEndpointSelectorBulkDeleteView(generic.BulkDeleteView):
     """Bulk delete view for deleting multiple objects of ESG EP Selector."""
 

@@ -460,9 +460,7 @@ class ACIContractRelationEditForm(NetBoxModelForm):
             try:
                 # Retrieve the ContentType model class based on the ACI object
                 # type
-                aci_object_type = ContentType.objects.get(
-                    pk=aci_object_type_id
-                )
+                aci_object_type = ContentType.objects.get(pk=aci_object_type_id)
                 aci_model = aci_object_type.model_class()
 
                 # Configure the queryset and label for the aci_object field
@@ -553,9 +551,7 @@ class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
             try:
                 # Retrieve the ContentType model class based on the ACI object
                 # type
-                aci_object_type = ContentType.objects.get(
-                    pk=aci_object_type_id
-                )
+                aci_object_type = ContentType.objects.get(pk=aci_object_type_id)
                 aci_model = aci_object_type.model_class()
 
                 # Configure the queryset and label for the aci_object field
@@ -1325,15 +1321,11 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
 
     def clean_target_dscp_cons_to_prov(self) -> str:
         """Return a cleaned value for target_dscp_cons_to_prov."""
-        return self._clean_field_default_unspecified(
-            "target_dscp_cons_to_prov"
-        )
+        return self._clean_field_default_unspecified("target_dscp_cons_to_prov")
 
     def clean_target_dscp_prov_to_cons(self) -> str:
         """Return a cleaned value for target_dscp_prov_to_cons."""
-        return self._clean_field_default_unspecified(
-            "target_dscp_prov_to_cons"
-        )
+        return self._clean_field_default_unspecified("target_dscp_prov_to_cons")
 
 
 #
@@ -1391,9 +1383,7 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
     log_enabled = forms.BooleanField(
         required=False,
         label=_("Logging enabled"),
-        help_text=_(
-            "Enables logging for the matched traffic. Default is disabled."
-        ),
+        help_text=_("Enables logging for the matched traffic. Default is disabled."),
     )
     policy_compression_enabled = forms.BooleanField(
         required=False,

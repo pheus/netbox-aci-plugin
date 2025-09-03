@@ -22,9 +22,7 @@ def create_default_aci_tenants(apps, schema_editor) -> None:
                 .filter(name=default_aci_tenant)
                 .exists()
             ):
-                aci_tenant.objects.using(db_alias).create(
-                    name=default_aci_tenant
-                )
+                aci_tenant.objects.using(db_alias).create(name=default_aci_tenant)
 
 
 class Migration(migrations.Migration):

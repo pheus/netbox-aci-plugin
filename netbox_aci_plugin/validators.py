@@ -19,18 +19,14 @@ from .choices import (
 ACIPolicyNameValidator = RegexValidator(
     regex=r"^[a-zA-Z0-9_.:-]{1,64}$",
     message=_(
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     ),
     code="invalid",
 )
 
 ACIPolicyDescriptionValidator = RegexValidator(
     regex=r"^[a-zA-Z0-9\\!#$%()*,-./:;@ _{|}~?&+]{1,128}$",
-    message=_(
-        "Only alphanumeric characters and !#$%%()*,-./:;@ _{|}~?&+ are"
-        " allowed."
-    ),
+    message=_("Only alphanumeric characters and !#$%%()*,-./:;@ _{|}~?&+ are allowed."),
     code="invalid",
 )
 
@@ -94,13 +90,9 @@ def validate_contract_filter_tcp_rules(value_list: list[str]) -> None:
         ContractFilterTCPRulesChoices.TCP_ESTABLISHED in value_list
         and len(value_list) > 1
     ):
-        raise ValidationError(
-            _("TCP rules cannot be combined with 'established'.")
-        )
+        raise ValidationError(_("TCP rules cannot be combined with 'established'."))
     if (
         ContractFilterTCPRulesChoices.TCP_UNSPECIFIED in value_list
         and len(value_list) > 1
     ):
-        raise ValidationError(
-            _("TCP rules cannot be combined with 'unspecified'.")
-        )
+        raise ValidationError(_("TCP rules cannot be combined with 'unspecified'."))

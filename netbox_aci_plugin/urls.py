@@ -11,9 +11,7 @@ urlpatterns: tuple = (
     # ACI Tenants
     path(
         "tenants/",
-        include(
-            get_model_urls("netbox_aci_plugin", "acitenant", detail=False)
-        ),
+        include(get_model_urls("netbox_aci_plugin", "acitenant", detail=False)),
     ),
     path(
         "tenants/<int:pk>/",
@@ -22,9 +20,7 @@ urlpatterns: tuple = (
     # ACI Application Profiles
     path(
         "app-profiles/",
-        include(
-            get_model_urls("netbox_aci_plugin", "aciappprofile", detail=False)
-        ),
+        include(get_model_urls("netbox_aci_plugin", "aciappprofile", detail=False)),
     ),
     path(
         "app-profiles/<int:pk>/",
@@ -33,11 +29,7 @@ urlpatterns: tuple = (
     # ACI Endpoint Group
     path(
         "endpoint-groups/",
-        include(
-            get_model_urls(
-                "netbox_aci_plugin", "aciendpointgroup", detail=False
-            )
-        ),
+        include(get_model_urls("netbox_aci_plugin", "aciendpointgroup", detail=False)),
     ),
     path(
         "endpoint-groups/<int:pk>/",
@@ -47,9 +39,7 @@ urlpatterns: tuple = (
     path(
         "useg-endpoint-groups/",
         include(
-            get_model_urls(
-                "netbox_aci_plugin", "aciusegendpointgroup", detail=False
-            )
+            get_model_urls("netbox_aci_plugin", "aciusegendpointgroup", detail=False)
         ),
     ),
     path(
@@ -60,16 +50,12 @@ urlpatterns: tuple = (
     path(
         "useg-endpoint-groups/network-attributes/",
         include(
-            get_model_urls(
-                "netbox_aci_plugin", "aciusegnetworkattribute", detail=False
-            )
+            get_model_urls("netbox_aci_plugin", "aciusegnetworkattribute", detail=False)
         ),
     ),
     path(
         "useg-endpoint-groups/network-attributes/<int:pk>/",
-        include(
-            get_model_urls("netbox_aci_plugin", "aciusegnetworkattribute")
-        ),
+        include(get_model_urls("netbox_aci_plugin", "aciusegnetworkattribute")),
     ),
     # ACI Security Endpoint Group
     path(
@@ -82,9 +68,7 @@ urlpatterns: tuple = (
     ),
     path(
         "endpoint-security-groups/<int:pk>/",
-        include(
-            get_model_urls("netbox_aci_plugin", "aciendpointsecuritygroup")
-        ),
+        include(get_model_urls("netbox_aci_plugin", "aciendpointsecuritygroup")),
     ),
     # ACI ESG Endpoint Group Selector
     path(
@@ -99,17 +83,13 @@ urlpatterns: tuple = (
     ),
     path(
         "endpoint-security-groups/epg-selectors/<int:pk>/",
-        include(
-            get_model_urls("netbox_aci_plugin", "aciesgendpointgroupselector")
-        ),
+        include(get_model_urls("netbox_aci_plugin", "aciesgendpointgroupselector")),
     ),
     # ACI ESG Endpoint Selector
     path(
         "endpoint-security-groups/ep-selectors/",
         include(
-            get_model_urls(
-                "netbox_aci_plugin", "aciesgendpointselector", detail=False
-            )
+            get_model_urls("netbox_aci_plugin", "aciesgendpointselector", detail=False)
         ),
     ),
     path(
@@ -119,11 +99,7 @@ urlpatterns: tuple = (
     # ACI Bridge Domain
     path(
         "bridge-domains/",
-        include(
-            get_model_urls(
-                "netbox_aci_plugin", "acibridgedomain", detail=False
-            )
-        ),
+        include(get_model_urls("netbox_aci_plugin", "acibridgedomain", detail=False)),
     ),
     path(
         "bridge-domains/<int:pk>/",
@@ -133,9 +109,7 @@ urlpatterns: tuple = (
     path(
         "bridge-domain-subnets/",
         include(
-            get_model_urls(
-                "netbox_aci_plugin", "acibridgedomainsubnet", detail=False
-            )
+            get_model_urls("netbox_aci_plugin", "acibridgedomainsubnet", detail=False)
         ),
     ),
     path(
@@ -154,11 +128,7 @@ urlpatterns: tuple = (
     # ACI Contract Filter
     path(
         "contract-filters/",
-        include(
-            get_model_urls(
-                "netbox_aci_plugin", "acicontractfilter", detail=False
-            )
-        ),
+        include(get_model_urls("netbox_aci_plugin", "acicontractfilter", detail=False)),
     ),
     path(
         "contract-filters/<int:pk>/",
@@ -168,9 +138,7 @@ urlpatterns: tuple = (
     path(
         "contract-filter-entries/",
         include(
-            get_model_urls(
-                "netbox_aci_plugin", "acicontractfilterentry", detail=False
-            )
+            get_model_urls("netbox_aci_plugin", "acicontractfilterentry", detail=False)
         ),
     ),
     path(
@@ -180,9 +148,7 @@ urlpatterns: tuple = (
     # ACI Contract
     path(
         "contracts/",
-        include(
-            get_model_urls("netbox_aci_plugin", "acicontract", detail=False)
-        ),
+        include(get_model_urls("netbox_aci_plugin", "acicontract", detail=False)),
     ),
     path(
         "contracts/<int:pk>/",
@@ -192,9 +158,7 @@ urlpatterns: tuple = (
     path(
         "contracts/relations/",
         include(
-            get_model_urls(
-                "netbox_aci_plugin", "acicontractrelation", detail=False
-            )
+            get_model_urls("netbox_aci_plugin", "acicontractrelation", detail=False)
         ),
     ),
     path(
@@ -205,9 +169,7 @@ urlpatterns: tuple = (
     path(
         "contract-subjects/",
         include(
-            get_model_urls(
-                "netbox_aci_plugin", "acicontractsubject", detail=False
-            )
+            get_model_urls("netbox_aci_plugin", "acicontractsubject", detail=False)
         ),
     ),
     path(
@@ -225,8 +187,6 @@ urlpatterns: tuple = (
     ),
     path(
         "contract-subjects/filters/<int:pk>/",
-        include(
-            get_model_urls("netbox_aci_plugin", "acicontractsubjectfilter")
-        ),
+        include(get_model_urls("netbox_aci_plugin", "acicontractsubjectfilter")),
     ),
 )

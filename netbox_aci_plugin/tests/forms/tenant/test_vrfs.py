@@ -11,8 +11,7 @@ class ACIVRFFormTestCase(TestCase):
     """Test case for ACIVRF form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -27,12 +26,8 @@ class ACIVRFFormTestCase(TestCase):
                 "description": "Invalid Description: ö",
             }
         )
-        self.assertEqual(
-            aci_vrf_form.errors["name"], [self.name_error_message]
-        )
-        self.assertEqual(
-            aci_vrf_form.errors["name_alias"], [self.name_error_message]
-        )
+        self.assertEqual(aci_vrf_form.errors["name"], [self.name_error_message])
+        self.assertEqual(aci_vrf_form.errors["name_alias"], [self.name_error_message])
         self.assertEqual(
             aci_vrf_form.errors["description"],
             [self.description_error_message],

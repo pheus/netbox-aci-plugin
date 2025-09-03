@@ -23,8 +23,7 @@ class ACIEndpointSecurityGroupFormTestCase(TestCase):
     """Test case for ACIEndpointSecurityGroup form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -52,12 +51,8 @@ class ACIEndpointSecurityGroupFormTestCase(TestCase):
                 "aci_vrf": self.aci_vrf,
             }
         )
-        self.assertEqual(
-            aci_esg_form.errors["name"], [self.name_error_message]
-        )
-        self.assertEqual(
-            aci_esg_form.errors["name_alias"], [self.name_error_message]
-        )
+        self.assertEqual(aci_esg_form.errors["name"], [self.name_error_message])
+        self.assertEqual(aci_esg_form.errors["name_alias"], [self.name_error_message])
         self.assertEqual(
             aci_esg_form.errors["description"],
             [self.description_error_message],
@@ -83,8 +78,7 @@ class ACIEsgEndpointGroupSelectorFormTestCase(TestCase):
     """Test case for ACIEsgEndpointGroupSelector form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -161,23 +155,16 @@ class ACIEsgEndpointGroupSelectorFormTestCase(TestCase):
         )
         self.assertTrue(aci_esg_epg_selector_form.is_valid())
         self.assertEqual(aci_esg_epg_selector_form.errors.get("name"), None)
-        self.assertEqual(
-            aci_esg_epg_selector_form.errors.get("name_alias"), None
-        )
-        self.assertEqual(
-            aci_esg_epg_selector_form.errors.get("description"), None
-        )
-        self.assertNotIn(
-            "aci_epg_object_type", aci_esg_epg_selector_form.errors
-        )
+        self.assertEqual(aci_esg_epg_selector_form.errors.get("name_alias"), None)
+        self.assertEqual(aci_esg_epg_selector_form.errors.get("description"), None)
+        self.assertNotIn("aci_epg_object_type", aci_esg_epg_selector_form.errors)
 
 
 class ACIEsgEndpointSelectorFormTestCase(TestCase):
     """Test case for ACIEsgEndpointSelector form."""
 
     name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are"
-        " allowed."
+        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
     )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
@@ -245,10 +232,6 @@ class ACIEsgEndpointSelectorFormTestCase(TestCase):
         )
         self.assertTrue(aci_esg_ep_selector_form.is_valid())
         self.assertEqual(aci_esg_ep_selector_form.errors.get("name"), None)
-        self.assertEqual(
-            aci_esg_ep_selector_form.errors.get("name_alias"), None
-        )
-        self.assertEqual(
-            aci_esg_ep_selector_form.errors.get("description"), None
-        )
+        self.assertEqual(aci_esg_ep_selector_form.errors.get("name_alias"), None)
+        self.assertEqual(aci_esg_ep_selector_form.errors.get("description"), None)
         self.assertNotIn("ep_object_type", aci_esg_ep_selector_form.errors)
