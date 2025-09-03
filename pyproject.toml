@@ -43,7 +43,6 @@ docs = [
 ]
 test = [
     "check-manifest==0.50",
-    "isort==6.0.1",
     "pre-commit==4.3.0",
     "pytest==8.4.1",
     "ruff==0.12.11",
@@ -66,10 +65,6 @@ ignore = [
   "requirements_dev.txt",
   "ruff.toml",
 ]
-
-[tool.isort]
-line_length = 79
-profile = "black"
 
 [tool.ruff]
 line-length = 79

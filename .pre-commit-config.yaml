@@ -21,14 +21,6 @@ repos:
           - "--django"
       - id: requirements-txt-fixer
 
-  - repo: https://github.com/PyCQA/isort
-    rev: "6.0.1"
-    hooks:
-      - id: isort
-        args:
-          - "--profile=black"
-        exclude: ^.devcontainer/
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.12.11"
     hooks:

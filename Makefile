@@ -4,7 +4,6 @@ sources = netbox_aci_plugin
 test: format lint unittest
 
 format:
-	isort $(sources) tests
 	ruff format $(sources) tests
 
 lint:
