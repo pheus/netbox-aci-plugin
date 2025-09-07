@@ -9,9 +9,11 @@ nav:
   - Features:
       - Tenants: features/tenants.md
   - Development:
+      - Code of Conduct: development/code_of_conduct.md
       - Contributing: development/contributing.md
       - Releasing: development/releasing.md
   - Changelog: changelog.md
+  - Security: security.md
 theme:
   name: material
   language: en
