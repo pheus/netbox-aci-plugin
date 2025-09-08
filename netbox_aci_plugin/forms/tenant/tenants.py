@@ -121,12 +121,12 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
             "name",
             "name_alias",
             "description",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 

@@ -235,7 +235,7 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
             "name_alias",
             "aci_tenant_id",
             "description",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "scope",
@@ -249,7 +249,7 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 
@@ -580,7 +580,7 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "aci_tenant_id",
             "aci_contract_id",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "aci_endpoint_group_tenant_id",
@@ -1055,7 +1055,7 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
             "aci_tenant_id",
             "aci_contract_id",
             "description",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "apply_both_directions_enabled",
@@ -1080,7 +1080,7 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 
@@ -1548,7 +1548,7 @@ class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
             "aci_contract_filter_id",
             "action",
             "name",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "apply_direction",

@@ -357,7 +357,7 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
             "aci_bridge_domain_id",
             "description",
             "admin_shutdown",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "preferred_group_member_enabled",
@@ -377,7 +377,7 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 
@@ -865,7 +865,7 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
             "aci_bridge_domain_id",
             "description",
             "admin_shutdown",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "preferred_group_member_enabled",
@@ -884,7 +884,7 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 

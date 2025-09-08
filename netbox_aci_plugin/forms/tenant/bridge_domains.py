@@ -501,7 +501,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
             "aci_tenant_id",
             "aci_vrf_id",
             "description",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "unicast_routing_enabled",
@@ -541,7 +541,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 
@@ -1104,7 +1104,7 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
             "description",
             "preferred_ip_address_enabled",
             "virtual_ip_enabled",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "advertised_externally_enabled",
@@ -1128,7 +1128,7 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 

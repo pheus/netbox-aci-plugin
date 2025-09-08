@@ -163,12 +163,12 @@ class ACIContractFilterFilterForm(NetBoxModelFilterSetForm):
             "name_alias",
             "aci_tenant_id",
             "description",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 
@@ -787,7 +787,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
             "aci_tenant_id",
             "aci_contract_filter_id",
             "description",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "ether_type",
@@ -828,7 +828,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 

@@ -316,7 +316,7 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
             "name_alias",
             "aci_tenant_id",
             "description",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "pc_enforcement_direction",
@@ -341,7 +341,7 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
         FieldSet(
             "nb_vrf_id",

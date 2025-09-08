@@ -274,7 +274,7 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
             "aci_vrf_id",
             "description",
             "admin_shutdown",
-            name="Attributes",
+            name=_("Attributes"),
         ),
         FieldSet(
             "preferred_group_member_enabled",
@@ -284,7 +284,7 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
-            name="NetBox Tenancy",
+            name=_("NetBox Tenancy"),
         ),
     )
 
