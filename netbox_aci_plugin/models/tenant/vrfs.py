@@ -14,14 +14,13 @@ from ...choices import (
 )
 from ...validators import ACIPolicyNameValidator
 from ..base import ACIBaseModel
-from .tenants import ACITenant
 
 
 class ACIVRF(ACIBaseModel):
     """NetBox model for ACI VRF."""
 
     aci_tenant = models.ForeignKey(
-        to=ACITenant,
+        to="netbox_aci_plugin.ACITenant",
         on_delete=models.PROTECT,
         related_name="aci_vrfs",
         verbose_name=_("ACI Tenant"),

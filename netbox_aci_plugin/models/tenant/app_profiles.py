@@ -6,14 +6,13 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from ..base import ACIBaseModel
-from .tenants import ACITenant
 
 
 class ACIAppProfile(ACIBaseModel):
     """NetBox model for ACI Application Profile."""
 
     aci_tenant = models.ForeignKey(
-        to=ACITenant,
+        to="netbox_aci_plugin.ACITenant",
         on_delete=models.PROTECT,
         related_name="aci_app_profiles",
         verbose_name=_("ACI Tenant"),

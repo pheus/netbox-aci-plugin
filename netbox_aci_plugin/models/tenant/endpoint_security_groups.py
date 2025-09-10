@@ -20,7 +20,6 @@ from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .app_profiles import ACIAppProfile
 from .tenants import ACITenant
-from .vrfs import ACIVRF
 
 #
 # ACI Endpoint Security Group
@@ -31,12 +30,12 @@ class ACIEndpointSecurityGroup(ACIBaseModel):
     """NetBox model for ACI Endpoint Security Group (ESG)."""
 
     aci_app_profile = models.ForeignKey(
-        to=ACIAppProfile,
+        to="netbox_aci_plugin.ACIAppProfile",
         on_delete=models.PROTECT,
         verbose_name=_("ACI Application Profile"),
     )
     aci_vrf = models.ForeignKey(
-        to=ACIVRF,
+        to="netbox_aci_plugin.ACIVRF",
         on_delete=models.PROTECT,
         verbose_name=_("ACI VRf"),
     )
@@ -150,7 +149,7 @@ class ACIEsgSelectorBaseModel(ACIBaseModel):
     """Base model for ACI Endpoint Security Group (ESG) Selector."""
 
     aci_endpoint_security_group = models.ForeignKey(
-        to=ACIEndpointSecurityGroup,
+        to="netbox_aci_plugin.ACIEndpointSecurityGroup",
         on_delete=models.CASCADE,
         verbose_name=_("ACI Endpoint Security Group"),
     )

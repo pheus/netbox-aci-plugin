@@ -24,7 +24,6 @@ from ...constants import CONTRACT_RELATION_OBJECT_TYPES
 from ...validators import ACIPolicyNameValidator
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
-from .contract_filters import ACIContractFilter
 from .endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
 from .endpoint_security_groups import ACIEndpointSecurityGroup
 from .tenants import ACITenant
@@ -34,7 +33,7 @@ class ACIContract(ACIBaseModel):
     """NetBox model for ACI Contract."""
 
     aci_tenant = models.ForeignKey(
-        to=ACITenant,
+        to="netbox_aci_plugin.ACITenant",
         on_delete=models.PROTECT,
         related_name="aci_contracts",
         verbose_name=_("ACI Tenant"),
@@ -113,7 +112,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
     """NetBox model for ACI Contract Relation to ACI objects."""
 
     aci_contract = models.ForeignKey(
-        to=ACIContract,
+        to="netbox_aci_plugin.ACIContract",
         on_delete=models.CASCADE,
         related_name="aci_contract_relations",
         verbose_name=_("ACI Contract"),
@@ -359,7 +358,7 @@ class ACIContractSubject(ACIBaseModel):
     """NetBox model for ACI Contract Subject."""
 
     aci_contract = models.ForeignKey(
-        to=ACIContract,
+        to="netbox_aci_plugin.ACIContract",
         on_delete=models.CASCADE,
         related_name="aci_contract_subjects",
         verbose_name=_("ACI Contract"),
@@ -544,13 +543,13 @@ class ACIContractSubjectFilter(NetBoxModel):
     """NetBox model for ACI Contract Subject Filter Attachment."""
 
     aci_contract_filter = models.ForeignKey(
-        to=ACIContractFilter,
+        to="netbox_aci_plugin.ACIContractFilter",
         on_delete=models.CASCADE,
         related_name="aci_contract_subject_filters",
         verbose_name=_("ACI Contract Filter"),
     )
     aci_contract_subject = models.ForeignKey(
-        to=ACIContractSubject,
+        to="netbox_aci_plugin.ACIContractSubject",
         on_delete=models.CASCADE,
         related_name="aci_contract_subject_filters",
         verbose_name=_("ACI Contract Subject"),

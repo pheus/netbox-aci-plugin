@@ -37,7 +37,7 @@ class ACIContractFilter(ACIBaseModel):
     """NetBox model for ACI Contract Filter."""
 
     aci_tenant = models.ForeignKey(
-        to=ACITenant,
+        to="netbox_aci_plugin.ACITenant",
         on_delete=models.PROTECT,
         related_name="aci_contract_filters",
         verbose_name=_("ACI Tenant"),
@@ -72,7 +72,7 @@ class ACIContractFilterEntry(ACIBaseModel):
     """NetBox model for ACI Contract Filter Entry."""
 
     aci_contract_filter = models.ForeignKey(
-        to=ACIContractFilter,
+        to="netbox_aci_plugin.ACIContractFilter",
         on_delete=models.CASCADE,
         related_name="aci_contract_filter_entries",
         verbose_name=_("ACI Contract Filter"),

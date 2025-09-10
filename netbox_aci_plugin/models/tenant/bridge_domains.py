@@ -24,13 +24,13 @@ class ACIBridgeDomain(ACIBaseModel):
     """NetBox model for ACI Bridge Domain."""
 
     aci_tenant = models.ForeignKey(
-        to=ACITenant,
+        to="netbox_aci_plugin.ACITenant",
         on_delete=models.PROTECT,
         related_name="aci_bridge_domains",
         verbose_name=_("ACI Tenant"),
     )
     aci_vrf = models.ForeignKey(
-        to=ACIVRF,
+        to="netbox_aci_plugin.ACIVRF",
         on_delete=models.PROTECT,
         related_name="aci_bridge_domains",
         verbose_name=_("ACI VRF"),
@@ -316,7 +316,7 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
     """NetBox model for ACI Bridge Domain Subnet."""
 
     aci_bridge_domain = models.ForeignKey(
-        to=ACIBridgeDomain,
+        to="netbox_aci_plugin.ACIBridgeDomain",
         on_delete=models.CASCADE,
         related_name="aci_bridge_domain_subnets",
         verbose_name=_("ACI Bridge Domain"),

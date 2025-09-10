@@ -24,7 +24,6 @@ from ...validators import ACIPolicyNameValidator
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .app_profiles import ACIAppProfile
-from .bridge_domains import ACIBridgeDomain
 from .tenants import ACITenant
 from .vrfs import ACIVRF
 
@@ -37,12 +36,12 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
     """NetBox abstract model for ACI Endpoint Group (EPG)."""
 
     aci_app_profile = models.ForeignKey(
-        to=ACIAppProfile,
+        to="netbox_aci_plugin.ACIAppProfile",
         on_delete=models.PROTECT,
         verbose_name=_("ACI Application Profile"),
     )
     aci_bridge_domain = models.ForeignKey(
-        to=ACIBridgeDomain,
+        to="netbox_aci_plugin.ACIBridgeDomain",
         on_delete=models.PROTECT,
         verbose_name=_("ACI Bridge Domain"),
     )
@@ -276,7 +275,7 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
     """Base model for ACI uSeg Attribute."""
 
     aci_useg_endpoint_group = models.ForeignKey(
-        to=ACIUSegEndpointGroup,
+        to="netbox_aci_plugin.ACIUSegEndpointGroup",
         on_delete=models.CASCADE,
         verbose_name=_("ACI uSeg Endpoint Group"),
     )
