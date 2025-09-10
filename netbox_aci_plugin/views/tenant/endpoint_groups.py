@@ -58,11 +58,16 @@ class ACIEndpointGroupChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIEndpointGroup."""
-        return ACIEndpointGroup.objects.restrict(request.user, "view").prefetch_related(
-            "aci_app_profile",
-            "aci_bridge_domain",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIEndpointGroup.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_app_profile",
+                "aci_bridge_domain",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -81,13 +86,16 @@ class ACIUSegEndpointGroupChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIUSegEndpointGroup."""
-        return ACIUSegEndpointGroup.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_app_profile",
-            "aci_bridge_domain",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIUSegEndpointGroup.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_app_profile",
+                "aci_bridge_domain",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -106,14 +114,17 @@ class ACIUSegNetworkAttributeChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIUSegNetworkAttribute."""
-        return ACIUSegNetworkAttribute.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_useg_endpoint_group",
-            "attr_object_type",
-            "attr_object",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIUSegNetworkAttribute.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_useg_endpoint_group",
+                "attr_object_type",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "attr_object",
+                "tags",
+            )
         )
 
 
@@ -126,10 +137,11 @@ class ACIUSegNetworkAttributeChildrenView(generic.ObjectChildrenView):
 class ACIEndpointGroupView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Endpoint Group."""
 
-    queryset = ACIEndpointGroup.objects.prefetch_related(
+    queryset = ACIEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -138,10 +150,11 @@ class ACIEndpointGroupView(generic.ObjectView):
 class ACIEndpointGroupListView(generic.ObjectListView):
     """List view for listing all objects of ACI Endpoint Group."""
 
-    queryset = ACIEndpointGroup.objects.prefetch_related(
+    queryset = ACIEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIEndpointGroupFilterSet
@@ -154,10 +167,11 @@ class ACIEndpointGroupListView(generic.ObjectListView):
 class ACIEndpointGroupEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Endpoint Group."""
 
-    queryset = ACIEndpointGroup.objects.prefetch_related(
+    queryset = ACIEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIEndpointGroupEditForm
@@ -167,10 +181,11 @@ class ACIEndpointGroupEditView(generic.ObjectEditView):
 class ACIEndpointGroupDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Endpoint Group."""
 
-    queryset = ACIEndpointGroup.objects.prefetch_related(
+    queryset = ACIEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -248,10 +263,11 @@ class ACIEndpointGroupBulkDeleteView(generic.BulkDeleteView):
 class ACIUSegEndpointGroupView(generic.ObjectView):
     """Detail view for displaying a single object of ACI uSeg EPG."""
 
-    queryset = ACIUSegEndpointGroup.objects.prefetch_related(
+    queryset = ACIUSegEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -260,10 +276,11 @@ class ACIUSegEndpointGroupView(generic.ObjectView):
 class ACIUSegEndpointGroupListView(generic.ObjectListView):
     """List view for listing all objects of ACI uSeg Endpoint Group."""
 
-    queryset = ACIUSegEndpointGroup.objects.prefetch_related(
+    queryset = ACIUSegEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIUSegEndpointGroupFilterSet
@@ -276,10 +293,11 @@ class ACIUSegEndpointGroupListView(generic.ObjectListView):
 class ACIUSegEndpointGroupEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI uSeg Endpoint Group."""
 
-    queryset = ACIUSegEndpointGroup.objects.prefetch_related(
+    queryset = ACIUSegEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIUSegEndpointGroupEditForm
@@ -289,10 +307,11 @@ class ACIUSegEndpointGroupEditView(generic.ObjectEditView):
 class ACIUSegEndpointGroupDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI uSeg Endpoint Group."""
 
-    queryset = ACIUSegEndpointGroup.objects.prefetch_related(
+    queryset = ACIUSegEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -403,10 +422,12 @@ class ACIUSegEndpointGroupBulkDeleteView(generic.BulkDeleteView):
 class ACIUSegNetworkAttributeView(generic.ObjectView):
     """Detail view for displaying a single object of uSeg Network Attribute."""
 
-    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+    queryset = ACIUSegNetworkAttribute.objects.select_related(
         "aci_useg_endpoint_group",
-        "attr_object",
+        "attr_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "attr_object",
         "tags",
     )
 
@@ -415,10 +436,12 @@ class ACIUSegNetworkAttributeView(generic.ObjectView):
 class ACIUSegNetworkAttributeListView(generic.ObjectListView):
     """List view for listing all objects of ACI uSeg Network Attribute."""
 
-    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+    queryset = ACIUSegNetworkAttribute.objects.select_related(
         "aci_useg_endpoint_group",
-        "attr_object",
+        "attr_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "attr_object",
         "tags",
     )
     filterset = ACIUSegNetworkAttributeFilterSet
@@ -431,10 +454,12 @@ class ACIUSegNetworkAttributeListView(generic.ObjectListView):
 class ACIUSegNetworkAttributeEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI uSeg Network Attribute."""
 
-    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+    queryset = ACIUSegNetworkAttribute.objects.select_related(
         "aci_useg_endpoint_group",
-        "attr_object",
+        "attr_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "attr_object",
         "tags",
     )
     form = ACIUSegNetworkAttributeEditForm
@@ -444,10 +469,12 @@ class ACIUSegNetworkAttributeEditView(generic.ObjectEditView):
 class ACIUSegNetworkAttributeDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI uSeg Network Attribute."""
 
-    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+    queryset = ACIUSegNetworkAttribute.objects.select_related(
         "aci_useg_endpoint_group",
-        "attr_object",
+        "attr_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "attr_object",
         "tags",
     )
 

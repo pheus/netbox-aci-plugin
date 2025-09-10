@@ -51,11 +51,16 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIBridgeDomain."""
-        return ACIBridgeDomain.objects.restrict(request.user, "view").prefetch_related(
-            "aci_tenant",
-            "aci_vrf",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIBridgeDomain.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_tenant",
+                "aci_vrf",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -74,13 +79,16 @@ class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIBridgeDomainSubnet."""
-        return ACIBridgeDomainSubnet.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_bridge_domain",
-            "gateway_ip_address",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIBridgeDomainSubnet.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_bridge_domain",
+                "gateway_ip_address",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -93,11 +101,12 @@ class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
 class ACIBridgeDomainView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Bridge Domain."""
 
-    queryset = ACIBridgeDomain.objects.prefetch_related(
-        "aci_bridge_domain_subnets",
+    queryset = ACIBridgeDomain.objects.select_related(
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
+        "aci_bridge_domain_subnets",
         "tags",
     )
 
@@ -117,10 +126,11 @@ class ACIBridgeDomainView(generic.ObjectView):
 class ACIBridgeDomainListView(generic.ObjectListView):
     """List view for listing all objects of ACI Bridge Domain."""
 
-    queryset = ACIBridgeDomain.objects.prefetch_related(
+    queryset = ACIBridgeDomain.objects.select_related(
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIBridgeDomainFilterSet
@@ -133,10 +143,11 @@ class ACIBridgeDomainListView(generic.ObjectListView):
 class ACIBridgeDomainEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Bridge Domain."""
 
-    queryset = ACIBridgeDomain.objects.prefetch_related(
+    queryset = ACIBridgeDomain.objects.select_related(
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIBridgeDomainEditForm
@@ -146,10 +157,11 @@ class ACIBridgeDomainEditView(generic.ObjectEditView):
 class ACIBridgeDomainDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Bridge Domain."""
 
-    queryset = ACIBridgeDomain.objects.prefetch_related(
+    queryset = ACIBridgeDomain.objects.select_related(
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -232,10 +244,11 @@ class ACIBridgeDomainBulkDeleteView(generic.BulkDeleteView):
 class ACIBridgeDomainSubnetView(generic.ObjectView):
     """Detail view for displaying a single object of ACI BD Subnet."""
 
-    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+    queryset = ACIBridgeDomainSubnet.objects.select_related(
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -244,10 +257,11 @@ class ACIBridgeDomainSubnetView(generic.ObjectView):
 class ACIBridgeDomainSubnetListView(generic.ObjectListView):
     """List view for listing all objects of ACI BD Subnet."""
 
-    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+    queryset = ACIBridgeDomainSubnet.objects.select_related(
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIBridgeDomainSubnetFilterSet
@@ -260,10 +274,11 @@ class ACIBridgeDomainSubnetListView(generic.ObjectListView):
 class ACIBridgeDomainSubnetEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI BD Subnet."""
 
-    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+    queryset = ACIBridgeDomainSubnet.objects.select_related(
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIBridgeDomainSubnetEditForm
@@ -273,10 +288,11 @@ class ACIBridgeDomainSubnetEditView(generic.ObjectEditView):
 class ACIBridgeDomainSubnetDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI BD Subnet."""
 
-    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+    queryset = ACIBridgeDomainSubnet.objects.select_related(
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 

@@ -65,10 +65,15 @@ class ACIContractChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIContract."""
-        return ACIContract.objects.restrict(request.user, "view").prefetch_related(
-            "aci_tenant",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIContract.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_tenant",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -87,13 +92,16 @@ class ACIContractRelationChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIContractRelation."""
-        return ACIContractRelation.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_contract",
-            "aci_object_type",
-            "aci_object",
-            "tags",
+        return (
+            ACIContractRelation.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_contract",
+                "aci_object_type",
+            )
+            .prefetch_related(
+                "aci_object",
+                "tags",
+            )
         )
 
 
@@ -112,12 +120,15 @@ class ACIContractSubjectChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIContractSubject."""
-        return ACIContractSubject.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_contract",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIContractSubject.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_contract",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -136,12 +147,15 @@ class ACIContractSubjectFilterChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIContractSubjectFilter."""
-        return ACIContractSubjectFilter.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_contract_filter",
-            "aci_contract_subject",
-            "tags",
+        return (
+            ACIContractSubjectFilter.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_contract_filter",
+                "aci_contract_subject",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -154,9 +168,10 @@ class ACIContractSubjectFilterChildrenView(generic.ObjectChildrenView):
 class ACIContractView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Contract."""
 
-    queryset = ACIContract.objects.prefetch_related(
+    queryset = ACIContract.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -176,9 +191,10 @@ class ACIContractView(generic.ObjectView):
 class ACIContractListView(generic.ObjectListView):
     """List view for listing all objects of ACI Contract."""
 
-    queryset = ACIContract.objects.prefetch_related(
+    queryset = ACIContract.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIContractFilterSet
@@ -191,9 +207,10 @@ class ACIContractListView(generic.ObjectListView):
 class ACIContractEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Contract."""
 
-    queryset = ACIContract.objects.prefetch_related(
+    queryset = ACIContract.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIContractEditForm
@@ -203,9 +220,10 @@ class ACIContractEditView(generic.ObjectEditView):
 class ACIContractDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Contract."""
 
-    queryset = ACIContract.objects.prefetch_related(
+    queryset = ACIContract.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -298,8 +316,10 @@ class ACIContractBulkDeleteView(generic.BulkDeleteView):
 class ACIContractRelationView(generic.ObjectView):
     """Detail view for displaying a single object of ACIContractRelation."""
 
-    queryset = ACIContractRelation.objects.prefetch_related(
+    queryset = ACIContractRelation.objects.select_related(
         "aci_contract",
+        "aci_object_type",
+    ).prefetch_related(
         "aci_object",
         "tags",
     )
@@ -309,8 +329,10 @@ class ACIContractRelationView(generic.ObjectView):
 class ACIContractRelationListView(generic.ObjectListView):
     """List view for listing all objects of ACIContractRelation."""
 
-    queryset = ACIContractRelation.objects.prefetch_related(
+    queryset = ACIContractRelation.objects.select_related(
         "aci_contract",
+        "aci_object_type",
+    ).prefetch_related(
         "aci_object",
         "tags",
     )
@@ -324,8 +346,10 @@ class ACIContractRelationListView(generic.ObjectListView):
 class ACIContractRelationEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACIContractRelation."""
 
-    queryset = ACIContractRelation.objects.prefetch_related(
+    queryset = ACIContractRelation.objects.select_related(
         "aci_contract",
+        "aci_object_type",
+    ).prefetch_related(
         "aci_object",
         "tags",
     )
@@ -336,8 +360,10 @@ class ACIContractRelationEditView(generic.ObjectEditView):
 class ACIContractRelationDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACIContractRelation."""
 
-    queryset = ACIContractRelation.objects.prefetch_related(
+    queryset = ACIContractRelation.objects.select_related(
         "aci_contract",
+        "aci_object_type",
+    ).prefetch_related(
         "aci_object",
         "tags",
     )
@@ -379,9 +405,10 @@ class ACIContractRelationBulkDeleteView(generic.BulkDeleteView):
 class ACIContractSubjectView(generic.ObjectView):
     """Detail view for displaying a single object of ACIContractSubject."""
 
-    queryset = ACIContractSubject.objects.prefetch_related(
+    queryset = ACIContractSubject.objects.select_related(
         "aci_contract",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -401,9 +428,10 @@ class ACIContractSubjectView(generic.ObjectView):
 class ACIContractSubjectListView(generic.ObjectListView):
     """List view for listing all objects of ACIContractSubject."""
 
-    queryset = ACIContractSubject.objects.prefetch_related(
+    queryset = ACIContractSubject.objects.select_related(
         "aci_contract",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIContractSubjectFilterSet
@@ -416,9 +444,10 @@ class ACIContractSubjectListView(generic.ObjectListView):
 class ACIContractSubjectEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACIContractSubject."""
 
-    queryset = ACIContractSubject.objects.prefetch_related(
+    queryset = ACIContractSubject.objects.select_related(
         "aci_contract",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIContractSubjectEditForm
@@ -428,9 +457,10 @@ class ACIContractSubjectEditView(generic.ObjectEditView):
 class ACIContractSubjectDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACIContractSubject."""
 
-    queryset = ACIContractSubject.objects.prefetch_related(
+    queryset = ACIContractSubject.objects.select_related(
         "aci_contract",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -496,9 +526,10 @@ class ACIContractSubjectBulkDeleteView(generic.BulkDeleteView):
 class ACIContractSubjectFilterView(generic.ObjectView):
     """Detail view for displaying a single object of Subject Filter."""
 
-    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+    queryset = ACIContractSubjectFilter.objects.select_related(
         "aci_contract_filter",
         "aci_contract_subject",
+    ).prefetch_related(
         "tags",
     )
 
@@ -507,9 +538,10 @@ class ACIContractSubjectFilterView(generic.ObjectView):
 class ACIContractSubjectFilterListView(generic.ObjectListView):
     """List view for listing all objects of Subject Filter."""
 
-    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+    queryset = ACIContractSubjectFilter.objects.select_related(
         "aci_contract_filter",
         "aci_contract_subject",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIContractSubjectFilterFilterSet
@@ -522,9 +554,10 @@ class ACIContractSubjectFilterListView(generic.ObjectListView):
 class ACIContractSubjectFilterEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACIContractSubjectFilter."""
 
-    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+    queryset = ACIContractSubjectFilter.objects.select_related(
         "aci_contract_filter",
         "aci_contract_subject",
+    ).prefetch_related(
         "tags",
     )
     form = ACIContractSubjectFilterEditForm
@@ -534,9 +567,10 @@ class ACIContractSubjectFilterEditView(generic.ObjectEditView):
 class ACIContractSubjectFilterDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACIContractSubjectFilter."""
 
-    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+    queryset = ACIContractSubjectFilter.objects.select_related(
         "aci_contract_filter",
         "aci_contract_subject",
+    ).prefetch_related(
         "tags",
     )
 

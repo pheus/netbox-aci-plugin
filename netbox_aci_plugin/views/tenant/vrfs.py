@@ -39,10 +39,15 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIVRF."""
-        return ACIVRF.objects.restrict(request.user, "view").prefetch_related(
-            "aci_tenant",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIVRF.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_tenant",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -55,9 +60,10 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
 class ACIVRFView(generic.ObjectView):
     """Detail view for displaying a single object of ACI VRF."""
 
-    queryset = ACIVRF.objects.prefetch_related(
+    queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -66,9 +72,10 @@ class ACIVRFView(generic.ObjectView):
 class ACIVRFListView(generic.ObjectListView):
     """List view for listing all objects of ACI VRF."""
 
-    queryset = ACIVRF.objects.prefetch_related(
+    queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIVRFFilterSet
@@ -81,9 +88,10 @@ class ACIVRFListView(generic.ObjectListView):
 class ACIVRFEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI VRF."""
 
-    queryset = ACIVRF.objects.prefetch_related(
+    queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIVRFEditForm
@@ -93,9 +101,10 @@ class ACIVRFEditView(generic.ObjectEditView):
 class ACIVRFDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI VRF."""
 
-    queryset = ACIVRF.objects.prefetch_related(
+    queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 

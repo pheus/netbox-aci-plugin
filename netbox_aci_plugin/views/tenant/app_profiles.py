@@ -41,10 +41,15 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIAppProfile."""
-        return ACIAppProfile.objects.restrict(request.user, "view").prefetch_related(
-            "aci_tenant",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIAppProfile.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_tenant",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -57,9 +62,10 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
 class ACIAppProfileView(generic.ObjectView):
     """Detail view for displaying a single object of ACI App Profile."""
 
-    queryset = ACIAppProfile.objects.prefetch_related(
+    queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -68,9 +74,10 @@ class ACIAppProfileView(generic.ObjectView):
 class ACIAppProfileListView(generic.ObjectListView):
     """List view for listing all objects of ACI Application Profile."""
 
-    queryset = ACIAppProfile.objects.prefetch_related(
+    queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIAppProfileFilterSet
@@ -83,9 +90,10 @@ class ACIAppProfileListView(generic.ObjectListView):
 class ACIAppProfileEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Application Profile."""
 
-    queryset = ACIAppProfile.objects.prefetch_related(
+    queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIAppProfileEditForm
@@ -95,9 +103,10 @@ class ACIAppProfileEditView(generic.ObjectEditView):
 class ACIAppProfileDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Application Profile."""
 
-    queryset = ACIAppProfile.objects.prefetch_related(
+    queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 

@@ -34,8 +34,9 @@ from .vrfs import ACIVRFChildrenView
 class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
     """Detail view for displaying a single object of ACI Tenant."""
 
-    queryset = ACITenant.objects.prefetch_related(
+    queryset = ACITenant.objects.select_related(
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -68,8 +69,9 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
 class ACITenantListView(generic.ObjectListView):
     """List view for listing all objects of ACI Tenant."""
 
-    queryset = ACITenant.objects.prefetch_related(
+    queryset = ACITenant.objects.select_related(
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACITenantFilterSet
@@ -82,8 +84,9 @@ class ACITenantListView(generic.ObjectListView):
 class ACITenantEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Tenant."""
 
-    queryset = ACITenant.objects.prefetch_related(
+    queryset = ACITenant.objects.select_related(
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACITenantEditForm
@@ -93,8 +96,9 @@ class ACITenantEditView(generic.ObjectEditView):
 class ACITenantDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Tenant."""
 
-    queryset = ACITenant.objects.prefetch_related(
+    queryset = ACITenant.objects.select_related(
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 

@@ -82,8 +82,9 @@ from .serializers import (
 class ACITenantListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Tenant instances."""
 
-    queryset = ACITenant.objects.prefetch_related(
+    queryset = ACITenant.objects.select_related(
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACITenantSerializer
@@ -93,9 +94,10 @@ class ACITenantListViewSet(NetBoxModelViewSet):
 class ACIAppProfileListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Application Profile instances."""
 
-    queryset = ACIAppProfile.objects.prefetch_related(
+    queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIAppProfileSerializer
@@ -105,10 +107,11 @@ class ACIAppProfileListViewSet(NetBoxModelViewSet):
 class ACIVRFListViewSet(NetBoxModelViewSet):
     """API view for listing ACI VRF instances."""
 
-    queryset = ACIVRF.objects.prefetch_related(
+    queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
         "nb_vrf",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIVRFSerializer
@@ -118,10 +121,11 @@ class ACIVRFListViewSet(NetBoxModelViewSet):
 class ACIBridgeDomainListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Bridge Domain instances."""
 
-    queryset = ACIBridgeDomain.objects.prefetch_related(
+    queryset = ACIBridgeDomain.objects.select_related(
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIBridgeDomainSerializer
@@ -131,10 +135,11 @@ class ACIBridgeDomainListViewSet(NetBoxModelViewSet):
 class ACIBridgeDomainSubnetListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Bridge Domain Subnet instances."""
 
-    queryset = ACIBridgeDomainSubnet.objects.prefetch_related(
+    queryset = ACIBridgeDomainSubnet.objects.select_related(
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIBridgeDomainSubnetSerializer
@@ -144,10 +149,11 @@ class ACIBridgeDomainSubnetListViewSet(NetBoxModelViewSet):
 class ACIEndpointGroupListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Endpoint Group instances."""
 
-    queryset = ACIEndpointGroup.objects.prefetch_related(
+    queryset = ACIEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIEndpointGroupSerializer
@@ -157,10 +163,11 @@ class ACIEndpointGroupListViewSet(NetBoxModelViewSet):
 class ACIUSegEndpointGroupListViewSet(NetBoxModelViewSet):
     """API view for listing ACI uSeg Endpoint Group instances."""
 
-    queryset = ACIUSegEndpointGroup.objects.prefetch_related(
+    queryset = ACIUSegEndpointGroup.objects.select_related(
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIUSegEndpointGroupSerializer
@@ -170,10 +177,12 @@ class ACIUSegEndpointGroupListViewSet(NetBoxModelViewSet):
 class ACIUSegNetworkAttributeListViewSet(NetBoxModelViewSet):
     """API view for listing ACI uSeg Network Attribute instances."""
 
-    queryset = ACIUSegNetworkAttribute.objects.prefetch_related(
+    queryset = ACIUSegNetworkAttribute.objects.select_related(
         "aci_useg_endpoint_group",
-        "attr_object",
+        "attr_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "attr_object",
         "tags",
     )
     serializer_class = ACIUSegNetworkAttributeSerializer
@@ -183,10 +192,11 @@ class ACIUSegNetworkAttributeListViewSet(NetBoxModelViewSet):
 class ACIEndpointSecurityGroupListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Endpoint Security Group instances."""
 
-    queryset = ACIEndpointSecurityGroup.objects.prefetch_related(
+    queryset = ACIEndpointSecurityGroup.objects.select_related(
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIEndpointSecurityGroupSerializer
@@ -196,10 +206,12 @@ class ACIEndpointSecurityGroupListViewSet(NetBoxModelViewSet):
 class ACIEsgEndpointGroupSelectorListViewSet(NetBoxModelViewSet):
     """API view for listing ACI ESG Endpoint Group (EPG) Selector instances."""
 
-    queryset = ACIEsgEndpointGroupSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointGroupSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "aci_epg_object",
+        "aci_epg_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "aci_epg_object",
         "tags",
     )
     serializer_class = ACIEsgEndpointGroupSelectorSerializer
@@ -209,10 +221,12 @@ class ACIEsgEndpointGroupSelectorListViewSet(NetBoxModelViewSet):
 class ACIEsgEndpointSelectorListViewSet(NetBoxModelViewSet):
     """API view for listing ACI ESG Endpoint Selector instances."""
 
-    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "ep_object",
+        "ep_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "ep_object",
         "tags",
     )
     serializer_class = ACIEsgEndpointSelectorSerializer
@@ -222,9 +236,10 @@ class ACIEsgEndpointSelectorListViewSet(NetBoxModelViewSet):
 class ACIContractFilterListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Contract Filter instances."""
 
-    queryset = ACIContractFilter.objects.prefetch_related(
+    queryset = ACIContractFilter.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIContractFilterSerializer
@@ -234,8 +249,9 @@ class ACIContractFilterListViewSet(NetBoxModelViewSet):
 class ACIContractFilterEntryListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Contract Filter Entry instances."""
 
-    queryset = ACIContractFilterEntry.objects.prefetch_related(
+    queryset = ACIContractFilterEntry.objects.select_related(
         "aci_contract_filter",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIContractFilterEntrySerializer
@@ -245,9 +261,10 @@ class ACIContractFilterEntryListViewSet(NetBoxModelViewSet):
 class ACIContractListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Contract instances."""
 
-    queryset = ACIContract.objects.prefetch_related(
+    queryset = ACIContract.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIContractSerializer
@@ -257,8 +274,10 @@ class ACIContractListViewSet(NetBoxModelViewSet):
 class ACIContractRelationListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Contract Relation instances."""
 
-    queryset = ACIContractRelation.objects.prefetch_related(
+    queryset = ACIContractRelation.objects.select_related(
         "aci_contract",
+        "aci_object_type",
+    ).prefetch_related(
         "aci_object",
         "tags",
     )
@@ -269,9 +288,10 @@ class ACIContractRelationListViewSet(NetBoxModelViewSet):
 class ACIContractSubjectListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Contract Subject instances."""
 
-    queryset = ACIContractSubject.objects.prefetch_related(
+    queryset = ACIContractSubject.objects.select_related(
         "aci_contract",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIContractSubjectSerializer
@@ -281,9 +301,10 @@ class ACIContractSubjectListViewSet(NetBoxModelViewSet):
 class ACIContractSubjectFilterListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Contract Subject Filter instances."""
 
-    queryset = ACIContractSubjectFilter.objects.prefetch_related(
+    queryset = ACIContractSubjectFilter.objects.select_related(
         "aci_contract_filter",
         "aci_contract_subject",
+    ).prefetch_related(
         "tags",
     )
     serializer_class = ACIContractSubjectFilterSerializer

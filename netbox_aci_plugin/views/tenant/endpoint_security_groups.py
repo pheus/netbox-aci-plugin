@@ -58,13 +58,16 @@ class ACIEndpointSecurityGroupChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIEndpointSecurityGroup."""
-        return ACIEndpointSecurityGroup.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_app_profile",
-            "aci_vrf",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIEndpointSecurityGroup.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_app_profile",
+                "aci_vrf",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
         )
 
 
@@ -83,13 +86,17 @@ class ACIEsgEndpointGroupSelectorChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIEsgEndpointGroupSelector."""
-        return ACIEsgEndpointGroupSelector.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_endpoint_security_group",
-            "aci_epg_object",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIEsgEndpointGroupSelector.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_endpoint_security_group",
+                "aci_epg_object_type",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "aci_epg_object",
+                "tags",
+            )
         )
 
 
@@ -108,13 +115,17 @@ class ACIEsgEndpointSelectorChildrenView(generic.ObjectChildrenView):
 
     def get_children(self, request, parent):
         """Return all objects of ACIEsgEndpointSelector."""
-        return ACIEsgEndpointSelector.objects.restrict(
-            request.user, "view"
-        ).prefetch_related(
-            "aci_endpoint_security_group",
-            "ep_object",
-            "nb_tenant",
-            "tags",
+        return (
+            ACIEsgEndpointSelector.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_endpoint_security_group",
+                "ep_object_type",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "ep_object",
+                "tags",
+            )
         )
 
 
@@ -127,10 +138,11 @@ class ACIEsgEndpointSelectorChildrenView(generic.ObjectChildrenView):
 class ACIEndpointSecurityGroupView(generic.ObjectView):
     """Detail view for displaying a single object of ACI ESG."""
 
-    queryset = ACIEndpointSecurityGroup.objects.prefetch_related(
+    queryset = ACIEndpointSecurityGroup.objects.select_related(
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -139,10 +151,11 @@ class ACIEndpointSecurityGroupView(generic.ObjectView):
 class ACIEndpointSecurityGroupListView(generic.ObjectListView):
     """List view for listing all objects of ACI Endpoint Security Group."""
 
-    queryset = ACIEndpointSecurityGroup.objects.prefetch_related(
+    queryset = ACIEndpointSecurityGroup.objects.select_related(
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     filterset = ACIEndpointSecurityGroupFilterSet
@@ -155,10 +168,11 @@ class ACIEndpointSecurityGroupListView(generic.ObjectListView):
 class ACIEndpointSecurityGroupEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Endpoint Security Group."""
 
-    queryset = ACIEndpointSecurityGroup.objects.prefetch_related(
+    queryset = ACIEndpointSecurityGroup.objects.select_related(
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
     form = ACIEndpointSecurityGroupEditForm
@@ -168,10 +182,11 @@ class ACIEndpointSecurityGroupEditView(generic.ObjectEditView):
 class ACIEndpointSecurityGroupDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Endpoint Security Group."""
 
-    queryset = ACIEndpointSecurityGroup.objects.prefetch_related(
+    queryset = ACIEndpointSecurityGroup.objects.select_related(
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+    ).prefetch_related(
         "tags",
     )
 
@@ -321,10 +336,12 @@ class ACIEndpointSecurityGroupBulkDeleteView(generic.BulkDeleteView):
 class ACIEsgEndpointGroupSelectorView(generic.ObjectView):
     """Detail view for displaying a single object of ACI ESG EPG Selector."""
 
-    queryset = ACIEsgEndpointGroupSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointGroupSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "aci_epg_object",
+        "aci_epg_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "aci_epg_object",
         "tags",
     )
 
@@ -333,10 +350,12 @@ class ACIEsgEndpointGroupSelectorView(generic.ObjectView):
 class ACIEsgEndpointGroupSelectorListView(generic.ObjectListView):
     """List view for listing all objects of ACI ESG EPG Selector."""
 
-    queryset = ACIEsgEndpointGroupSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointGroupSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "aci_epg_object",
+        "aci_epg_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "aci_epg_object",
         "tags",
     )
     filterset = ACIEsgEndpointGroupSelectorFilterSet
@@ -349,10 +368,12 @@ class ACIEsgEndpointGroupSelectorListView(generic.ObjectListView):
 class ACIEsgEndpointGroupSelectorEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI ESG EPG Selector."""
 
-    queryset = ACIEsgEndpointGroupSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointGroupSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "aci_epg_object",
+        "aci_epg_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "aci_epg_object",
         "tags",
     )
     form = ACIEsgEndpointGroupSelectorEditForm
@@ -362,10 +383,12 @@ class ACIEsgEndpointGroupSelectorEditView(generic.ObjectEditView):
 class ACIEsgEndpointGroupSelectorDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI ESG EPG Selector."""
 
-    queryset = ACIEsgEndpointGroupSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointGroupSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "aci_epg_object",
+        "aci_epg_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "aci_epg_object",
         "tags",
     )
 
@@ -412,10 +435,12 @@ class ACIEsgEndpointGroupSelectorBulkDeleteView(generic.BulkDeleteView):
 class ACIEsgEndpointSelectorView(generic.ObjectView):
     """Detail view for displaying a single object of ACI ESG EP Selector."""
 
-    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "ep_object",
+        "ep_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "ep_object",
         "tags",
     )
 
@@ -424,10 +449,12 @@ class ACIEsgEndpointSelectorView(generic.ObjectView):
 class ACIEsgEndpointSelectorListView(generic.ObjectListView):
     """List view for listing all objects of ACI ESG Endpoint Selector."""
 
-    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "ep_object",
+        "ep_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "ep_object",
         "tags",
     )
     filterset = ACIEsgEndpointSelectorFilterSet
@@ -440,10 +467,12 @@ class ACIEsgEndpointSelectorListView(generic.ObjectListView):
 class ACIEsgEndpointSelectorEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI ESG Endpoint Selector."""
 
-    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "ep_object",
+        "ep_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "ep_object",
         "tags",
     )
     form = ACIEsgEndpointSelectorEditForm
@@ -453,10 +482,12 @@ class ACIEsgEndpointSelectorEditView(generic.ObjectEditView):
 class ACIEsgEndpointSelectorDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI ESG Endpoint Selector."""
 
-    queryset = ACIEsgEndpointSelector.objects.prefetch_related(
+    queryset = ACIEsgEndpointSelector.objects.select_related(
         "aci_endpoint_security_group",
-        "ep_object",
+        "ep_object_type",
         "nb_tenant",
+    ).prefetch_related(
+        "ep_object",
         "tags",
     )
 
