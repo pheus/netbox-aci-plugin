@@ -436,6 +436,12 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
         ordering: tuple = ("aci_bridge_domain", "name")
         verbose_name: str = _("ACI Bridge Domain Subnet")
 
+    def to_objectchange(self, action):
+        """Return an ObjectChange for the change made to an instance."""
+        objectchange = super().to_objectchange(action)
+        objectchange.related_object = self.aci_bridge_domain
+        return objectchange
+
     @property
     def aci_tenant(self) -> ACITenant:
         """Return the ACITenant instance of the related ACIBridgeDomain."""

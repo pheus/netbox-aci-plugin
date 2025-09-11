@@ -349,6 +349,12 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
     cache_related_objects.alters_data = True
 
+    def to_objectchange(self, action):
+        """Return an ObjectChange for the change made to an instance."""
+        objectchange = super().to_objectchange(action)
+        objectchange.related_object = self.aci_contract
+        return objectchange
+
     def get_role_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return ContractRelationRoleChoices.colors.get(self.role)
@@ -652,6 +658,12 @@ class ACIContractSubjectFilter(NetBoxModel):
     def parent_object(self) -> ACIBaseModel:
         """Return the parent object of the instance."""
         return self.aci_contract_subject
+
+    def to_objectchange(self, action):
+        """Return an ObjectChange for the change made to an instance."""
+        objectchange = super().to_objectchange(action)
+        objectchange.related_object = self.aci_contract_subject
+        return objectchange
 
     def get_action_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""

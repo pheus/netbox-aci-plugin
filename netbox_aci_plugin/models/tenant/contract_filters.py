@@ -368,6 +368,12 @@ class ACIContractFilterEntry(ACIBaseModel):
         if validation_errors:
             raise ValidationError(validation_errors)
 
+    def to_objectchange(self, action):
+        """Return an ObjectChange for the change made to an instance."""
+        objectchange = super().to_objectchange(action)
+        objectchange.related_object = self.aci_contract_filter
+        return objectchange
+
     @property
     def aci_tenant(self) -> ACITenant:
         """Return the ACITenant instance of related ACIContractFilter."""
