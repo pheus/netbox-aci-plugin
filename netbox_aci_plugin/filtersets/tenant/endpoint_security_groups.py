@@ -7,7 +7,6 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from ipam.models import VRF, IPAddress, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
-from tenancy.models import Tenant
 from utilities.filters import ContentTypeFilter
 
 from ...models.tenant.app_profiles import ACIAppProfile
@@ -22,9 +21,10 @@ from ...models.tenant.endpoint_security_groups import (
 )
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
+from ..mixins import NBTenantFilterSetMixin
 
 
-class ACIEndpointSecurityGroupFilterSet(NetBoxModelFilterSet):
+class ACIEndpointSecurityGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI Endpoint Security Group model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -61,17 +61,6 @@ class ACIEndpointSecurityGroupFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("ACI VRF (ID)"),
     )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
-    )
 
     class Meta:
         model = ACIEndpointSecurityGroup
@@ -100,7 +89,9 @@ class ACIEndpointSecurityGroupFilterSet(NetBoxModelFilterSet):
         return queryset.filter(queryset_filter)
 
 
-class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
+class ACIEsgEndpointGroupSelectorFilterSet(
+    NBTenantFilterSetMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI ESG Endpoint Group (EPG) Selector model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -140,17 +131,6 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
     )
     aci_epg_object_type = ContentTypeFilter(
         label=_("ACI EPG Object Type"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
 
     # Cached related objects filters
@@ -230,7 +210,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(NetBoxModelFilterSet):
         return queryset.filter(queryset_filter)
 
 
-class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
+class ACIEsgEndpointSelectorFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI ESG Endpoint Selector model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -270,17 +250,6 @@ class ACIEsgEndpointSelectorFilterSet(NetBoxModelFilterSet):
     )
     ep_object_type = ContentTypeFilter(
         label=_("Endpoint Object Type"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
 
     # Cached related objects filters

@@ -10,7 +10,6 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from ipam.models import VRF
 from netbox.filtersets import NetBoxModelFilterSet
-from tenancy.models import Tenant
 
 from ...choices import (
     VRFPCEnforcementDirectionChoices,
@@ -18,33 +17,14 @@ from ...choices import (
 )
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
+from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
-class ACIVRFFilterSet(NetBoxModelFilterSet):
+class ACIVRFFilterSet(
+    ACITenantFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI VRF model."""
 
-    aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_tenant__name",
-        queryset=ACITenant.objects.all(),
-        to_field_name="name",
-        label=_("ACI Tenant (name)"),
-    )
-    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=ACITenant.objects.all(),
-        to_field_name="id",
-        label=_("ACI Tenant (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
-    )
     nb_vrf = django_filters.ModelMultipleChoiceFilter(
         field_name="nb_vrf__name",
         queryset=VRF.objects.all(),

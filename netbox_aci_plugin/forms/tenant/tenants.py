@@ -143,14 +143,14 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
         queryset=TenantGroup.objects.all(),
         null_option="None",
         required=False,
-        label=_("Tenant group"),
+        label=_("NetBox tenant group"),
     )
     nb_tenant_id = DynamicModelMultipleChoiceField(
         queryset=Tenant.objects.all(),
         query_params={"group_id": "$nb_tenant_group_id"},
         null_option="None",
         required=False,
-        label=_("Tenant"),
+        label=_("NetBox tenant"),
     )
     tag = TagFilterField(model)
 

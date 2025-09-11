@@ -10,7 +10,6 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from ipam.models import VRF, IPAddress, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
-from tenancy.models import Tenant
 from utilities.filters import ContentTypeFilter
 
 from ...choices import QualityOfServiceClassChoices, USegAttributeTypeChoices
@@ -24,9 +23,10 @@ from ...models.tenant.endpoint_groups import (
 from ...models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
+from ..mixins import NBTenantFilterSetMixin
 
 
-class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
+class ACIEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI Endpoint Group model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -74,17 +74,6 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
         queryset=ACIBridgeDomain.objects.all(),
         to_field_name="id",
         label=_("ACI Bridge Domain (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
     qos_class = django_filters.MultipleChoiceFilter(
         choices=QualityOfServiceClassChoices,
@@ -140,7 +129,7 @@ class ACIEndpointGroupFilterSet(NetBoxModelFilterSet):
         )
 
 
-class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
+class ACIUSegEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI uSeg Endpoint Group model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -188,17 +177,6 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
         queryset=ACIBridgeDomain.objects.all(),
         to_field_name="id",
         label=_("ACI Bridge Domain (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
     qos_class = django_filters.MultipleChoiceFilter(
         choices=QualityOfServiceClassChoices,
@@ -253,7 +231,7 @@ class ACIUSegEndpointGroupFilterSet(NetBoxModelFilterSet):
         )
 
 
-class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
+class ACIUSegNetworkAttributeFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI uSeg Network Attribute model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -294,17 +272,6 @@ class ACIUSegNetworkAttributeFilterSet(NetBoxModelFilterSet):
     )
     attr_object_type = ContentTypeFilter(
         label=_("Attribute Object Type"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
     type = django_filters.MultipleChoiceFilter(
         choices=USegAttributeTypeChoices,

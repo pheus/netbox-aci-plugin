@@ -10,7 +10,6 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from ipam.models import IPAddress
 from netbox.filtersets import NetBoxModelFilterSet
-from tenancy.models import Tenant
 from utilities.filters import MultiValueMACAddressFilter
 
 from ...choices import (
@@ -24,22 +23,14 @@ from ...models.tenant.bridge_domains import (
 )
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
+from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
-class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
+class ACIBridgeDomainFilterSet(
+    ACITenantFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI Bridge Domain model."""
 
-    aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_tenant__name",
-        queryset=ACITenant.objects.all(),
-        to_field_name="name",
-        label=_("ACI Tenant (name)"),
-    )
-    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=ACITenant.objects.all(),
-        to_field_name="id",
-        label=_("ACI Tenant (ID)"),
-    )
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_vrf__name",
         queryset=ACIVRF.objects.all(),
@@ -50,17 +41,6 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         queryset=ACIVRF.objects.all(),
         to_field_name="id",
         label=_("ACI VRF (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
     mac_address = MultiValueMACAddressFilter(
         field_name="mac_address",
@@ -155,7 +135,7 @@ class ACIBridgeDomainFilterSet(NetBoxModelFilterSet):
         )
 
 
-class ACIBridgeDomainSubnetFilterSet(NetBoxModelFilterSet):
+class ACIBridgeDomainSubnetFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI Bridge Domain Subnet model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -203,17 +183,6 @@ class ACIBridgeDomainSubnetFilterSet(NetBoxModelFilterSet):
         queryset=IPAddress.objects.all(),
         to_field_name="id",
         label=_("Gateway IP address (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
 
     class Meta:

@@ -26,33 +26,13 @@ from ...models.tenant.contract_filters import (
     ACIContractFilterEntry,
 )
 from ...models.tenant.tenants import ACITenant
+from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
-class ACIContractFilterFilterSet(NetBoxModelFilterSet):
+class ACIContractFilterFilterSet(
+    ACITenantFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI Contract Filter model."""
-
-    aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_tenant__name",
-        queryset=ACITenant.objects.all(),
-        to_field_name="name",
-        label=_("ACI Tenant (name)"),
-    )
-    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=ACITenant.objects.all(),
-        to_field_name="id",
-        label=_("ACI Tenant (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
-    )
 
     # Filters extended with a custom filter method
     present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
@@ -120,10 +100,10 @@ class ACIContractFilterEntryFilterSet(NetBoxModelFilterSet):
         label=_("ACI Contract Filter (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract_filter__nb_tenant__name",
+        field_name="aci_contract_filter__nb_tenant__slug",
         queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
+        to_field_name="slug",
+        label=_("NetBox tenant (slug)"),
     )
     nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_contract_filter__nb_tenant",

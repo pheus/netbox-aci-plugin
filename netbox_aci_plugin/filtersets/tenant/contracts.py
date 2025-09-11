@@ -30,33 +30,14 @@ from ...models.tenant.contracts import (
 from ...models.tenant.endpoint_groups import ACIEndpointGroup
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
+from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
-class ACIContractFilterSet(NetBoxModelFilterSet):
+class ACIContractFilterSet(
+    ACITenantFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI Contract model."""
 
-    aci_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_tenant__name",
-        queryset=ACITenant.objects.all(),
-        to_field_name="name",
-        label=_("ACI Tenant (name)"),
-    )
-    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=ACITenant.objects.all(),
-        to_field_name="id",
-        label=_("ACI Tenant (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
-    )
     qos_class = django_filters.MultipleChoiceFilter(
         choices=QualityOfServiceClassChoices,
         null_value=None,
@@ -142,10 +123,10 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         label=_("ACI Contract (ID)"),
     )
     nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract__nb_tenant__name",
+        field_name="aci_contract__nb_tenant__slug",
         queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
+        to_field_name="slug",
+        label=_("NetBox tenant (slug)"),
     )
     nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_contract__nb_tenant",
@@ -234,7 +215,7 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         return queryset.filter(queryset_filter)
 
 
-class ACIContractSubjectFilterSet(NetBoxModelFilterSet):
+class ACIContractSubjectFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI Contract Subject model."""
 
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -259,17 +240,6 @@ class ACIContractSubjectFilterSet(NetBoxModelFilterSet):
         queryset=ACIContract.objects.all(),
         to_field_name="id",
         label=_("ACI Contract (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="nb_tenant__name",
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        label=_("NetBox tenant (name)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
     qos_class = django_filters.MultipleChoiceFilter(
         choices=QualityOfServiceClassChoices,
