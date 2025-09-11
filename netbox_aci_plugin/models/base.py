@@ -68,4 +68,4 @@ class ACIBaseModel(NetBoxModel):
     @property
     def parent_object(self) -> NetBoxModel | None:
         """Return the parent object of the instance."""
-        return NotImplemented
+        raise NotImplementedError
