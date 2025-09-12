@@ -27,6 +27,7 @@ from ...choices import (
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
+from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
 
@@ -177,12 +178,12 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI VRF model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )

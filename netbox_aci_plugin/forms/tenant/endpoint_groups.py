@@ -35,7 +35,11 @@ from utilities.forms.widgets import HTMXSelect
 from utilities.templatetags.builtins.filters import bettertitle
 
 from ...choices import QualityOfServiceClassChoices
-from ...constants import USEG_NETWORK_ATTRIBUTES_MODELS
+from ...constants import (
+    ACI_DESC_MAX_LEN,
+    ACI_NAME_MAX_LEN,
+    USEG_NETWORK_ATTRIBUTES_MODELS,
+)
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.bridge_domains import ACIBridgeDomain
 from ...models.tenant.endpoint_groups import (
@@ -227,12 +231,12 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI Endpoint Group model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )
@@ -743,12 +747,12 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI uSeg Endpoint Group model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )
@@ -1224,12 +1228,12 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI uSeg Network Attribute model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )

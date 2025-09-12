@@ -18,7 +18,7 @@ from ...choices import (
     USegAttributeMatchOperatorChoices,
     USegAttributeTypeChoices,
 )
-from ...constants import USEG_NETWORK_ATTRIBUTES_MODELS
+from ...constants import ACI_NAME_MAX_LEN, USEG_NETWORK_ATTRIBUTES_MODELS
 from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
@@ -54,7 +54,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
     )
     custom_qos_policy_name = models.CharField(
         verbose_name=_("custom QoS policy name"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         help_text=_(
             "Custom quality of service (QoS) policy name associate with the EPG."

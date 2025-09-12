@@ -11,6 +11,7 @@ from ...choices import (
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
+from ...constants import ACI_NAME_MAX_LEN
 from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 
@@ -42,7 +43,7 @@ class ACIVRF(ACIBaseModel):
     )
     dns_labels = ArrayField(
         base_field=models.CharField(
-            max_length=64,
+            max_length=ACI_NAME_MAX_LEN,
             validators=[ACIPolicyNameOptionalValidator],
         ),
         verbose_name=_("DNS labels"),

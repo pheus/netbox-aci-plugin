@@ -10,6 +10,9 @@ from django.db.models import Q
 # Validation
 #
 
+ACI_NAME_MAX_LEN: Final[int] = 64
+ACI_DESC_MAX_LEN: Final[int] = 128
+
 NAME_CHAR_CLASS: Final[str] = r"[A-Za-z0-9_.:-]"
 DESC_CHAR_CLASS: Final[str] = r"[A-Za-z0-9!#$%()*,-./:;@ _{|}~?&+]"
 

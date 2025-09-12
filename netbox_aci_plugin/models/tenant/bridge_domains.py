@@ -13,6 +13,7 @@ from ...choices import (
     BDUnknownMulticastChoices,
     BDUnknownUnicastChoices,
 )
+from ...constants import ACI_NAME_MAX_LEN
 from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 from .tenants import ACITenant
@@ -60,7 +61,7 @@ class ACIBridgeDomain(ACIBaseModel):
     )
     dhcp_labels = ArrayField(
         base_field=models.CharField(
-            max_length=64,
+            max_length=ACI_NAME_MAX_LEN,
             validators=[ACIPolicyNameOptionalValidator],
         ),
         verbose_name=_("DHCP labels"),
@@ -78,13 +79,13 @@ class ACIBridgeDomain(ACIBaseModel):
     )
     igmp_interface_policy_name = models.CharField(
         verbose_name=_("IGMP interface policy name"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         validators=[ACIPolicyNameOptionalValidator],
     )
     igmp_snooping_policy_name = models.CharField(
         verbose_name=_("IGMP snooping policy name"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         validators=[ACIPolicyNameOptionalValidator],
     )
@@ -131,13 +132,13 @@ class ACIBridgeDomain(ACIBaseModel):
     )
     pim_ipv4_destination_filter = models.CharField(
         verbose_name=_("PIM destination filter"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         validators=[ACIPolicyNameOptionalValidator],
     )
     pim_ipv4_source_filter = models.CharField(
         verbose_name=_("PIM source filter"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         validators=[ACIPolicyNameOptionalValidator],
     )
@@ -352,7 +353,7 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
     )
     nd_ra_prefix_policy_name = models.CharField(
         verbose_name=_("ND RA prefix policy name"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         help_text=_(
             "IPv6 Neighbor Discovery Prefix Policy to associate with the Subnet."

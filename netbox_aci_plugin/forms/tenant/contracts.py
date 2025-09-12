@@ -41,7 +41,11 @@ from ...choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ...constants import CONTRACT_RELATION_OBJECT_TYPES
+from ...constants import (
+    ACI_DESC_MAX_LEN,
+    ACI_NAME_MAX_LEN,
+    CONTRACT_RELATION_OBJECT_TYPES,
+)
 from ...models.tenant.contract_filters import ACIContractFilter
 from ...models.tenant.contracts import (
     ACIContract,
@@ -152,12 +156,12 @@ class ACIContractBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI Contract model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )
@@ -908,12 +912,12 @@ class ACIContractSubjectBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI Contract Subject model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )

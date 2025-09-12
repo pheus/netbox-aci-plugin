@@ -28,6 +28,7 @@ from ...choices import (
     BDUnknownMulticastChoices,
     BDUnknownUnicastChoices,
 )
+from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
 from ...models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
@@ -283,12 +284,12 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI Bridge Domain model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )
@@ -956,12 +957,12 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for ACI Bridge Domain Subnet model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )

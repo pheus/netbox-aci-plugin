@@ -32,6 +32,8 @@ from utilities.forms.widgets import HTMXSelect
 from utilities.templatetags.builtins.filters import bettertitle
 
 from ...constants import (
+    ACI_DESC_MAX_LEN,
+    ACI_NAME_MAX_LEN,
     ESG_ENDPOINT_GROUP_SELECTORS_MODELS,
     ESG_ENDPOINT_SELECTORS_MODELS,
 )
@@ -179,12 +181,12 @@ class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI Endpoint Security Group model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )
@@ -597,12 +599,12 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI ESG EPG Selector model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )
@@ -1037,12 +1039,12 @@ class ACIEsgEndpointSelectorBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI ESG Endpoint Selector model."""
 
     name_alias = forms.CharField(
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         required=False,
         label=_("Name Alias"),
     )
     description = forms.CharField(
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         required=False,
         label=_("Description"),
     )

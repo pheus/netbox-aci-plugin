@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
 
+from ..constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
 from ..validators import (
     ACIPolicyDescriptionValidator,
     ACIPolicyNameOptionalValidator,
@@ -18,18 +19,18 @@ class ACIBaseModel(NetBoxModel):
 
     name = models.CharField(
         verbose_name=_("name"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         validators=[ACIPolicyNameRequiredValidator],
     )
     name_alias = models.CharField(
         verbose_name=_("name alias"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         validators=[ACIPolicyNameOptionalValidator],
     )
     description = models.CharField(
         verbose_name=_("description"),
-        max_length=128,
+        max_length=ACI_DESC_MAX_LEN,
         blank=True,
         validators=[ACIPolicyDescriptionValidator],
     )

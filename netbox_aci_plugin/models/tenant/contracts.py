@@ -19,7 +19,7 @@ from ...choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ...constants import CONTRACT_RELATION_OBJECT_TYPES
+from ...constants import ACI_NAME_MAX_LEN, CONTRACT_RELATION_OBJECT_TYPES
 from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
@@ -419,7 +419,7 @@ class ACIContractSubject(ACIBaseModel):
     )
     service_graph_name = models.CharField(
         verbose_name=_("Service Graph name"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         validators=[ACIPolicyNameOptionalValidator],
         help_text=_(
@@ -429,7 +429,7 @@ class ACIContractSubject(ACIBaseModel):
     )
     service_graph_name_cons_to_prov = models.CharField(
         verbose_name=_("Service Graph name (consumer to provider)"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         validators=[ACIPolicyNameOptionalValidator],
         help_text=_(
@@ -439,7 +439,7 @@ class ACIContractSubject(ACIBaseModel):
     )
     service_graph_name_prov_to_cons = models.CharField(
         verbose_name=_("Service Graph name (provider to consumer)"),
-        max_length=64,
+        max_length=ACI_NAME_MAX_LEN,
         blank=True,
         validators=[ACIPolicyNameOptionalValidator],
         help_text=_(
