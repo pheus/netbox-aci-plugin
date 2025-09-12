@@ -22,9 +22,7 @@ from ....models.tenant.vrfs import ACIVRF
 class ACIEndpointSecurityGroupFormTestCase(TestCase):
     """Test case for ACIEndpointSecurityGroup form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
@@ -77,9 +75,7 @@ class ACIEndpointSecurityGroupFormTestCase(TestCase):
 class ACIEsgEndpointGroupSelectorFormTestCase(TestCase):
     """Test case for ACIEsgEndpointGroupSelector form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
@@ -163,9 +159,7 @@ class ACIEsgEndpointGroupSelectorFormTestCase(TestCase):
 class ACIEsgEndpointSelectorFormTestCase(TestCase):
     """Test case for ACIEsgEndpointSelector form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )

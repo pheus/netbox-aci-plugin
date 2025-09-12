@@ -6,7 +6,6 @@ from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
@@ -21,7 +20,7 @@ from ...choices import (
     QualityOfServiceDSCPChoices,
 )
 from ...constants import CONTRACT_RELATION_OBJECT_TYPES
-from ...validators import ACIPolicyNameValidator
+from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
@@ -422,10 +421,7 @@ class ACIContractSubject(ACIBaseModel):
         verbose_name=_("Service Graph name"),
         max_length=64,
         blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
         help_text=_(
             "Specifies the name of the Service Graph associated with the "
             "contract subject."
@@ -435,10 +431,7 @@ class ACIContractSubject(ACIBaseModel):
         verbose_name=_("Service Graph name (consumer to provider)"),
         max_length=64,
         blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
         help_text=_(
             "Specifies the name of the Service Graph associated with the "
             "contract subject for traffic from Consumer to Provider."
@@ -448,10 +441,7 @@ class ACIContractSubject(ACIBaseModel):
         verbose_name=_("Service Graph name (provider to consumer)"),
         max_length=64,
         blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
         help_text=_(
             "Specifies the name of the Service Graph associated with the "
             "contract subject for traffic from Provider to Consumer."

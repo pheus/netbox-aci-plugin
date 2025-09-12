@@ -4,7 +4,6 @@
 
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
-from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -12,7 +11,7 @@ from ...choices import (
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ...validators import ACIPolicyNameValidator
+from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 
 
@@ -44,10 +43,7 @@ class ACIVRF(ACIBaseModel):
     dns_labels = ArrayField(
         base_field=models.CharField(
             max_length=64,
-            validators=[
-                MaxLengthValidator(64),
-                ACIPolicyNameValidator,
-            ],
+            validators=[ACIPolicyNameOptionalValidator],
         ),
         verbose_name=_("DNS labels"),
         blank=True,

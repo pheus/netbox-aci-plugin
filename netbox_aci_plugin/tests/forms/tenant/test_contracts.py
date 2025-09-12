@@ -13,9 +13,7 @@ from ....forms.tenant.contracts import (
 class ACIContractFormTestCase(TestCase):
     """Test case for ACIContract form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
@@ -53,9 +51,7 @@ class ACIContractFormTestCase(TestCase):
 class ACIContractSubjectFormTestCase(TestCase):
     """Test case for ACIContractSubject form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )

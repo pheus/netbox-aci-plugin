@@ -9,7 +9,6 @@ from django.contrib.contenttypes.fields import (
     GenericRelation,
 )
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from ipam.models import IPAddress, Prefix
@@ -20,7 +19,7 @@ from ...choices import (
     USegAttributeTypeChoices,
 )
 from ...constants import USEG_NETWORK_ATTRIBUTES_MODELS
-from ...validators import ACIPolicyNameValidator
+from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .app_profiles import ACIAppProfile
@@ -60,10 +59,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         help_text=_(
             "Custom quality of service (QoS) policy name associate with the EPG."
         ),
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
     )
     flood_in_encap_enabled = models.BooleanField(
         verbose_name=_("flood in encapsulation enabled"),

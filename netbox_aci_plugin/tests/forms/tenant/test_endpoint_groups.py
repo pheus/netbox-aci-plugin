@@ -21,9 +21,7 @@ from ....models.tenant.vrfs import ACIVRF
 class ACIEndpointGroupFormTestCase(TestCase):
     """Test case for ACIEndpointGroup form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
@@ -81,9 +79,7 @@ class ACIEndpointGroupFormTestCase(TestCase):
 class ACIUSegEndpointGroupFormTestCase(TestCase):
     """Test case for ACIUSegEndpointGroup form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
@@ -143,9 +139,7 @@ class ACIUSegEndpointGroupFormTestCase(TestCase):
 class ACIUSegNetworkAttributeFormTestCase(TestCase):
     """Test case for ACIUSegNetworkAttribute form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )

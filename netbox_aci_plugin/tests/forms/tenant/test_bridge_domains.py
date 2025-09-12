@@ -15,9 +15,7 @@ from ....models.tenant.vrfs import ACIVRF
 class ACIBridgeDomainFormTestCase(TestCase):
     """Test case for ACIBridgeDomain form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
@@ -67,9 +65,7 @@ class ACIBridgeDomainFormTestCase(TestCase):
 class ACIBridgeDomainSubnetFormTestCase(TestCase):
     """Test case for ACIBridgeDomainSubnet form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )

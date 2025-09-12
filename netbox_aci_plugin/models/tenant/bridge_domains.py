@@ -5,7 +5,6 @@
 from dcim.fields import MACAddressField
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -14,7 +13,7 @@ from ...choices import (
     BDUnknownMulticastChoices,
     BDUnknownUnicastChoices,
 )
-from ...validators import ACIPolicyNameValidator
+from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 from .tenants import ACITenant
 from .vrfs import ACIVRF
@@ -62,10 +61,7 @@ class ACIBridgeDomain(ACIBaseModel):
     dhcp_labels = ArrayField(
         base_field=models.CharField(
             max_length=64,
-            validators=[
-                MaxLengthValidator(64),
-                ACIPolicyNameValidator,
-            ],
+            validators=[ACIPolicyNameOptionalValidator],
         ),
         verbose_name=_("DHCP labels"),
         blank=True,
@@ -84,19 +80,13 @@ class ACIBridgeDomain(ACIBaseModel):
         verbose_name=_("IGMP interface policy name"),
         max_length=64,
         blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
     )
     igmp_snooping_policy_name = models.CharField(
         verbose_name=_("IGMP snooping policy name"),
         max_length=64,
         blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
     )
     ip_data_plane_learning_enabled = models.BooleanField(
         verbose_name=_("IP data plane learning enabled"),
@@ -143,19 +133,13 @@ class ACIBridgeDomain(ACIBaseModel):
         verbose_name=_("PIM destination filter"),
         max_length=64,
         blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
     )
     pim_ipv4_source_filter = models.CharField(
         verbose_name=_("PIM source filter"),
         max_length=64,
         blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
     )
     pim_ipv6_enabled = models.BooleanField(
         verbose_name=_("PIM (multicast) IPv6 enabled"),
@@ -373,10 +357,7 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
         help_text=_(
             "IPv6 Neighbor Discovery Prefix Policy to associate with the Subnet."
         ),
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
     )
     preferred_ip_address_enabled = models.BooleanField(
         verbose_name=_("preferred IP address enabled"),

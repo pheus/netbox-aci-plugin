@@ -13,9 +13,7 @@ from ....forms.tenant.contract_filters import (
 class ACIContractFilterFormTestCase(TestCase):
     """Test case for ACIContractFilter form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )
@@ -55,9 +53,7 @@ class ACIContractFilterFormTestCase(TestCase):
 class ACIContractFilterEntryFormTestCase(TestCase):
     """Test case for ACIContractFilterEntry form."""
 
-    name_error_message: str = (
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
-    )
+    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )

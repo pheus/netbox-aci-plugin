@@ -11,21 +11,33 @@ from .choices import (
     ContractFilterPortChoices,
     ContractFilterTCPRulesChoices,
 )
+from .constants import DESC_CHAR_CLASS, NAME_CHAR_CLASS
 
 #
 # ACI Policy Validators
 #
 
-ACIPolicyNameValidator = RegexValidator(
-    regex=r"^[a-zA-Z0-9_.:-]{1,64}$",
+
+# Required (1+)
+ACIPolicyNameRequiredValidator = RegexValidator(
+    regex=rf"^{NAME_CHAR_CLASS}+$",
     message=_(
-        "Only alphanumeric characters, hyphens, periods and underscores are allowed."
+        "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
+    ),
+    code="invalid",
+)
+
+# Optional (0+) – use on blank=True fields to align schema and clients
+ACIPolicyNameOptionalValidator = RegexValidator(
+    regex=rf"^{NAME_CHAR_CLASS}*$",
+    message=_(
+        "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
     ),
     code="invalid",
 )
 
 ACIPolicyDescriptionValidator = RegexValidator(
-    regex=r"^[a-zA-Z0-9\\!#$%()*,-./:;@ _{|}~?&+]{1,128}$",
+    regex=rf"^{DESC_CHAR_CLASS}*$",
     message=_("Only alphanumeric characters and !#$%%()*,-./:;@ _{|}~?&+ are allowed."),
     code="invalid",
 )

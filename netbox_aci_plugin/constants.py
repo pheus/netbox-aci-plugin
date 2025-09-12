@@ -2,7 +2,16 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import Final
+
 from django.db.models import Q
+
+#
+# Validation
+#
+
+NAME_CHAR_CLASS: Final[str] = r"[A-Za-z0-9_.:-]"
+DESC_CHAR_CLASS: Final[str] = r"[A-Za-z0-9!#$%()*,-./:;@ _{|}~?&+]"
 
 #
 # Contract Relation

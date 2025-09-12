@@ -2,12 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
 
-from ..validators import ACIPolicyDescriptionValidator, ACIPolicyNameValidator
+from ..validators import (
+    ACIPolicyDescriptionValidator,
+    ACIPolicyNameOptionalValidator,
+    ACIPolicyNameRequiredValidator,
+)
 
 
 class ACIBaseModel(NetBoxModel):
@@ -16,28 +19,19 @@ class ACIBaseModel(NetBoxModel):
     name = models.CharField(
         verbose_name=_("name"),
         max_length=64,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameRequiredValidator],
     )
     name_alias = models.CharField(
         verbose_name=_("name alias"),
         max_length=64,
         blank=True,
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
+        validators=[ACIPolicyNameOptionalValidator],
     )
     description = models.CharField(
         verbose_name=_("description"),
         max_length=128,
         blank=True,
-        validators=[
-            MaxLengthValidator(128),
-            ACIPolicyDescriptionValidator,
-        ],
+        validators=[ACIPolicyDescriptionValidator],
     )
     nb_tenant = models.ForeignKey(
         to="tenancy.Tenant",
