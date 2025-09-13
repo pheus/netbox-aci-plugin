@@ -4,7 +4,6 @@
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.test import TestCase
 from ipam.models import IPAddress
 from tenancy.models import Tenant
 
@@ -19,16 +18,17 @@ from ....models.tenant.bridge_domains import (
 )
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
+from ..base import ACIBaseTestCase
 
 
-class ACIBridgeDomainTestCase(TestCase):
+class ACIBridgeDomainTestCase(ACIBaseTestCase):
     """Test case for ACIBridgeDomain model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
-        """Set up test data for ACIBridgeDomain model."""
-        cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_vrf_name = "ACITestVRF"
+        """Set up test data for the ACIBridgeDomain model."""
+        super().setUpTestData()
+
         cls.aci_bd_name = "ACITestBD"
         cls.aci_bd_alias = "ACITestBDAlias"
         cls.aci_bd_description = "ACI Test Bridge Domain for NetBox ACI Plugin"
@@ -62,14 +62,7 @@ class ACIBridgeDomainTestCase(TestCase):
         cls.aci_bd_unknown_unicast = BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY
         cls.aci_bd_virtual_mac_address = "00:11:22:33:44:55"
 
-        cls.nb_tenant_name = "NetBoxTestTenant"
-
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
         cls.aci_bd = ACIBridgeDomain.objects.create(
             name=cls.aci_bd_name,
             name_alias=cls.aci_bd_alias,
@@ -116,28 +109,19 @@ class ACIBridgeDomainTestCase(TestCase):
         """Test description of created ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.description, self.aci_bd_description)
 
-    def test_aci_bd_aci_tenant_type(self) -> None:
+    def test_aci_bd_aci_tenant_instance(self) -> None:
         """Test the ACI Tenant instance associated with ACI Bridge Domain."""
         self.assertTrue(isinstance(self.aci_bd.aci_tenant, ACITenant))
-
-    def test_aci_bd_aci_tenant_name(self) -> None:
-        """Test the ACI Tenant name associated with ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_bd_aci_vrf_type(self) -> None:
         """Test the ACI VRF instance associated with ACI Bridge Domain."""
         self.assertTrue(isinstance(self.aci_bd.aci_vrf, ACIVRF))
-
-    def test_aci_bd_aci_vrf_name(self) -> None:
-        """Test the ACI VRF name associated with ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.aci_vrf.name, self.aci_vrf_name)
 
-    def test_aci_bd_nb_tenant_type(self) -> None:
+    def test_aci_bd_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant instance associated with ACI BD."""
         self.assertTrue(isinstance(self.aci_bd.nb_tenant, Tenant))
-
-    def test_aci_bd_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI Bridge Domain."""
         self.assertEqual(self.aci_bd.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_bd_advertise_host_routes_enabled(self) -> None:
@@ -408,15 +392,14 @@ class ACIBridgeDomainTestCase(TestCase):
             duplicate_bd.save()
 
 
-class ACIBridgeDomainSubnetTestCase(TestCase):
+class ACIBridgeDomainSubnetTestCase(ACIBaseTestCase):
     """Test case for ACIBridgeDomainSubnet model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIBridgeDomainSubnet model."""
-        cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_vrf_name = "ACITestVRF"
-        cls.aci_bd_name = "ACITestBD"
+        super().setUpTestData()
+
         cls.aci_bd_subnet_name = "ACITestBDSubnet"
         cls.aci_bd_subnet_alias = "ACITestBDSubnetAlias"
         cls.aci_bd_subnet_description = (
@@ -438,18 +421,8 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
         cls.nb_tenant_name = "NetBoxTestTenant"
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
         cls.gateway_ip_address = IPAddress.objects.create(
             address=cls.aci_bd_subnet_gateway_ip_address,
-        )
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name=cls.aci_bd_name,
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
         )
         cls.aci_bd_subnet = ACIBridgeDomainSubnet.objects.create(
             name=cls.aci_bd_subnet_name,
@@ -493,17 +466,11 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
     def test_aci_bd_subnet_aci_tenant_instance(self) -> None:
         """Test ACI Tenant instance in ACI Bridge Domain Subnet."""
         self.assertTrue(isinstance(self.aci_bd_subnet.aci_tenant, ACITenant))
-
-    def test_aci_bd_subnet_aci_tenant_name(self) -> None:
-        """Test ACI Tenant name of ACI Bridge Domain Subnet."""
         self.assertEqual(self.aci_bd_subnet.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_bd_subnet_aci_vrf_instance(self) -> None:
         """Test ACI VRF instance in ACI Bridge Domain Subnet."""
         self.assertTrue(isinstance(self.aci_bd_subnet.aci_vrf, ACIVRF))
-
-    def test_aci_bd_subnet_aci_vrf_name(self) -> None:
-        """Test ACI VRF name in ACI Bridge Domain Subnet."""
         self.assertEqual(self.aci_bd_subnet.aci_vrf.name, self.aci_vrf_name)
 
     def test_aci_bd_subnet_aci_bridge_domain_instance(self) -> None:
@@ -511,9 +478,6 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
         self.assertTrue(
             isinstance(self.aci_bd_subnet.aci_bridge_domain, ACIBridgeDomain)
         )
-
-    def test_aci_bd_subnet_aci_bridge_domain_name(self) -> None:
-        """Test ACI Bridge Domain name of ACI Bridge Domain Subnet."""
         self.assertEqual(self.aci_bd_subnet.aci_bridge_domain.name, self.aci_bd_name)
 
     def test_aci_bd_subnet_gateway_ip_address_instance(self) -> None:
@@ -530,9 +494,6 @@ class ACIBridgeDomainSubnetTestCase(TestCase):
     def test_aci_bd_subnet_nb_tenant_instance(self) -> None:
         """Test NetBox tenant instance in ACI Bridge Domain Subnet."""
         self.assertTrue(isinstance(self.aci_bd_subnet.nb_tenant, Tenant))
-
-    def test_aci_bd_subnet_nb_tenant_name(self) -> None:
-        """Test NetBox tenant name of ACI Bridge Domain Subnet."""
         self.assertEqual(self.aci_bd_subnet.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_bd_subnet_advertised_externally_enabled(self) -> None:

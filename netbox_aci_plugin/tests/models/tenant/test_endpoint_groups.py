@@ -5,7 +5,6 @@
 from dcim.models import MACAddress
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
 
@@ -23,18 +22,17 @@ from ....models.tenant.endpoint_groups import (
 )
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
+from ..base import ACIBaseTestCase
 
 
-class ACIEndpointGroupTestCase(TestCase):
+class ACIEndpointGroupTestCase(ACIBaseTestCase):
     """Test case for ACIEndpointGroup model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIBridgeDomainSubnet model."""
-        cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_app_profile_name = "ACITestAppProfile"
-        cls.aci_vrf_name = "ACITestVRF"
-        cls.aci_bd_name = "ACITestBD"
+        super().setUpTestData()
+
         cls.aci_epg_name = "ACITestEPG"
         cls.aci_epg_alias = "ACITestEPGAlias"
         cls.aci_epg_description = "ACI Test Endpoint Group for NetBox ACI Plugin"
@@ -51,19 +49,6 @@ class ACIEndpointGroupTestCase(TestCase):
         cls.nb_tenant_name = "NetBoxTestTenant"
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name=cls.aci_bd_name,
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
-        )
         cls.aci_epg = ACIEndpointGroup.objects.create(
             name=cls.aci_epg_name,
             name_alias=cls.aci_epg_alias,
@@ -75,9 +60,9 @@ class ACIEndpointGroupTestCase(TestCase):
             admin_shutdown=cls.aci_epg_admin_shutdown,
             custom_qos_policy_name=cls.aci_epg_custom_qos_policy_name,
             flood_in_encap_enabled=cls.aci_epg_flood_in_encap_enabled,
-            intra_epg_isolation_enabled=(cls.aci_epg_intra_epg_isolation_enabled),
+            intra_epg_isolation_enabled=cls.aci_epg_intra_epg_isolation_enabled,
             qos_class=cls.aci_epg_qos_class,
-            preferred_group_member_enabled=(cls.aci_epg_preferred_group_member_enabled),
+            preferred_group_member_enabled=cls.aci_epg_preferred_group_member_enabled,
             proxy_arp_enabled=cls.aci_epg_proxy_arp_enabled,
         )
 
@@ -100,41 +85,26 @@ class ACIEndpointGroupTestCase(TestCase):
     def test_aci_endpoint_group_aci_tenant_instance(self) -> None:
         """Test the ACI Tenant instance associated with ACI EPG."""
         self.assertTrue(isinstance(self.aci_epg.aci_tenant, ACITenant))
-
-    def test_aci_endpoint_group_aci_tenant_name(self) -> None:
-        """Test the ACI Tenant name associated with ACI EPG."""
         self.assertEqual(self.aci_epg.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_endpoint_group_aci_app_profile_instance(self) -> None:
         """Test the ACI App Profile instance associated with ACI EPG."""
         self.assertTrue(isinstance(self.aci_epg.aci_app_profile, ACIAppProfile))
-
-    def test_aci_endpoint_group_aci_app_profile_name(self) -> None:
-        """Test the ACI App Profile name associated with ACI EPG."""
         self.assertEqual(self.aci_epg.aci_app_profile.name, self.aci_app_profile_name)
 
     def test_aci_endpoint_group_aci_vrf_instance(self) -> None:
         """Test the ACI VRF instance associated with ACI EPG."""
         self.assertTrue(isinstance(self.aci_epg.aci_vrf, ACIVRF))
-
-    def test_aci_endpoint_group_aci_vrf_name(self) -> None:
-        """Test the ACI VRF name associated with ACI EPG."""
         self.assertEqual(self.aci_epg.aci_vrf.name, self.aci_vrf_name)
 
     def test_aci_endpoint_group_aci_bridge_domain_instance(self) -> None:
         """Test the ACI Bridge Domain instance associated with ACI EPG."""
         self.assertTrue(isinstance(self.aci_epg.aci_bridge_domain, ACIBridgeDomain))
-
-    def test_aci_endpoint_group_aci_bridge_domain_name(self) -> None:
-        """Test the ACI Bridge Domain name associated with ACI EPG."""
         self.assertEqual(self.aci_epg.aci_bridge_domain.name, self.aci_bd_name)
 
     def test_aci_endpoint_group_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant instance associated with ACI EPG."""
         self.assertTrue(isinstance(self.aci_epg.nb_tenant, Tenant))
-
-    def test_aci_endpoint_group_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI EPG."""
         self.assertEqual(self.aci_epg.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_endpoint_group_admin_shutdown(self) -> None:
@@ -301,16 +271,14 @@ class ACIEndpointGroupTestCase(TestCase):
             duplicate_epg.save()
 
 
-class ACIUSegEndpointGroupTestCase(TestCase):
+class ACIUSegEndpointGroupTestCase(ACIBaseTestCase):
     """Test case for ACIUSegEndpointGroup model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIUSegEndpointGroup model."""
-        cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_app_profile_name = "ACITestAppProfile"
-        cls.aci_vrf_name = "ACITestVRF"
-        cls.aci_bd_name = "ACITestBD"
+        super().setUpTestData()
+
         cls.aci_useg_epg_name = "ACITestUSegEPG"
         cls.aci_useg_epg_alias = "ACITestUSegEPGAlias"
         cls.aci_useg_epg_description = (
@@ -326,22 +294,8 @@ class ACIUSegEndpointGroupTestCase(TestCase):
         cls.aci_useg_epg_match_operator = USegAttributeMatchOperatorChoices.MATCH_ANY
         cls.aci_useg_epg_qos_class = QualityOfServiceClassChoices.CLASS_LEVEL_3
         cls.aci_useg_epg_preferred_group_member_enabled = False
-        cls.nb_tenant_name = "NetBoxTestTenant"
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name=cls.aci_bd_name,
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
-        )
         cls.aci_useg_epg = ACIUSegEndpointGroup.objects.create(
             name=cls.aci_useg_epg_name,
             name_alias=cls.aci_useg_epg_alias,
@@ -353,7 +307,7 @@ class ACIUSegEndpointGroupTestCase(TestCase):
             admin_shutdown=cls.aci_useg_epg_admin_shutdown,
             custom_qos_policy_name=cls.aci_useg_epg_custom_qos_policy_name,
             flood_in_encap_enabled=cls.aci_useg_epg_flood_in_encap_enabled,
-            intra_epg_isolation_enabled=(cls.aci_useg_epg_intra_epg_isolation_enabled),
+            intra_epg_isolation_enabled=cls.aci_useg_epg_intra_epg_isolation_enabled,
             match_operator=cls.aci_useg_epg_match_operator,
             qos_class=cls.aci_useg_epg_qos_class,
             preferred_group_member_enabled=(
@@ -380,17 +334,11 @@ class ACIUSegEndpointGroupTestCase(TestCase):
     def test_aci_useg_endpoint_group_aci_tenant_instance(self) -> None:
         """Test the ACI Tenant instance associated with ACI uSeg EPG."""
         self.assertTrue(isinstance(self.aci_useg_epg.aci_tenant, ACITenant))
-
-    def test_aci_useg_endpoint_group_aci_tenant_name(self) -> None:
-        """Test the ACI Tenant name associated with ACI uSeg EPG."""
         self.assertEqual(self.aci_useg_epg.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_useg_endpoint_group_aci_app_profile_instance(self) -> None:
         """Test the ACI App Profile instance associated with ACI uSeg EPG."""
         self.assertTrue(isinstance(self.aci_useg_epg.aci_app_profile, ACIAppProfile))
-
-    def test_aci_useg_endpoint_group_aci_app_profile_name(self) -> None:
-        """Test the ACI App Profile name associated with ACI uSeg EPG."""
         self.assertEqual(
             self.aci_useg_epg.aci_app_profile.name, self.aci_app_profile_name
         )
@@ -398,9 +346,6 @@ class ACIUSegEndpointGroupTestCase(TestCase):
     def test_aci_useg_endpoint_group_aci_vrf_instance(self) -> None:
         """Test the ACI VRF instance associated with ACI uSeg EPG."""
         self.assertTrue(isinstance(self.aci_useg_epg.aci_vrf, ACIVRF))
-
-    def test_aci_useg_endpoint_group_aci_vrf_name(self) -> None:
-        """Test the ACI VRF name associated with ACI uSeg EPG."""
         self.assertEqual(self.aci_useg_epg.aci_vrf.name, self.aci_vrf_name)
 
     def test_aci_useg_endpoint_group_aci_bridge_domain_instance(self) -> None:
@@ -408,17 +353,11 @@ class ACIUSegEndpointGroupTestCase(TestCase):
         self.assertTrue(
             isinstance(self.aci_useg_epg.aci_bridge_domain, ACIBridgeDomain)
         )
-
-    def test_aci_useg_endpoint_group_aci_bridge_domain_name(self) -> None:
-        """Test the ACI Bridge Domain name associated with ACI uSeg EPG."""
         self.assertEqual(self.aci_useg_epg.aci_bridge_domain.name, self.aci_bd_name)
 
     def test_aci_useg_endpoint_group_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant instance associated with ACI uSeg EPG."""
         self.assertTrue(isinstance(self.aci_useg_epg.nb_tenant, Tenant))
-
-    def test_aci_useg_endpoint_group_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI uSeg EPG."""
         self.assertEqual(self.aci_useg_epg.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_useg_endpoint_group_admin_shutdown(self) -> None:
@@ -591,16 +530,14 @@ class ACIUSegEndpointGroupTestCase(TestCase):
             duplicate_epg.save()
 
 
-class ACIUSegNetworkAttributeTestCase(TestCase):
+class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
     """Test case for ACIUSegNetworkAttribute model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIUSegNetworkAttribute model."""
-        cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_app_profile_name = "ACITestAppProfile"
-        cls.aci_vrf_name = "ACITestVRF"
-        cls.aci_bd_name = "ACITestBD"
+        super().setUpTestData()
+
         cls.aci_useg_epg_name = "ACITestUSegEPG"
         cls.aci_useg_network_attr_ip_name = "ACITestUSegNetworkAttributeIPAddress"
         cls.aci_useg_network_attr_mac_name = "ACITestUSegNetworkAttributeMACAddress"
@@ -617,33 +554,12 @@ class ACIUSegNetworkAttributeTestCase(TestCase):
         cls.nb_tenant_name = "NetBoxTestTenant"
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name=cls.aci_bd_name,
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
-        )
         cls.aci_useg_epg = ACIUSegEndpointGroup.objects.create(
             name=cls.aci_useg_epg_name,
             aci_app_profile=cls.aci_app_profile,
             aci_bridge_domain=cls.aci_bd,
             nb_tenant=cls.nb_tenant,
         )
-
-        # Create attribute objects
-        cls.ip_address1 = IPAddress.objects.create(address="192.168.1.1/24")
-        cls.ip_address2 = IPAddress.objects.create(address="192.168.1.2/24")
-        cls.mac_address1 = MACAddress.objects.create(mac_address="00:00:00:00:00:01")
-        cls.mac_address2 = MACAddress.objects.create(mac_address="00:00:00:00:00:02")
-        cls.prefix1 = Prefix.objects.create(prefix="192.168.1.0/24")
-        cls.prefix2 = Prefix.objects.create(prefix="192.168.2.0/24")
 
         # Create model objects
         cls.aci_useg_network_attr_ip_address = ACIUSegNetworkAttribute.objects.create(
@@ -783,9 +699,6 @@ class ACIUSegNetworkAttributeTestCase(TestCase):
                 ACIUSegEndpointGroup,
             )
         )
-
-    def test_aci_useg_network_attr_aci_useg_endpoint_group_name(self) -> None:
-        """Test the ACI uSeg EPG name associated with ACI uSeg Attribute."""
         self.assertEqual(
             self.aci_useg_network_attr_ip_address.aci_useg_endpoint_group.name,
             self.aci_useg_epg_name,
@@ -842,9 +755,6 @@ class ACIUSegNetworkAttributeTestCase(TestCase):
         self.assertTrue(
             isinstance(self.aci_useg_network_attr_epg_subnet.nb_tenant, Tenant)
         )
-
-    def test_aci_useg_network_attr_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI uSeg Attribute."""
         self.assertEqual(
             self.aci_useg_network_attr_ip_address.nb_tenant.name,
             self.nb_tenant_name,

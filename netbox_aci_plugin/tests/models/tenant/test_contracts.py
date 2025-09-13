@@ -4,7 +4,6 @@
 
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from tenancy.models import Tenant
 
 from ....choices import (
@@ -16,8 +15,6 @@ from ....choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
-from ....models.tenant.app_profiles import ACIAppProfile
-from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.contract_filters import ACIContractFilter
 from ....models.tenant.contracts import (
     ACIContract,
@@ -32,15 +29,17 @@ from ....models.tenant.endpoint_groups import (
 from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
+from ..base import ACIBaseTestCase
 
 
-class ACIContractTestCase(TestCase):
+class ACIContractTestCase(ACIBaseTestCase):
     """Test case for ACIContract model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIContract model."""
-        cls.aci_tenant_name = "ACITestTenant"
+        super().setUpTestData()
+
         cls.aci_contract_name = "ACITestContract"
         cls.aci_contract_alias = "ACITestContractAlias"
         cls.aci_contract_description = "ACI Test Contract for NetBox ACI Plugin"
@@ -53,8 +52,6 @@ class ACIContractTestCase(TestCase):
         cls.aci_contract_target_dscp = QualityOfServiceDSCPChoices.DSCP_EF
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
         cls.aci_contract = ACIContract.objects.create(
             name=cls.aci_contract_name,
             name_alias=cls.aci_contract_alias,
@@ -89,17 +86,11 @@ class ACIContractTestCase(TestCase):
     def test_aci_contract_aci_tenant_instance(self) -> None:
         """Test the ACI Tenant instance associated with ACI Contract."""
         self.assertTrue(isinstance(self.aci_contract.aci_tenant, ACITenant))
-
-    def test_aci_contract_aci_tenant_name(self) -> None:
-        """Test the ACI Tenant name associated with ACI Contract."""
         self.assertEqual(self.aci_contract.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_contract_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant instance associated with ACI Contract."""
         self.assertTrue(isinstance(self.aci_contract.nb_tenant, Tenant))
-
-    def test_aci_contract_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI Contract."""
         self.assertEqual(self.aci_contract.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_contract_qos_class(self) -> None:
@@ -184,19 +175,16 @@ class ACIContractTestCase(TestCase):
             duplicate_contract.save()
 
 
-class ACIContractRelationTestCase(TestCase):
+class ACIContractRelationTestCase(ACIBaseTestCase):
     """Test case for ACIContractRelation model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIContract model."""
-        cls.aci_tenant_name = "ACITestTenant"
+        super().setUpTestData()
+
         cls.aci_contract_epg_name = "ACITestContractEPG"
         cls.aci_contract_esg_name = "ACITestContractESG"
-        cls.nb_tenant_name = "NetBoxTestTenant"
-        cls.aci_app_profile_name = "ACITestAppProfile"
-        cls.aci_vrf_name = "ACITestVRF"
-        cls.aci_bd_name = "ACITestBD"
         cls.aci_epg1_name = "ACITestEPG1"
         cls.aci_epg2_name = "ACITestEPG2"
         cls.aci_useg_epg1_name = "ACITestUSegEPG1"
@@ -213,19 +201,6 @@ class ACIContractRelationTestCase(TestCase):
         """
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name=cls.aci_bd_name,
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
-        )
         cls.aci_epg1 = ACIEndpointGroup.objects.create(
             name=cls.aci_epg1_name,
             aci_app_profile=cls.aci_app_profile,
@@ -432,9 +407,6 @@ class ACIContractRelationTestCase(TestCase):
         self.assertTrue(
             isinstance(self.aci_contract_relation_esg_vz_any.aci_contract, ACIContract)
         )
-
-    def test_aci_contract_relation_aci_contract_name(self) -> None:
-        """Test the ACI Contract name associated with ACI Contract Relation."""
         self.assertEqual(
             self.aci_contract_relation_epg_cons.aci_contract.name,
             self.aci_contract_epg_name,
@@ -512,9 +484,6 @@ class ACIContractRelationTestCase(TestCase):
         self.assertTrue(
             isinstance(self.aci_contract_relation_esg_vz_any.aci_object, ACIVRF)
         )
-
-    def test_aci_contract_relation_aci_object_name(self) -> None:
-        """Test the ACI object name associated with ACI Contract Relation."""
         self.assertEqual(
             self.aci_contract_relation_epg_cons.aci_object.name,
             self.aci_epg1_name,
@@ -685,13 +654,14 @@ class ACIContractRelationTestCase(TestCase):
             duplicate_contract_relation.save()
 
 
-class ACIContractSubjectTestCase(TestCase):
+class ACIContractSubjectTestCase(ACIBaseTestCase):
     """Test case for ACIContractSubject model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIContractSubject model."""
-        cls.aci_tenant_name = "ACITestTenant"
+        super().setUpTestData()
+
         cls.aci_contract_name = "ACITestContract"
         cls.aci_contract_qos_class = QualityOfServiceClassChoices.CLASS_UNSPECIFIED
         cls.aci_contract_scope = ContractScopeChoices.SCOPE_VRF
@@ -704,7 +674,6 @@ class ACIContractSubjectTestCase(TestCase):
         cls.aci_contract_subject_comments = """
         ACI Contract Subject for NetBox ACI Plugin testing.
         """
-        cls.nb_tenant_name = "NetBoxTestTenant"
         cls.aci_contract_subject_apply_both_directions_enabled = True
         cls.aci_contract_subject_qos_class = (
             QualityOfServiceClassChoices.CLASS_UNSPECIFIED
@@ -728,8 +697,6 @@ class ACIContractSubjectTestCase(TestCase):
         )
 
         # Create objects
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
         cls.aci_contract = ACIContract.objects.create(
             name=cls.aci_contract_name,
             aci_tenant=cls.aci_tenant,
@@ -800,9 +767,6 @@ class ACIContractSubjectTestCase(TestCase):
     ) -> None:
         """Test the Contract instance associated with Contract Subject."""
         self.assertTrue(isinstance(self.aci_contract_subject.aci_contract, ACIContract))
-
-    def test_aci_contract_subject_aci_contract_name(self) -> None:
-        """Test the Contract name associated with Contract Subject."""
         self.assertEqual(
             self.aci_contract_subject.aci_contract.name,
             self.aci_contract_name,
@@ -811,9 +775,6 @@ class ACIContractSubjectTestCase(TestCase):
     def test_aci_contract_subject_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant instance associated with Contract Subject."""
         self.assertTrue(isinstance(self.aci_contract_subject.nb_tenant, Tenant))
-
-    def test_aci_contract_subject_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with Contract Subject."""
         self.assertEqual(self.aci_contract_subject.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_contract_subject_apply_both_directions_enabled(self) -> None:
@@ -992,19 +953,19 @@ class ACIContractSubjectTestCase(TestCase):
             duplicate_contract_subject.save()
 
 
-class ACIContractSubjectFilterTestCase(TestCase):
+class ACIContractSubjectFilterTestCase(ACIBaseTestCase):
     """Test case for ACIContractSubjectFilter model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIContractSubjectFilter model."""
-        cls.aci_tenant_name = "ACITestTenant"
+        super().setUpTestData()
+
         cls.aci_contract_name = "ACITestContract"
         cls.aci_contract_qos_class = QualityOfServiceClassChoices.CLASS_UNSPECIFIED
         cls.aci_contract_scope = ContractScopeChoices.SCOPE_VRF
         cls.aci_contract_target_dscp = QualityOfServiceDSCPChoices.DSCP_EF
         cls.aci_contract_subject_name = "ACITestContractSubject"
-        cls.nb_tenant_name = "NetBoxTestTenant"
         cls.aci_contract_subject_apply_both_directions_enabled = True
         cls.aci_contract_subject_qos_class = (
             QualityOfServiceClassChoices.CLASS_UNSPECIFIED
@@ -1037,8 +998,6 @@ class ACIContractSubjectFilterTestCase(TestCase):
         cls.aci_contract_filter_name = "ACITestContractFilter"
 
         # Create objects
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
         cls.aci_contract_filter = ACIContractFilter.objects.create(
             name=cls.aci_contract_filter_name,
             aci_tenant=cls.aci_tenant,
@@ -1105,6 +1064,10 @@ class ACIContractSubjectFilterTestCase(TestCase):
         self.assertTrue(
             isinstance(self.aci_contract_subject_filter.aci_contract, ACIContract)
         )
+        self.assertEqual(
+            self.aci_contract_subject_filter.aci_contract.name,
+            self.aci_contract_name,
+        )
 
     def test_aci_contract_subject_filter_aci_contract_filter_instance(
         self,
@@ -1116,18 +1079,6 @@ class ACIContractSubjectFilterTestCase(TestCase):
                 ACIContractFilter,
             )
         )
-
-    def test_aci_contract_subject_filter_aci_contract_name(self) -> None:
-        """Test the Contract name associated with Contract Subject Filter."""
-        self.assertEqual(
-            self.aci_contract_subject_filter.aci_contract.name,
-            self.aci_contract_name,
-        )
-
-    def test_aci_contract_subject_filter_aci_contract_filter_name(
-        self,
-    ) -> None:
-        """Test the Contract Filter name associated with Subject Filter."""
         self.assertEqual(
             self.aci_contract_subject_filter.aci_contract_filter.name,
             self.aci_contract_filter_name,

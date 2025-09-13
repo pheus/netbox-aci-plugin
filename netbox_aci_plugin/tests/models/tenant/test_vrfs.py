@@ -4,7 +4,6 @@
 
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from ipam.models import VRF
 from tenancy.models import Tenant
 
@@ -14,15 +13,17 @@ from ....choices import (
 )
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
+from ..base import ACIBaseTestCase
 
 
-class ACIVRFTestCase(TestCase):
+class ACIVRFTestCase(ACIBaseTestCase):
     """Test case for ACIVRF model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for the ACIVRF model."""
-        cls.aci_tenant_name = "ACITestTenant"
+        super().setUpTestData()
+
         cls.aci_vrf_name = "ACITestVRF"
         cls.aci_vrf_alias = "ACITestVRFAlias"
         cls.aci_vrf_description = "ACI Test VRF for NetBox ACI Plugin"
@@ -45,9 +46,6 @@ class ACIVRFTestCase(TestCase):
         cls.nb_vrf_name = "NetBoxTestVRF"
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.nb_vrf = VRF.objects.create(name=cls.nb_vrf_name, tenant=cls.nb_tenant)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
         cls.aci_vrf = ACIVRF.objects.create(
             name=cls.aci_vrf_name,
             name_alias=cls.aci_vrf_alias,
@@ -85,25 +83,16 @@ class ACIVRFTestCase(TestCase):
     def test_aci_vrf_aci_tenant_instance(self) -> None:
         """Test the ACI Tenant instance associated with ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf.aci_tenant, ACITenant))
-
-    def test_aci_vrf_aci_tenant_name(self) -> None:
-        """Test the ACI Tenant name associated with ACI VRF."""
         self.assertEqual(self.aci_vrf.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_vrf_nb_tenant_instance(self) -> None:
         """Test the NetBox Tenant instance associated with ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf.nb_tenant, Tenant))
-
-    def test_aci_vrf_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI VRF."""
         self.assertEqual(self.aci_vrf.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_vrf_nb_vrf_instance(self) -> None:
         """Test the NetBox VRF instance associated with ACI VRF."""
         self.assertTrue(isinstance(self.aci_vrf.nb_vrf, VRF))
-
-    def test_aci_vrf_nb_vrf_name(self) -> None:
-        """Test the NetBox VRF name associated with ACI VRF."""
         self.assertEqual(self.aci_vrf.nb_vrf.name, self.nb_vrf_name)
 
     def test_aci_vrf_bd_enforcement_enabled(self) -> None:

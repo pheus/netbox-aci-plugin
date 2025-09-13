@@ -4,28 +4,28 @@
 
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from tenancy.models import Tenant
 
 from ....models.tenant.tenants import ACITenant
+from ..base import ACIBaseTestCase
 
 
-class ACITenantTestCase(TestCase):
+class ACITenantTestCase(ACIBaseTestCase):
     """Test case for ACITenant model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACITenant model."""
+        super().setUpTestData()
+
         cls.aci_tenant_name = "ACITestTenant"
         cls.aci_tenant_alias = "ACITestTenantAlias"
         cls.aci_tenant_description = "ACI Test Tenant for NetBox ACI Plugin"
         cls.aci_tenant_comments = """
         ACI Tenant for NetBox ACI Plugin testing.
         """
-        cls.nb_tenant_name = "NetBoxTestTenant"
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
         cls.aci_tenant = ACITenant.objects.create(
             name=cls.aci_tenant_name,
             name_alias=cls.aci_tenant_alias,
@@ -53,9 +53,6 @@ class ACITenantTestCase(TestCase):
     def test_aci_tenant_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant associated with ACI Tenant."""
         self.assertTrue(isinstance(self.aci_tenant.nb_tenant, Tenant))
-
-    def test_aci_tenant_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI Tenant."""
         self.assertEqual(self.aci_tenant.nb_tenant.name, self.nb_tenant_name)
 
     def test_invalid_aci_tenant_name(self) -> None:

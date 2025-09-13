@@ -4,7 +4,6 @@
 
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
 
@@ -21,17 +20,17 @@ from ....models.tenant.endpoint_security_groups import (
 )
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
+from ..base import ACIBaseTestCase
 
 
-class ACIEndpointSecurityGroupTestCase(TestCase):
+class ACIEndpointSecurityGroupTestCase(ACIBaseTestCase):
     """Test case for ACIEndpointSecurityGroup model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIEndpointSecurityGroup model."""
-        cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_app_profile_name = "ACITestAppProfile"
-        cls.aci_vrf_name = "ACITestVRF"
+        super().setUpTestData()
+
         cls.aci_esg_name = "ACITestESG"
         cls.aci_esg_alias = "ACITestESGAlias"
         cls.aci_esg_description = (
@@ -43,17 +42,8 @@ class ACIEndpointSecurityGroupTestCase(TestCase):
         cls.aci_esg_admin_shutdown = False
         cls.aci_esg_intra_esg_isolation_enabled = False
         cls.aci_esg_preferred_group_member_enabled = False
-        cls.nb_tenant_name = "NetBoxTestTenant"
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
         cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
             name=cls.aci_esg_name,
             name_alias=cls.aci_esg_alias,
@@ -63,8 +53,8 @@ class ACIEndpointSecurityGroupTestCase(TestCase):
             aci_vrf=cls.aci_vrf,
             nb_tenant=cls.nb_tenant,
             admin_shutdown=cls.aci_esg_admin_shutdown,
-            intra_esg_isolation_enabled=(cls.aci_esg_intra_esg_isolation_enabled),
-            preferred_group_member_enabled=(cls.aci_esg_preferred_group_member_enabled),
+            intra_esg_isolation_enabled=cls.aci_esg_intra_esg_isolation_enabled,
+            preferred_group_member_enabled=cls.aci_esg_preferred_group_member_enabled,
         )
 
     def test_create_aci_endpoint_security_group_instance(self) -> None:
@@ -86,9 +76,6 @@ class ACIEndpointSecurityGroupTestCase(TestCase):
     def test_aci_endpoint_security_group_aci_tenant_instance(self) -> None:
         """Test the ACI Tenant instance associated with ACI ESG."""
         self.assertTrue(isinstance(self.aci_esg.aci_tenant, ACITenant))
-
-    def test_aci_endpoint_security_group_aci_tenant_name(self) -> None:
-        """Test the ACI Tenant name associated with ACI ESG."""
         self.assertEqual(self.aci_esg.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_endpoint_security_group_aci_app_profile_instance(
@@ -96,25 +83,16 @@ class ACIEndpointSecurityGroupTestCase(TestCase):
     ) -> None:
         """Test the ACI App Profile instance associated with ACI ESG."""
         self.assertTrue(isinstance(self.aci_esg.aci_app_profile, ACIAppProfile))
-
-    def test_aci_endpoint_security_group_aci_app_profile_name(self) -> None:
-        """Test the ACI App Profile name associated with ACI ESG."""
         self.assertEqual(self.aci_esg.aci_app_profile.name, self.aci_app_profile_name)
 
     def test_aci_endpoint_security_group_aci_vrf_instance(self) -> None:
         """Test the ACI VRF instance associated with ACI ESG."""
         self.assertTrue(isinstance(self.aci_esg.aci_vrf, ACIVRF))
-
-    def test_aci_endpoint_security_group_aci_vrf_name(self) -> None:
-        """Test the ACI VRF name associated with ACI ESG."""
         self.assertEqual(self.aci_esg.aci_vrf.name, self.aci_vrf_name)
 
     def test_aci_endpoint_security_group_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant instance associated with ACI ESG."""
         self.assertTrue(isinstance(self.aci_esg.nb_tenant, Tenant))
-
-    def test_aci_endpoint_security_group_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI ESG."""
         self.assertEqual(self.aci_esg.nb_tenant.name, self.nb_tenant_name)
 
     def test_aci_endpoint_security_group_admin_shutdown(self) -> None:
@@ -252,16 +230,14 @@ class ACIEndpointSecurityGroupTestCase(TestCase):
             duplicate_esg.save()
 
 
-class ACIEsgEndpointGroupSelectorTestCase(TestCase):
+class ACIEsgEndpointGroupSelectorTestCase(ACIBaseTestCase):
     """Test case for ACIEsgEndpointGroupSelector model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIEsgEndpointGroupSelector model."""
-        cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_app_profile_name = "ACITestAppProfile"
-        cls.aci_vrf_name = "ACITestVRF"
-        cls.aci_bd_name = "ACITestBD"
+        super().setUpTestData()
+
         cls.aci_esg_name = "ACITestESG"
         cls.aci_esg_epg_sel1_name = "ACITestESGEPGSelector1"
         cls.aci_esg_epg_sel2_name = "ACITestESGEPGSelector2"
@@ -276,22 +252,6 @@ class ACIEsgEndpointGroupSelectorTestCase(TestCase):
         cls.aci_epg1_name = "ACITestEPG1"
         cls.aci_epg2_name = "ACITestEPG2"
         cls.aci_useg_epg1_name = "ACITestuSegEPG1"
-        cls.nb_tenant_name = "NetBoxTestTenant"
-
-        # Create depending objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name=cls.aci_bd_name,
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
-        )
 
         # Create parent objects
         cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
@@ -414,11 +374,6 @@ class ACIEsgEndpointGroupSelectorTestCase(TestCase):
                 ACIEndpointSecurityGroup,
             )
         )
-
-    def test_aci_esg_epg_selector_aci_endpoint_security_group_name(
-        self,
-    ) -> None:
-        """Test the ACI ESG name associated with ACI ESG EPG Selector."""
         self.assertEqual(
             self.aci_esg_epg_sel1.aci_endpoint_security_group.name,
             self.aci_esg_name,
@@ -443,9 +398,6 @@ class ACIEsgEndpointGroupSelectorTestCase(TestCase):
         self.assertTrue(
             isinstance(self.aci_esg_epg_sel3.aci_epg_object, ACIUSegEndpointGroup)
         )
-
-    def test_aci_esg_epg_selector_aci_endpoint_group_name(self) -> None:
-        """Test the ACI EPG name associated with ACI ESG EPG Selector."""
         self.assertEqual(self.aci_esg_epg_sel1.aci_epg_object.name, self.aci_epg1_name)
         self.assertEqual(self.aci_esg_epg_sel2.aci_epg_object.name, self.aci_epg2_name)
         self.assertEqual(
@@ -457,9 +409,6 @@ class ACIEsgEndpointGroupSelectorTestCase(TestCase):
         self.assertTrue(isinstance(self.aci_esg_epg_sel1.nb_tenant, Tenant))
         self.assertTrue(isinstance(self.aci_esg_epg_sel2.nb_tenant, Tenant))
         self.assertTrue(isinstance(self.aci_esg_epg_sel3.nb_tenant, Tenant))
-
-    def test_aci_esg_endpoint_group_selector_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ESG EPG Selector."""
         self.assertEqual(self.aci_esg_epg_sel1.nb_tenant.name, self.nb_tenant_name)
         self.assertEqual(self.aci_esg_epg_sel2.nb_tenant.name, self.nb_tenant_name)
         self.assertEqual(self.aci_esg_epg_sel3.nb_tenant.name, self.nb_tenant_name)
@@ -632,16 +581,14 @@ class ACIEsgEndpointGroupSelectorTestCase(TestCase):
             duplicate_esg_epg_selector.save()
 
 
-class ACIEsgEndpointSelectorTestCase(TestCase):
+class ACIEsgEndpointSelectorTestCase(ACIBaseTestCase):
     """Test case for ACIEsgEndpointSelector model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIEsgEndpointSelector model."""
-        cls.aci_tenant_name = "ACITestTenant"
-        cls.aci_app_profile_name = "ACITestAppProfile"
-        cls.aci_vrf_name = "ACITestVRF"
-        cls.aci_bd_name = "ACITestBD"
+        super().setUpTestData()
+
         cls.aci_esg_name = "ACITestESG"
         cls.aci_esg_ep_sel1_name = "ACITestESGEndpointSelector1"
         cls.aci_esg_ep_sel2_name = "ACITestESGEndpointSelector2"
@@ -653,17 +600,6 @@ class ACIEsgEndpointSelectorTestCase(TestCase):
         cls.aci_esg_ep_sel_comments = """
         ACI ESG Endpoint Selector for NetBox ACI Plugin testing.
         """
-        cls.nb_tenant_name = "NetBoxTestTenant"
-
-        # Create depending objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name=cls.aci_app_profile_name, aci_tenant=cls.aci_tenant
-        )
-        cls.aci_vrf = ACIVRF.objects.create(
-            name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
-        )
 
         # Create parent objects
         cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
@@ -672,11 +608,6 @@ class ACIEsgEndpointSelectorTestCase(TestCase):
             aci_vrf=cls.aci_vrf,
             nb_tenant=cls.nb_tenant,
         )
-
-        # Create selector objects
-        cls.ip_address1 = IPAddress.objects.create(address="192.168.1.1/24")
-        cls.ip_address2 = IPAddress.objects.create(address="192.168.1.2/24")
-        cls.prefix1 = Prefix.objects.create(prefix="192.168.1.0/24")
 
         # Create model objects
         cls.aci_esg_ep_sel1 = ACIEsgEndpointSelector.objects.create(
@@ -771,11 +702,6 @@ class ACIEsgEndpointSelectorTestCase(TestCase):
                 ACIEndpointSecurityGroup,
             )
         )
-
-    def test_aci_esg_ep_selector_aci_endpoint_security_group_name(
-        self,
-    ) -> None:
-        """Test the ACI ESG name associated with ACI ESG Endpoint Selector."""
         self.assertEqual(
             self.aci_esg_ep_sel1.aci_endpoint_security_group.name,
             self.aci_esg_name,
@@ -800,9 +726,6 @@ class ACIEsgEndpointSelectorTestCase(TestCase):
         self.assertTrue(isinstance(self.aci_esg_ep_sel1.nb_tenant, Tenant))
         self.assertTrue(isinstance(self.aci_esg_ep_sel2.nb_tenant, Tenant))
         self.assertTrue(isinstance(self.aci_esg_ep_sel3.nb_tenant, Tenant))
-
-    def test_aci_esg_endpoint_selector_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ESG EP Selector."""
         self.assertEqual(self.aci_esg_ep_sel1.nb_tenant.name, self.nb_tenant_name)
         self.assertEqual(self.aci_esg_ep_sel2.nb_tenant.name, self.nb_tenant_name)
         self.assertEqual(self.aci_esg_ep_sel3.nb_tenant.name, self.nb_tenant_name)

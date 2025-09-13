@@ -4,7 +4,6 @@
 
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
-from django.test import TestCase
 from tenancy.models import Tenant
 
 from ....choices import (
@@ -22,15 +21,17 @@ from ....models.tenant.contract_filters import (
     ACIContractFilterEntry,
 )
 from ....models.tenant.tenants import ACITenant
+from ..base import ACIBaseTestCase
 
 
-class ACIContractFilterTestCase(TestCase):
+class ACIContractFilterTestCase(ACIBaseTestCase):
     """Test case for ACIContractFilter model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIContractFilter model."""
-        cls.aci_tenant_name = "ACITestTenant"
+        super().setUpTestData()
+
         cls.aci_contract_filter_name = "ACITestContractFilter"
         cls.aci_contract_filter_alias = "ACITestContractFilterAlias"
         cls.aci_contract_filter_description = (
@@ -39,11 +40,8 @@ class ACIContractFilterTestCase(TestCase):
         cls.aci_contract_filter_comments = """
         ACI Contract Filter for NetBox ACI Plugin testing.
         """
-        cls.nb_tenant_name = "NetBoxTestTenant"
 
         # Create objects
-        cls.nb_tenant = Tenant.objects.create(name=cls.nb_tenant_name)
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
         cls.aci_contract_filter = ACIContractFilter.objects.create(
             name=cls.aci_contract_filter_name,
             name_alias=cls.aci_contract_filter_alias,
@@ -79,17 +77,11 @@ class ACIContractFilterTestCase(TestCase):
     def test_aci_contract_filter_aci_tenant_instance(self) -> None:
         """Test the ACI Tenant instance associated with ACI Contract Filter."""
         self.assertTrue(isinstance(self.aci_contract_filter.aci_tenant, ACITenant))
-
-    def test_aci_contract_filter_aci_tenant_name(self) -> None:
-        """Test the ACI Tenant name associated with ACI Contract Filter."""
         self.assertEqual(self.aci_contract_filter.aci_tenant.name, self.aci_tenant_name)
 
     def test_aci_contract_filter_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant instance associated with Contract Filter."""
         self.assertTrue(isinstance(self.aci_contract_filter.nb_tenant, Tenant))
-
-    def test_aci_contract_filter_nb_tenant_name(self) -> None:
-        """Test the NetBox tenant name associated with ACI Contract Filter."""
         self.assertEqual(self.aci_contract_filter.nb_tenant.name, self.nb_tenant_name)
 
     def test_invalid_aci_contract_filter_name(self) -> None:
@@ -152,13 +144,14 @@ class ACIContractFilterTestCase(TestCase):
             duplicate_contract_filter.save()
 
 
-class ACIContractFilterEntryTestCase(TestCase):
+class ACIContractFilterEntryTestCase(ACIBaseTestCase):
     """Test case for ACIContractFilterEntry model."""
 
     @classmethod
     def setUpTestData(cls) -> None:
         """Set up test data for ACIContractFilterEntry model."""
-        cls.aci_tenant_name = "ACITestTenant"
+        super().setUpTestData()
+
         cls.aci_contract_filter_name = "ACITestContractFilter"
         cls.aci_contract_filter_entry_name = "ACITestContractFilterEntry"
         cls.aci_contract_filter_entry_alias = "ACITestContractFilterEntryAlias"
@@ -198,7 +191,6 @@ class ACIContractFilterEntryTestCase(TestCase):
         ]
 
         # Create objects
-        cls.aci_tenant = ACITenant.objects.create(name=cls.aci_tenant_name)
         cls.aci_contract_filter = ACIContractFilter.objects.create(
             name=cls.aci_contract_filter_name,
             aci_tenant=cls.aci_tenant,
@@ -263,9 +255,6 @@ class ACIContractFilterEntryTestCase(TestCase):
                 ACIContractFilter,
             )
         )
-
-    def test_aci_contract_filter_entry_aci_contract_filter_name(self) -> None:
-        """Test the Filter name associated with Contract Filter Entry."""
         self.assertEqual(
             self.aci_contract_filter_entry.aci_contract_filter.name,
             self.aci_contract_filter_name,
@@ -726,7 +715,7 @@ class ACIContractFilterEntryTestCase(TestCase):
     def test_constraint_unique_aci_filter_entry_name_per_aci_contract_filter(
         self,
     ) -> None:
-        """Test unique constraint of ACI Contract Filter Entry name."""
+        """Test the unique constraint of ACI Contract Filter Entry name."""
         contract_filter = ACIContractFilter.objects.get(
             name=self.aci_contract_filter_name
         )
