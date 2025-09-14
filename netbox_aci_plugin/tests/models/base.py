@@ -7,6 +7,7 @@ from django.test import TestCase
 from ipam.models import VRF, IPAddress, Prefix
 from tenancy.models import Tenant
 
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.bridge_domains import ACIBridgeDomain
 from ...models.tenant.tenants import ACITenant
@@ -19,6 +20,12 @@ class ACIBaseTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Set up test data for netbox_aci_plugin models."""
+        # ACI Fabric configuration
+        cls.aci_fabric_name = "ACIBaseTestFabric"
+        cls.aci_fabric_id = 127
+        cls.aci_fabric_infra_vlan_vid = 3900
+        cls.aci_fabric_gipo_pool_prefix = "225.0.0.0/15"
+
         # ACI Tenant object configurations
         cls.aci_tenant_name = "ACIBaseTestTenant"
         cls.aci_app_profile_name = "ACIBaseTestAppProfile"
@@ -38,6 +45,13 @@ class ACIBaseTestCase(TestCase):
         cls.mac_address2 = MACAddress.objects.create(mac_address="00:00:00:00:00:02")
         cls.prefix1 = Prefix.objects.create(prefix="192.168.1.0/24")
         cls.prefix2 = Prefix.objects.create(prefix="192.168.2.0/24")
+
+        # Create ACIFabric object
+        cls.aci_fabric = ACIFabric.objects.create(
+            name=cls.aci_fabric_name,
+            fabric_id=cls.aci_fabric_id,
+            infra_vlan_vid=cls.aci_fabric_infra_vlan_vid,
+        )
 
         # Create ACITenant objects
         cls.aci_tenant = ACITenant.objects.create(
