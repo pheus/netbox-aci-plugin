@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase
 from ipam.models import IPAddress
 
 from ....forms.tenant.endpoint_groups import (
@@ -11,36 +10,12 @@ from ....forms.tenant.endpoint_groups import (
     ACIUSegEndpointGroupEditForm,
     ACIUSegNetworkAttributeEditForm,
 )
-from ....models.tenant.app_profiles import ACIAppProfile
-from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.endpoint_groups import ACIUSegEndpointGroup
-from ....models.tenant.tenants import ACITenant
-from ....models.tenant.vrfs import ACIVRF
+from ..base import ACIBaseFormTestCase
 
 
-class ACIEndpointGroupFormTestCase(TestCase):
+class ACIEndpointGroupFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIEndpointGroup form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
-
-    @classmethod
-    def setUp(cls):
-        """Set up required objects for ACIBridgeDomainForm tests."""
-        cls.aci_tenant = ACITenant.objects.create(name="ACITestTenant")
-        cls.aci_vrf = ACIVRF.objects.create(
-            name="ACITestVRF", aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name="ACITestBridgeDomain",
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
-        )
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name="ACITestAppProfile", aci_tenant=cls.aci_tenant
-        )
 
     def test_invalid_aci_endpoint_group_field_values(self) -> None:
         """Test validation of invalid ACI Endpoint Group field values."""
@@ -76,29 +51,8 @@ class ACIEndpointGroupFormTestCase(TestCase):
         self.assertEqual(aci_epg_form.errors.get("description"), None)
 
 
-class ACIUSegEndpointGroupFormTestCase(TestCase):
+class ACIUSegEndpointGroupFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIUSegEndpointGroup form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
-
-    @classmethod
-    def setUp(cls):
-        """Set up required objects for ACIUSegEndpointGroupForm tests."""
-        cls.aci_tenant = ACITenant.objects.create(name="ACITestTenant")
-        cls.aci_vrf = ACIVRF.objects.create(
-            name="ACITestVRF", aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name="ACITestBridgeDomain",
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
-        )
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name="ACITestAppProfile", aci_tenant=cls.aci_tenant
-        )
 
     def test_invalid_aci_useg_endpoint_group_field_values(self) -> None:
         """Test validation of invalid ACI uSeg Endpoint Group field values."""
@@ -136,29 +90,14 @@ class ACIUSegEndpointGroupFormTestCase(TestCase):
         self.assertEqual(aci_useg_epg_form.errors.get("description"), None)
 
 
-class ACIUSegNetworkAttributeFormTestCase(TestCase):
+class ACIUSegNetworkAttributeFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIUSegNetworkAttribute form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
 
     @classmethod
     def setUp(cls):
         """Set up required objects for ACIUSegNetworkAttributeForm tests."""
-        cls.aci_tenant = ACITenant.objects.create(name="ACITestTenant")
-        cls.aci_vrf = ACIVRF.objects.create(
-            name="ACITestVRF", aci_tenant=cls.aci_tenant
-        )
-        cls.aci_bd = ACIBridgeDomain.objects.create(
-            name="ACITestBridgeDomain",
-            aci_tenant=cls.aci_tenant,
-            aci_vrf=cls.aci_vrf,
-        )
-        cls.aci_app_profile = ACIAppProfile.objects.create(
-            name="ACITestAppProfile", aci_tenant=cls.aci_tenant
-        )
+        super().setUp()
+
         cls.aci_useg_epg = ACIUSegEndpointGroup.objects.create(
             name="ACIUSegEndpointGroup1",
             aci_app_profile=cls.aci_app_profile,

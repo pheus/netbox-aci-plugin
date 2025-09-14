@@ -2,21 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from django.test import TestCase
-
 from ....forms.tenant.contract_filters import (
     ACIContractFilterEditForm,
     ACIContractFilterEntryEditForm,
 )
+from ..base import ACIBaseFormTestCase
 
 
-class ACIContractFilterFormTestCase(TestCase):
+class ACIContractFilterFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIContractFilter form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
 
     def test_invalid_aci_contract_filter_field_values(self) -> None:
         """Test validation of invalid ACI Contract Filter field values."""
@@ -50,13 +44,8 @@ class ACIContractFilterFormTestCase(TestCase):
         self.assertEqual(aci_contract_filter.errors.get("description"), None)
 
 
-class ACIContractFilterEntryFormTestCase(TestCase):
+class ACIContractFilterEntryFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIContractFilterEntry form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
 
     def test_invalid_aci_contract_filter_entry_field_values(self) -> None:
         """Test validation of invalid Contract Filter Entry field values."""

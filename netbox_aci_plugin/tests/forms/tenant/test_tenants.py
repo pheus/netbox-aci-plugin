@@ -2,18 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from django.test import TestCase
-
 from ....forms.tenant.tenants import ACITenantEditForm
+from ..base import ACIBaseFormTestCase
 
 
-class ACITenantFormTestCase(TestCase):
+class ACITenantFormTestCase(ACIBaseFormTestCase):
     """Test case for ACITenant form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
 
     def test_invalid_aci_tenant_field_values(self) -> None:
         """Test validation of invalid ACI Tenant field values."""

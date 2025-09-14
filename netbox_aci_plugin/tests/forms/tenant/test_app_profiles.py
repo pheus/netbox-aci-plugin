@@ -2,18 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from django.test import TestCase
-
 from ....forms.tenant.app_profiles import ACIAppProfileEditForm
+from ..base import ACIBaseFormTestCase
 
 
-class ACIAppProfileFormTestCase(TestCase):
+class ACIAppProfileFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIAppProfile form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
 
     def test_invalid_aci_app_profile_field_values(self) -> None:
         """Test validation of invalid ACI AppProfile field values."""

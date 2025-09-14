@@ -2,31 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from django.test import TestCase
-
 from ....forms.tenant.bridge_domains import (
     ACIBridgeDomainEditForm,
     ACIBridgeDomainSubnetEditForm,
 )
-from ....models.tenant.tenants import ACITenant
-from ....models.tenant.vrfs import ACIVRF
+from ..base import ACIBaseFormTestCase
 
 
-class ACIBridgeDomainFormTestCase(TestCase):
+class ACIBridgeDomainFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIBridgeDomain form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
-
-    @classmethod
-    def setUp(cls):
-        """Set up required objects for ACIBridgeDomainForm tests."""
-        cls.aci_tenant = ACITenant.objects.create(name="ACITestTenant")
-        cls.aci_vrf = ACIVRF.objects.create(
-            name="ACITestVRF", aci_tenant=cls.aci_tenant
-        )
 
     def test_invalid_aci_bridge_domain_field_values(self) -> None:
         """Test validation of invalid ACI Bridge Domain field values."""
@@ -62,13 +46,8 @@ class ACIBridgeDomainFormTestCase(TestCase):
         self.assertEqual(aci_bd_form.errors.get("description"), None)
 
 
-class ACIBridgeDomainSubnetFormTestCase(TestCase):
+class ACIBridgeDomainSubnetFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIBridgeDomainSubnet form."""
-
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
-    description_error_message: str = (
-        "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
-    )
 
     def test_invalid_aci_bridge_domain_subnet_field_values(self) -> None:
         """Test validation of invalid ACI Bridge Domain Subnet field values."""
