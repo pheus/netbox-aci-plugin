@@ -113,19 +113,16 @@ class ACIFabric(CachedScopeMixin, NetBoxModel):
         """Override the model's clean method for custom field validation."""
         super().clean()
 
+        errors = {}
+
         # Ensure VLAN object VID matches infra_vlan_vid
         if (
             self.infra_vlan
             and self.infra_vlan_vid
             and self.infra_vlan.vid != self.infra_vlan_vid
         ):
-            raise ValidationError(
-                {
-                    "infra_vlan": _(
-                        "NetBox referenced VLAN VID must match the "
-                        "Infrastructure VLAN VID."
-                    )
-                }
+            errors.setdefault("infra_vlan", []).append(
+                _("NetBox referenced VLAN VID must match the Infrastructure VLAN VID.")
             )
 
         # Ensure gipo_pool is IPv4 multicast
@@ -133,7 +130,10 @@ class ACIFabric(CachedScopeMixin, NetBoxModel):
             self.gipo_pool.prefix.version != 4
             or not self.gipo_pool.prefix.is_multicast()
         ):
-            raise ValidationError({"gipo_pool": _("GIPo must be IPv4 multicast.")})
+            errors.setdefault("gipo_pool", []).append(_("GIPo must be IPv4 multicast."))
+
+        if errors:
+            raise ValidationError(errors)
 
     @property
     def parent_object(self) -> NetBoxModel | None:
