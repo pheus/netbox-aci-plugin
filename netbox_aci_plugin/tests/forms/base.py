@@ -6,6 +6,7 @@ from django.test import TestCase
 from ipam.models import VRF
 from tenancy.models import Tenant
 
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.bridge_domains import ACIBridgeDomain
 from ...models.tenant.tenants import ACITenant
@@ -32,12 +33,20 @@ class ACIBaseFormTestCase(TestCase):
             tenant=cls.nb_tenant,
         )
 
+        # Create ACIFabric object
+        cls.aci_fabric = ACIFabric.objects.create(
+            name="ACIBaseFormTestFabric",
+            fabric_id=101,
+            infra_vlan_vid=3900,
+        )
+
         # Create ACITenant objects
         cls.aci_tenant = ACITenant.objects.create(
             name="ACIBaseFormTestTenant",
         )
         cls.aci_vrf = ACIVRF.objects.create(
-            name="ACIBaseFormTestVRF", aci_tenant=cls.aci_tenant
+            name="ACIBaseFormTestVRF",
+            aci_tenant=cls.aci_tenant,
         )
         cls.aci_bd = ACIBridgeDomain.objects.create(
             name="ACIBaseFormTestBridgeDomain",
