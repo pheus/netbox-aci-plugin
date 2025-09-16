@@ -1,3 +1,10 @@
+from .fabric.fabrics import (
+    ACIFabricBulkDeleteView,
+    ACIFabricBulkEditView,
+    ACIFabricBulkImportView,
+    ACIFabricEditView,
+    ACIFabricListView,
+)
 from .tenant.app_profiles import (
     ACIAppProfileBulkDeleteView,
     ACIAppProfileBulkEditView,
@@ -179,6 +186,12 @@ __all__ = (
     "ACIEsgEndpointSelectorBulkImportView",
     "ACIEsgEndpointSelectorEditView",
     "ACIEsgEndpointSelectorListView",
+    # ACIFabric
+    "ACIFabricBulkDeleteView",
+    "ACIFabricBulkEditView",
+    "ACIFabricBulkImportView",
+    "ACIFabricEditView",
+    "ACIFabricListView",
     # ACITenant
     "ACITenantBulkDeleteView",
     "ACITenantBulkEditView",
