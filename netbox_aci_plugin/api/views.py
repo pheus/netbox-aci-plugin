@@ -4,6 +4,7 @@
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
+from ..filtersets.fabric.fabrics import ACIFabricFilterSet
 from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ..filtersets.tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
@@ -31,6 +32,7 @@ from ..filtersets.tenant.endpoint_security_groups import (
 )
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
+from ..models.fabric.fabrics import ACIFabric
 from ..models.tenant.app_profiles import ACIAppProfile
 from ..models.tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -72,11 +74,26 @@ from .serializers import (
     ACIEndpointSecurityGroupSerializer,
     ACIEsgEndpointGroupSelectorSerializer,
     ACIEsgEndpointSelectorSerializer,
+    ACIFabricSerializer,
     ACITenantSerializer,
     ACIUSegEndpointGroupSerializer,
     ACIUSegNetworkAttributeSerializer,
     ACIVRFSerializer,
 )
+
+
+class ACIFabricListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Fabric instances."""
+
+    queryset = ACIFabric.objects.select_related(
+        "infra_vlan",
+        "gipo_pool",
+        "nb_tenant",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIFabricSerializer
+    filterset_class = ACIFabricFilterSet
 
 
 class ACITenantListViewSet(NetBoxModelViewSet):
