@@ -8,6 +8,11 @@ from . import views
 
 app_name = "netbox_aci_plugin"
 router = NetBoxRouter()
+
+# ACI Fabric
+router.register("fabrics", views.ACIFabricListViewSet)
+
+# ACI Tenant
 router.register("tenants", views.ACITenantListViewSet)
 router.register("app-profiles", views.ACIAppProfileListViewSet)
 router.register("bridge-domains", views.ACIBridgeDomainListViewSet)
