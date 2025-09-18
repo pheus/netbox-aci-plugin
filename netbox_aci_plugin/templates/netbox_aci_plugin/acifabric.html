@@ -1,0 +1,51 @@
+
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load i18n %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h2 class="card-header">{% trans "ACI Fabric" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Description" %}</th>
+            <td>{{ object.description|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Fabric ID" %}</th>
+            <td>{{ object.fabric_id }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Infrastructure VLAN ID" %}</th>
+            <td>{{ object.infra_vlan_vid }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Infrastructure VLAN" %}</th>
+            <td>{{ object.infra_vlan|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "GIPo Pool" %}</th>
+            <td>{{ object.gipo_pool|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox Tenant" %}</th>
+            <td>
+                {% if object.nb_tenant.group %}
+                    {{ object.nb_tenant.group|linkify }} /
+                {% endif %}
+                {{ object.nb_tenant|linkify|placeholder }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/related_objects.html' %}
+    </div>
+  </div>
+{% endblock content %}
