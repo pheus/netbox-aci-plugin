@@ -1,3 +1,4 @@
+from .fabric.fabrics import ACIFabricSerializer
 from .tenant.app_profiles import ACIAppProfileSerializer
 from .tenant.bridge_domains import (
     ACIBridgeDomainSerializer,
@@ -27,6 +28,8 @@ from .tenant.tenants import ACITenantSerializer
 from .tenant.vrfs import ACIVRFSerializer
 
 __all__ = (
+    # From fabric
+    "ACIFabricSerializer",
     # From app_profiles
     "ACIAppProfileSerializer",
     "ACIEndpointGroupSerializer",
