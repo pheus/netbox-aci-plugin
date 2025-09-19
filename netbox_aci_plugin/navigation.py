@@ -256,6 +256,27 @@ acicontractsubject_item = PluginMenuItem(
     ),
 )
 
+# ACI Fabric
+acifabric_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acifabric_list",
+    link_text="Fabrics",
+    permissions=["netbox_aci_plugin.view_acifabric"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acifabric_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acifabric"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acifabric_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acifabric"],
+        ),
+    ),
+)
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -289,6 +310,10 @@ menu = PluginMenu(
                 acicontractfilter_item,
                 acicontractfilterentry_item,
             ),
+        ),
+        (
+            "Fabrics",
+            (acifabric_item,),
         ),
     ),
     icon_class="mdi mdi-router",
