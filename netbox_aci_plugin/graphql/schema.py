@@ -20,6 +20,7 @@ from .types import (
     ACIEndpointSecurityGroupType,
     ACIEsgEndpointGroupSelectorType,
     ACIEsgEndpointSelectorType,
+    ACIFabricType,
     ACITenantType,
     ACIUSegEndpointGroupType,
     ACIUSegNetworkAttributeType,
@@ -30,6 +31,9 @@ from .types import (
 @strawberry.type(name="Query")
 class NetBoxACIQuery:
     """GraphQL query definition for the NetBox ACI Plugin."""
+
+    aci_fabric: ACIFabricType = strawberry_django.field()
+    aci_fabric_list: list[ACIFabricType] = strawberry_django.field()
 
     aci_tenant: ACITenantType = strawberry_django.field()
     aci_tenant_list: list[ACITenantType] = strawberry_django.field()
