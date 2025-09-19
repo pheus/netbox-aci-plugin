@@ -4,6 +4,7 @@
 
 from netbox.search import SearchIndex, register_search
 
+from .models.fabric.fabrics import ACIFabric
 from .models.tenant.app_profiles import ACIAppProfile
 from .models.tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -31,6 +32,26 @@ from .models.tenant.endpoint_security_groups import (
 )
 from .models.tenant.tenants import ACITenant
 from .models.tenant.vrfs import ACIVRF
+
+
+@register_search
+class ACIFabricIndex(SearchIndex):
+    """NetBox search definition for the ACI Fabric model."""
+
+    model = ACIFabric
+
+    fields: tuple = (
+        ("name", 100),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "description",
+        "fabric_id",
+        "infra_vlan_vid",
+        "nb_tenant",
+    )
 
 
 @register_search
