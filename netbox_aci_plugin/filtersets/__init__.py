@@ -1,3 +1,4 @@
+from .fabric.fabrics import ACIFabricFilterSet
 from .tenant.app_profiles import ACIAppProfileFilterSet
 from .tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
@@ -27,6 +28,9 @@ from .tenant.tenants import ACITenantFilterSet
 from .tenant.vrfs import ACIVRFFilterSet
 
 __all__ = (
+    # Fabric
+    "ACIFabricFilterSet",
+    # Tenant
     "ACIAppProfileFilterSet",
     "ACIBridgeDomainFilterSet",
     "ACIBridgeDomainSubnetFilterSet",

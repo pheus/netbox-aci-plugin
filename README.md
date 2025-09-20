@@ -32,6 +32,7 @@ Bridge Domains (BD), and VRFs (Contexts).
 ## Features
 
 - Represent core ACI constructs in NetBox:
+    - Fabrics
     - Tenants
     - Application Profiles
     - Endpoint Groups (including **uSeg EPGs**)
@@ -90,10 +91,11 @@ discovered. For more on Docker usage, see the
 
 1. Install the plugin (see [Installation](#Installation)).
 2. Start NetBox and verify **Plugins → NetBox ACI** appears in the UI.
-3. Create a **Tenant**, then an **Application Profile** and **EPGs**.
-4. Add **Contracts**, **Subjects**, and **Filters**; associate them with
-   EPGs.
-5. Define **Bridge Domains** and **VRFs** to complete the model.
+3. Create a **Fabric** to host Tenant policies.
+4. Add a **Tenant**, then an **Application Profile** and **EPGs**.
+5. Configure **Contracts**, **Subjects**, and **Filters**;
+   associate them with EPGs.
+6. Define **Bridge Domains** and **VRFs** to complete the model.
 
 > Tip: Use NetBox’s API to populate objects at scale once your model is set.
 
@@ -110,6 +112,8 @@ PLUGINS = [
 
 PLUGINS_CONFIG = {
     "netbox_aci_plugin": {
+        # Create default ACI Fabric "Fabric1" during migration
+        "create_default_aci_fabric": True,
         # Create default ACI Tenants "common", "infra", "mgmt" during migration
         "create_default_aci_tenants": True,
         # Create default ACI Filters "arp", "icmp", "ip" during migration

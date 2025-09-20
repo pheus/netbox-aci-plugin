@@ -8,6 +8,15 @@ from utilities.urls import get_model_urls
 from . import views  # noqa F401
 
 urlpatterns: tuple = (
+    # ACI Fabric
+    path(
+        "fabrics/",
+        include(get_model_urls("netbox_aci_plugin", "acifabric", detail=False)),
+    ),
+    path(
+        "fabrics/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acifabric")),
+    ),
     # ACI Tenants
     path(
         "tenants/",

@@ -16,6 +16,12 @@ ACI_DESC_MAX_LEN: Final[int] = 128
 NAME_CHAR_CLASS: Final[str] = r"[A-Za-z0-9_.:-]"
 DESC_CHAR_CLASS: Final[str] = r"[A-Za-z0-9!#$%()*,-./:;@ _{|}~?&+]"
 
+VLAN_VID_MIN = 1
+VLAN_VID_MAX = 4094
+
+FABRIC_ID_MIN = 1
+FABRIC_ID_MAX = 128
+
 #
 # Contract Relation
 #

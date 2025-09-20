@@ -2,14 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 import strawberry
 import strawberry_django
-from dcim.graphql.types import MACAddressType
-from ipam.graphql.types import IPAddressType, PrefixType, VRFType
 from netbox.graphql.types import NetBoxObjectType
-from tenancy.graphql.types import TenantType
 
 from .. import models
 from .filters import (
@@ -26,11 +23,58 @@ from .filters import (
     ACIEndpointSecurityGroupFilter,
     ACIEsgEndpointGroupSelectorFilter,
     ACIEsgEndpointSelectorFilter,
+    ACIFabricFilter,
     ACITenantFilter,
     ACIUSegEndpointGroupFilter,
     ACIUSegNetworkAttributeFilter,
     ACIVRFFilter,
 )
+
+if TYPE_CHECKING:
+    from dcim.graphql.types import (
+        LocationType,
+        MACAddressType,
+        RegionType,
+        SiteGroupType,
+        SiteType,
+    )
+    from ipam.graphql.types import (
+        IPAddressType,
+        PrefixType,
+        VLANType,
+        VRFType,
+    )
+    from tenancy.graphql.types import TenantType
+
+
+@strawberry_django.type(
+    models.ACIFabric,
+    exclude=["scope_type", "scope_id", "_location", "_region", "_site", "_site_group"],
+    filters=ACIFabricFilter,
+)
+class ACIFabricType(NetBoxObjectType):
+    """GraphQL type definition for the ACIFabric model."""
+
+    # Model fields
+    infra_vlan: Annotated["VLANType", strawberry.lazy("ipam.graphql.types")] | None
+    gipo_pool: Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")] | None
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    @strawberry_django.field(description="Scope Object")
+    def scope(
+        self,
+    ) -> (
+        Annotated[
+            Annotated["LocationType", strawberry.lazy("dcim.graphql.types")]
+            | Annotated["RegionType", strawberry.lazy("dcim.graphql.types")]
+            | Annotated["SiteGroupType", strawberry.lazy("dcim.graphql.types")]
+            | Annotated["SiteType", strawberry.lazy("dcim.graphql.types")],
+            strawberry.union("ACIFabricScopeType"),
+        ]
+        | None
+    ):
+        """Return the scope object."""
+        return self.scope
 
 
 @strawberry_django.type(models.ACITenant, fields="__all__", filters=ACITenantFilter)

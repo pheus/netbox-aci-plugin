@@ -22,6 +22,7 @@ class ACIConfig(PluginConfig):
     min_version = "4.3.0"
     max_version = "4.4.99"
     default_settings = {
+        "create_default_aci_fabric": True,
         "create_default_aci_tenants": True,
         "create_default_aci_contract_filters": True,
     }
