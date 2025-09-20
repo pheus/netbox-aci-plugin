@@ -7,6 +7,7 @@ repo_name: pheus/netbox-aci-plugin
 nav:
   - Home: index.md
   - Features:
+      - Fabrics: features/fabrics.md
       - Tenants: features/tenants.md
   - Development:
       - Code of Conduct: development/code_of_conduct.md
