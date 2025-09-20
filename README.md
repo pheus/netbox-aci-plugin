@@ -110,6 +110,8 @@ PLUGINS = [
 
 PLUGINS_CONFIG = {
     "netbox_aci_plugin": {
+        # Create default ACI Fabric "Fabric1" during migration
+        "create_default_aci_fabric": True,
         # Create default ACI Tenants "common", "infra", "mgmt" during migration
         "create_default_aci_tenants": True,
         # Create default ACI Filters "arp", "icmp", "ip" during migration
