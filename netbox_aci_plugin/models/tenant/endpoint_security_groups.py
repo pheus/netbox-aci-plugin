@@ -105,21 +105,57 @@ class ACIEndpointSecurityGroup(ACIBaseModel):
         """Override the model's clean method for custom field validation."""
         super().clean()
 
-        # Validate the assigned ACIVRF belongs to either the same ACITenant as
-        # the ACIAppProfile or to the special ACITenant 'common'
+        errors = {}
+
+        # Validate the assigned ACIVRF belongs to the same ACIFabric as
+        # the ACIAppProfile
         if (
-            self.aci_vrf.aci_tenant != self.aci_app_profile.aci_tenant
-            and self.aci_vrf.aci_tenant.name != "common"
+            hasattr(self, "aci_vrf")
+            and hasattr(self, "aci_app_profile")
+            and self.aci_vrf.aci_tenant.aci_fabric
+            != self.aci_app_profile.aci_tenant.aci_fabric
         ):
-            raise ValidationError(
+            errors.setdefault("aci_vrf", []).append(
                 _(
-                    "Assigned ACIVRF have to belong to the same ACITenant as "
-                    "the ACIAppProfile or to the special ACITenant 'common'."
+                    "The assigned ACI VRF must belong to the "
+                    "same ACI Fabric as the ACI Application Profile."
                 )
             )
 
+        # Validate the assigned ACIVRF belongs to either the same ACITenant as
+        # the ACIAppProfile or to the special ACITenant 'common'
+        if (
+            hasattr(self, "aci_vrf")
+            and hasattr(self, "aci_app_profile")
+            and self.aci_vrf.aci_tenant != self.aci_app_profile.aci_tenant
+            and self.aci_vrf.aci_tenant.name != "common"
+        ):
+            errors.setdefault("aci_vrf", []).append(
+                _(
+                    "The assigned ACI VRF must belong to the "
+                    "same ACI Tenant as the ACI Application Profile, "
+                    "or to the ACI Tenant 'common'."
+                )
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
     def save(self, *args, **kwargs) -> None:
         """Save the current instance to the database."""
+        # Validate the assigned ACIVRF belongs to the same
+        # ACIFabric as the ACIAppProfile
+        if (
+            self.aci_vrf.aci_tenant.aci_fabric
+            != self.aci_app_profile.aci_tenant.aci_fabric
+        ):
+            raise ValidationError(
+                _(
+                    "The assigned ACI VRF must belong to the "
+                    "same ACI Fabric as the ACI Application Profile."
+                )
+            )
+
         # Ensure the assigned ACIVRF belongs to either the same ACITenant as
         # the ACIAppProfile or to the special ACITenant 'common'
         if (
@@ -128,8 +164,9 @@ class ACIEndpointSecurityGroup(ACIBaseModel):
         ):
             raise ValidationError(
                 _(
-                    "Assigned ACIVRF have to belong to the same ACITenant as "
-                    "the ACIAppProfile or to the special ACITenant 'common'."
+                    "The assigned ACI VRF must belong to the "
+                    "same ACI Tenant as the ACI Application Profile, "
+                    "or to the ACI Tenant 'common'."
                 )
             )
 
@@ -302,6 +339,8 @@ class ACIEsgEndpointGroupSelector(
 
         super().clean()
 
+        errors = {}
+
         # Validate the assigned ACI EPG Object belongs to the same
         # ACITenant as the ACIEndpointSecurityGroup
         if (
@@ -310,16 +349,13 @@ class ACIEsgEndpointGroupSelector(
             != self.aci_epg_object.aci_tenant
         ):
             aci_model_class = self.aci_epg_object_type.model_class()
-            raise ValidationError(
-                {
-                    "aci_epg_object": _(
-                        "An assigned {aci_epg_object} must belong to the "
-                        "same ACI Tenant as the "
-                        "ACI Endpoint Security Group.".format(
-                            aci_epg_object=aci_model_class._meta.verbose_name
-                        )
+            errors.setdefault("aci_epg_object", []).append(
+                _(
+                    "The assigned {aci_epg_object} must belong to the "
+                    "same ACI Tenant as the ACI Endpoint Security Group.".format(
+                        aci_epg_object=aci_model_class._meta.verbose_name
                     )
-                }
+                )
             )
 
         # Validate the assigned ACI EPG Object belongs to the same
@@ -329,17 +365,17 @@ class ACIEsgEndpointGroupSelector(
             and self.aci_endpoint_security_group.aci_vrf != self.aci_epg_object.aci_vrf
         ):
             aci_model_class = self.aci_epg_object_type.model_class()
-            raise ValidationError(
-                {
-                    "aci_epg_object": _(
-                        "An assigned {aci_epg_object} must belong to the "
-                        "same ACI VRF as the "
-                        "ACI Endpoint Security Group.".format(
-                            aci_epg_object=aci_model_class._meta.verbose_name
-                        )
+            errors.setdefault("aci_epg_object", []).append(
+                _(
+                    "The assigned {aci_epg_object} must belong to the "
+                    "same ACI VRF as the ACI Endpoint Security Group.".format(
+                        aci_epg_object=aci_model_class._meta.verbose_name
                     )
-                }
+                )
             )
+
+        if errors:
+            raise ValidationError(errors)
 
         # Perform the mixin's unique constraint validation
         self._validate_generic_uniqueness()

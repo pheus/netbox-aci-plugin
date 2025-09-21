@@ -224,7 +224,9 @@ class ACIEndpointGroupTestCase(ACIBaseTestCase):
         self,
     ) -> None:
         """Test valid assignment of ACI BD from ACI Tenant 'common'."""
-        tenant_common = ACITenant.objects.get_or_create(name="common")[0]
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common", aci_fabric=self.aci_fabric
+        )[0]
         vrf_common = ACIVRF.objects.create(name="common_vrf", aci_tenant=tenant_common)
         bd_common = ACIBridgeDomain.objects.create(
             name="common_bd", aci_tenant=tenant_common, aci_vrf=vrf_common
@@ -242,7 +244,9 @@ class ACIEndpointGroupTestCase(ACIBaseTestCase):
         self,
     ) -> None:
         """Test invalid assignment of ACI BD from ACI Tenant 'other'."""
-        tenant_other = ACITenant.objects.get_or_create(name="other")[0]
+        tenant_other = ACITenant.objects.get_or_create(
+            name="other", aci_fabric=self.aci_fabric
+        )[0]
         vrf_other = ACIVRF.objects.create(name="other_vrf", aci_tenant=tenant_other)
         bd_other = ACIBridgeDomain.objects.create(
             name="other_bd", aci_tenant=tenant_other, aci_vrf=vrf_other
@@ -483,7 +487,9 @@ class ACIUSegEndpointGroupTestCase(ACIBaseTestCase):
         self,
     ) -> None:
         """Test valid assignment of ACI BD from ACI Tenant 'common'."""
-        tenant_common = ACITenant.objects.get_or_create(name="common")[0]
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common", aci_fabric=self.aci_fabric
+        )[0]
         vrf_common = ACIVRF.objects.create(name="common_vrf", aci_tenant=tenant_common)
         bd_common = ACIBridgeDomain.objects.create(
             name="common_bd", aci_tenant=tenant_common, aci_vrf=vrf_common
@@ -501,7 +507,9 @@ class ACIUSegEndpointGroupTestCase(ACIBaseTestCase):
         self,
     ) -> None:
         """Test invalid assignment of ACI BD from ACI Tenant 'other'."""
-        tenant_other = ACITenant.objects.get_or_create(name="other")[0]
+        tenant_other = ACITenant.objects.get_or_create(
+            name="other", aci_fabric=self.aci_fabric
+        )[0]
         vrf_other = ACIVRF.objects.create(name="other_vrf", aci_tenant=tenant_other)
         bd_other = ACIBridgeDomain.objects.create(
             name="other_bd", aci_tenant=tenant_other, aci_vrf=vrf_other

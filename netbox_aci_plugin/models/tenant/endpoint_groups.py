@@ -124,23 +124,58 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         """Override the model's clean method for custom field validation."""
         super().clean()
 
-        # Validate the assigned ACIBrideDomain belongs to either the same
-        # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
+        errors = {}
+
+        # Validate the assigned ACIBridgeDomain belongs to the same
+        # ACIFabric as the ACIAppProfile
         if (
-            self.aci_bridge_domain.aci_tenant != self.aci_app_profile.aci_tenant
-            and self.aci_bridge_domain.aci_tenant.name != "common"
+            hasattr(self, "aci_bridge_domain")
+            and hasattr(self, "aci_app_profile")
+            and self.aci_bridge_domain.aci_tenant.aci_fabric
+            != self.aci_app_profile.aci_tenant.aci_fabric
         ):
-            raise ValidationError(
+            errors.setdefault("aci_bridge_domain", []).append(
                 _(
-                    "An assigned ACIBridgeDomain must belong to the "
-                    "same ACITenant as the ACIAppProfile or to the "
-                    "ACITenant 'common'."
+                    "The assigned ACI Bridge Domain must belong to the "
+                    "same ACI Fabric as the ACI Application Profile."
                 )
             )
 
+        # Validate the assigned ACIBridgeDomain belongs to either the same
+        # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
+        if (
+            hasattr(self, "aci_bridge_domain")
+            and hasattr(self, "aci_app_profile")
+            and self.aci_bridge_domain.aci_tenant != self.aci_app_profile.aci_tenant
+            and self.aci_bridge_domain.aci_tenant.name != "common"
+        ):
+            errors.setdefault("aci_bridge_domain", []).append(
+                _(
+                    "The assigned ACI Bridge Domain must belong to the "
+                    "same ACI Tenant as the ACI Application Profile, "
+                    "or to the ACI Tenant 'common'."
+                )
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
     def save(self, *args, **kwargs) -> None:
         """Save the current instance to the database."""
-        # Ensure the assigned ACIBrideDomain belongs to either the same
+        # Validate the assigned ACIBridgeDomain belongs to the same
+        # ACIFabric as the ACIAppProfile
+        if (
+            self.aci_bridge_domain.aci_tenant.aci_fabric
+            != self.aci_app_profile.aci_tenant.aci_fabric
+        ):
+            raise ValidationError(
+                _(
+                    "The assigned ACI Bridge Domain must belong to the "
+                    "same ACI Fabric as the ACI Application Profile."
+                )
+            )
+
+        # Ensure the assigned ACIBridgeDomain belongs to either the same
         # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
         if (
             self.aci_bridge_domain.aci_tenant != self.aci_app_profile.aci_tenant
@@ -148,9 +183,9 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         ):
             raise ValidationError(
                 _(
-                    "Assigned ACIBridgeDomain have to belong to the same "
-                    "ACITenant as the ACIAppProfile or to the special "
-                    "ACITenant 'common'."
+                    "The assigned ACI Bridge Domain must belong to the "
+                    "same ACI Tenant as the ACI Application Profile, "
+                    "or to the ACI Tenant 'common'."
                 )
             )
 
@@ -460,17 +495,22 @@ class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKey
 
         super().clean()
 
+        errors = {}
+
         # Ensure that when 'use_epg_subnet' is True, neither 'attr_object_type'
         # nor 'attr_object_id' is set
         if self.use_epg_subnet:
             if self.attr_object_type:
-                raise ValidationError(
+                errors.setdefault("attr_object_type", []).append(
                     _("Cannot set attr_object_type with 'use_epg_subnet = True'.")
                 )
             if self.attr_object_id:
-                raise ValidationError(
+                errors.setdefault("attr_object_id", []).append(
                     _("Cannot set attr_object_id with 'use_epg_subnet = True'.")
                 )
+
+        if errors:
+            raise ValidationError(errors)
 
         # Perform the mixin's unique constraint validation
         self._validate_generic_uniqueness()

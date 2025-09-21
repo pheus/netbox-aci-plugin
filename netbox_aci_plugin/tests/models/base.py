@@ -56,6 +56,7 @@ class ACIBaseTestCase(TestCase):
         # Create ACITenant objects
         cls.aci_tenant = ACITenant.objects.create(
             name=cls.aci_tenant_name,
+            aci_fabric=cls.aci_fabric,
         )
         cls.aci_app_profile = ACIAppProfile.objects.create(
             name=cls.aci_app_profile_name,

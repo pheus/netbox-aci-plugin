@@ -18,6 +18,7 @@ from ..validators import (
 )
 
 if TYPE_CHECKING:
+    from .fabric.fabrics import ACIFabric
     from .tenant.tenants import ACITenant
 
 
@@ -66,6 +67,11 @@ class ACIBaseModel(NetBoxModel):
     def __str__(self) -> str:
         """Return string representation of the instance."""
         return self.name
+
+    @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACIFabric instance of the related ACITenant."""
+        return self.aci_tenant.aci_fabric
 
     @property
     def aci_tenant(self) -> ACITenant:

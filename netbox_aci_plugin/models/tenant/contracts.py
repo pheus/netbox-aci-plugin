@@ -31,6 +31,7 @@ from .endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
 from .endpoint_security_groups import ACIEndpointSecurityGroup
 
 if TYPE_CHECKING:
+    from ..fabric.fabrics import ACIFabric
     from .tenants import ACITenant
 
 
@@ -265,7 +266,11 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
         # Validate the assigned ACI Contract and ACI Object shares the same
         # ACI Tenant
-        if self.aci_contract.aci_tenant != self.aci_object.aci_tenant:
+        if (
+            hasattr(self, "aci_contract")
+            and hasattr(self, "aci_object")
+            and self.aci_contract.aci_tenant != self.aci_object.aci_tenant
+        ):
             aci_model_class = self.aci_object_type.model_class()
             raise ValidationError(
                 {
@@ -634,6 +639,11 @@ class ACIContractSubjectFilter(NetBoxModel):
     def __str__(self) -> str:
         """Return string representation of the instance."""
         return f"{self.aci_contract_subject.name}-{self.aci_contract_filter.name}"
+
+    @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACFabric instance of related ACITenant."""
+        return self.aci_tenant.aci_fabric
 
     @property
     def aci_tenant(self) -> ACITenant:
