@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from dcim.fields import MACAddressField
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -16,8 +20,10 @@ from ...choices import (
 from ...constants import ACI_NAME_MAX_LEN
 from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
-from .tenants import ACITenant
-from .vrfs import ACIVRF
+
+if TYPE_CHECKING:
+    from .tenants import ACITenant
+    from .vrfs import ACIVRF
 
 
 class ACIBridgeDomain(ACIBaseModel):

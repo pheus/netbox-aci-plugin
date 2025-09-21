@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -25,7 +29,9 @@ from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
 from .endpoint_security_groups import ACIEndpointSecurityGroup
-from .tenants import ACITenant
+
+if TYPE_CHECKING:
+    from .tenants import ACITenant
 
 
 class ACIContract(ACIBaseModel):
@@ -628,6 +634,11 @@ class ACIContractSubjectFilter(NetBoxModel):
     def __str__(self) -> str:
         """Return string representation of the instance."""
         return f"{self.aci_contract_subject.name}-{self.aci_contract_filter.name}"
+
+    @property
+    def aci_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of related ACIContract."""
+        return self.aci_contract.aci_tenant
 
     @property
     def aci_contract(self) -> ACIContract:

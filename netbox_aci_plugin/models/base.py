@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
@@ -12,6 +16,9 @@ from ..validators import (
     ACIPolicyNameOptionalValidator,
     ACIPolicyNameRequiredValidator,
 )
+
+if TYPE_CHECKING:
+    from .tenant.tenants import ACITenant
 
 
 class ACIBaseModel(NetBoxModel):
@@ -61,6 +68,19 @@ class ACIBaseModel(NetBoxModel):
         return self.name
 
     @property
+    def aci_tenant(self) -> ACITenant:
+        """
+        Return the ACITenant instance.
+
+        Subclasses must implement this property or have an 'aci_tenant' field.
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement 'aci_tenant'"
+        )
+
+    @property
     def parent_object(self) -> NetBoxModel | None:
         """Return the parent object of the instance."""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement 'parent_object'"
+        )

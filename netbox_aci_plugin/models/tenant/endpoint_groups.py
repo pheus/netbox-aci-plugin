@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from dcim.models import MACAddress
 from django.apps import apps
 from django.contrib.contenttypes.fields import (
@@ -22,9 +26,11 @@ from ...constants import ACI_NAME_MAX_LEN, USEG_NETWORK_ATTRIBUTES_MODELS
 from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
-from .app_profiles import ACIAppProfile
-from .tenants import ACITenant
-from .vrfs import ACIVRF
+
+if TYPE_CHECKING:
+    from .app_profiles import ACIAppProfile
+    from .tenants import ACITenant
+    from .vrfs import ACIVRF
 
 #
 # ACI Endpoint Group Base
@@ -300,11 +306,6 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
         return f"{self.name} ({self.aci_useg_endpoint_group.name})"
 
     @property
-    def parent_object(self) -> ACIBaseModel:
-        """Return the parent object of the instance."""
-        return self.aci_useg_endpoint_group
-
-    @property
     def aci_tenant(self) -> ACITenant:
         """Return the ACITenant instance of related ACIUSegEndpointGroup."""
         return self.aci_useg_endpoint_group.aci_tenant
@@ -313,6 +314,11 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
     def aci_app_profile(self) -> ACIAppProfile:
         """Return the ACIAppProfile of the related ACIUSegEndpointGroup."""
         return self.aci_useg_endpoint_group.aci_app_profile
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_useg_endpoint_group
 
     def get_type_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""

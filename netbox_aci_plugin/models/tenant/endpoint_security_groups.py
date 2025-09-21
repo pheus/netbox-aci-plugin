@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.apps import apps
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,
@@ -18,8 +22,10 @@ from ...constants import (
 )
 from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
-from .app_profiles import ACIAppProfile
-from .tenants import ACITenant
+
+if TYPE_CHECKING:
+    from .app_profiles import ACIAppProfile
+    from .tenants import ACITenant
 
 #
 # ACI Endpoint Security Group
@@ -170,11 +176,6 @@ class ACIEsgSelectorBaseModel(ACIBaseModel):
         return f"{self.name} ({self.aci_endpoint_security_group.name})"
 
     @property
-    def parent_object(self) -> ACIBaseModel:
-        """Return the parent object of the instance."""
-        return self.aci_endpoint_security_group
-
-    @property
     def aci_tenant(self) -> ACITenant:
         """Return the ACITenant instance of the related ESG."""
         return self.aci_endpoint_security_group.aci_tenant
@@ -183,6 +184,11 @@ class ACIEsgSelectorBaseModel(ACIBaseModel):
     def aci_app_profile(self) -> ACIAppProfile:
         """Return the ACIAppProfile instance of the related ESG."""
         return self.aci_endpoint_security_group.aci_app_profile
+
+    @property
+    def parent_object(self) -> ACIBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_endpoint_security_group
 
 
 #

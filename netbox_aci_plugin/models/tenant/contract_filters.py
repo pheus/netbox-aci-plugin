@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -23,7 +27,9 @@ from ...validators import (
     validate_contract_filter_tcp_rules,
 )
 from ..base import ACIBaseModel
-from .tenants import ACITenant
+
+if TYPE_CHECKING:
+    from .tenants import ACITenant
 
 
 def default_contract_filter_entry_tcp_rules() -> list[str]:
