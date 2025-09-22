@@ -7,12 +7,25 @@ from django.utils.translation import gettext as _
 from tenancy.models import Tenant, TenantGroup
 from utilities.filters import TreeNodeMultipleChoiceFilter
 
+from ..models.fabric.fabrics import ACIFabric
 from ..models.tenant.tenants import ACITenant
 
 
 class ACITenantFilterSetMixin(django_filters.FilterSet):
     """Filter set mixin for the ACI Tenant model."""
 
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_tenant__aci_fabric__name",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_tenant__aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_tenant__name",
         queryset=ACITenant.objects.all(),

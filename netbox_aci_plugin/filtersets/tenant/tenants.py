@@ -2,15 +2,31 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import django_filters
 from django.db.models import Q
+from django.utils.translation import gettext as _
 from netbox.filtersets import NetBoxModelFilterSet
 
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.tenants import ACITenant
 from ..mixins import NBTenantFilterSetMixin
 
 
 class ACITenantFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI Tenant model."""
+
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_fabric__name",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
 
     class Meta:
         model = ACITenant
@@ -19,6 +35,7 @@ class ACITenantFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
             "name",
             "name_alias",
             "description",
+            "aci_fabric",
             "nb_tenant",
         )
 

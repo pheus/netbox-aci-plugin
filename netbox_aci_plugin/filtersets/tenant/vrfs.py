@@ -92,10 +92,14 @@ class ACIVRFFilterSet(
         return queryset.filter(queryset_filter)
 
     @extend_schema_field(OpenApiTypes.INT)
-    def filter_present_in_aci_tenant_or_common_id(self, queryset, name, aci_tenant_id):
+    def filter_present_in_aci_tenant_or_common_id(self, queryset, name, aci_tenant):
         """Return a QuerySet filtered by given ACI Tenant or 'common'."""
-        if aci_tenant_id is None:
+        if aci_tenant is None:
             return queryset.none()
         return queryset.filter(
-            Q(aci_tenant=aci_tenant_id) | Q(aci_tenant__name="common")
+            Q(aci_tenant=aci_tenant)
+            | Q(
+                aci_tenant__name="common",
+                aci_tenant__aci_fabric_id=aci_tenant.aci_fabric_id,
+            )
         )
