@@ -26,6 +26,11 @@ class ACIContractTable(NetBoxTable):
         verbose_name=_("Alias"),
         linkify=True,
     )
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_tenant__aci_fabric",
+        linkify=True,
+    )
     aci_tenant = tables.Column(
         linkify=True,
     )
@@ -74,6 +79,11 @@ class ACIContractTable(NetBoxTable):
 class ACIContractRelationTable(NetBoxTable):
     """NetBox table for the ACI Contract Relation model."""
 
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_contract__aci_tenant__aci_fabric",
+        linkify=True,
+    )
     aci_contract_tenant = tables.Column(
         verbose_name=_("ACI Tenant (Contract)"),
         linkify=True,
@@ -139,6 +149,11 @@ class ACIContractSubjectTable(NetBoxTable):
     )
     name_alias = tables.Column(
         verbose_name=_("Alias"),
+        linkify=True,
+    )
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_contract__aci_tenant__aci_fabric",
         linkify=True,
     )
     aci_tenant = tables.Column(
@@ -256,6 +271,11 @@ class ACIContractSubjectReducedTable(NetBoxTable):
 class ACIContractSubjectFilterTable(NetBoxTable):
     """NetBox table for the ACI Contract Subject Filter model."""
 
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_contract_subject__aci_contract__aci_tenant__aci_fabric",
+        linkify=True,
+    )
     aci_contract = tables.Column(
         verbose_name=_("Contract"),
         linkify=True,

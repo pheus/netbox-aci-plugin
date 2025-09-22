@@ -31,6 +31,11 @@ class ACIBridgeDomainTable(NetBoxTable):
         verbose_name=_("Alias"),
         linkify=True,
     )
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_tenant__aci_fabric",
+        linkify=True,
+    )
     aci_tenant = tables.Column(
         linkify=True,
     )
@@ -141,6 +146,11 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
     )
     gateway_ip_address = tables.Column(
         verbose_name=_("Gateway IP"),
+        linkify=True,
+    )
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_bridge_domain__ci_tenant__aci_fabric",
         linkify=True,
     )
     aci_tenant = tables.Column(
