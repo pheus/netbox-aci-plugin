@@ -21,12 +21,17 @@ from utilities.forms.fields import (
 from utilities.forms.rendering import FieldSet
 
 from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.tenants import ACITenant
 
 
 class ACITenantEditForm(NetBoxModelForm):
     """NetBox edit form for ACI Tenant model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        label=_("ACI Fabric"),
+    )
     nb_tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
         initial_params={"tenants": "$nb_tenant"},
@@ -45,6 +50,7 @@ class ACITenantEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "description",
             "tags",
             name=_("ACI Tenant"),
@@ -62,6 +68,7 @@ class ACITenantEditForm(NetBoxModelForm):
             "name",
             "name_alias",
             "description",
+            "aci_fabric",
             "nb_tenant",
             "comments",
             "tags",
@@ -81,6 +88,11 @@ class ACITenantBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("Description"),
     )
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
     nb_tenant = DynamicModelChoiceField(
         queryset=Tenant.objects.all(),
         required=False,
@@ -92,6 +104,7 @@ class ACITenantBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
+            "aci_fabric",
             "description",
             name=_("ACI Tenant"),
         ),
@@ -121,6 +134,7 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "description",
             name=_("Attributes"),
         ),
@@ -139,6 +153,11 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
     )
     description = forms.CharField(
         required=False,
+    )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
     )
     nb_tenant_group_id = DynamicModelMultipleChoiceField(
         queryset=TenantGroup.objects.all(),
@@ -159,6 +178,13 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
 class ACITenantImportForm(NetBoxModelImportForm):
     """NetBox import form for ACITenant."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Assigned ACI Fabric"),
+    )
     nb_tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
         to_field_name="name",
@@ -172,6 +198,7 @@ class ACITenantImportForm(NetBoxModelImportForm):
         fields = (
             "name",
             "name_alias",
+            "aci_fabric",
             "description",
             "nb_tenant",
             "comments",

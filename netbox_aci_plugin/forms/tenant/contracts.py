@@ -46,6 +46,7 @@ from ...constants import (
     ACI_NAME_MAX_LEN,
     CONTRACT_RELATION_OBJECT_TYPES,
 )
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.contract_filters import ACIContractFilter
 from ...models.tenant.contracts import (
     ACIContract,
@@ -65,8 +66,15 @@ from ...models.tenant.vrfs import ACIVRF
 class ACIContractEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI Contract model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_tenants": "$aci_tenant"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI Tenant"),
     )
     nb_tenant_group = DynamicModelChoiceField(
@@ -115,6 +123,7 @@ class ACIContractEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "description",
             "tags",
@@ -237,6 +246,7 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "aci_tenant_id",
             "description",
             name=_("Attributes"),
@@ -265,6 +275,11 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
     )
     description = forms.CharField(
         required=False,
+    )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
     )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
@@ -304,6 +319,13 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
 class ACIContractImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI Contract model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -352,6 +374,7 @@ class ACIContractImportForm(NetBoxModelImportForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "description",
             "nb_tenant",
@@ -361,6 +384,19 @@ class ACIContractImportForm(NetBoxModelImportForm):
             "comments",
             "tags",
         )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        if data.get("aci_fabric") and data.get("aci_tenant"):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
 
     def _clean_field_default_unspecified(self, field_name) -> str:
         """Return default value for empty imported field."""
@@ -386,15 +422,25 @@ class ACIContractImportForm(NetBoxModelImportForm):
 class ACIContractRelationEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI Contract Relation model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_tenants__aci_contracts": "$aci_contract"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         initial_params={"aci_contracts": "$aci_contract"},
         required=False,
         label=_("ACI Tenant"),
     )
     aci_contract = DynamicModelChoiceField(
         queryset=ACIContract.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         label=_("ACI Contract"),
     )
     aci_object_type = ContentTypeChoiceField(
@@ -404,7 +450,10 @@ class ACIContractRelationEditForm(NetBoxModelForm):
     )
     aci_object = DynamicModelChoiceField(
         queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         selector=True,
         label=_("ACI Object"),
         disabled=True,
@@ -423,6 +472,7 @@ class ACIContractRelationEditForm(NetBoxModelForm):
 
     fieldsets: tuple = (
         FieldSet(
+            "aci_fabric",
             "aci_tenant",
             "aci_contract",
             "aci_object_type",
@@ -582,6 +632,7 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
             "tag",
         ),
         FieldSet(
+            "aci_fabric_id",
             "aci_tenant_id",
             "aci_contract_id",
             name=_("Attributes"),
@@ -597,6 +648,11 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
             "role",
             name=_("Role"),
         ),
+    )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
     )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
@@ -639,6 +695,13 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
 class ACIContractRelationImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI Contract Relation model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -675,6 +738,7 @@ class ACIContractRelationImportForm(NetBoxModelImportForm):
     class Meta:
         model = ACIContractRelation
         fields: tuple = (
+            "aci_fabric",
             "aci_tenant",
             "aci_contract",
             "aci_object_type",
@@ -683,9 +747,6 @@ class ACIContractRelationImportForm(NetBoxModelImportForm):
             "comments",
             "tags",
         )
-        labels: dict = {
-            "aci_object_id": "ACI Object ID",
-        }
 
     def __init__(self, data=None, *args, **kwargs) -> None:
         """Extend import data processing with enhanced query sets."""
@@ -694,11 +755,15 @@ class ACIContractRelationImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit ACIContract queryset
-        if data.get("aci_tenant"):
+        if data.get("aci_fabric") and data.get("aci_tenant"):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
             # Limit ACIContract queryset by parent ACITenant
             self.fields["aci_contract"].queryset = ACIContract.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_tenant__name=data["aci_tenant"],
             )
 
 
@@ -710,15 +775,25 @@ class ACIContractRelationImportForm(NetBoxModelImportForm):
 class ACIContractSubjectEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI Contract Subject model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_tenants__aci_contracts": "$aci_contract"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         initial_params={"aci_contracts": "$aci_contract"},
         required=False,
         label=_("ACI Tenant"),
     )
     aci_contract = DynamicModelChoiceField(
         queryset=ACIContract.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         label=_("ACI Contract"),
     )
     nb_tenant_group = DynamicModelChoiceField(
@@ -814,6 +889,7 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_contract",
             "description",
@@ -1056,6 +1132,7 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "aci_tenant_id",
             "aci_contract_id",
             "description",
@@ -1096,6 +1173,11 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
     )
     description = forms.CharField(
         required=False,
+    )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
     )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
@@ -1181,6 +1263,13 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
 class ACIContractSubjectImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI Contract Subject model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -1267,6 +1356,7 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_contract",
             "description",
@@ -1293,11 +1383,15 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit queryset by parent ACI objects
-        if data.get("aci_tenant"):
+        if data.get("aci_fabric") and data.get("aci_tenant"):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
             # Limit ACIContract queryset by parent ACITenant
             self.fields["aci_contract"].queryset = ACIContract.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_tenant__name=data["aci_tenant"],
             )
 
     def _clean_field_default_unspecified(self, field_name) -> str:
@@ -1340,8 +1434,17 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
 class ACIContractSubjectFilterEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI Contract Subject Filter model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={
+            "aci_tenants__aci_contracts__aci_contract_subjects": "$aci_contract_subject"
+        },
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         initial_params={
             "aci_contracts__aci_contract_subjects": "$aci_contract_subject"
         },
@@ -1350,19 +1453,29 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
     )
     aci_contract = DynamicModelChoiceField(
         queryset=ACIContract.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         initial_params={"aci_contract_subjects": "aci_contract_subject"},
         required=False,
         label=_("ACI Contract"),
     )
     aci_contract_filter = DynamicModelChoiceField(
         queryset=ACIContractFilter.objects.all(),
-        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
+        },
         label=_("ACI Contract Filter"),
     )
     aci_contract_subject = DynamicModelChoiceField(
         queryset=ACIContractSubject.objects.all(),
-        query_params={"aci_contract_id": "$aci_contract"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
+            "aci_contract_id": "$aci_contract",
+        },
         label=_("ACI Contract Subject"),
     )
     action = forms.ChoiceField(
@@ -1412,6 +1525,7 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
 
     fieldsets: tuple = (
         FieldSet(
+            "aci_fabric",
             "aci_tenant",
             "aci_contract",
             "aci_contract_subject",
@@ -1546,6 +1660,7 @@ class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
             "tag",
         ),
         FieldSet(
+            "aci_fabric_id",
             "aci_tenant_id",
             "aci_contract_id",
             "aci_contract_subject_id",
@@ -1569,6 +1684,11 @@ class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
         ),
     )
 
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
         required=False,
@@ -1624,6 +1744,13 @@ class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
 class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI Contract Subject Filter model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -1709,31 +1836,42 @@ class ACIContractSubjectFilterImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit ACIContractSubject queryset by parent ACI objects
-        if data.get("aci_tenant") and data.get("aci_contract"):
+        if (
+            data.get("aci_fabric")
+            and data.get("aci_tenant")
+            and data.get("aci_contract")
+        ):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"],
+            )
             # Limit ACIContract queryset by parent ACITenant
             self.fields["aci_contract"].queryset = ACIContract.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_tenant__name=data["aci_tenant"],
             )
             # Limit ACIContractSubject queryset by parent ACIContract
             aci_subject_queryset = ACIContractSubject.objects.filter(
-                aci_contract__name=data["aci_contract"]
+                aci_contract__aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_contract__aci_tenant__name=data["aci_tenant"],
+                aci_contract__name=data["aci_contract"],
             )
             self.fields["aci_contract_subject"].queryset = aci_subject_queryset
 
-        # Limit ACIContractFilter queryset by "common" ACITenant
-        if data.get("is_aci_contract_filter_in_common") == "true":
-            aci_filter_queryset = ACIContractFilter.objects.filter(
-                aci_tenant__name="common"
-            )
-            self.fields["aci_contract_filter"].queryset = aci_filter_queryset
-        # Limit ACIContractFilter queryset by parent ACITenant
-        elif data.get("aci_tenant"):
-            # Limit ACIContractFilter queryset by ACITenant of ACIContract
-            aci_filter_queryset = ACIContractFilter.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
-            )
-            self.fields["aci_contract_filter"].queryset = aci_filter_queryset
+            if data.get("is_aci_contract_filter_in_common") == "true":
+                # Limit ACIContractFilter queryset by "common" ACITenant
+                aci_filter_queryset = ACIContractFilter.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name="common",
+                )
+                self.fields["aci_contract_filter"].queryset = aci_filter_queryset
+            else:
+                # Limit ACIContractFilter queryset by ACITenant of ACIContract
+                aci_filter_queryset = ACIContractFilter.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name=data["aci_tenant"],
+                )
+                self.fields["aci_contract_filter"].queryset = aci_filter_queryset
 
     def clean_apply_direction(self) -> str | None:
         """Return a cleaned and validated value for apply_direction."""

@@ -28,6 +28,7 @@ from ...choices import (
     VRFPCEnforcementPreferenceChoices,
 )
 from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
 
@@ -39,8 +40,15 @@ from ...models.tenant.vrfs import ACIVRF
 class ACIVRFEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI VRF model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_tenants": "$aci_tenant"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI Tenant"),
     )
     nb_tenant_group = DynamicModelChoiceField(
@@ -116,6 +124,7 @@ class ACIVRFEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "description",
             "tags",
@@ -315,6 +324,7 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "aci_tenant_id",
             "description",
             name=_("Attributes"),
@@ -359,9 +369,13 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
     description = forms.CharField(
         required=False,
     )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        null_option="None",
         required=False,
         label=_("ACI Tenant"),
     )
@@ -440,6 +454,13 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
 class ACIVRFImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI VRF model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -479,6 +500,7 @@ class ACIVRFImportForm(NetBoxModelImportForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "description",
             "nb_tenant",
@@ -494,3 +516,16 @@ class ACIVRFImportForm(NetBoxModelImportForm):
             "comments",
             "tags",
         )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        if data.get("aci_fabric") and data.get("aci_tenant"):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
