@@ -82,6 +82,10 @@ class ACITenantType(NetBoxObjectType):
     """GraphQL type definition for the ACITenant model."""
 
     # Model fields
+    aci_fabric: (
+        Annotated["ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+        | None
+    )
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
