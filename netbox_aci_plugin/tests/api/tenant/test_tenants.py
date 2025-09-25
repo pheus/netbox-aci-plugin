@@ -6,6 +6,7 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.tenants import ACITenant
 
 
@@ -15,6 +16,7 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     model = ACITenant
     view_namespace: str = f"plugins-api:{app_name}"
     brief_fields: list[str] = [
+        "aci_fabric",
         "description",
         "display",
         "id",
@@ -33,27 +35,35 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         nb_tenant2 = Tenant.objects.create(
             name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
         )
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
         aci_tenants = (
             ACITenant(
                 name="ACITestTenantAPI1",
                 name_alias="TestingTenant1",
                 description="First ACI Test Tenant",
-                comments="# ACI Test Tenant 1",
+                aci_fabric=aci_fabric,
                 nb_tenant=nb_tenant1,
+                comments="# ACI Test Tenant 1",
             ),
             ACITenant(
                 name="ACITestTenantAPI2",
                 name_alias="TestingTenant2",
                 description="Second ACI Test Tenant",
-                comments="# ACI Test Tenant 2",
+                aci_fabric=aci_fabric,
                 nb_tenant=nb_tenant1,
+                comments="# ACI Test Tenant 2",
             ),
             ACITenant(
                 name="ACITestTenantAPI3",
                 name_alias="TestingTenant3",
                 description="Third ACI Test Tenant",
-                comments="# ACI Test Tenant 3",
+                aci_fabric=aci_fabric,
                 nb_tenant=nb_tenant2,
+                comments="# ACI Test Tenant 3",
             ),
         )
         ACITenant.objects.bulk_create(aci_tenants)
@@ -63,15 +73,17 @@ class ACITenantAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "name": "ACITestTenantAPI4",
                 "name_alias": "TestingTenant4",
                 "description": "Forth ACI Test Tenant",
-                "comments": "# ACI Test Tenant 4",
+                "aci_fabric": aci_fabric.id,
                 "nb_tenant": nb_tenant1.id,
+                "comments": "# ACI Test Tenant 4",
             },
             {
                 "name": "ACITestTenantAPI5",
                 "name_alias": "TestingTenant5",
                 "description": "Fifth ACI Test Tenant",
-                "comments": "# ACI Test Tenant 5",
+                "aci_fabric": aci_fabric.id,
                 "nb_tenant": nb_tenant2.id,
+                "comments": "# ACI Test Tenant 5",
             },
         ]
         cls.bulk_update_data = {

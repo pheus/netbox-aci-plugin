@@ -7,6 +7,7 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
@@ -40,8 +41,17 @@ class ACIVRFAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         nb_vrf1 = VRF.objects.create(name="NetBox-VRF-API-1", tenant=nb_tenant1)
         nb_vrf2 = VRF.objects.create(name="NetBox-VRF-API-2", tenant=nb_tenant2)
-        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
-        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant1 = ACITenant.objects.create(
+            name="ACITestTenantAPI5", aci_fabric=aci_fabric
+        )
+        aci_tenant2 = ACITenant.objects.create(
+            name="ACITestTenantAPI6", aci_fabric=aci_fabric
+        )
 
         aci_vrfs: tuple = (
             ACIVRF(
