@@ -43,6 +43,7 @@ class ACIBaseFormTestCase(TestCase):
         # Create ACITenant objects
         cls.aci_tenant = ACITenant.objects.create(
             name="ACIBaseFormTestTenant",
+            aci_fabric=cls.aci_fabric,
         )
         cls.aci_vrf = ACIVRF.objects.create(
             name="ACIBaseFormTestVRF",

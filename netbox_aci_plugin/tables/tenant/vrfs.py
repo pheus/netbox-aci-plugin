@@ -20,6 +20,11 @@ class ACIVRFTable(NetBoxTable):
         verbose_name=_("Alias"),
         linkify=True,
     )
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_tenant__aci_fabric",
+        linkify=True,
+    )
     aci_tenant = tables.Column(
         linkify=True,
     )

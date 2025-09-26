@@ -29,6 +29,7 @@ from ...choices import (
     BDUnknownUnicastChoices,
 )
 from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainSubnet,
@@ -44,13 +45,23 @@ from ...models.tenant.vrfs import ACIVRF
 class ACIBridgeDomainEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI Bridge Domain model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_tenants": "$aci_tenant"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI Tenant"),
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
+        },
         label=_("ACI VRF"),
     )
     nb_tenant_group = DynamicModelChoiceField(
@@ -173,6 +184,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_vrf",
             "description",
@@ -253,31 +265,6 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "comments",
             "tags",
         )
-
-    def clean(self) -> None:
-        """Clean and validate the ACI Bridge Domain form."""
-        super().clean()
-
-        aci_tenant = self.cleaned_data.get("aci_tenant")
-        aci_vrf = self.cleaned_data.get("aci_vrf")
-
-        # Ensure aci_tenant and aci_vrf are present before validating
-        if aci_tenant and aci_vrf:
-            # Check if the ACI Tenant IDs mismatch
-            aci_tenant_mismatch = aci_tenant.id != aci_vrf.aci_tenant.id
-            # Check if the ACI VRF Tenant name is not 'common'
-            not_aci_tenant_common = aci_vrf.aci_tenant.name != "common"
-
-            # Raise validation error if both conditions are met
-            if aci_tenant_mismatch and not_aci_tenant_common:
-                self.add_error(
-                    "aci_vrf",
-                    _(
-                        "A VRF can only be assigned belonging to the same ACI "
-                        "Tenant as the Bridge Domain or to the special ACI "
-                        "Tenant 'common'."
-                    ),
-                )
 
 
 class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
@@ -499,6 +486,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "aci_tenant_id",
             "aci_vrf_id",
             "description",
@@ -555,9 +543,13 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
     description = forms.CharField(
         required=False,
     )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        null_option="None",
         required=False,
         label=_("ACI Tenant"),
     )
@@ -667,6 +659,13 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
 class ACIBridgeDomainImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI Bridge Domain model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -725,6 +724,7 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_vrf",
             "description",
@@ -761,16 +761,23 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit ACIVRF queryset by "common" ACITenant
-        if data.get("is_aci_vrf_in_common") == "true":
-            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
-                aci_tenant__name="common"
+        if data.get("aci_fabric") and data.get("aci_tenant"):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
             )
-        # Limit ACIVRF queryset by parent ACITenant
-        elif data.get("aci_tenant"):
-            self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
-            )
+            # Limit ACIVRF queryset by "common" ACITenant
+            if data.get("is_aci_vrf_in_common") == "true":
+                self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name="common",
+                )
+            # Limit ACIVRF queryset by parent ACITenant
+            else:
+                self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name=data["aci_tenant"],
+                )
 
 
 #
@@ -781,15 +788,25 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
 class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI Bridge Domain Subnet model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_tenants__aci_bridge_domains": "$aci_bridge_domain"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
         required=False,
         label=_("ACI Tenant"),
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
         required=False,
         label=_("ACI VRF"),
@@ -797,6 +814,7 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
     aci_bridge_domain = DynamicModelChoiceField(
         queryset=ACIBridgeDomain.objects.all(),
         query_params={
+            "aci_fabric_id": "$aci_fabric",
             "aci_tenant_id": "$aci_tenant",
             "aci_vrf_id": "$aci_vrf",
         },
@@ -892,6 +910,7 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_vrf",
             "aci_bridge_domain",
@@ -1097,6 +1116,7 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "aci_tenant_id",
             "aci_vrf_id",
             "aci_bridge_domain_id",
@@ -1146,9 +1166,13 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
     description = forms.CharField(
         required=False,
     )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        null_option="None",
         required=False,
         label=_("ACI Tenant"),
     )
@@ -1245,6 +1269,13 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
 class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI Bridge Domain Subnet model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -1286,6 +1317,7 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_vrf",
             "aci_bridge_domain",
@@ -1312,14 +1344,19 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
-        if data.get("aci_tenant") and data.get("aci_vrf"):
+        if data.get("aci_fabric") and data.get("aci_tenant") and data.get("aci_vrf"):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
             # Limit ACIVRF queryset by parent ACITenant
             self.fields["aci_vrf"].queryset = ACIVRF.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_tenant__name=data["aci_tenant"],
             )
             # Limit ACIBridgeDomain queryset by parent ACIVRF and ACITenant
             aci_bd_queryset = ACIBridgeDomain.objects.filter(
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
                 aci_tenant__name=data["aci_tenant"],
                 aci_vrf__name=data["aci_vrf"],
             )

@@ -8,6 +8,7 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.app_profiles import ACIAppProfile
 from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.endpoint_groups import (
@@ -53,8 +54,17 @@ class ACIEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         nb_vrf1 = VRF.objects.create(name="VRF1", tenant=nb_tenant1)
         nb_vrf2 = VRF.objects.create(name="VRF2", tenant=nb_tenant2)
-        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
-        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant1 = ACITenant.objects.create(
+            name="ACITestTenantAPI5", aci_fabric=aci_fabric
+        )
+        aci_tenant2 = ACITenant.objects.create(
+            name="ACITestTenantAPI6", aci_fabric=aci_fabric
+        )
         aci_app_profile1 = ACIAppProfile.objects.create(
             name="ACITestAppProfileAPI1",
             aci_tenant=aci_tenant1,
@@ -206,8 +216,17 @@ class ACIUSegEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         nb_vrf1 = VRF.objects.create(name="VRF1", tenant=nb_tenant1)
         nb_vrf2 = VRF.objects.create(name="VRF2", tenant=nb_tenant2)
-        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
-        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant1 = ACITenant.objects.create(
+            name="ACITestTenantAPI5", aci_fabric=aci_fabric
+        )
+        aci_tenant2 = ACITenant.objects.create(
+            name="ACITestTenantAPI6", aci_fabric=aci_fabric
+        )
         aci_app_profile1 = ACIAppProfile.objects.create(
             name="ACITestAppProfileAPI1",
             aci_tenant=aci_tenant1,
@@ -366,8 +385,17 @@ class ACIUSegNetworkAttributeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         nb_vrf1 = VRF.objects.create(name="VRF1", tenant=nb_tenant1)
         nb_vrf2 = VRF.objects.create(name="VRF2", tenant=nb_tenant2)
-        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
-        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant1 = ACITenant.objects.create(
+            name="ACITestTenantAPI5", aci_fabric=aci_fabric
+        )
+        aci_tenant2 = ACITenant.objects.create(
+            name="ACITestTenantAPI6", aci_fabric=aci_fabric
+        )
         aci_app_profile1 = ACIAppProfile.objects.create(
             name="ACITestAppProfileAPI1",
             aci_tenant=aci_tenant1,

@@ -13,6 +13,7 @@ from netbox.filtersets import NetBoxModelFilterSet
 from utilities.filters import ContentTypeFilter
 
 from ...choices import QualityOfServiceClassChoices, USegAttributeTypeChoices
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.bridge_domains import ACIBridgeDomain
 from ...models.tenant.endpoint_groups import (
@@ -29,6 +30,18 @@ from ..mixins import NBTenantFilterSetMixin
 class ACIEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI Endpoint Group model."""
 
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_app_profile__aci_tenant__aci_fabric__name",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_app_profile__aci_tenant__aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
@@ -132,6 +145,18 @@ class ACIEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
 class ACIUSegEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI uSeg Endpoint Group model."""
 
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_app_profile__aci_tenant__aci_fabric__name",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_app_profile__aci_tenant__aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),
@@ -234,6 +259,20 @@ class ACIUSegEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet
 class ACIUSegNetworkAttributeFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI uSeg Network Attribute model."""
 
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name=(
+            "aci_useg_endpoint_group__aci_app_profile__aci_tenant__aci_fabric__name"
+        ),
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_useg_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_useg_endpoint_group__aci_app_profile__aci_tenant__name",
         queryset=ACITenant.objects.all(),

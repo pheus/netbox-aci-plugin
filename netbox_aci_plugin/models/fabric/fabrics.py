@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
 from dcim.models.mixins import CachedScopeMixin
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -107,9 +109,9 @@ class ACIFabric(CachedScopeMixin, NetBoxModel):
 
     def __str__(self) -> str:
         """Return string representation of the instance."""
-        return f"{self.name} ({self.fabric_id})"
+        return self.name
 
-    def clean(self):
+    def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
         super().clean()
 
@@ -134,6 +136,11 @@ class ACIFabric(CachedScopeMixin, NetBoxModel):
 
         if errors:
             raise ValidationError(errors)
+
+    @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return self as the ACIFabric instance."""
+        return self
 
     @property
     def parent_object(self) -> NetBoxModel | None:

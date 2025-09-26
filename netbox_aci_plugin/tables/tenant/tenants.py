@@ -20,6 +20,10 @@ class ACITenantTable(NetBoxTable):
         verbose_name=_("Alias"),
         linkify=True,
     )
+    aci_fabric = tables.Column(
+        verbose_name=_("Fabric"),
+        linkify=True,
+    )
     nb_tenant = tables.Column(
         linkify=True,
     )
@@ -33,6 +37,7 @@ class ACITenantTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "aci_fabric",
             "nb_tenant",
             "description",
             "tags",
@@ -41,6 +46,7 @@ class ACITenantTable(NetBoxTable):
         default_columns: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "nb_tenant",
             "description",
             "tags",

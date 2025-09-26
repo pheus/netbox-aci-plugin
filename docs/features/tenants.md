@@ -87,6 +87,7 @@ The *ACITenant* model has the following fields:
 *Required fields*:
 
 - **Name**: represent the Tenant name in the ACI.
+- **ACI Fabric**: a reference to the `ACIFabric` model.
 
 *Optional fields*:
 

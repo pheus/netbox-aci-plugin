@@ -189,7 +189,9 @@ class ACIEndpointSecurityGroupTestCase(ACIBaseTestCase):
         self,
     ) -> None:
         """Test valid assignment of ACI VRF from ACI Tenant 'common'."""
-        tenant_common = ACITenant.objects.get_or_create(name="common")[0]
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common", aci_fabric=self.aci_fabric
+        )[0]
         vrf_common = ACIVRF.objects.create(name="common_vrf", aci_tenant=tenant_common)
         esg = ACIEndpointSecurityGroup.objects.create(
             name="ACIESGTest1",
@@ -204,7 +206,9 @@ class ACIEndpointSecurityGroupTestCase(ACIBaseTestCase):
         self,
     ) -> None:
         """Test invalid assignment of ACI VRF from ACI Tenant 'other'."""
-        tenant_other = ACITenant.objects.get_or_create(name="other")[0]
+        tenant_other = ACITenant.objects.get_or_create(
+            name="other", aci_fabric=self.aci_fabric
+        )[0]
         vrf_other = ACIVRF.objects.create(name="other_vrf", aci_tenant=tenant_other)
         esg = ACIEndpointSecurityGroup(
             name="ACIESGTest1",
@@ -522,7 +526,9 @@ class ACIEsgEndpointGroupSelectorTestCase(ACIBaseTestCase):
         self,
     ) -> None:
         """Test invalid assignment of ACI EPG from ACI Tenant 'other'."""
-        tenant_other = ACITenant.objects.get_or_create(name="other")[0]
+        tenant_other = ACITenant.objects.get_or_create(
+            name="other", aci_fabric=self.aci_fabric
+        )[0]
         vrf_other = ACIVRF.objects.create(
             name="other_tenant_vrf", aci_tenant=tenant_other
         )

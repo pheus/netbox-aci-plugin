@@ -6,6 +6,7 @@
 
 {% block breadcrumbs %}
   {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acicontractfilterentry_list' %}?aci_fabric_id={{ object.aci_fabric.pk }}">{{ object.aci_fabric }}</a></li>
   <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acicontractfilterentry_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
   <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acicontractfilterentry_list' %}?aci_contract_filter_id={{ object.aci_contract_filter.pk }}">{{ object.aci_contract_filter }}</a></li>
 {% endblock breadcrumbs %}
@@ -17,12 +18,16 @@
         <h2 class="card-header">{% trans "ACI Contract Filter Entry" %}</h2>
         <table class="table table-hover attr-table">
           <tr>
+            <th scope="row">{% trans "ACI Fabric" %}</th>
+            <td>{{ object.aci_fabric|linkify }}</td>
+          </tr>
+          <tr>
             <th scope="row">{% trans "ACI Tenant" %}</th>
-            <td>{{ object.aci_tenant|linkify|placeholder }}</td>
+            <td>{{ object.aci_tenant|linkify }}</td>
           </tr>
           <tr>
             <th scope="row">{% trans "ACI Contract Filter" %}</th>
-            <td>{{ object.aci_contract_filter|linkify|placeholder }}</td>
+            <td>{{ object.aci_contract_filter|linkify }}</td>
           </tr>
           <tr>
             <th scope="row">{% trans "Name Alias" %}</th>

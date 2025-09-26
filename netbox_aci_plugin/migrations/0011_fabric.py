@@ -200,4 +200,34 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RunPython(create_default_aci_fabric, migrations.RunPython.noop),
+        migrations.RemoveConstraint(
+            model_name="acitenant",
+            name="netbox_aci_plugin_acitenant_unique_name",
+        ),
+        migrations.AddField(
+            model_name="acitenant",
+            name="aci_fabric",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="aci_tenants",
+                to="netbox_aci_plugin.acifabric",
+            ),
+            preserve_default=False,
+        ),
+        migrations.AlterModelOptions(
+            name="acitenant",
+            options={"ordering": ("aci_fabric", "name")},
+        ),
+        migrations.AddConstraint(
+            model_name="acitenant",
+            constraint=models.UniqueConstraint(
+                fields=("aci_fabric", "name"),
+                name="netbox_aci_plugin_acitenant_unique_name_per_aci_fabric",
+            ),
+        ),
+        migrations.AlterModelOptions(
+            name="acibridgedomain",
+            options={"ordering": ("aci_tenant", "name")},
+        ),
     ]

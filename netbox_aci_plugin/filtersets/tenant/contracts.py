@@ -20,6 +20,7 @@ from ...choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.contract_filters import ACIContractFilter
 from ...models.tenant.contracts import (
     ACIContract,
@@ -87,18 +88,34 @@ class ACIContractFilterSet(
         return queryset.filter(queryset_filter)
 
     @extend_schema_field(OpenApiTypes.INT)
-    def filter_present_in_aci_tenant_or_common_id(self, queryset, name, aci_tenant_id):
+    def filter_present_in_aci_tenant_or_common_id(self, queryset, name, aci_tenant):
         """Return a QuerySet filtered by given ACI Tenant or 'common'."""
-        if aci_tenant_id is None:
+        if aci_tenant is None:
             return queryset.none()
         return queryset.filter(
-            Q(aci_tenant=aci_tenant_id) | Q(aci_tenant__name="common")
+            Q(aci_tenant=aci_tenant)
+            | Q(
+                aci_tenant__name="common",
+                aci_tenant__aci_fabric_id=aci_tenant.aci_fabric_id,
+            )
         )
 
 
 class ACIContractRelationFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Contract Relation model."""
 
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__aci_tenant__aci_fabric__name",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__aci_tenant__aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_contract__aci_tenant__name",
         queryset=ACITenant.objects.all(),
@@ -218,6 +235,18 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
 class ACIContractSubjectFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
     """Filter set for the ACI Contract Subject model."""
 
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__aci_tenant__aci_fabric__name",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract__aci_tenant__aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_contract__aci_tenant__name",
         queryset=ACITenant.objects.all(),
@@ -310,6 +339,18 @@ class ACIContractSubjectFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
 class ACIContractSubjectFilterFilterSet(NetBoxModelFilterSet):
     """Filter set for the ACI Contract Subject Filter model."""
 
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_subject__aci_contract__aci_tenant__aci_fabric__name",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_contract_subject__aci_contract__aci_tenant__aci_fabric",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_contract_subject__aci_contract__aci_tenant__name",
         queryset=ACITenant.objects.all(),

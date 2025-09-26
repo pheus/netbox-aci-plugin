@@ -605,7 +605,9 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
 
     def test_invalid_aci_contract_relation_aci_tenant(self) -> None:
         """Test validation of the same ACI Tenant assignment for Relation."""
-        other_tenant = ACITenant.objects.create(name="OtherTenant")
+        other_tenant = ACITenant.objects.create(
+            name="OtherTenant", aci_fabric=self.aci_fabric
+        )
         contract = ACIContract.objects.create(
             name="ACIContractOtherTenant",
             aci_tenant=other_tenant,

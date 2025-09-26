@@ -5,9 +5,10 @@
 
 {% block breadcrumbs %}
   {{ block.super }}
-    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_app_profile_id={{ object.aci_app_profile.pk }}">{{ object.aci_app_profile }}</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_vrf_id={{ object.aci_vrf.pk }}">{{ object.aci_vrf }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_fabric_id={{ object.aci_fabric.pk }}">{{ object.aci_fabric }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_app_profile_id={{ object.aci_app_profile.pk }}">{{ object.aci_app_profile }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciendpointsecuritygroup_list' %}?aci_vrf_id={{ object.aci_vrf.pk }}">{{ object.aci_vrf }}</a></li>
 {% endblock breadcrumbs %}
 
 {% block content %}
@@ -17,16 +18,20 @@
         <h2 class="card-header">{% trans "ACI Endpoint Security Group" %}</h2>
         <table class="table table-hover attr-table">
           <tr>
+            <th scope="row">{% trans "ACI Fabric" %}</th>
+            <td>{{ object.aci_fabric|linkify }}</td>
+          </tr>
+          <tr>
             <th scope="row">{% trans "ACI Tenant" %}</th>
-            <td>{{ object.aci_tenant|linkify|placeholder }}</td>
+            <td>{{ object.aci_tenant|linkify }}</td>
           </tr>
           <tr>
             <th scope="row">{% trans "ACI Application Profile" %}</th>
-            <td>{{ object.aci_app_profile|linkify|placeholder }}</td>
+            <td>{{ object.aci_app_profile|linkify }}</td>
           </tr>
           <tr>
             <th scope="row">{% trans "ACI VRF" %}</th>
-            <td>{{ object.aci_vrf|linkify|placeholder }}</td>
+            <td>{{ object.aci_vrf|linkify }}</td>
           </tr>
           <tr>
             <th scope="row">{% trans "Name Alias" %}</th>

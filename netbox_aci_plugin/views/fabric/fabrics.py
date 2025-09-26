@@ -14,6 +14,7 @@ from ...forms.fabric.fabrics import (
 )
 from ...models.fabric.fabrics import ACIFabric
 from ...tables.fabric.fabrics import ACIFabricTable
+from ..tenant.tenants import ACITenantChildrenView
 
 #
 # Fabric views
@@ -25,6 +26,10 @@ class ACIFabricView(GetRelatedModelsMixin, generic.ObjectView):
     """Detail view for displaying a single object of ACI Fabric."""
 
     queryset = ACIFabric.objects.select_related("nb_tenant").prefetch_related("tags")
+
+    def get_extra_context(self, request, instance) -> dict:
+        """Return related models as extra context."""
+        return {"related_models": self.get_related_models(request, instance)}
 
 
 @register_model_view(ACIFabric, "list", path="", detail=False)
@@ -51,6 +56,27 @@ class ACIFabricDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Fabric."""
 
     queryset = ACIFabric.objects.select_related("nb_tenant").prefetch_related("tags")
+
+
+@register_model_view(ACIFabric, "tenants", path="tenants")
+class ACIFabricTenantView(ACITenantChildrenView):
+    """Children view of ACI Tenant of ACI Fabric."""
+
+    queryset = ACIFabric.objects.all()
+    template_name = "netbox_aci_plugin/inc/acifabric/tenants.html"
+
+    def get_children(self, request, parent):
+        """Return all ACITenant objects for the current ACIFabric."""
+        return super().get_children(request, parent).filter(aci_fabric_id=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACIFabric colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIFabric column
+        table.columns.hide("aci_fabric")
+
+        return table
 
 
 @register_model_view(ACIFabric, "bulk_import", path="import", detail=False)

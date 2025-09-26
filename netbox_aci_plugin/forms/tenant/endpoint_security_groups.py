@@ -37,6 +37,7 @@ from ...constants import (
     ESG_ENDPOINT_GROUP_SELECTORS_MODELS,
     ESG_ENDPOINT_SELECTORS_MODELS,
 )
+from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.endpoint_groups import (
     ACIEndpointGroup,
@@ -58,20 +59,33 @@ from ...models.tenant.vrfs import ACIVRF
 class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI Endpoint Security Group model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_tenants__aci_app_profiles": "$aci_app_profile"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         initial_params={"aci_app_profiles": "$aci_app_profile"},
         required=False,
         label=_("ACI Tenant"),
     )
     aci_app_profile = DynamicModelChoiceField(
         queryset=ACIAppProfile.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         label=_("ACI Application Profile"),
     )
     aci_vrf = DynamicModelChoiceField(
         queryset=ACIVRF.objects.all(),
-        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
+        },
         label=_("ACI VRF"),
     )
     nb_tenant_group = DynamicModelChoiceField(
@@ -116,6 +130,7 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_vrf",
@@ -151,30 +166,6 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
             "comments",
             "tags",
         )
-
-    def clean(self):
-        """Clean and validate the ACI Endpoint Security Group form."""
-        super().clean()
-
-        aci_app_profile = self.cleaned_data.get("aci_app_profile")
-        aci_vrf = self.cleaned_data.get("aci_vrf")
-
-        # Ensure aci_app_profile and aci_vrf are present before validating
-        if aci_app_profile and aci_vrf:
-            # Check if the ACI Tenant IDs mismatch
-            aci_tenant_mismatch = aci_app_profile.aci_tenant.id != aci_vrf.aci_tenant.id
-            # Check if the ACI VRF Tenant name is not 'common'
-            not_aci_tenant_common = aci_vrf.aci_tenant.name != "common"
-            # Raise the validation error if both conditions are met
-            if aci_tenant_mismatch and not_aci_tenant_common:
-                self.add_error(
-                    "aci_vrf",
-                    _(
-                        "A VRF can only be assigned belonging to same"
-                        "ACI Tenant as the Application Profile or to the "
-                        "special ACI Tenant 'common'."
-                    ),
-                )
 
 
 class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
@@ -271,6 +262,7 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "aci_tenant_id",
             "aci_app_profile_id",
             "aci_vrf_id",
@@ -299,23 +291,25 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
     description = forms.CharField(
         required=False,
     )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        null_option="None",
         required=False,
         label=_("ACI Tenant"),
     )
     aci_app_profile_id = DynamicModelMultipleChoiceField(
         queryset=ACIAppProfile.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant_id"},
-        null_option="None",
         required=False,
         label=_("ACI Application Profile"),
     )
     aci_vrf_id = DynamicModelMultipleChoiceField(
         queryset=ACIVRF.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant_id"},
-        null_option="None",
         required=False,
         label=_("ACI VRF"),
     )
@@ -359,6 +353,13 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
 class ACIEndpointSecurityGroupImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI Endpoint Security Group model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -398,6 +399,7 @@ class ACIEndpointSecurityGroupImportForm(NetBoxModelImportForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_vrf",
@@ -418,26 +420,31 @@ class ACIEndpointSecurityGroupImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit ACIEndpointSecurityGroup queryset by parent ACIAppProfile
-        # and ACITenant
-        if data.get("aci_tenant") and data.get("aci_app_profile"):
+        if data.get("aci_fabric") and data.get("aci_tenant"):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
             # Limit ACIAppProfile queryset by parent ACITenant
-            aci_appprofile_queryset = ACIAppProfile.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
+            self.fields["aci_app_profile"].queryset = ACIAppProfile.objects.filter(
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_tenant__name=data["aci_tenant"],
             )
-            self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
 
-        # Limit ACIVRF queryset by "common" ACITenant
-        if data.get("is_aci_vrf_in_common") == "true":
-            aci_vrf_queryset = ACIVRF.objects.filter(aci_tenant__name="common")
-            self.fields["aci_vrf"].queryset = aci_vrf_queryset
-        # Limit ACIVRF queryset by ACITenant
-        elif data.get("aci_tenant") and data.get("aci_vrf"):
-            # Limit ACIVRF queryset by parent ACITenant
-            aci_vrf_queryset = ACIVRF.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
-            )
-            self.fields["aci_vrf"].queryset = aci_vrf_queryset
+            if data.get("is_aci_vrf_in_common") == "true":
+                # Limit ACIVRF queryset by "common" ACITenant
+                aci_vrf_queryset = ACIVRF.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name="common",
+                )
+                self.fields["aci_vrf"].queryset = aci_vrf_queryset
+            else:
+                # Limit ACIVRF queryset by parent ACITenant
+                aci_vrf_queryset = ACIVRF.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name=data["aci_tenant"],
+                )
+                self.fields["aci_vrf"].queryset = aci_vrf_queryset
 
 
 #
@@ -448,8 +455,19 @@ class ACIEndpointSecurityGroupImportForm(NetBoxModelImportForm):
 class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI ESG Endpoint Group (EPG) Selector model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={
+            "aci_tenants__aci_app_profiles__aci_endpoint_security_groups": (
+                "$aci_endpoint_security_group"
+            )
+        },
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         initial_params={
             "aci_app_profiles__aci_endpoint_security_groups": (
                 "$aci_endpoint_security_group"
@@ -460,7 +478,10 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
     )
     aci_app_profile = DynamicModelChoiceField(
         queryset=ACIAppProfile.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         initial_params={"aci_endpoint_security_groups": "$aci_endpoint_security_group"},
         required=False,
         label=_("ACI Application Profile"),
@@ -468,6 +489,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
     aci_endpoint_security_group = DynamicModelChoiceField(
         queryset=ACIEndpointSecurityGroup.objects.all(),
         query_params={
+            "aci_fabric_id": "$aci_fabric",
             "aci_tenant_id": "$aci_tenant",
             "aci_app_profile_id": "$aci_app_profile",
         },
@@ -475,7 +497,10 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
     )
     aci_epg_object_app_profile = DynamicModelChoiceField(
         queryset=ACIAppProfile.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         required=False,
         label=_("ACI Application Profile of Endpoint Group"),
     )
@@ -487,6 +512,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
     aci_epg_object = DynamicModelChoiceField(
         queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
         query_params={
+            "aci_fabric_id": "$aci_fabric",
             "aci_tenant_id": "$aci_tenant",
             "aci_app_profile_id": "$aci_epg_object_app_profile",
             "shares_aci_vrf_with_aci_esg_id": "$aci_endpoint_security_group",
@@ -513,6 +539,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_endpoint_security_group",
@@ -726,6 +753,7 @@ class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "aci_tenant_id",
             "aci_app_profile_id",
             "aci_endpoint_security_group_id",
@@ -759,23 +787,25 @@ class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
     description = forms.CharField(
         required=False,
     )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        null_option="None",
         required=False,
         label=_("ACI Tenant"),
     )
     aci_app_profile_id = DynamicModelMultipleChoiceField(
         queryset=ACIAppProfile.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant_id"},
-        null_option="None",
         required=False,
         label=_("ACI Application Profile"),
     )
     aci_endpoint_security_group_id = DynamicModelMultipleChoiceField(
         queryset=ACIEndpointSecurityGroup.objects.all(),
         query_params={"aci_app_profile_id": "$aci_app_profile_id"},
-        null_option="None",
         required=False,
         label=_("ACI Endpoint Security Group"),
     )
@@ -818,6 +848,13 @@ class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
 class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI ESG EPG Selector model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -861,9 +898,12 @@ class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_endpoint_security_group",
+            "aci_epg_object_id",
+            "aci_epg_object_type",
             "description",
             "nb_tenant",
             "comments",
@@ -877,17 +917,26 @@ class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit ACIEndpointSecurityGroup queryset by parent ACI objects
-        if data.get("aci_tenant") and data.get("aci_app_profile"):
-            # Limit ACIAppProfile queryset by parent ACITenant
-            aci_appprofile_queryset = ACIAppProfile.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
+        if (
+            data.get("aci_fabric")
+            and data.get("aci_tenant")
+            and data.get("aci_app_profile")
+        ):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
             )
-            self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
+            # Limit ACIAppProfile queryset by parent ACITenant
+            self.fields["aci_app_profile"].queryset = ACIAppProfile.objects.filter(
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_tenant__name=data["aci_tenant"],
+            )
             # Limit ACIEndpointSecurityGroup queryset by parent ACIAppProfile
             aci_endpoint_security_group_queryset = (
                 ACIEndpointSecurityGroup.objects.filter(
-                    aci_app_profile__name=data["aci_app_profile"]
+                    aci_app_profile__aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_app_profile__aci_tenant__name=data["aci_tenant"],
+                    aci_app_profile__name=data["aci_app_profile"],
                 )
             )
             self.fields[
@@ -903,8 +952,19 @@ class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
 class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
     """NetBox edit form for the ACI ESG Endpoint Selector model."""
 
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={
+            "aci_tenants__aci_app_profiles__aci_endpoint_security_groups": (
+                "$aci_endpoint_security_group"
+            )
+        },
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
         initial_params={
             "aci_app_profiles__aci_endpoint_security_groups": (
                 "$aci_endpoint_security_group"
@@ -915,14 +975,21 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
     )
     aci_app_profile = DynamicModelChoiceField(
         queryset=ACIAppProfile.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
         initial_params={"aci_endpoint_security_groups": "$aci_endpoint_security_group"},
         required=False,
         label=_("ACI Application Profile"),
     )
     aci_endpoint_security_group = DynamicModelChoiceField(
         queryset=ACIEndpointSecurityGroup.objects.all(),
-        query_params={"aci_app_profile_id": "$aci_app_profile"},
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+            "aci_app_profile_id": "$aci_app_profile",
+        },
         label=_("ACI Endpoint Security Group"),
     )
     ep_object_type = ContentTypeChoiceField(
@@ -954,6 +1021,7 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_endpoint_security_group",
@@ -1152,6 +1220,7 @@ class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "aci_fabric_id",
             "aci_tenant_id",
             "aci_app_profile_id",
             "aci_endpoint_security_group_id",
@@ -1182,9 +1251,13 @@ class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
     description = forms.CharField(
         required=False,
     )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        null_option="None",
         required=False,
         label=_("ACI Tenant"),
     )
@@ -1243,6 +1316,13 @@ class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
 class ACIEsgEndpointSelectorImportForm(NetBoxModelImportForm):
     """NetBox import form for the ACI ESG Endpoint Selector model."""
 
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of ACI Tenant"),
+    )
     aci_tenant = CSVModelChoiceField(
         queryset=ACITenant.objects.all(),
         to_field_name="name",
@@ -1286,9 +1366,12 @@ class ACIEsgEndpointSelectorImportForm(NetBoxModelImportForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_endpoint_security_group",
+            "ep_object_id",
+            "ep_object_type",
             "description",
             "nb_tenant",
             "comments",
@@ -1302,17 +1385,26 @@ class ACIEsgEndpointSelectorImportForm(NetBoxModelImportForm):
         if not data:
             return
 
-        # Limit ACIEndpointSecurityGroup queryset by parent ACI objects
-        if data.get("aci_tenant") and data.get("aci_app_profile"):
-            # Limit ACIAppProfile queryset by parent ACITenant
-            aci_appprofile_queryset = ACIAppProfile.objects.filter(
-                aci_tenant__name=data["aci_tenant"]
+        if (
+            data.get("aci_fabric")
+            and data.get("aci_tenant")
+            and data.get("aci_app_profile")
+        ):
+            # Limit ACITenant queryset by parent ACIFabric
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
             )
-            self.fields["aci_app_profile"].queryset = aci_appprofile_queryset
+            # Limit ACIAppProfile queryset by parent ACITenant
+            self.fields["aci_app_profile"].queryset = ACIAppProfile.objects.filter(
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_tenant__name=data["aci_tenant"],
+            )
             # Limit ACIEndpointSecurityGroup queryset by parent ACIAppProfile
             aci_endpoint_security_group_queryset = (
                 ACIEndpointSecurityGroup.objects.filter(
-                    aci_app_profile__name=data["aci_app_profile"]
+                    aci_app_profile__aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_app_profile__aci_tenant__name=data["aci_tenant"],
+                    aci_app_profile__name=data["aci_app_profile"],
                 )
             )
             self.fields[

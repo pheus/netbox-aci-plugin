@@ -26,6 +26,38 @@ from .endpoint_security_groups import ACIEndpointSecurityGroupChildrenView
 from .vrfs import ACIVRFChildrenView
 
 #
+# Base children views
+#
+
+
+class ACITenantChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI Tenant."""
+
+    child_model = ACITenant
+    filterset = ACITenantFilterSet
+    tab = ViewTab(
+        label=_("Tenants"),
+        badge=lambda obj: obj.aci_tenants.count(),
+        permission="netbox_aci_plugin.view_acitenant",
+        weight=1000,
+    )
+    table = ACITenantTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACITenant."""
+        return (
+            ACITenant.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_fabric",
+                "nb_tenant",
+            )
+            .prefetch_related(
+                "tags",
+            )
+        )
+
+
+#
 # Tenant views
 #
 
@@ -35,6 +67,7 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
     """Detail view for displaying a single object of ACI Tenant."""
 
     queryset = ACITenant.objects.select_related(
+        "aci_fabric",
         "nb_tenant",
     ).prefetch_related(
         "tags",
@@ -70,6 +103,7 @@ class ACITenantListView(generic.ObjectListView):
     """List view for listing all objects of ACI Tenant."""
 
     queryset = ACITenant.objects.select_related(
+        "aci_fabric",
         "nb_tenant",
     ).prefetch_related(
         "tags",
@@ -85,6 +119,7 @@ class ACITenantEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Tenant."""
 
     queryset = ACITenant.objects.select_related(
+        "aci_fabric",
         "nb_tenant",
     ).prefetch_related(
         "tags",
@@ -97,6 +132,7 @@ class ACITenantDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Tenant."""
 
     queryset = ACITenant.objects.select_related(
+        "aci_fabric",
         "nb_tenant",
     ).prefetch_related(
         "tags",

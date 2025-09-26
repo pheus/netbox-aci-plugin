@@ -24,6 +24,11 @@ class ACIEndpointSecurityGroupTable(NetBoxTable):
         verbose_name=_("Alias"),
         linkify=True,
     )
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_app_profile__aci_tenant__aci_fabric",
+        linkify=True,
+    )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant"),
         linkify=True,
@@ -78,6 +83,11 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
     )
     name_alias = tables.Column(
         verbose_name=_("Alias"),
+        linkify=True,
+    )
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_endpoint_security_group__aci_app_profile__aci_tenant__aci_fabric",
         linkify=True,
     )
     aci_tenant = tables.Column(
@@ -156,6 +166,11 @@ class ACIEsgEndpointSelectorTable(NetBoxTable):
     )
     name_alias = tables.Column(
         verbose_name=_("Alias"),
+        linkify=True,
+    )
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_endpoint_security_group__aci_app_profile__aci_tenant__aci_fabric",
         linkify=True,
     )
     aci_tenant = tables.Column(

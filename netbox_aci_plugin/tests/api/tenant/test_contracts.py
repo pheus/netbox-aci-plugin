@@ -6,6 +6,7 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.app_profiles import ACIAppProfile
 from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.contract_filters import ACIContractFilter
@@ -51,8 +52,17 @@ class ACIContractAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         nb_tenant2 = Tenant.objects.create(
             name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
         )
-        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
-        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant1 = ACITenant.objects.create(
+            name="ACITestTenantAPI5", aci_fabric=aci_fabric
+        )
+        aci_tenant2 = ACITenant.objects.create(
+            name="ACITestTenantAPI6", aci_fabric=aci_fabric
+        )
 
         aci_contracts = (
             ACIContract(
@@ -151,8 +161,17 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         nb_tenant2 = Tenant.objects.create(
             name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
         )
-        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
-        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant1 = ACITenant.objects.create(
+            name="ACITestTenantAPI5", aci_fabric=aci_fabric
+        )
+        aci_tenant2 = ACITenant.objects.create(
+            name="ACITestTenantAPI6", aci_fabric=aci_fabric
+        )
         aci_app_profile1 = ACIAppProfile.objects.create(
             name="ACITestAppProfileAPI1",
             aci_tenant=aci_tenant1,
@@ -435,8 +454,17 @@ class ACIContractSubjectAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         nb_tenant2 = Tenant.objects.create(
             name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
         )
-        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
-        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant1 = ACITenant.objects.create(
+            name="ACITestTenantAPI5", aci_fabric=aci_fabric
+        )
+        aci_tenant2 = ACITenant.objects.create(
+            name="ACITestTenantAPI6", aci_fabric=aci_fabric
+        )
         aci_contract1 = ACIContract.objects.create(
             name="ACIContractTestAPI1",
             aci_tenant=aci_tenant1,
@@ -557,8 +585,17 @@ class ACIContractSubjectFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         nb_tenant2 = Tenant.objects.create(
             name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
         )
-        aci_tenant1 = ACITenant.objects.create(name="ACITestTenantAPI5")
-        aci_tenant2 = ACITenant.objects.create(name="ACITestTenantAPI6")
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricAPI",
+            fabric_id=102,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant1 = ACITenant.objects.create(
+            name="ACITestTenantAPI5", aci_fabric=aci_fabric
+        )
+        aci_tenant2 = ACITenant.objects.create(
+            name="ACITestTenantAPI6", aci_fabric=aci_fabric
+        )
         aci_contract_filter1 = ACIContractFilter.objects.create(
             name="ACIContractFilterTestAPI1",
             aci_tenant=aci_tenant1,

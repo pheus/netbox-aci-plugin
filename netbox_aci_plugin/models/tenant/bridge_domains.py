@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from dcim.fields import MACAddressField
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -16,8 +20,10 @@ from ...choices import (
 from ...constants import ACI_NAME_MAX_LEN
 from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACIBaseModel
-from .tenants import ACITenant
-from .vrfs import ACIVRF
+
+if TYPE_CHECKING:
+    from .tenants import ACITenant
+    from .vrfs import ACIVRF
 
 
 class ACIBridgeDomain(ACIBaseModel):
@@ -230,7 +236,7 @@ class ACIBridgeDomain(ACIBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
-        ordering: tuple = ("aci_tenant", "aci_vrf", "name")
+        ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Bridge Domain")
 
     def __str__(self) -> str:
@@ -243,21 +249,51 @@ class ACIBridgeDomain(ACIBaseModel):
         """Override the model's clean method for custom field validation."""
         super().clean()
 
-        # Validate the assigned ACIVRF belongs to either the same ACITenant as
-        # the ACIBridgeDomain or to the special ACITenant 'common'
+        errors = {}
+
+        # Validate the assigned ACIVRF belongs to the same ACIFabric as
+        # the ACIBridgeDomain
         if (
-            self.aci_vrf.aci_tenant != self.aci_tenant
-            and self.aci_vrf.aci_tenant.name != "common"
+            hasattr(self, "aci_vrf")
+            and self.aci_vrf.aci_tenant.aci_fabric != self.aci_tenant.aci_fabric
         ):
-            raise ValidationError(
+            errors.setdefault("aci_vrf", []).append(
                 _(
-                    "Assigned ACIVRF have to belong to the same ACITenant as "
-                    "the ACIBridgeDomain or to the special ACITenant 'common'."
+                    "The assigned ACI VRF must belong to the "
+                    "same ACI Fabric as the ACI Bridge Domain."
                 )
             )
 
+        # Validate the assigned ACIVRF belongs to either the same ACITenant as
+        # the ACIBridgeDomain or to the special ACITenant 'common'
+        if (
+            hasattr(self, "aci_vrf")
+            and self.aci_vrf.aci_tenant != self.aci_tenant
+            and self.aci_vrf.aci_tenant.name != "common"
+        ):
+            errors.setdefault("aci_vrf", []).append(
+                _(
+                    "The assigned ACI VRF must belong to the "
+                    "same ACI Tenant as the ACI Bridge Domain, "
+                    "or to the ACI Tenant 'common'."
+                )
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
     def save(self, *args, **kwargs) -> None:
         """Save the current instance to the database."""
+        # Ensure the assigned ACIVRF belongs to the same ACIFabric as
+        # the ACIBridgeDomain.
+        if self.aci_vrf.aci_tenant.aci_fabric != self.aci_tenant.aci_fabric:
+            raise ValidationError(
+                _(
+                    "The assigned ACI VRF must belong to the "
+                    "same ACI Fabric as the ACI Bridge Domain."
+                )
+            )
+
         # Ensure the assigned ACIVRF belongs to either the same ACITenant as
         # the ACIBridgeDomain or to the special ACITenant 'common'
         if (
@@ -266,8 +302,9 @@ class ACIBridgeDomain(ACIBaseModel):
         ):
             raise ValidationError(
                 _(
-                    "Assigned ACIVRF have to belong to the same ACITenant as "
-                    "the ACIBridgeDomain or to the special ACITenant 'common'."
+                    "The assigned ACI VRF must belong to the "
+                    "same ACI Tenant as the ACI Bridge Domain, "
+                    "or to the ACI Tenant 'common'."
                 )
             )
 

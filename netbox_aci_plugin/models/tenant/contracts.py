@@ -2,6 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -25,7 +29,10 @@ from ..base import ACIBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
 from .endpoint_security_groups import ACIEndpointSecurityGroup
-from .tenants import ACITenant
+
+if TYPE_CHECKING:
+    from ..fabric.fabrics import ACIFabric
+    from .tenants import ACITenant
 
 
 class ACIContract(ACIBaseModel):
@@ -259,7 +266,11 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
         # Validate the assigned ACI Contract and ACI Object shares the same
         # ACI Tenant
-        if self.aci_contract.aci_tenant != self.aci_object.aci_tenant:
+        if (
+            hasattr(self, "aci_contract")
+            and hasattr(self, "aci_object")
+            and self.aci_contract.aci_tenant != self.aci_object.aci_tenant
+        ):
             aci_model_class = self.aci_object_type.model_class()
             raise ValidationError(
                 {
@@ -628,6 +639,16 @@ class ACIContractSubjectFilter(NetBoxModel):
     def __str__(self) -> str:
         """Return string representation of the instance."""
         return f"{self.aci_contract_subject.name}-{self.aci_contract_filter.name}"
+
+    @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACFabric instance of related ACITenant."""
+        return self.aci_tenant.aci_fabric
+
+    @property
+    def aci_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of related ACIContract."""
+        return self.aci_contract.aci_tenant
 
     @property
     def aci_contract(self) -> ACIContract:

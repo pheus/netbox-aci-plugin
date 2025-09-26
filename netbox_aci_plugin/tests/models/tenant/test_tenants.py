@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from tenancy.models import Tenant
 
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.tenants import ACITenant
 from ..base import ACIBaseTestCase
 
@@ -30,6 +31,7 @@ class ACITenantTestCase(ACIBaseTestCase):
             name=cls.aci_tenant_name,
             name_alias=cls.aci_tenant_alias,
             description=cls.aci_tenant_description,
+            aci_fabric=cls.aci_fabric,
             comments=cls.aci_tenant_comments,
             nb_tenant=cls.nb_tenant,
         )
@@ -49,6 +51,11 @@ class ACITenantTestCase(ACIBaseTestCase):
     def test_aci_tenant_description(self) -> None:
         """Test description of ACI Tenant."""
         self.assertEqual(self.aci_tenant.description, self.aci_tenant_description)
+
+    def test_aci_tenant_aci_fabric_instance(self) -> None:
+        """Test the ACI Fabric associated with ACI Tenant."""
+        self.assertTrue(isinstance(self.aci_tenant.aci_fabric, ACIFabric))
+        self.assertEqual(self.aci_tenant.aci_fabric.name, self.aci_fabric_name)
 
     def test_aci_tenant_nb_tenant_instance(self) -> None:
         """Test the NetBox tenant associated with ACI Tenant."""
@@ -101,6 +108,9 @@ class ACITenantTestCase(ACIBaseTestCase):
 
     def test_constraint_unique_aci_tenant_name(self) -> None:
         """Test unique constraint of ACI Tenant name."""
-        duplicate_tenant = ACITenant(name=self.aci_tenant_name)
+        duplicate_tenant = ACITenant(
+            name=self.aci_tenant_name,
+            aci_fabric=self.aci_fabric,
+        )
         with self.assertRaises(IntegrityError):
             duplicate_tenant.save()

@@ -106,7 +106,6 @@ class ACIBridgeDomainView(generic.ObjectView):
         "aci_vrf",
         "nb_tenant",
     ).prefetch_related(
-        "aci_bridge_domain_subnets",
         "tags",
     )
 
