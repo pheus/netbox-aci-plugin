@@ -113,19 +113,19 @@ aciendpointgroup_item = PluginMenuItem(
 aciusegendpointgroup_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:aciusegendpointgroup_list",
     link_text="uSeg Endpoint Groups",
-    permissions=["netbox_aci_plugin.vieusegw_aciendpointgroup"],
+    permissions=["netbox_aci_plugin.view_aciusegendpointgroup"],
     buttons=(
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:aciusegendpointgroup_add",
             title="Add",
             icon_class="mdi mdi-plus-thick",
-            permissions=["netbox_aci_plugin.adduseg_aciendpointgroup"],
+            permissions=["netbox_aci_plugin.add_aciusegendpointgroup"],
         ),
         PluginMenuButton(
             link="plugins:netbox_aci_plugin:aciusegendpointgroup_bulk_import",
             title="Import",
             icon_class="mdi mdi-upload",
-            permissions=["netbox_aci_plugin.adduseg_aciendpointgroup"],
+            permissions=["netbox_aci_plugin.add_aciusegendpointgroup"],
         ),
     ),
 )
