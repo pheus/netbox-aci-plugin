@@ -31,6 +31,8 @@ from .endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
 from .endpoint_security_groups import ACIEndpointSecurityGroup
 
 if TYPE_CHECKING:
+    from core.models import ObjectChange
+
     from ..fabric.fabrics import ACIFabric
     from .tenants import ACITenant
 
@@ -359,7 +361,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
     cache_related_objects.alters_data = True
 
-    def to_objectchange(self, action):
+    def to_objectchange(self, action) -> ObjectChange:
         """Return an ObjectChange for the change made to an instance."""
         objectchange = super().to_objectchange(action)
         objectchange.related_object = self.aci_contract
