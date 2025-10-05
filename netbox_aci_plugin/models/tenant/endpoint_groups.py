@@ -24,7 +24,7 @@ from ...choices import (
 )
 from ...constants import ACI_NAME_MAX_LEN, USEG_NETWORK_ATTRIBUTES_MODELS
 from ...validators import ACIPolicyNameOptionalValidator
-from ..base import ACIBaseModel
+from ..base import ACITenantBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 #
 
 
-class ACIEndpointGroupBaseModel(ACIBaseModel):
+class ACIEndpointGroupBaseModel(ACITenantBaseModel):
     """NetBox abstract model for ACI Endpoint Group (EPG)."""
 
     aci_app_profile = models.ForeignKey(
@@ -102,7 +102,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         ),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
         "aci_app_profile",
         "aci_bridge_domain",
         "admin_shutdown",
@@ -202,7 +202,7 @@ class ACIEndpointGroupBaseModel(ACIBaseModel):
         return self.aci_bridge_domain.aci_vrf
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_app_profile
 
@@ -308,7 +308,7 @@ class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
 #
 
 
-class ACIUSegAttributeBaseModel(ACIBaseModel):
+class ACIUSegAttributeBaseModel(ACITenantBaseModel):
     """Base model for ACI uSeg Attribute."""
 
     aci_useg_endpoint_group = models.ForeignKey(
@@ -325,7 +325,7 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
         help_text=_("Type of the uSeg attribute. Default is 'mac'."),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + ("aci_useg_endpoint_group",)
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + ("aci_useg_endpoint_group",)
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIUSegEndpointGroup",)
 
     class Meta:
@@ -351,7 +351,7 @@ class ACIUSegAttributeBaseModel(ACIBaseModel):
         return self.aci_useg_endpoint_group.aci_app_profile
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_useg_endpoint_group
 

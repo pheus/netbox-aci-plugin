@@ -20,7 +20,7 @@ from ...constants import (
     ESG_ENDPOINT_GROUP_SELECTORS_MODELS,
     ESG_ENDPOINT_SELECTORS_MODELS,
 )
-from ..base import ACIBaseModel
+from ..base import ACITenantBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 #
 
 
-class ACIEndpointSecurityGroup(ACIBaseModel):
+class ACIEndpointSecurityGroup(ACITenantBaseModel):
     """NetBox model for ACI Endpoint Security Group (ESG)."""
 
     aci_app_profile = models.ForeignKey(
@@ -70,7 +70,7 @@ class ACIEndpointSecurityGroup(ACIBaseModel):
         ),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
         "aci_app_profile",
         "aci_vrf",
         "admin_shutdown",
@@ -178,7 +178,7 @@ class ACIEndpointSecurityGroup(ACIBaseModel):
         return self.aci_app_profile.aci_tenant
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_app_profile
 
@@ -188,7 +188,7 @@ class ACIEndpointSecurityGroup(ACIBaseModel):
 #
 
 
-class ACIEsgSelectorBaseModel(ACIBaseModel):
+class ACIEsgSelectorBaseModel(ACITenantBaseModel):
     """Base model for ACI Endpoint Security Group (ESG) Selector."""
 
     aci_endpoint_security_group = models.ForeignKey(
@@ -197,7 +197,9 @@ class ACIEsgSelectorBaseModel(ACIBaseModel):
         verbose_name=_("ACI Endpoint Security Group"),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + ("aci_endpoint_security_group",)
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
+        "aci_endpoint_security_group",
+    )
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIEndpointSecurityGroup",)
 
     class Meta:
@@ -223,7 +225,7 @@ class ACIEsgSelectorBaseModel(ACIBaseModel):
         return self.aci_endpoint_security_group.aci_app_profile
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_endpoint_security_group
 

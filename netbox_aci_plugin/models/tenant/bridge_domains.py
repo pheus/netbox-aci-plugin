@@ -19,14 +19,14 @@ from ...choices import (
 )
 from ...constants import ACI_NAME_MAX_LEN
 from ...validators import ACIPolicyNameOptionalValidator
-from ..base import ACIBaseModel
+from ..base import ACITenantBaseModel
 
 if TYPE_CHECKING:
     from .tenants import ACITenant
     from .vrfs import ACIVRF
 
 
-class ACIBridgeDomain(ACIBaseModel):
+class ACIBridgeDomain(ACITenantBaseModel):
     """NetBox model for ACI Bridge Domain."""
 
     aci_tenant = models.ForeignKey(
@@ -200,7 +200,7 @@ class ACIBridgeDomain(ACIBaseModel):
         ),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
         "aci_tenant",
         "aci_vrf",
         "advertise_host_routes_enabled",
@@ -311,7 +311,7 @@ class ACIBridgeDomain(ACIBaseModel):
         super().save(*args, **kwargs)
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_tenant
 
@@ -334,7 +334,7 @@ class ACIBridgeDomain(ACIBaseModel):
         return BDUnknownUnicastChoices.colors.get(self.unknown_unicast)
 
 
-class ACIBridgeDomainSubnet(ACIBaseModel):
+class ACIBridgeDomainSubnet(ACITenantBaseModel):
     """NetBox model for ACI Bridge Domain Subnet."""
 
     aci_bridge_domain = models.ForeignKey(
@@ -419,7 +419,7 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
         help_text=_("Treat the gateway IP as virtual IP. Default is disabled."),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
         "aci_bridge_domain",
         "advertised_externally_enabled",
         "igmp_querier_enabled",
@@ -472,6 +472,6 @@ class ACIBridgeDomainSubnet(ACIBaseModel):
         return self.aci_bridge_domain.aci_vrf
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_bridge_domain

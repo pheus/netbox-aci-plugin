@@ -26,7 +26,7 @@ from ...validators import (
     validate_contract_filter_port,
     validate_contract_filter_tcp_rules,
 )
-from ..base import ACIBaseModel
+from ..base import ACITenantBaseModel
 
 if TYPE_CHECKING:
     from .tenants import ACITenant
@@ -39,7 +39,7 @@ def default_contract_filter_entry_tcp_rules() -> list[str]:
     ]
 
 
-class ACIContractFilter(ACIBaseModel):
+class ACIContractFilter(ACITenantBaseModel):
     """NetBox model for ACI Contract Filter."""
 
     aci_tenant = models.ForeignKey(
@@ -49,7 +49,7 @@ class ACIContractFilter(ACIBaseModel):
         verbose_name=_("ACI Tenant"),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + ("aci_tenant",)
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + ("aci_tenant",)
     prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
 
     class Meta:
@@ -69,12 +69,12 @@ class ACIContractFilter(ACIBaseModel):
         return self.name
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_tenant
 
 
-class ACIContractFilterEntry(ACIBaseModel):
+class ACIContractFilterEntry(ACITenantBaseModel):
     """NetBox model for ACI Contract Filter Entry."""
 
     aci_contract_filter = models.ForeignKey(
@@ -211,7 +211,7 @@ class ACIContractFilterEntry(ACIBaseModel):
         validators=[validate_contract_filter_tcp_rules],
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
         "aci_contract_filter",
         "arp_opc",
         "destination_from_port",
@@ -386,7 +386,7 @@ class ACIContractFilterEntry(ACIBaseModel):
         return self.aci_contract_filter.aci_tenant
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_contract_filter
 

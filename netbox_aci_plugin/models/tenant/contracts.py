@@ -25,7 +25,7 @@ from ...choices import (
 )
 from ...constants import ACI_NAME_MAX_LEN, CONTRACT_RELATION_OBJECT_TYPES
 from ...validators import ACIPolicyNameOptionalValidator
-from ..base import ACIBaseModel
+from ..base import ACITenantBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 from .endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
 from .endpoint_security_groups import ACIEndpointSecurityGroup
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from .tenants import ACITenant
 
 
-class ACIContract(ACIBaseModel):
+class ACIContract(ACITenantBaseModel):
     """NetBox model for ACI Contract."""
 
     aci_tenant = models.ForeignKey(
@@ -76,7 +76,7 @@ class ACIContract(ACIBaseModel):
         ),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
         "aci_tenant",
         "qos_class",
         "scope",
@@ -101,7 +101,7 @@ class ACIContract(ACIBaseModel):
         return self.name
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_tenant
 
@@ -242,7 +242,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         return self.aci_object.aci_tenant
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_contract
 
@@ -370,7 +370,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         return ContractRelationRoleChoices.colors.get(self.role)
 
 
-class ACIContractSubject(ACIBaseModel):
+class ACIContractSubject(ACITenantBaseModel):
     """NetBox model for ACI Contract Subject."""
 
     aci_contract = models.ForeignKey(
@@ -491,7 +491,7 @@ class ACIContractSubject(ACIBaseModel):
         ),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
         "aci_contract",
         "apply_both_directions_enabled",
         "qos_class",
@@ -529,7 +529,7 @@ class ACIContractSubject(ACIBaseModel):
         return self.aci_contract.aci_tenant
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_contract
 
@@ -666,7 +666,7 @@ class ACIContractSubjectFilter(NetBoxModel):
         return self.aci_contract_subject.aci_tenant
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_contract_subject
 

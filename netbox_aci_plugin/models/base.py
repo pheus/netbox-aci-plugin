@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 
 class ACIBaseModel(NetBoxModel):
-    """NetBox abstract model for ACI classes."""
+    """Base model for ACI policies."""
 
     name = models.CharField(
         verbose_name=_("name"),
@@ -69,9 +69,36 @@ class ACIBaseModel(NetBoxModel):
         return self.name
 
     @property
+    def parent_object(self) -> NetBoxModel | None:
+        """Return the parent object of the instance."""
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement 'parent_object'"
+        )
+
+
+class ACIFabricBaseModel(ACIBaseModel):
+    """Base model for ACI Fabric-level policies."""
+
+    class Meta:
+        abstract = True
+
+    @property
     def aci_fabric(self) -> ACIFabric:
-        """Return the ACIFabric instance of the related ACITenant."""
-        return self.aci_tenant.aci_fabric
+        """
+        Return the ACIFabric instance.
+
+        Subclasses must implement this property or have an 'aci_fabric' field.
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement 'aci_fabric'"
+        )
+
+
+class ACITenantBaseModel(ACIBaseModel):
+    """Base model for ACI Tenant-level policies."""
+
+    class Meta:
+        abstract = True
 
     @property
     def aci_tenant(self) -> ACITenant:
@@ -85,8 +112,6 @@ class ACIBaseModel(NetBoxModel):
         )
 
     @property
-    def parent_object(self) -> NetBoxModel | None:
-        """Return the parent object of the instance."""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} must implement 'parent_object'"
-        )
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACIFabric instance of the related ACITenant."""
+        return self.aci_tenant.aci_fabric

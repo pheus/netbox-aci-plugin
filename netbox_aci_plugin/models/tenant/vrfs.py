@@ -13,10 +13,10 @@ from ...choices import (
 )
 from ...constants import ACI_NAME_MAX_LEN
 from ...validators import ACIPolicyNameOptionalValidator
-from ..base import ACIBaseModel
+from ..base import ACITenantBaseModel
 
 
-class ACIVRF(ACIBaseModel):
+class ACIVRF(ACITenantBaseModel):
     """NetBox model for ACI VRF."""
 
     aci_tenant = models.ForeignKey(
@@ -103,7 +103,7 @@ class ACIVRF(ACIBaseModel):
         related_query_name="aci_vrf",
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + (
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + (
         "aci_tenant",
         "nb_vrf",
         "bd_enforcement_enabled",
@@ -134,7 +134,7 @@ class ACIVRF(ACIBaseModel):
         return self.name
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_tenant
 

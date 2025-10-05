@@ -5,10 +5,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from ..base import ACIBaseModel
+from ..base import ACITenantBaseModel
 
 
-class ACIAppProfile(ACIBaseModel):
+class ACIAppProfile(ACITenantBaseModel):
     """NetBox model for ACI Application Profile."""
 
     aci_tenant = models.ForeignKey(
@@ -18,7 +18,7 @@ class ACIAppProfile(ACIBaseModel):
         verbose_name=_("ACI Tenant"),
     )
 
-    clone_fields: tuple = ACIBaseModel.clone_fields + ("aci_tenant",)
+    clone_fields: tuple = ACITenantBaseModel.clone_fields + ("aci_tenant",)
     prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
 
     class Meta:
@@ -32,6 +32,6 @@ class ACIAppProfile(ACIBaseModel):
         verbose_name: str = _("ACI Application Profile")
 
     @property
-    def parent_object(self) -> ACIBaseModel:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_tenant
