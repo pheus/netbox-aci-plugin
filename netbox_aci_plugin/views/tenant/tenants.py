@@ -2,7 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from django.db.models import QuerySet
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
 from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
@@ -24,6 +27,10 @@ from .contracts import ACIContractChildrenView
 from .endpoint_groups import ACIEndpointGroupChildrenView
 from .endpoint_security_groups import ACIEndpointSecurityGroupChildrenView
 from .vrfs import ACIVRFChildrenView
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
+
 
 #
 # Base children views
