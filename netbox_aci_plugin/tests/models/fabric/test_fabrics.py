@@ -86,7 +86,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
 
     def test_invalid_aci_fabric_name(self) -> None:
         """Test validation of ACI Fabric naming."""
-        fabric = ACIFabric(name="ACI Test Fabric 1")
+        fabric = ACIFabric(
+            name="ACI Test Fabric 1",
+            fabric_id=14,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
+        )
         with self.assertRaises(ValidationError):
             fabric.full_clean()
 
@@ -94,13 +98,20 @@ class ACIFabricTestCase(ACIBaseTestCase):
         """Test validation of ACI Fabric name length."""
         fabric = ACIFabric(
             name="T" * 65,  # Exceeding the maximum length of 64
+            fabric_id=14,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
         )
         with self.assertRaises(ValidationError):
             fabric.full_clean()
 
     def test_invalid_aci_fabric_description(self) -> None:
         """Test validation of ACI Fabric description."""
-        fabric = ACIFabric(name="ACITestFabric1", description="Invalid Description: ö")
+        fabric = ACIFabric(
+            name="ACITestFabric1",
+            description="Invalid Description: ö",
+            fabric_id=14,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
+        )
         with self.assertRaises(ValidationError):
             fabric.full_clean()
 
@@ -109,6 +120,8 @@ class ACIFabricTestCase(ACIBaseTestCase):
         fabric = ACIFabric(
             name="ACITestFabric1",
             description="T" * 129,  # Exceeding the maximum length of 128
+            fabric_id=14,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
         )
         with self.assertRaises(ValidationError):
             fabric.full_clean()
@@ -161,6 +174,20 @@ class ACIFabricTestCase(ACIBaseTestCase):
 
     def test_constraint_unique_aci_fabric_name(self) -> None:
         """Test unique constraint of ACI Fabric name."""
-        duplicate_fabric = ACIFabric(name=self.aci_fabric_name)
+        duplicate_fabric = ACIFabric(
+            name=self.aci_fabric_name,
+            fabric_id=14,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_fabric.save()
+
+    def test_constraint_unique_aci_fabric_id(self) -> None:
+        """Test unique constraint of ACI Fabric ID."""
+        duplicate_fabric = ACIFabric(
+            name="ACITestFabric1",
+            fabric_id=self.aci_fabric_id,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
+        )
         with self.assertRaises(IntegrityError):
             duplicate_fabric.save()
