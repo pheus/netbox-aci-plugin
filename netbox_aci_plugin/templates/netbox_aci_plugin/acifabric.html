@@ -38,6 +38,16 @@
                 {{ object.nb_tenant|linkify|placeholder }}
             </td>
           </tr>
+          <tr>
+            <th scope="row">{% trans "Scope" %}</th>
+            <td>
+              {% if object.scope %}
+                {{ object.scope|linkify }} ({% trans object.scope_type.name %})
+              {% else %}
+                {{ ''|placeholder }}
+              {% endif %}
+            </td>
+          </tr>
         </table>
       </div>
       {% include 'inc/panels/custom_fields.html' %}
