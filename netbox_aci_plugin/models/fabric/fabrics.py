@@ -127,12 +127,14 @@ class ACIFabric(CachedScopeMixin, NetBoxModel):
                 _("NetBox referenced VLAN VID must match the Infrastructure VLAN VID.")
             )
 
-        # Ensure gipo_pool is IPv4 multicast
+        # Ensure gipo_pool is IPv4 multicast prefix
         if self.gipo_pool and (
             self.gipo_pool.prefix.version != 4
             or not self.gipo_pool.prefix.is_multicast()
         ):
-            errors.setdefault("gipo_pool", []).append(_("GIPo must be IPv4 multicast."))
+            errors.setdefault("gipo_pool", []).append(
+                _("GIPo must be IPv4 multicast prefix.")
+            )
 
         if errors:
             raise ValidationError(errors)
