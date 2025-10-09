@@ -35,9 +35,11 @@ class ACIFabricFilter(ScopedFilterMixin, NetBoxModelFilterMixin):
     infra_vlan: (
         Annotated["VLANFilter", strawberry.lazy("ipam.graphql.filters")] | None
     ) = strawberry_django.filter_field()
+    infra_vlan_id: ID | None = strawberry_django.filter_field()
     gipo_pool: (
         Annotated["PrefixFilter", strawberry.lazy("ipam.graphql.filters")] | None
     ) = strawberry_django.filter_field()
+    gipo_pool_id: ID | None = strawberry_django.filter_field()
     nb_tenant: (
         Annotated["TenantFilter", strawberry.lazy("tenancy.graphql.filters")] | None
     ) = strawberry_django.filter_field()
