@@ -32,6 +32,10 @@ from ...constants import (
 )
 from ...models.fabric.fabrics import ACIFabric
 
+#
+# Fabric forms
+#
+
 
 class ACIFabricEditForm(ScopedForm, NetBoxModelForm):
     """NetBox edit form for ACI Fabric model."""
@@ -73,11 +77,11 @@ class ACIFabricEditForm(ScopedForm, NetBoxModelForm):
         FieldSet(
             "name",
             "description",
-            "fabric_id",
             "tags",
             name=_("ACI Fabric"),
         ),
         FieldSet(
+            "fabric_id",
             "infra_vlan_vid",
             "infra_vlan_group",
             "infra_vlan",
@@ -162,11 +166,11 @@ class ACIFabricBulkEditForm(ScopedBulkEditForm, NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "description",
-            "fabric_id",
             "tags",
             name=_("ACI Fabric"),
         ),
         FieldSet(
+            "fabric_id",
             "infra_vlan_vid",
             "infra_vlan_group",
             "infra_vlan",
@@ -206,10 +210,10 @@ class ACIFabricFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "description",
-            "fabric_id",
             name=_("Attributes"),
         ),
         FieldSet(
+            "fabric_id",
             "infra_vlan_vid",
             "infra_vlan_id",
             "gipo_pool_id",
