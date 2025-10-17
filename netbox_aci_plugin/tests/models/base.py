@@ -8,6 +8,7 @@ from ipam.models import VRF, IPAddress, Prefix
 from tenancy.models import Tenant
 
 from ...models.fabric.fabrics import ACIFabric
+from ...models.fabric.pods import ACIPod
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.bridge_domains import ACIBridgeDomain
 from ...models.tenant.tenants import ACITenant
@@ -25,6 +26,10 @@ class ACIBaseTestCase(TestCase):
         cls.aci_fabric_id = 127
         cls.aci_fabric_infra_vlan_vid = 3900
         cls.aci_fabric_gipo_pool_prefix = "225.0.0.0/15"
+
+        # ACI Pod configuration
+        cls.aci_pod_name = "ACIBaseTestPod"
+        cls.aci_pod_id = 1
 
         # ACI Tenant object configurations
         cls.aci_tenant_name = "ACIBaseTestTenant"
@@ -51,6 +56,12 @@ class ACIBaseTestCase(TestCase):
             name=cls.aci_fabric_name,
             fabric_id=cls.aci_fabric_id,
             infra_vlan_vid=cls.aci_fabric_infra_vlan_vid,
+        )
+        # Create ACIPod object
+        cls.aci_pod = ACIPod.objects.create(
+            name=cls.aci_pod_name,
+            aci_fabric=cls.aci_fabric,
+            pod_id=cls.aci_pod_id,
         )
 
         # Create ACITenant objects
