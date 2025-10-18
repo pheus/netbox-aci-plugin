@@ -277,6 +277,26 @@ acifabric_item = PluginMenuItem(
     ),
 )
 
+# ACI Pod
+acipod_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acipod_list",
+    link_text="Pods",
+    permissions=["netbox_aci_plugin.view_acipod"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acipod_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acipod"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acipod_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acipod"],
+        ),
+    ),
+)
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -313,7 +333,10 @@ menu = PluginMenu(
         ),
         (
             "Fabrics",
-            (acifabric_item,),
+            (
+                acifabric_item,
+                acipod_item,
+            ),
         ),
     ),
     icon_class="mdi mdi-router",
