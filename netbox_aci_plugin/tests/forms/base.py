@@ -7,6 +7,7 @@ from ipam.models import VRF
 from tenancy.models import Tenant
 
 from ...models.fabric.fabrics import ACIFabric
+from ...models.fabric.pods import ACIPod
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.bridge_domains import ACIBridgeDomain
 from ...models.tenant.tenants import ACITenant
@@ -33,11 +34,16 @@ class ACIBaseFormTestCase(TestCase):
             tenant=cls.nb_tenant,
         )
 
-        # Create ACIFabric object
+        # Create ACIFabric objects
         cls.aci_fabric = ACIFabric.objects.create(
             name="ACIBaseFormTestFabric",
             fabric_id=101,
             infra_vlan_vid=3900,
+        )
+        cls.aci_pod = ACIPod.objects.create(
+            name="ACIBaseFormTestPod",
+            aci_fabric=cls.aci_fabric,
+            pod_id=101,
         )
 
         # Create ACITenant objects
