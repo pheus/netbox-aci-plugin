@@ -5,6 +5,13 @@ from .fabric.fabrics import (
     ACIFabricEditView,
     ACIFabricListView,
 )
+from .fabric.pods import (
+    ACIPodBulkDeleteView,
+    ACIPodBulkEditView,
+    ACIPodBulkImportView,
+    ACIPodEditView,
+    ACIPodListView,
+)
 from .tenant.app_profiles import (
     ACIAppProfileBulkDeleteView,
     ACIAppProfileBulkEditView,
@@ -192,6 +199,12 @@ __all__ = (
     "ACIFabricBulkImportView",
     "ACIFabricEditView",
     "ACIFabricListView",
+    # ACIPod
+    "ACIPodBulkDeleteView",
+    "ACIPodBulkEditView",
+    "ACIPodBulkImportView",
+    "ACIPodEditView",
+    "ACIPodListView",
     # ACITenant
     "ACITenantBulkDeleteView",
     "ACITenantBulkEditView",
