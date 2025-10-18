@@ -17,6 +17,15 @@ urlpatterns: tuple = (
         "fabrics/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acifabric")),
     ),
+    # ACI Pod
+    path(
+        "pods/",
+        include(get_model_urls("netbox_aci_plugin", "acipod", detail=False)),
+    ),
+    path(
+        "pods/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acipod")),
+    ),
     # ACI Tenants
     path(
         "tenants/",
