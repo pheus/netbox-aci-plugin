@@ -11,6 +11,7 @@ router = NetBoxRouter()
 
 # ACI Fabric
 router.register("fabrics", views.ACIFabricListViewSet)
+router.register("pods", views.ACIPodListViewSet)
 
 # ACI Tenant
 router.register("tenants", views.ACITenantListViewSet)
