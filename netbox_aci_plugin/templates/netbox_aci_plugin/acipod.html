@@ -1,0 +1,61 @@
+
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load i18n %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h2 class="card-header">{% trans "ACI Pod" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ACI Fabric" %}</th>
+            <td>{{ object.aci_fabric|linkify }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Name Alias" %}</th>
+            <td>{{ object.name_alias|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Description" %}</th>
+            <td>{{ object.description|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Pod ID" %}</th>
+            <td>{{ object.pod_id }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "TEP Pool" %}</th>
+            <td>{{ object.tep_pool|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox Tenant" %}</th>
+            <td>
+                {% if object.nb_tenant.group %}
+                    {{ object.nb_tenant.group|linkify }} /
+                {% endif %}
+                {{ object.nb_tenant|linkify|placeholder }}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Scope" %}</th>
+            <td>
+              {% if object.scope %}
+                {{ object.scope|linkify }} ({% trans object.scope_type.name %})
+              {% else %}
+                {{ ''|placeholder }}
+              {% endif %}
+            </td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/related_objects.html' %}
+    </div>
+  </div>
+{% endblock content %}

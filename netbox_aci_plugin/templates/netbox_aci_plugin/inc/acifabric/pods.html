@@ -1,0 +1,13 @@
+{% extends 'generic/object_children.html' %}
+{% load helpers %}
+{% load i18n %}
+
+{% block extra_controls %}
+  {% if perms.netbox_aci_plugin.add_acipod %}
+    {% with viewname=object|viewname:"" %}
+      <a href="{% url 'plugins:netbox_aci_plugin:acipod_add' %}?aci_fabric={{ object.pk }}&nb_tenant={{ object.nb_tenant.pk }}&return_url={% url viewname pk=object.pk %}" class="btn btn-primary">
+        <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add a Pod" %}
+      </a>
+    {% endwith %}
+  {% endif %}
+{% endblock %}
