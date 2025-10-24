@@ -86,6 +86,7 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 unknown_ipv6_multicast="flood",
                 unknown_unicast="proxy",
                 virtual_mac_address="00:11:22:33:44:55",
+                associated_l3outs=["L3Out1", "L3Out2"],
             ),
             ACIBridgeDomain(
                 name="ACIBridgeDomainTestAPI2",

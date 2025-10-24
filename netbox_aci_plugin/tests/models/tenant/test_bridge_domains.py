@@ -70,6 +70,7 @@ class ACIBridgeDomainTestCase(TestCase):
         cls.aci_vrf = ACIVRF.objects.create(
             name=cls.aci_vrf_name, aci_tenant=cls.aci_tenant
         )
+        cls.aci_bd_associated_l3outs = ["L3Out1", "L3Out2"]
         cls.aci_bd = ACIBridgeDomain.objects.create(
             name=cls.aci_bd_name,
             name_alias=cls.aci_bd_alias,
@@ -98,6 +99,7 @@ class ACIBridgeDomainTestCase(TestCase):
             unknown_ipv6_multicast=cls.aci_bd_unknown_ipv6_multicast,
             unknown_unicast=cls.aci_bd_unknown_unicast,
             virtual_mac_address=cls.aci_bd_virtual_mac_address,
+            associated_l3outs=cls.aci_bd_associated_l3outs,
         )
 
     def test_aci_bd_type(self) -> None:
@@ -406,6 +408,12 @@ class ACIBridgeDomainTestCase(TestCase):
         )
         with self.assertRaises(IntegrityError):
             duplicate_bd.save()
+    def test_aci_bd_associated_l3outs(self) -> None:
+        """Test the 'associated L3 outs' option of ACI Bridge Domain."""
+        self.assertEqual(
+            self.aci_bd.associated_l3outs,
+            self.aci_bd_associated_l3outs,
+        )
 
 
 class ACIBridgeDomainSubnetTestCase(TestCase):

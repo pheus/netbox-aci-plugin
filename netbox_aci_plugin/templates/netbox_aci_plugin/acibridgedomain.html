@@ -66,6 +66,10 @@
             <th scope="row">{% trans "Virtual MAC Address" %}</th>
             <td>{{ object.virtual_mac_address|placeholder }}</td>
           </tr>
+          <tr>
+            <th scope="row">{% trans "Associated L3 Outs" %}</th>
+            <td>{{ object.associated_l3outs|join:", "|placeholder }}</td>
+          </tr>
         </table>
       </div>
       <div class="card">

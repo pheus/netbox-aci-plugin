@@ -79,6 +79,7 @@ class ACIBridgeDomainTable(NetBoxTable):
         orderable=False,
         template_code=BRIDGEDOMAIN_SUBNETS,
     )
+    associated_l3outs = columns.ArrayColumn()
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -113,6 +114,7 @@ class ACIBridgeDomainTable(NetBoxTable):
             "unknown_ipv6_multicast",
             "unknown_unicast",
             "virtual_mac_address",
+            "associated_l3outs",
             "tags",
             "comments",
         )

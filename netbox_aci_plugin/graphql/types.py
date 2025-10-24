@@ -151,6 +151,7 @@ class ACIBridgeDomainType(NetBoxObjectType):
     dhcp_labels: list[str] | None
     mac_address: str | None
     virtual_mac_address: str | None
+    associated_l3outs: list[str] | None
 
     # Related models
     aci_bridge_domain_subnets: list[

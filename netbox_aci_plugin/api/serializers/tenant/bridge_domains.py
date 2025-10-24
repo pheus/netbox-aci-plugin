@@ -63,6 +63,7 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
             "unknown_ipv6_multicast",
             "unknown_unicast",
             "virtual_mac_address",
+            "associated_l3outs",
             "comments",
             "tags",
             "custom_fields",

@@ -208,7 +208,19 @@ class ACIBridgeDomain(ACIBaseModel):
             "multiple sites. Default is ''."
         ),
     )
-
+    associated_l3outs = ArrayField(
+        base_field=models.CharField(
+            max_length=11,
+        ),
+        verbose_name=_("Associated L3 Outs"),
+        blank=True,
+        null=True,
+        help_text=_("Enter L3Out names separated by comma"),
+        validators=[
+            MaxLengthValidator(64),
+            ACIPolicyNameValidator,
+        ],
+    )
     clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_tenant",
         "aci_vrf",
@@ -232,6 +244,7 @@ class ACIBridgeDomain(ACIBaseModel):
         "unknown_ipv6_multicast",
         "unknown_unicast",
         "virtual_mac_address",
+        "associated_l3outs",
     )
     prerequisite_models: tuple = (
         "netbox_aci_plugin.ACITenant",

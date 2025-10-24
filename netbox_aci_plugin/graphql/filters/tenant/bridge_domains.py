@@ -118,7 +118,13 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
         | None
     ) = strawberry_django.filter_field()
     virtual_mac_address: FilterLookup[str] | None = strawberry_django.filter_field()
-
+    associated_l3outs: (
+        Annotated[
+            "StringArrayLookup",
+            strawberry.lazy("netbox.graphql.filter_lookups"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
 
 @strawberry_django.filter(models.ACIBridgeDomainSubnet, lookups=True)
 class ACIBridgeDomainSubnetFilter(ACIBaseFilterMixin):

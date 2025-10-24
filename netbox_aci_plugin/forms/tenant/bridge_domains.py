@@ -184,6 +184,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "ep_move_detection_enabled",
             "mac_address",
             "virtual_mac_address",
+            "associated_l3outs",
             name=_("Routing Settings"),
         ),
         FieldSet(
@@ -249,6 +250,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "unknown_ipv6_multicast",
             "unknown_unicast",
             "virtual_mac_address",
+            "associated_l3outs",
             "comments",
             "tags",
         )
@@ -418,6 +420,10 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("Virtual MAC address"),
     )
+    associated_l3outs = forms.CharField(
+        required=False,
+        label=_("Associated L3 Outs"),
+    )
     comments = CommentField()
 
     model = ACIBridgeDomain
@@ -437,6 +443,7 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
             "ep_move_detection_enabled",
             "mac_address",
             "virtual_mac_address",
+            "associated_l3outs",
             name=_("Routing Settings"),
         ),
         FieldSet(
@@ -481,6 +488,7 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         "pim_ipv4_destination_filter",
         "pim_ipv4_source_filter",
         "virtual_mac_address",
+        "associated_l3outs",
         "comments",
     )
 
@@ -509,6 +517,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
             "ep_move_detection_enabled",
             "mac_address",
             "virtual_mac_address",
+            "associated_l3outs",
             name=_("Routing Settings"),
         ),
         FieldSet(
@@ -660,6 +669,10 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Unknown unicast"),
     )
+    associated_l3outs = forms.CharField(
+        required=False,
+        label=_("Associated L3 Outs"),
+    )
     tag = TagFilterField(model)
 
 
@@ -749,6 +762,7 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
             "unknown_ipv6_multicast",
             "unknown_unicast",
             "virtual_mac_address",
+            "associated_l3outs",
             "comments",
             "tags",
         )
