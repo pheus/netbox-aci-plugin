@@ -22,6 +22,10 @@ VLAN_VID_MAX = 4094
 FABRIC_ID_MIN = 1
 FABRIC_ID_MAX = 128
 
+POD_ID_MIN = 1
+POD_ID_MAX = 255
+
+
 #
 # Contract Relation
 #

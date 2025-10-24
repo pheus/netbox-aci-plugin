@@ -1,4 +1,5 @@
 from .fabric.fabrics import ACIFabric
+from .fabric.pods import ACIPod
 from .tenant.app_profiles import ACIAppProfile
 from .tenant.bridge_domains import ACIBridgeDomain, ACIBridgeDomainSubnet
 from .tenant.contract_filters import ACIContractFilter, ACIContractFilterEntry
@@ -24,6 +25,7 @@ from .tenant.vrfs import ACIVRF
 __all__ = (
     # Fabric
     "ACIFabric",
+    "ACIPod",
     # Tenant
     "ACIAppProfile",
     "ACIBridgeDomain",

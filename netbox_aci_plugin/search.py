@@ -5,6 +5,7 @@
 from netbox.search import SearchIndex, register_search
 
 from .models.fabric.fabrics import ACIFabric
+from .models.fabric.pods import ACIPod
 from .models.tenant.app_profiles import ACIAppProfile
 from .models.tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -50,6 +51,28 @@ class ACIFabricIndex(SearchIndex):
         "description",
         "fabric_id",
         "infra_vlan_vid",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIPodIndex(SearchIndex):
+    """NetBox search definition for the ACI Pod model."""
+
+    model = ACIPod
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "pod_id",
         "nb_tenant",
     )
 

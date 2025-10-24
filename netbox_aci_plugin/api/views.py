@@ -5,6 +5,7 @@
 from netbox.api.viewsets import NetBoxModelViewSet
 
 from ..filtersets.fabric.fabrics import ACIFabricFilterSet
+from ..filtersets.fabric.pods import ACIPodFilterSet
 from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ..filtersets.tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
@@ -33,6 +34,7 @@ from ..filtersets.tenant.endpoint_security_groups import (
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
 from ..models.fabric.fabrics import ACIFabric
+from ..models.fabric.pods import ACIPod
 from ..models.tenant.app_profiles import ACIAppProfile
 from ..models.tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -75,6 +77,7 @@ from .serializers import (
     ACIEsgEndpointGroupSelectorSerializer,
     ACIEsgEndpointSelectorSerializer,
     ACIFabricSerializer,
+    ACIPodSerializer,
     ACITenantSerializer,
     ACIUSegEndpointGroupSerializer,
     ACIUSegNetworkAttributeSerializer,
@@ -94,6 +97,20 @@ class ACIFabricListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIFabricSerializer
     filterset_class = ACIFabricFilterSet
+
+
+class ACIPodListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Pod instances."""
+
+    queryset = ACIPod.objects.select_related(
+        "aci_fabric",
+        "tep_pool",
+        "nb_tenant",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIPodSerializer
+    filterset_class = ACIPodFilterSet
 
 
 class ACITenantListViewSet(NetBoxModelViewSet):

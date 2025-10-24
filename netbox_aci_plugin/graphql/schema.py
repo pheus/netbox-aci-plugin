@@ -21,6 +21,7 @@ from .types import (
     ACIEsgEndpointGroupSelectorType,
     ACIEsgEndpointSelectorType,
     ACIFabricType,
+    ACIPodType,
     ACITenantType,
     ACIUSegEndpointGroupType,
     ACIUSegNetworkAttributeType,
@@ -34,6 +35,9 @@ class NetBoxACIQuery:
 
     aci_fabric: ACIFabricType = strawberry_django.field()
     aci_fabric_list: list[ACIFabricType] = strawberry_django.field()
+
+    aci_pod: ACIPodType = strawberry_django.field()
+    aci_pod_list: list[ACIPodType] = strawberry_django.field()
 
     aci_tenant: ACITenantType = strawberry_django.field()
     aci_tenant_list: list[ACITenantType] = strawberry_django.field()

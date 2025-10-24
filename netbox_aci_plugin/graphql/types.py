@@ -24,6 +24,7 @@ from .filters import (
     ACIEsgEndpointGroupSelectorFilter,
     ACIEsgEndpointSelectorFilter,
     ACIFabricFilter,
+    ACIPodFilter,
     ACITenantFilter,
     ACIUSegEndpointGroupFilter,
     ACIUSegNetworkAttributeFilter,
@@ -70,6 +71,39 @@ class ACIFabricType(NetBoxObjectType):
             | Annotated["SiteGroupType", strawberry.lazy("dcim.graphql.types")]
             | Annotated["SiteType", strawberry.lazy("dcim.graphql.types")],
             strawberry.union("ACIFabricScopeType"),
+        ]
+        | None
+    ):
+        """Return the scope object."""
+        return self.scope
+
+
+@strawberry_django.type(
+    models.ACIPod,
+    exclude=["scope_type", "scope_id", "_location", "_region", "_site", "_site_group"],
+    filters=ACIPodFilter,
+)
+class ACIPodType(NetBoxObjectType):
+    """GraphQL type definition for the ACIPod model."""
+
+    # Model fields
+    aci_fabric: (
+        Annotated["ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+        | None
+    )
+    tep_pool: Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")] | None
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    @strawberry_django.field(description="Scope Object")
+    def scope(
+        self,
+    ) -> (
+        Annotated[
+            Annotated["LocationType", strawberry.lazy("dcim.graphql.types")]
+            | Annotated["RegionType", strawberry.lazy("dcim.graphql.types")]
+            | Annotated["SiteGroupType", strawberry.lazy("dcim.graphql.types")]
+            | Annotated["SiteType", strawberry.lazy("dcim.graphql.types")],
+            strawberry.union("ACIPodScopeType"),
         ]
         | None
     ):
