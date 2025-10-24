@@ -33,13 +33,16 @@ Bridge Domains (BD), and VRFs (Contexts).
 
 - Represent core ACI constructs in NetBox:
     - Fabrics
+        - Fabrics
+        - Pods
     - Tenants
-    - Application Profiles
-    - Endpoint Groups (including **uSeg EPGs**)
-    - Endpoint Security Groups
-    - Bridge Domains
-    - VRFs (Contexts)
-    - Contracts, Contract Subjects, and Contract Filters
+        - Tenants
+        - Application Profiles
+        - Endpoint Groups (including **uSeg EPGs**)
+        - Endpoint Security Groups
+        - Bridge Domains
+        - VRFs (Contexts)
+        - Contracts, Contract Subjects, and Contract Filters
 - Consistent UI patterns with NetBox core (tables, filtersets,
   detail views)
 - Ready for automation via NetBox’s REST API
