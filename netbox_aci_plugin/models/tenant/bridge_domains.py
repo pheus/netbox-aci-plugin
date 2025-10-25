@@ -210,16 +210,16 @@ class ACIBridgeDomain(ACIBaseModel):
     )
     associated_l3outs = ArrayField(
         base_field=models.CharField(
-            max_length=11,
+            max_length=64,
+            validators=[
+                MaxLengthValidator(64),
+                ACIPolicyNameValidator,
+            ],
         ),
-        verbose_name=_("Associated L3 Outs"),
+        verbose_name=_("L3 Outs"),
         blank=True,
         null=True,
         help_text=_("Enter L3Out names separated by comma"),
-        validators=[
-            MaxLengthValidator(64),
-            ACIPolicyNameValidator,
-        ],
     )
     clone_fields: tuple = ACIBaseModel.clone_fields + (
         "aci_tenant",
