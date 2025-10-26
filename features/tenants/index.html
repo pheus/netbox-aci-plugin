@@ -1,0 +1,1896 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://pheus.github.io/netbox-aci-plugin/features/tenants/">
+      
+      
+        <link rel="prev" href="../..">
+      
+      
+        <link rel="next" href="../../development/code_of_conduct/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>Tenants - NetBox ACI Plugin</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#Tenants" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="NetBox ACI Plugin" class="md-header__button md-logo" aria-label="NetBox ACI Plugin" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            NetBox ACI Plugin
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tenants
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pheus/netbox-aci-plugin" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pheus/netbox-aci-plugin
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="NetBox ACI Plugin" class="md-nav__button md-logo" aria-label="NetBox ACI Plugin" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    NetBox ACI Plugin
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pheus/netbox-aci-plugin" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pheus/netbox-aci-plugin
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Features
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Tenants
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tenants
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#Tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tenant
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Application-Profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      Application Profile
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#VRF" class="md-nav__link">
+    <span class="md-ellipsis">
+      VRF
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Bridge-Domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bridge Domain
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Bridge-Domain-Subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bridge Domain Subnet
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Endpoint-Group" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoint Group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uSeg-Endpoint-Group" class="md-nav__link">
+    <span class="md-ellipsis">
+      uSeg Endpoint Group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uSeg-Network-Attribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      uSeg Network Attribute
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Endpoint-Security-Group" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoint Security Group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ESG-Endpoint-Group-EPG-Selector" class="md-nav__link">
+    <span class="md-ellipsis">
+      ESG Endpoint Group (EPG) Selector
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ESG-Endpoint-Selector" class="md-nav__link">
+    <span class="md-ellipsis">
+      ESG Endpoint Selector
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Filter
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Filter-Entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Filter Entry
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Relation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Relation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Subject" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Subject
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Subject-Filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Subject Filter
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Development
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Development
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/code_of_conduct/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Code of Conduct
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/releasing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Releasing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#Tenant" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tenant
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Application-Profile" class="md-nav__link">
+    <span class="md-ellipsis">
+      Application Profile
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#VRF" class="md-nav__link">
+    <span class="md-ellipsis">
+      VRF
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Bridge-Domain" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bridge Domain
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Bridge-Domain-Subnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bridge Domain Subnet
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Endpoint-Group" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoint Group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uSeg-Endpoint-Group" class="md-nav__link">
+    <span class="md-ellipsis">
+      uSeg Endpoint Group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uSeg-Network-Attribute" class="md-nav__link">
+    <span class="md-ellipsis">
+      uSeg Network Attribute
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Endpoint-Security-Group" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoint Security Group
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ESG-Endpoint-Group-EPG-Selector" class="md-nav__link">
+    <span class="md-ellipsis">
+      ESG Endpoint Group (EPG) Selector
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ESG-Endpoint-Selector" class="md-nav__link">
+    <span class="md-ellipsis">
+      ESG Endpoint Selector
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Filter
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Filter-Entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Filter Entry
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Relation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Relation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Subject" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Subject
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#Contract-Subject-Filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contract Subject Filter
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="Tenants">Tenants<a class="headerlink" href="#Tenants" title="Permanent link">#</a></h1>
+<p>ACI fabric manages one or more <em>Tenants</em> based on the tenant portion of the
+hierarchical management information tree (MIT).</p>
+<pre class="mermaid"><code>flowchart TD
+    TN([Tenant])
+    AP(Application Profile)
+    EPG(Endpoint Group)
+    USEGEPG(uSeg Endpoint Group)
+    USEGATTR(uSeg Attribute)
+    ESG(Endpoint Security Group)
+    ESGEPGSEL(ESG EPG Selector)
+    ESGEPSEL(ESG EP Selector)
+    VRF(VRF)
+    BD(Bridge Domain)
+    SN(Subnet)
+    CT(Contract)
+    CTR(Relation)
+    SJ(Subject)
+    SJF(Subject Filter)
+    FT(Filter)
+    FTE(Filter Entry)
+    subgraph graphTN [Tenant]
+        TN
+    end
+    subgraph graphAP [Application Profile]
+        AP
+        TN --&gt;|1:n| AP
+        AP --&gt;|1:n| EPG
+        AP --&gt;|1:n| USEGEPG
+        subgraph graphEPG [Endpoint Group]
+            EPG
+            USEGEPG --&gt;|1:n| USEGATTR
+        end
+        AP --&gt;|1:n| ESG
+        subgraph graphESG [Endpoint Security Group]
+            ESG
+            ESG --&gt;|1:n| ESGEPGSEL
+            ESG --&gt;|1:n| ESGEPSEL
+        end
+    end
+    subgraph graphNW [Network]
+        TN --&gt;|1:n| VRF
+        subgraph graphVRF [VRF]
+            VRF
+        end
+        BD -.-&gt;|n:1| VRF
+        subgraph graphBD [Bridge Domain]
+            TN --&gt;|1:n| BD
+            BD --&gt;|1:n| SN
+        end
+    end
+    subgraph graphCT [Contract]
+        subgraph graphCTS [Contract]
+            TN --&gt;|1:n| CT
+            CT --&gt;|1:n| SJ
+            CT --&gt;|1:n| CTR
+            SJ --&gt;|1:n| SJF
+        end
+        subgraph graphFT [Filter]
+            TN --&gt;|1:n| FT
+            FT --&gt;|1:n| FTE
+        end
+        SJF -.-&gt;|n:1| FT
+        CTR -.-&gt;|n:1| EPG
+        CTR -.-&gt;|n:1| USEGEPG
+        CTR -.-&gt;|n:1| ESG
+        CTR -.-&gt;|n:1| VRF
+    end
+    EPG -.-&gt;|n:1| BD
+    USEGEPG -.-&gt;|n:1| BD
+    ESG -.-&gt;|n:1| VRF
+    ESGEPGSEL -.-&gt;|n:1| EPG</code></pre>
+<h2 id="Tenant">Tenant<a class="headerlink" href="#Tenant" title="Permanent link">#</a></h2>
+<p>A <em>Tenant</em> in the ACI policy model represents a container for application
+policies with domain-based access control.
+Tenants can be modeled after customers, organizations, domains, or used to
+group policies.</p>
+<p>The <em>ACITenant</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the Tenant name in the ACI.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: a name alias in the ACI.</li>
+<li><strong>Description</strong>: a description of the ACI Tenant.</li>
+<li><strong>NetBox Tenant</strong>: an assignment to the NetBox tenant model.</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Application-Profile">Application Profile<a class="headerlink" href="#Application-Profile" title="Permanent link">#</a></h2>
+<p>An <em>Application Profile</em> contains <em>Endpoint Groups</em> (EPGs) and may be modeled
+after applications, stages or domains.</p>
+<p>The <em>ACIAppProfile</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the Application Profile name in the ACI.</li>
+<li><strong>ACI Tenant</strong>: a reference to the <code>ACITenant</code> model.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: a name alias in the ACI for the Application Profile.</li>
+<li><strong>Description</strong>: a description of the Application Profile.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="VRF">VRF<a class="headerlink" href="#VRF" title="Permanent link">#</a></h2>
+<p>A <em>VRF (virtual routing and forwarding)</em> instance defines a unique layer 3
+forwarding, address and application policy domain for a <em>Tenant</em>.
+The layer 3 domain must have unique IP addresses.
+A <em>Tenant</em> can contain multiple VRFs.
+Bridge Domains are associated with a VRF.</p>
+<p>The <em>ACIVRF</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the VRF name in the ACI.</li>
+<li><strong>ACI Tenant</strong>: a reference to the <code>ACITenant</code> model.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: a name alias in the ACI for the VRF.</li>
+<li><strong>Description</strong>: a description of the VRF.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>NetBox VRF</strong>: a reference to the NetBox vrf model.</li>
+<li><strong>BD enforcement enabled</strong>: a boolean field, whether endpoints can ping other
+  bridge domain gateways.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>DNS labels</strong>: a comma-separated list of DNS labels.</li>
+<li><strong>IP data plane learning enabled</strong>: a boolean field representing whether IP
+  data plane learning is enabled for the VRF.<ul>
+<li>Default: <code>true</code></li>
+</ul>
+</li>
+<li><strong>PC enforcement direction</strong>: Direction of policy control enforcement.<ul>
+<li>Values: <code>ingress</code> (ingress), <code>egress</code> (egress)</li>
+<li>Default: <code>ingress</code></li>
+</ul>
+</li>
+<li><strong>PC enforcement preference</strong>: Preference of policy control enforcement.<ul>
+<li>Values: <code>enforced</code> (enforced), <code>unenforced</code> (unenforced)</li>
+<li>Default: <code>enforced</code></li>
+</ul>
+</li>
+<li><strong>PIM IPv4 enabled</strong>: a boolean field, whether IPv4 multicast is enabled.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>PIM IPv6 enabled</strong>: a boolean field, whether IPv6 multicast is enabled.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Preferred group enabled</strong>: a boolean field, if the preferred group feature
+  is enabled for the VRF.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Bridge-Domain">Bridge Domain<a class="headerlink" href="#Bridge-Domain" title="Permanent link">#</a></h2>
+<p>A <em>Bridge Domain</em> represents layer 2 forwarding and flood domain defining a
+unique MAC address space.
+Each Bridge Domain must be linked to a VRF instance.
+One or more Subnets are associated with a Bridge Domain.</p>
+<p>The <em>ACIBridgeDomain</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the Bridge Domain name in the ACI.</li>
+<li><strong>ACI Tenant</strong>: a reference to the <code>ACITenant</code> model.</li>
+<li><strong>ACI VRF</strong>: a reference to the <code>ACIVRF</code> model.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: a name alias in the ACI for the Bridge Domain.</li>
+<li><strong>Description</strong>: a description of the Bridge Domain.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>Advertise host routes enabled</strong>: a boolean field, whether associated
+  endpoints are advertised as host routes (/32 prefixes) out of the L3Outs.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>ARP flooding enabled</strong>: a boolean field representing the state, whether
+  Address Resolution Protocol (ARP) is flooded within the Bridge Domain.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Clear remote mac entries enabled</strong>: a boolean field, whether MAC endpoint
+  entries should be deleted on remote leaves, when endpoints are removed from
+  the local leaf.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>DHCP labels</strong>: a comma-separated list of DHCP labels.</li>
+<li><strong>EP move detection enabled</strong>: a boolean field documenting the state of
+  endpoint move detection based on Gratuitous ARP (GARP).<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>IGMP interface policy name</strong>: the name of the IGMP interface policy.</li>
+<li><strong>IGMP snooping policy name</strong>: the name of the IGMP snooping policy.</li>
+<li><strong>IP data plane learning enabled</strong>: a boolean field representing whether IP
+  data plane learning is enabled for the Bridge Domain.<ul>
+<li>Default: <code>true</code></li>
+</ul>
+</li>
+<li><strong>Limit IP learn enabled</strong>: a boolean field, if IP learning is limited to the
+  Bridge Domain's subnets.<ul>
+<li>Default: <code>true</code></li>
+</ul>
+</li>
+<li><strong>MAC address</strong>: the MAC address of the Bridge Domain's gateway.<ul>
+<li>Default: <code>00:22:BD:F8:19:FF</code></li>
+</ul>
+</li>
+<li><strong>Multi destination flooding</strong>: forwarding method for layer 2 multicast,
+  broadcast and link layer traffic.<ul>
+<li>Values: <code>bd-flood</code> (Bridge Domain flood),
+  <code>encap-flood</code> (encapsulation flood), <code>drop</code> (drop)</li>
+<li>Default: <code>bd-flood</code></li>
+</ul>
+</li>
+<li><strong>PIM IPv4 enabled</strong>: a boolean field, whether IPv4 multicast is enabled.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>PIM IPv4 destination filter</strong>: the name of the PIM IPv4 destination filter.</li>
+<li><strong>PIM IPv4 source filter</strong>: the name of the PIM IPv4 source filter.</li>
+<li><strong>PIM IPv6 enabled</strong>: a boolean field, whether IPv6 multicast is enabled.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Unicast routing enabled</strong>: a boolean field, whether unicast routing is.
+  enabled.<ul>
+<li>Default: <code>true</code></li>
+</ul>
+</li>
+<li><strong>Unknown IPv4 multicast</strong>: defines the IPv4 unknown multicast forwarding
+  method.<ul>
+<li>Values: <code>flood</code> (flood), <code>opt-flood</code> (optimized flood)</li>
+<li>Default: <code>flood</code></li>
+</ul>
+</li>
+<li><strong>Unknown IPv6 multicast</strong>: defines the IPv6 unknown multicast forwarding
+  method.<ul>
+<li>Values: <code>flood</code> (flood), <code>opt-flood</code> (optimized flood)</li>
+<li>Default: <code>flood</code></li>
+</ul>
+</li>
+<li><strong>Virtual MAC address</strong>: the virtual MAC address of the Bridge Domain / SVI
+  used when the Bridge Domain is extended to multiple sites using L2Outs.</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Bridge-Domain-Subnet">Bridge Domain Subnet<a class="headerlink" href="#Bridge-Domain-Subnet" title="Permanent link">#</a></h2>
+<p>A <em>Bridge Domain Subnet</em> is an anycast gateway IP address of the Bridge Domain.
+The Subnet must be linked to a Bridge Domain instance.
+One or more Subnets can be associated with a Bridge Domain, but only one Subnet
+can be preferred.</p>
+<p>The <em>ACIBridgeDomainSubnet</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the Bridge Domain name in the ACI.</li>
+<li><strong>ACI Bridge Domain</strong>: a reference to the <code>ACIBridgeDomain</code> model.</li>
+<li><strong>Gateway IP Address</strong>: the gateway IP address of the Bridge Domain
+  (referencing the NetBox IP address).</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: a name alias in the ACI for the Bridge Domain Subnet.</li>
+<li><strong>Description</strong>: a description of the Bridge Domain Subnet.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>Advertised externally enabled</strong>: a boolean field, whether the subnet is
+  advertised to the outside to any associated L3Outs (public scope).<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>IGMP querier enabled</strong>: a boolean field specifying whether the gateway
+  IP address is treated as an IGMP querier source IP.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>IP data plane learning enabled</strong>: a boolean field representing whether
+  IP data plane learning is enabled for the Bridge Domain Subnet.<ul>
+<li>Default: <code>true</code></li>
+</ul>
+</li>
+<li><strong>No default SVI gateway</strong>: a boolean field, if the default gateway
+  functionality of the address is removed.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>ND RA enabled</strong>: a boolean field, whether the gateway IP is treated as an
+  IPv6 Neighbor Discovery Router Advertisement prefix.<ul>
+<li>Default: <code>true</code></li>
+</ul>
+</li>
+<li><strong>ND RA prefix policy name</strong>: the name of the Neighbor Discovery Router
+  Advertisement prefix policy.</li>
+<li><strong>Preferred IP address enabled</strong>: a boolean field, if the gateway IP address
+  is the preferred (primary) IP gateway of the Bridge Domain.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Shared enabled</strong>: a boolean field, if endpoints can communicate only within
+  the same (<em>disabled</em>) or shared VRFs (<em>enabled</em>) in the ACI fabric
+  (inter-VRF route leaking).<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Virtual IP enabled</strong>: a boolean field determining if the gateway is a
+  virtual IP address (used for stretched Bridge Domains to multiple sites).<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Endpoint-Group">Endpoint Group<a class="headerlink" href="#Endpoint-Group" title="Permanent link">#</a></h2>
+<p>An <em>Endpoint Group</em> (EPG) is a named collection of endpoints (network-connected
+devices).
+The EPG needs to be contained in an Application Profile and be linked to a
+Bridge Domain.</p>
+<p>The <em>ACIEndpointGroup</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the Endpoint Group name in the ACI.</li>
+<li><strong>ACI Application Profile</strong>: containing the Endpoint Group.</li>
+<li><strong>ACI Bridge Domain</strong>: linking the associated Bridge Domain.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: a name alias in the ACI for the Endpoint Group.</li>
+<li><strong>Description</strong>: a description of the Endpoint Group.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>Admin shutdown</strong>: a boolean field, whether the EPG is in shutdown mode,
+  removing all policy configuration from all switches.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Custom QoS policy name</strong>: the name of the custom Quality of Service (Qos)
+  policy name associated with the EPG.</li>
+<li><strong>Flood in encapsulation enabled</strong>: a boolean field representing whether the
+  flooding traffic is limited to the encapsulation of the EPG.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Intra-EPG isolation enabled</strong>: a boolean field, whether the communication
+  between endpoints in the EPG is prevented.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>QoS class</strong>: represents the assignment of the ACI Quality of Service (QoS)
+  level for traffic sourced in the EPG.<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>level1</code> (level 1),
+  <code>level2</code> (level 2), <code>level3</code> (level 3), <code>level4</code> (level 4),
+  <code>level5</code> (level 5), <code>level6</code> (level 6)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Preferred group member enabled</strong>: a boolean field, if the EPG is a member
+  of the preferred group and allows communication without contracts.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Proxy-ARP enabled</strong>: a boolean field, whether proxy ARP is enabled for the
+  EPG.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="uSeg-Endpoint-Group">uSeg Endpoint Group<a class="headerlink" href="#uSeg-Endpoint-Group" title="Permanent link">#</a></h2>
+<p>An <em>uSeg Endpoint Group</em> (uSeg EPG) is a named collection of endpoints
+(network-connected devices) based on attributes for micro segmentation (uSeg).
+The EPG needs to be contained in an Application Profile and be linked to a
+Bridge Domain.
+uSeg Endpoint Groups consist of one or more associated
+<em>uSeg Network Attributes</em> defining the attributes segmenting one or more
+endpoints.</p>
+<p>The <em>ACIUSegEndpointGroup</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represents the uSeg Endpoint Group name in the ACI.</li>
+<li><strong>ACI Application Profile</strong>: indicates the Application Profile that contains
+  this uSeg Endpoint Group.</li>
+<li><strong>ACI Bridge Domain</strong>: links the associated Bridge Domain.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: a name alias in the ACI for the uSeg Endpoint Group.</li>
+<li><strong>Description</strong>: a description of the uSeg Endpoint Group.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>Admin shutdown</strong>: a boolean field, whether the uSeg EPG is in shutdown
+  mode, removing all policy configuration from all switches.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Custom QoS policy name</strong>: the name of the custom Quality of Service (Qos)
+  policy name associated with the uSeg EPG.</li>
+<li><strong>Flood in encapsulation enabled</strong>: a boolean field representing whether the
+  flooding traffic is limited to the encapsulation of the uSeg EPG.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Intra-EPG isolation enabled</strong>: a boolean field, whether the communication
+  between endpoints in the uSeg EPG is prevented.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Match operator</strong>: specifies the match operation for the referenced uSeg
+  attributes.<ul>
+<li>Values: <code>any</code> (any), <code>all</code> (all),</li>
+<li>Default: <code>any</code></li>
+</ul>
+</li>
+<li><strong>QoS class</strong>: represents the assignment of the ACI Quality of Service (QoS)
+  level for traffic sourced in the uSeg EPG.<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>level1</code> (level 1),
+  <code>level2</code> (level 2), <code>level3</code> (level 3), <code>level4</code> (level 4),
+  <code>level5</code> (level 5), <code>level6</code> (level 6)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Preferred group member enabled</strong>: a boolean field, if the uSeg EPG is a
+  member of the preferred group and allows communication without contracts.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="uSeg-Network-Attribute">uSeg Network Attribute<a class="headerlink" href="#uSeg-Network-Attribute" title="Permanent link">#</a></h2>
+<p>The <em>ACIUSegNetworkAttribute</em> model represents a network attribute associated
+with a uSeg Endpoint Group.
+This attribute is used to segment endpoints based on network parameters — such
+as IP address, MAC address or network prefix information.</p>
+<p>The <em>ACIUSegNetworkAttribute</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represents the uSeg Network Attribute name in the ACI.</li>
+<li><strong>ACI uSeg Endpoint Group</strong>: a reference to the uSeg Endpoint Group
+  associated with this network attribute.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: an alternate name for the uSeg Network Attribute.</li>
+<li><strong>Description</strong>: a description of the uSeg Network Attribute.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>Attribute Object Type</strong>: defines the type of the associated network object
+  (e.g., <em>IPAddress</em>, <em>MACAddress</em>, <em>Prefix</em>) in the form <code>app.model</code>.</li>
+<li><strong>Attribute Object ID</strong>: represents the (database) identifier for the
+  associated object.</li>
+<li><strong>Attribute Object</strong>: references the specific network object to which this
+  attribute applies.</li>
+<li><strong>Use EPG Subnet</strong>: a boolean indicating whether the uSeg Endpoint Group's
+  subnet should be used.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Type</strong>: specifies the ACI uSeg category of the network attribute
+  (read-only).</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Endpoint-Security-Group">Endpoint Security Group<a class="headerlink" href="#Endpoint-Security-Group" title="Permanent link">#</a></h2>
+<p>An <em>Endpoint Security Group</em> (ESG) is a named set of endpoints
+(network-connected devices) that applies security policies based on specified
+attributes.
+The ESG must be contained in an Application Profile and be linked to a VRF.</p>
+<p>The <em>ACIEndpointSecurityGroup</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represents the Endpoint Security Group name in the ACI.</li>
+<li><strong>ACI Application Profile</strong>: containing the Endpoint Security Group.</li>
+<li><strong>ACI VRF</strong>: a reference to the associated VRF.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: a name alias in the ACI for the Endpoint Security Group.</li>
+<li><strong>Description</strong>: a description of the Endpoint Group.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>Admin shutdown</strong>: a boolean field indicating whether the ESG is in shutdown
+  mode, removing all policy configuration from all switches.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Intra-ESG isolation enabled</strong>: a boolean field indicating whether the
+  communication between endpoints in the ESG is prevented.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Preferred group member enabled</strong>: a boolean field indicating whether the
+  ESG is in the preferred group, allowing communication without contracts.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="ESG-Endpoint-Group-EPG-Selector">ESG Endpoint Group (EPG) Selector<a class="headerlink" href="#ESG-Endpoint-Group-EPG-Selector" title="Permanent link">#</a></h2>
+<p>The <em>ACIEsgEndpointGroupSelector</em> model represents an Endpoint Group selector
+associated with an Endpoint Security Group.
+This selector is used to match Endpoint Groups based on the specified
+Endpoint Groups.</p>
+<p>The <em>ACIEsgEndpointGroupSelector</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represents the ESG Endpoint Group Selector name in the ACI.</li>
+<li><strong>ACI Endpoint Security Group</strong>: a reference to the Endpoint Security Group
+  associated with this endpoint group selector.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: an alternate name for the ESG Endpoint Group Selector.</li>
+<li><strong>Description</strong>: a description of the ESG Endpoint Group Selector.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>ACI EPG Object Type</strong>: defines the type of the associated Endpoint Group
+  object (e.g., <em>ACIEndpointGroup</em>, <em>ACIUSegEndpointGroup</em>) in the form
+  <code>app.model</code>.</li>
+<li><strong>ACI EPG Object ID</strong>: represents the (database) identifier for the
+  associated object.</li>
+<li><strong>ACI EPG Object</strong>: references the specific ACI Endpoint Group object to
+  which this selector applies.</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="ESG-Endpoint-Selector">ESG Endpoint Selector<a class="headerlink" href="#ESG-Endpoint-Selector" title="Permanent link">#</a></h2>
+<p>The <em>ACIEsgEndpointSelector</em> model represents an endpoint selector associated
+with an Endpoint Security Group.
+This selector is used to match specified endpoints based on network
+parameters — such as IP addresses or network prefix information.</p>
+<p>The <em>ACIEsgEndpointSelector</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represents the ESG Endpoint Selector name in the ACI.</li>
+<li><strong>ACI Endpoint Security Group</strong>: a reference to the Endpoint Security Group
+  associated with this endpoint selector.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name alias</strong>: an alternate name for the ESG Endpoint Selector.</li>
+<li><strong>Description</strong>: a description of the ESG Endpoint Selector.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model.</li>
+<li><strong>Endpoint Object Type</strong>: defines the type of the associated endpoint object
+  (e.g., <em>IPAddress</em>, <em>Prefix</em>) in the form <code>app.model</code>.</li>
+<li><strong>Endpoint Object ID</strong>: represents the (database) identifier for the
+  associated object.</li>
+<li><strong>Endpoint Object</strong>: references the specific network object to which this
+  selector applies.</li>
+<li><strong>Comments</strong>: a text field for additional notes.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Contract-Filter">Contract Filter<a class="headerlink" href="#Contract-Filter" title="Permanent link">#</a></h2>
+<p>A <em>Contract Filter</em> in the ACI policy model represents a filter that contains
+multiple filter entries defining the type of traffic that is allowed or denied.
+Each Contract Filter is associated with a <em>Tenant</em>.</p>
+<p>The <em>ACIContractFilter</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the Contract Filter name in the ACI.</li>
+<li><strong>ACI Tenant</strong>: a reference to the <code>ACITenant</code> model, associating the filter
+  with a specific tenant.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name Alias</strong>: an alias for the name of the filter in the ACI.</li>
+<li><strong>Description</strong>: a brief description of the filter.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model, linking the filter
+  to a NetBox tenant.</li>
+<li><strong>Comments</strong>: a text field for additional notes or comments.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Contract-Filter-Entry">Contract Filter Entry<a class="headerlink" href="#Contract-Filter-Entry" title="Permanent link">#</a></h2>
+<p>The <em>ACIContractFilterEntry</em> represents individual entries within a contract
+filter, specifying the types of traffic that either pass through or are blocked
+by the defined filter rules.
+One or more filters can be linked to the <code>ACIContractFilter</code> model.</p>
+<p>The <em>ACIContractFilterEntry</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: the name of the filter entry in the Contract Filter.</li>
+<li><strong>Contract Filter</strong>: a reference to the <code>ACIContractFilter</code> model,
+  associating the entry with a specific contract filter.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name Alias</strong>: an alias for the name of the filter entry.</li>
+<li><strong>Description</strong>: a brief description of the filter entry.</li>
+<li><strong>ARP OPC</strong>: specifies the ARP open peripheral codes for <em>Ethernet Type</em>
+  <code>arp</code> (ARP).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>req</code> (ARP request),
+  <code>reply</code> (ARP reply)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Destination from-port</strong>: sets the start of the filter destination port
+  range, in case for <em>IP Protocol</em> <code>tcp</code> (TCP) or <code>udp</code> (UDP).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>dns</code> (DNS), <code>ftpData</code> (FTP Data),
+  <code>http</code> (HTTP), <code>https</code> (HTTPS), <code>pop3</code> (POP3), <code>rtsp</code> (RTSP),
+  <code>smtp</code> (SMTP), <code>ssh</code> (SSH) or in range of <code>0</code>–<code>65535</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Destination to-port</strong>: sets the end of the filter destination port range,
+  in case for <em>IP Protocol</em> <code>tcp</code> (TCP) or <code>udp</code> (UDP).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>dns</code> (DNS), <code>ftpData</code> (FTP Data),
+  <code>http</code> (HTTP), <code>https</code> (HTTPS), <code>pop3</code> (POP3), <code>rtsp</code> (RTSP),
+  <code>smtp</code> (SMTP), <code>ssh</code> (SSH) or in range of <code>0</code>–<code>65535</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Ethernet type</strong>: declares the matching Ethernet type for the Filter Entry.<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>arp</code> (ARP), <code>fcoe</code> (FCOE),
+  <code>ip</code> (IP), <code>ipv4</code> (IPv4), <code>ipv6</code> (IPv6), <code>mac_security</code> (MAC Security),
+  <code>mpls_ucast</code> (MPLS Unicast), <code>trill</code> (Trill)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>ICMP v4 type</strong>: matches the specified ICMPv4 message type for <em>IP Protocol</em>
+  <code>icmp</code> (ICMPv4).<ul>
+<li>Values: <code>unspecified</code> (unspecified),
+  <code>dst-unreach</code> (destination unreachable), <code>echo</code> (echo request),
+  <code>echo-rep</code> (echo reply), <code>src-quench</code> (source quench),
+  <code>time-exceeded</code> (time exceeded)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>ICMP v6 type</strong>: matches the specified ICMPv6 message type for <em>IP Protocol</em>
+  <code>icmpv6</code> (ICMPv6).<ul>
+<li>Values: <code>unspecified</code> (unspecified),
+  <code>dst-unreach</code> (destination unreachable), <code>echo-req</code> (echo request),
+  <code>echo-rep</code> (echo reply), <code>nbr-advert</code> (neighbor advertisement),
+  <code>nbr-solicit</code> (neighbor solicitation), <code>time-exceeded</code> (time exceeded)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>IP protocol</strong>: specifies the layer 3 IP protocol type for <em>Ethernet Type</em>
+  <code>ip</code> (IP).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>egp</code> (EGP), <code>eigrp</code> (EIGRP),
+  <code>icmp</code> (ICMPv4), <code>icmpv6</code> (ICMPv6), <code>igmp</code> (IGMP), <code>igp</code> (IGP),
+  <code>l2tp</code> (L2TP), <code>ospfigp</code> (OSPF), <code>pim</code> (PIM), <code>tcp</code> (TCP), <code>udp</code> (UDP)
+  or in range of <code>0</code>-<code>255</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Match DSCP</strong>: matches the specific DSCP (Differentiated Services Code
+  Point) value for <em>Ethernet Type</em> <code>ip</code> (IP).<ul>
+<li>Values: <code>unspecified</code>, <code>AF11</code>, <code>AF12</code>, <code>AF13</code>, <code>AF21</code>, <code>AF22</code>, <code>AF23</code>,
+  <code>AF31</code>, <code>AF32</code>, <code>AF33</code>, <code>AF41</code>, <code>AF42</code>, <code>AF43</code>, <code>CS0</code>, <code>CS1</code>, <code>CS2</code>,
+  <code>CS3</code>, <code>CS4</code>, <code>CS5</code>, <code>CS6</code>, <code>CS7</code>, <code>EF</code>, <code>VA</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Match only fragments enabled</strong>: represents whether the filter rule
+  matches only fragments with offset greater than 0 (all fragments except the
+  first one).<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Source from-port</strong>: sets the start of the filter source port range, in case
+  for <em>IP Protocol</em> <code>tcp</code> (TCP) or <code>udp</code> (UDP).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>dns</code> (DNS), <code>ftpData</code> (FTP Data),
+  <code>http</code> (HTTP), <code>https</code> (HTTPS), <code>pop3</code> (POP3), <code>rtsp</code> (RTSP),
+  <code>smtp</code> (SMTP), <code>ssh</code> (SSH) or in range of <code>0</code>–<code>65535</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Source to-port</strong>: sets the end of the filter source port range, in case for
+  <em>IP Protocol</em> <code>tcp</code> (TCP) or <code>udp</code> (UDP).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>dns</code> (DNS), <code>ftpData</code> (FTP Data),
+  <code>http</code> (HTTP), <code>https</code> (HTTPS), <code>pop3</code> (POP3), <code>rtsp</code> (RTSP),
+  <code>smtp</code> (SMTP), <code>ssh</code> (SSH) or in range of <code>0</code>–<code>65535</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Stateful enabled</strong>: allows TCP packets from provider to consumer only if
+  the TCP flack ACK is set for <em>IP Protocol</em> <code>tcp</code> (TCP).<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>TCP rules</strong>: specifies a list of matching TCP flag values for <em>IP Protocol</em>
+  <code>tcp</code> (TCP).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>ack</code> (acknowledgement),
+  <code>est</code> (established), <code>fin</code> (finish), <code>rst</code> (reset), <code>syn</code> (synchronize)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: A text field for additional notes or comments.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Contract">Contract<a class="headerlink" href="#Contract" title="Permanent link">#</a></h2>
+<p>A <em>Contract</em> defines a set of policies that govern how traffic is permitted or
+denied between endpoints.
+Contracts consist of one or more associated <em>Contract Subjects</em> that define the
+exact <em>Contract Filters</em> for allowed or denied traffic.</p>
+<p>Each Contract is associated with an <em>ACI Tenant</em> and is used to manage the
+communication between <em>Consumers</em> and <em>Providers</em>.</p>
+<p>The <em>ACIContract</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the Contract name in the ACI.</li>
+<li><strong>ACI Tenant</strong>: a reference to the <code>ACITenant</code> model, associating the
+  contract with a specific tenant.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name Alias</strong>: an alias for the name of the contract in the ACI.</li>
+<li><strong>Description</strong>: a brief description of the contract.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model, linking the
+  contract to a NetBox tenant.</li>
+<li><strong>QoS class</strong>: specifies the priority handling, Quality of Service (QoS), for
+  traffic between Consumer and Provider within the fabric.<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>level1</code> (level 1),
+  <code>level2</code> (level 2), <code>level3</code> (level 3), <code>level4</code> (level 4),
+  <code>level5</code> (level 5), <code>level6</code> (level 6)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Scope</strong>: defines the extent within which the contract is applicable.<ul>
+<li>Values: <code>context</code> (VRF), <code>application-profile</code> (Application Profile),
+  <code>tenant</code> (Tenant), <code>global</code> (Global).</li>
+<li>Default: <code>context</code></li>
+</ul>
+</li>
+<li><strong>Target DSCP</strong>: rewrites the DSCP (Differentiated Services Code Point) value
+  of the incoming traffic to the specified value.<ul>
+<li>Values: <code>unspecified</code>, <code>AF11</code>, <code>AF12</code>, <code>AF13</code>, <code>AF21</code>, <code>AF22</code>, <code>AF23</code>,
+  <code>AF31</code>, <code>AF32</code>, <code>AF33</code>, <code>AF41</code>, <code>AF42</code>, <code>AF43</code>, <code>CS0</code>, <code>CS1</code>, <code>CS2</code>,
+  <code>CS3</code>, <code>CS4</code>, <code>CS5</code>, <code>CS6</code>, <code>CS7</code>, <code>EF</code>, <code>VA</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes or comments.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Contract-Relation">Contract Relation<a class="headerlink" href="#Contract-Relation" title="Permanent link">#</a></h2>
+<p>A <em>Contract Relation</em> links a <em>Contract</em> to specific ACI objects such as
+<em>Endpoint Groups</em> (EPG) or <em>Virtual Routing and Forwarding</em> (VRF) instances.
+A <em>Contract Relation</em> specifies the role of a given <em>Contract</em> for an
+associated ACI object, either as a <strong>Provider</strong> or a <strong>Consumer</strong>.
+Both the <em>Contract</em> and the associated ACI object must belong to the same
+<em>ACI Tenant</em>.</p>
+<p>The <em>ACIContractRelation</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>ACI Contract</strong>: a reference to the related <code>ACIContract</code> model.
+  This defines the Contract associated with the relation.</li>
+<li><strong>ACI Object Type</strong>: the type of the target ACI object (e.g.,
+  <em>Endpoint Group</em> or <em>VRF</em>) in the form <code>app.model</code>.<ul>
+<li>Values: <code>netbox_aci_plugin.aciendpointgroup</code> (Endpoint Group),
+  <code>netbox_aci_plugin.acivrf</code> (VRF)</li>
+</ul>
+</li>
+<li><strong>ACI Object ID</strong>: represents the (database) identifier for the specific
+  ACI object.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Role</strong>: specifies the role of the Contract for the associated ACI object.<ul>
+<li>Values: <code>prov</code> (Provider), <code>cons</code> (Consumer)</li>
+<li>Default: <code>prov</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes or comments.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Contract-Subject">Contract Subject<a class="headerlink" href="#Contract-Subject" title="Permanent link">#</a></h2>
+<p>A <em>Contract Subject</em> defines how contract filters and service graph templates
+are applied within a <em>Contract</em>.
+Each Subject is associated with an <em>ACI Contract</em>.</p>
+<p>The <em>ACIContractSubject</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>Name</strong>: represent the Contract Subject name in the ACI.</li>
+<li><strong>ACI Contract</strong>: a reference to the <code>ACIContract</code> model, associating the
+  subject with a specific contract.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Name Alias</strong>: an alias for the name of the subject in the ACI.</li>
+<li><strong>Description</strong>: a brief description of the subject.</li>
+<li><strong>NetBox Tenant</strong>: a reference to the NetBox tenant model, linking the
+  subject to a NetBox tenant.</li>
+<li><strong>Apply both directions enabled</strong>: indicates whether the filter associated
+  with the subject is applied in both directions
+  (consumer-to-provider and provider-to-consumer).<ul>
+<li>Default: <code>true</code></li>
+</ul>
+</li>
+<li><strong>QoS class</strong>: specifies the priority handling, Quality of Service (QoS), for
+  traffic between Consumer and Provider within the fabric.<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>level1</code> (level 1),
+  <code>level2</code> (level 2), <code>level3</code> (level 3), <code>level4</code> (level 4),
+  <code>level5</code> (level 5), <code>level6</code> (level 6)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>QoS class Consumer to Provider</strong>: specifies the priority handling,
+  Quality of Service (QoS), for traffic from Consumer to Provider within the
+  fabric (for disabled <code>apply_both_directions_enabled</code>).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>level1</code> (level 1),
+  <code>level2</code> (level 2), <code>level3</code> (level 3), <code>level4</code> (level 4),
+  <code>level5</code> (level 5), <code>level6</code> (level 6)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>QoS class Provider to Consumer</strong>: specifies the priority handling,
+  Quality of Service (QoS), for traffic from Provider to Consumer within the
+  fabric (for disabled <code>apply_both_directions_enabled</code>).<ul>
+<li>Values: <code>unspecified</code> (unspecified), <code>level1</code> (level 1),
+  <code>level2</code> (level 2), <code>level3</code> (level 3), <code>level4</code> (level 4),
+  <code>level5</code> (level 5), <code>level6</code> (level 6)</li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Reverse filter ports enabled</strong>: Indicates whether the source and
+  destination ports of the associated filter within the subject are reversed
+  for the return traffic.<ul>
+<li>Default: <code>true</code></li>
+</ul>
+</li>
+<li><strong>Service Graph name</strong>: the name of the Service Graph Template
+  associated with the subject.</li>
+<li><strong>Service Graph name Consumer to Provider</strong>: the name of the Service Graph
+  Template associated with the subject for traffic from Consumer to
+  Provider (for disabled <code>apply_both_directions_enabled</code>).</li>
+<li><strong>Service Graph name Provider to Consumer</strong>: the name of the Service Graph
+  Template associated with the subject for traffic from Provider to
+  Consumer (for disabled <code>apply_both_directions_enabled</code>).</li>
+<li><strong>Target DSCP</strong>: rewrites the DSCP (Differentiated Services Code Point) value
+  of the incoming traffic to the specified value.<ul>
+<li>Values: <code>unspecified</code>, <code>AF11</code>, <code>AF12</code>, <code>AF13</code>, <code>AF21</code>, <code>AF22</code>, <code>AF23</code>,
+  <code>AF31</code>, <code>AF32</code>, <code>AF33</code>, <code>AF41</code>, <code>AF42</code>, <code>AF43</code>, <code>CS0</code>, <code>CS1</code>, <code>CS2</code>,
+  <code>CS3</code>, <code>CS4</code>, <code>CS5</code>, <code>CS6</code>, <code>CS7</code>, <code>EF</code>, <code>VA</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Target DSCP Consumer to Provider</strong>: rewrites the DSCP (Differentiated
+  Services Code Point) value of the incoming traffic to the specified value
+  for traffic from Consumer to Provider within the fabric
+  (for disabled <code>apply_both_directions_enabled</code>).<ul>
+<li>Values: <code>unspecified</code>, <code>AF11</code>, <code>AF12</code>, <code>AF13</code>, <code>AF21</code>, <code>AF22</code>, <code>AF23</code>,
+  <code>AF31</code>, <code>AF32</code>, <code>AF33</code>, <code>AF41</code>, <code>AF42</code>, <code>AF43</code>, <code>CS0</code>, <code>CS1</code>, <code>CS2</code>,
+  <code>CS3</code>, <code>CS4</code>, <code>CS5</code>, <code>CS6</code>, <code>CS7</code>, <code>EF</code>, <code>VA</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Target DSCP Provider to Consumer</strong>: rewrites the DSCP (Differentiated
+  Services Code Point) value of the incoming traffic to the specified value
+  for traffic from Provider to Consumer within the fabric
+  (for disabled <code>apply_both_directions_enabled</code>).<ul>
+<li>Values: <code>unspecified</code>, <code>AF11</code>, <code>AF12</code>, <code>AF13</code>, <code>AF21</code>, <code>AF22</code>, <code>AF23</code>,
+  <code>AF31</code>, <code>AF32</code>, <code>AF33</code>, <code>AF41</code>, <code>AF42</code>, <code>AF43</code>, <code>CS0</code>, <code>CS1</code>, <code>CS2</code>,
+  <code>CS3</code>, <code>CS4</code>, <code>CS5</code>, <code>CS6</code>, <code>CS7</code>, <code>EF</code>, <code>VA</code></li>
+<li>Default: <code>unspecified</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes or comments.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+<h2 id="Contract-Subject-Filter">Contract Subject Filter<a class="headerlink" href="#Contract-Subject-Filter" title="Permanent link">#</a></h2>
+<p>The <em>Contract Subject Filter</em> defines the association of a <em>Contract Filter</em>
+with a <em>Contract Subject</em>.
+It specifies how the filter is applied to traffic between consumer and
+provider endpoints.</p>
+<p>The <em>ACIContractSubjectFilter</em> model has the following fields:</p>
+<p><em>Required fields</em>:</p>
+<ul>
+<li><strong>ACI Contract Filter</strong>: links to the associated <code>ACIContractFilter</code> model.</li>
+<li><strong>ACI Contract Subject</strong>: ties the filter to the <code>ACIContractSubject</code> model,
+  associating the given filter with a specific ACI Contract Subject.</li>
+</ul>
+<p><em>Optional fields</em>:</p>
+<ul>
+<li><strong>Action</strong>: determines whether the traffic is permitted or denied.<ul>
+<li>Values: <code>permit</code>, <code>deny</code></li>
+<li>Default: <code>permit</code></li>
+</ul>
+</li>
+<li><strong>Apply direction</strong>: specifies the direction to apply the filter.<ul>
+<li>Values: <code>both</code> (both directions), <code>ctp</code> (consumer to provider),
+  <code>ptc</code> (provider to consumer)</li>
+<li>Default: <code>both</code></li>
+</ul>
+</li>
+<li><strong>Log enabled</strong>: indicates whether logging is enabled for the applied filter.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Policy Compression enabled</strong>: specifies whether policy-based compression
+  for filtering is enabled.
+  This reduces the number of rules in the TCAM.<ul>
+<li>Default: <code>false</code></li>
+</ul>
+</li>
+<li><strong>Priority</strong>: sets the priority of deny actions.
+  The value is only valid for <em>action</em> <code>deny</code>.<ul>
+<li>Values: <code>default</code> (default level), <code>level1</code> (level 1),
+  <code>level2</code> (level 2), <code>level3</code> (level 3)</li>
+<li>Default: <code>default</code></li>
+</ul>
+</li>
+<li><strong>Comments</strong>: a text field for additional notes or comments.</li>
+<li><strong>Tags</strong>: a list of NetBox tags.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/pheus/netbox-aci-plugin" target="_blank" rel="noopener" title="Github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.indexes", "navigation.instant", "navigation.instant.progress", "navigation.tabs.sticky"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
