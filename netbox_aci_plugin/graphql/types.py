@@ -77,6 +77,11 @@ class ACIFabricType(NetBoxObjectType):
         """Return the scope object."""
         return self.scope
 
+    # Related models
+    aci_pods: list[
+        Annotated["ACIPodType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+    ]
+
 
 @strawberry_django.type(
     models.ACIPod,
