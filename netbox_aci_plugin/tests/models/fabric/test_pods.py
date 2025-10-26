@@ -84,18 +84,29 @@ class ACIPodTestCase(ACIBaseTestCase):
 
     def test_invalid_aci_pod_name(self) -> None:
         """Test validation of ACI Pod naming."""
-        pod = ACIPod(name="ACI Test Pod 1")
-        with self.assertRaises(ValidationError):
+        pod = ACIPod(
+            name="ACI Test Pod 1",
+            aci_fabric=self.aci_fabric,
+            pod_id=20,
+        )
+        with self.assertRaises(ValidationError) as cm:
             pod.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("name", cm.exception.error_dict)
 
     def test_invalid_aci_pod_name_length(self) -> None:
         """Test validation of ACI Pod name length."""
         pod = ACIPod(
             name="T" * 65,  # Exceeding the maximum length of 64
             aci_fabric=self.aci_fabric,
+            pod_id=20,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             pod.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("name", cm.exception.error_dict)
 
     def test_invalid_aci_pod_name_alias(self) -> None:
         """Test validation of ACI pod aliasing."""
@@ -103,9 +114,13 @@ class ACIPodTestCase(ACIBaseTestCase):
             name="ACIPodTest1",
             name_alias="Invalid Alias",
             aci_fabric=self.aci_fabric,
+            pod_id=20,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             pod.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("name_alias", cm.exception.error_dict)
 
     def test_invalid_aci_pod_description(self) -> None:
         """Test validation of ACI Pod description."""
@@ -113,9 +128,13 @@ class ACIPodTestCase(ACIBaseTestCase):
             name="ACITestPod1",
             description="Invalid Description: ö",
             aci_fabric=self.aci_fabric,
+            pod_id=20,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             pod.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("description", cm.exception.error_dict)
 
     def test_invalid_aci_pod_description_length(self) -> None:
         """Test validation of ACI Pod description length."""
@@ -123,9 +142,13 @@ class ACIPodTestCase(ACIBaseTestCase):
             name="ACITestPod1",
             description="T" * 129,  # Exceeding the maximum length of 128
             aci_fabric=self.aci_fabric,
+            pod_id=20,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             pod.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("description", cm.exception.error_dict)
 
     def test_invalid_aci_pod_id(self) -> None:
         """Test validation of ACI Pod ID value."""
@@ -134,19 +157,45 @@ class ACIPodTestCase(ACIBaseTestCase):
             aci_fabric=self.aci_fabric,
             pod_id=5000,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             pod.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("pod_id", cm.exception.error_dict)
+
+    def test_invalid_aci_pod_tep_pool(self) -> None:
+        """Test validation of the ACI Pod TEP pool prefix."""
+        invalid_tep_pool = Prefix(prefix="10.0.0.0/27")
+        invalid_tep_pool.full_clean()
+        invalid_tep_pool.save()
+        pod = ACIPod(
+            name="ACITestPod1",
+            aci_fabric=self.aci_fabric,
+            pod_id=20,
+            tep_pool=invalid_tep_pool,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            pod.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("tep_pool", cm.exception.error_dict)
 
     def test_constraint_unique_aci_pod_name(self) -> None:
         """Test unique constraint of ACI Pod name."""
-        duplicate_pod = ACIPod(name=self.aci_pod_name, aci_fabric=self.aci_fabric)
+        duplicate_pod = ACIPod(
+            name=self.aci_pod_name,
+            aci_fabric=self.aci_fabric,
+            pod_id=100,
+        )
         with self.assertRaises(IntegrityError):
             duplicate_pod.save()
 
     def test_constraint_unique_aci_pod_id(self) -> None:
         """Test unique constraint of ACI Pod ID."""
         duplicate_pod = ACIPod(
-            name="ACITestPod1", aci_fabric=self.aci_fabric, pod_id=self.aci_pod_id
+            name="ACITestPod1",
+            aci_fabric=self.aci_fabric,
+            pod_id=self.aci_pod_id,
         )
         with self.assertRaises(IntegrityError):
             duplicate_pod.save()
