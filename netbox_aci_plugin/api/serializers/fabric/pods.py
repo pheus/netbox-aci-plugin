@@ -74,7 +74,7 @@ class ACIPodSerializer(NetBoxModelSerializer):
 
     @extend_schema_field(serializers.JSONField(allow_null=True))
     def get_scope(self, obj):
-        """Return the attribute object as nested JSON."""
+        """Return the scope object as nested JSON."""
         if obj.scope_id is None:
             return None
         serializer = get_serializer_for_model(obj.scope)
