@@ -91,8 +91,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
             fabric_id=14,
             infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             fabric.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("name", cm.exception.error_dict)
 
     def test_invalid_aci_fabric_name_length(self) -> None:
         """Test validation of ACI Fabric name length."""
@@ -101,8 +104,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
             fabric_id=14,
             infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             fabric.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("name", cm.exception.error_dict)
 
     def test_invalid_aci_fabric_description(self) -> None:
         """Test validation of ACI Fabric description."""
@@ -112,8 +118,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
             fabric_id=14,
             infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             fabric.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("description", cm.exception.error_dict)
 
     def test_invalid_aci_fabric_description_length(self) -> None:
         """Test validation of ACI Fabric description length."""
@@ -123,8 +132,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
             fabric_id=14,
             infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             fabric.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("description", cm.exception.error_dict)
 
     def test_invalid_aci_fabric_id(self) -> None:
         """Test validation of ACI Fabric ID value."""
@@ -133,8 +145,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
             fabric_id=5000,
             infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             fabric.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("fabric_id", cm.exception.error_dict)
 
     def test_invalid_aci_fabric_infra_vlan_vid(self) -> None:
         """Test validation of ACI Fabric infra VLAN id."""
@@ -143,8 +158,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
             fabric_id=self.aci_fabric_id,
             infra_vlan_vid=5000,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             fabric.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("infra_vlan_vid", cm.exception.error_dict)
 
     def test_invalid_aci_fabric_infra_vlan_association(self) -> None:
         """Test validation of ACI Fabric infra VLAN association."""
@@ -155,8 +173,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
             infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
             infra_vlan=invalid_infra_vlan,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             fabric.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("infra_vlan", cm.exception.error_dict)
 
     def test_invalid_aci_fabric_gipo_pool(self) -> None:
         """Test validation of ACI Fabric GIPo pool prefix."""
@@ -169,8 +190,11 @@ class ACIFabricTestCase(ACIBaseTestCase):
             infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
             gipo_pool=invalid_gipo_pool,
         )
-        with self.assertRaises(ValidationError):
+        with self.assertRaises(ValidationError) as cm:
             fabric.full_clean()
+
+        # Check the specific field that failed
+        self.assertIn("gipo_pool", cm.exception.error_dict)
 
     def test_constraint_unique_aci_fabric_name(self) -> None:
         """Test unique constraint of ACI Fabric name."""
