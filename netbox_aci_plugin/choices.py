@@ -324,6 +324,42 @@ class ContractSubjectFilterPriorityChoices(ChoiceSet):
 
 
 #
+# Node
+#
+
+
+class NodeRoleChoices(ChoiceSet):
+    """Choice set of Node roles."""
+
+    ROLE_LEAF = "leaf"
+    ROLE_SPINE = "spine"
+    ROLE_APIC = "apic"
+
+    CHOICES = (
+        (ROLE_LEAF, _("Leaf"), "blue"),
+        (ROLE_SPINE, _("Spine"), "teal"),
+        (ROLE_APIC, _("APIC"), "purple"),
+    )
+
+
+class NodeTypeChoices(ChoiceSet):
+    """Choice set of Node types."""
+
+    # default "unknown"
+    TYPE_UNKNOWN = "unknown"
+    TYPE_TIER_2_LEAF = "tier-2-leaf"
+    TYPE_REMOTE_LEAF_WAN = "remote-leaf-wan"
+    TYPE_VIRTUAL = "virtual"
+
+    CHOICES = (
+        (TYPE_UNKNOWN, _("Unknown"), "gray"),
+        (TYPE_TIER_2_LEAF, _("Tier 2 Leaf"), "blue"),
+        (TYPE_REMOTE_LEAF_WAN, _("Remote Leaf WAN"), "teal"),
+        (TYPE_VIRTUAL, _("Virtual"), "purple"),
+    )
+
+
+#
 # Quality of Service (QoS)
 #
 

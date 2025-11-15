@@ -25,6 +25,8 @@ FABRIC_ID_MAX = 128
 POD_ID_MIN = 1
 POD_ID_MAX = 255
 
+NODE_ID_MIN = 1
+NODE_ID_MAX = 4000
 
 #
 # Contract Relation
@@ -83,4 +85,14 @@ USEG_NETWORK_ATTRIBUTES_MODELS = Q(
         ),
     )
     | Q(app_label="dcim", model="macaddress")
+)
+
+#
+# Node
+#
+
+# Node assignment to possible object types
+NODE_OBJECT_TYPES = Q(
+    Q(app_label="dcim", model="device")
+    | Q(app_label="virtualization", model="virtualmachine")
 )
