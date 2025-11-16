@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from dcim.models import DeviceRole, DeviceType, Manufacturer, Site
 from django.test import TestCase
-from ipam.models import VRF
+from ipam.models import VRF, Prefix
 from tenancy.models import Tenant
 
 from ...models.fabric.fabrics import ACIFabric
@@ -27,10 +28,24 @@ class ACIBaseFormTestCase(TestCase):
         """Set up required objects for form tests."""
         # Create NetBox objects
         cls.nb_tenant = Tenant.objects.create(
-            name="NetBoxBaseFormTestTenant",
+            name="ACIBaseFormTestTenant",
+        )
+        cls.site = Site.objects.create(
+            name="ACIBaseFormTestSite", slug="acibaseformtestsite"
+        )
+        cls.manufacturer = Manufacturer.objects.create(
+            name="ACIBaseFormTestManufacturer", slug="acibaseformtestmanufacturer"
+        )
+        cls.device_type1 = DeviceType.objects.create(
+            manufacturer=cls.manufacturer,
+            model="ACIBaseFormTestDeviceType1",
+            slug="acibaseformtestdevicetype1",
+        )
+        cls.device_role1 = DeviceRole.objects.create(
+            name="ACIBaseFormTestDeviceRole1", slug="acibaseformtestdevicerole1"
         )
         cls.nb_vrf = VRF.objects.create(
-            name="NetBoxBaseFormTestVRF",
+            name="ACIBaseFormTestVRF",
             tenant=cls.nb_tenant,
         )
 
@@ -40,10 +55,14 @@ class ACIBaseFormTestCase(TestCase):
             fabric_id=101,
             infra_vlan_vid=3900,
         )
+        cls.aci_pod_tep_pool = Prefix(prefix="10.0.32.0/19")
+        cls.aci_pod_tep_pool.full_clean()
+        cls.aci_pod_tep_pool.save()
         cls.aci_pod = ACIPod.objects.create(
             name="ACIBaseFormTestPod",
             aci_fabric=cls.aci_fabric,
             pod_id=101,
+            tep_pool=cls.aci_pod_tep_pool,
         )
 
         # Create ACITenant objects
