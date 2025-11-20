@@ -26,6 +26,15 @@ urlpatterns: tuple = (
         "pods/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acipod")),
     ),
+    # ACI Node
+    path(
+        "nodes/",
+        include(get_model_urls("netbox_aci_plugin", "acinode", detail=False)),
+    ),
+    path(
+        "nodes/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acinode")),
+    ),
     # ACI Tenants
     path(
         "tenants/",
