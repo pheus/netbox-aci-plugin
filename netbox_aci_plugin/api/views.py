@@ -5,6 +5,7 @@
 from netbox.api.viewsets import NetBoxModelViewSet
 
 from ..filtersets.fabric.fabrics import ACIFabricFilterSet
+from ..filtersets.fabric.nodes import ACINodeFilterSet
 from ..filtersets.fabric.pods import ACIPodFilterSet
 from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ..filtersets.tenant.bridge_domains import (
@@ -34,6 +35,7 @@ from ..filtersets.tenant.endpoint_security_groups import (
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
 from ..models.fabric.fabrics import ACIFabric
+from ..models.fabric.nodes import ACINode
 from ..models.fabric.pods import ACIPod
 from ..models.tenant.app_profiles import ACIAppProfile
 from ..models.tenant.bridge_domains import (
@@ -77,6 +79,7 @@ from .serializers import (
     ACIEsgEndpointGroupSelectorSerializer,
     ACIEsgEndpointSelectorSerializer,
     ACIFabricSerializer,
+    ACINodeSerializer,
     ACIPodSerializer,
     ACITenantSerializer,
     ACIUSegEndpointGroupSerializer,
@@ -111,6 +114,22 @@ class ACIPodListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIPodSerializer
     filterset_class = ACIPodFilterSet
+
+
+class ACINodeListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Node instances."""
+
+    queryset = ACINode.objects.select_related(
+        "aci_pod",
+        "node_object_type",
+        "tep_ip_address",
+        "nb_tenant",
+    ).prefetch_related(
+        "node_object",
+        "tags",
+    )
+    serializer_class = ACINodeSerializer
+    filterset_class = ACINodeFilterSet
 
 
 class ACITenantListViewSet(NetBoxModelViewSet):
