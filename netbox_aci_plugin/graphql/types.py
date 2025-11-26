@@ -24,6 +24,7 @@ from .filters import (
     ACIEsgEndpointGroupSelectorFilter,
     ACIEsgEndpointSelectorFilter,
     ACIFabricFilter,
+    ACINodeFilter,
     ACIPodFilter,
     ACITenantFilter,
     ACIUSegEndpointGroupFilter,
@@ -33,6 +34,7 @@ from .filters import (
 
 if TYPE_CHECKING:
     from dcim.graphql.types import (
+        DeviceType,
         LocationType,
         MACAddressType,
         RegionType,
@@ -46,6 +48,7 @@ if TYPE_CHECKING:
         VRFType,
     )
     from tenancy.graphql.types import TenantType
+    from virtualization.graphql.types import VirtualMachineType
 
 
 @strawberry_django.type(
@@ -114,6 +117,46 @@ class ACIPodType(NetBoxObjectType):
     ):
         """Return the scope object."""
         return self.scope
+
+    # Related models
+    aci_nodes: list[
+        Annotated["ACINodeType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+    ]
+
+
+@strawberry_django.type(
+    models.ACINode,
+    exclude=["node_object_type", "node_object_id", "_device", "_virtual_machine"],
+    filters=ACINodeFilter,
+)
+class ACINodeType(NetBoxObjectType):
+    """GraphQL type definition for the ACINode model."""
+
+    # Model fields
+    aci_pod: (
+        Annotated["ACIPodType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+        | None
+    )
+    tep_ip_address: (
+        Annotated["IPAddressType", strawberry.lazy("ipam.graphql.types")] | None
+    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    @strawberry_django.field(description="Node Object")
+    def node_object(
+        self,
+    ) -> (
+        Annotated[
+            Annotated["DeviceType", strawberry.lazy("dcim.graphql.types")]
+            | Annotated[
+                "VirtualMachineType", strawberry.lazy("virtualization.graphql.types")
+            ],
+            strawberry.union("ACINodeNodeObjectType"),
+        ]
+        | None
+    ):
+        """Return the node_object object."""
+        return self.node_object
 
 
 @strawberry_django.type(models.ACITenant, fields="__all__", filters=ACITenantFilter)

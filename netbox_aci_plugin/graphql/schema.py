@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-
 import strawberry
 import strawberry_django
 
@@ -21,6 +20,7 @@ from .types import (
     ACIEsgEndpointGroupSelectorType,
     ACIEsgEndpointSelectorType,
     ACIFabricType,
+    ACINodeType,
     ACIPodType,
     ACITenantType,
     ACIUSegEndpointGroupType,
@@ -38,6 +38,9 @@ class NetBoxACIQuery:
 
     aci_pod: ACIPodType = strawberry_django.field()
     aci_pod_list: list[ACIPodType] = strawberry_django.field()
+
+    aci_node: ACINodeType = strawberry_django.field()
+    aci_node_list: list[ACINodeType] = strawberry_django.field()
 
     aci_tenant: ACITenantType = strawberry_django.field()
     aci_tenant_list: list[ACITenantType] = strawberry_django.field()
