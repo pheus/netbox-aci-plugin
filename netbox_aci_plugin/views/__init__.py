@@ -5,6 +5,13 @@ from .fabric.fabrics import (
     ACIFabricEditView,
     ACIFabricListView,
 )
+from .fabric.nodes import (
+    ACINodeBulkDeleteView,
+    ACINodeBulkEditView,
+    ACINodeBulkImportView,
+    ACINodeEditView,
+    ACINodeListView,
+)
 from .fabric.pods import (
     ACIPodBulkDeleteView,
     ACIPodBulkEditView,
@@ -199,6 +206,12 @@ __all__ = (
     "ACIFabricBulkImportView",
     "ACIFabricEditView",
     "ACIFabricListView",
+    # ACINode
+    "ACINodeBulkDeleteView",
+    "ACINodeBulkEditView",
+    "ACINodeBulkImportView",
+    "ACINodeEditView",
+    "ACINodeListView",
     # ACIPod
     "ACIPodBulkDeleteView",
     "ACIPodBulkEditView",

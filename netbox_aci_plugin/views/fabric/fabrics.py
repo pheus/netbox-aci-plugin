@@ -2,8 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from django.utils.translation import gettext_lazy as _
 from netbox.views import generic
-from utilities.views import GetRelatedModelsMixin, register_model_view
+from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
 
 from ...filtersets.fabric.fabrics import ACIFabricFilterSet
 from ...forms.fabric.fabrics import (
@@ -13,9 +18,15 @@ from ...forms.fabric.fabrics import (
     ACIFabricImportForm,
 )
 from ...models.fabric.fabrics import ACIFabric
+from ...models.fabric.nodes import ACINode
 from ...tables.fabric.fabrics import ACIFabricTable
+from ..fabric.nodes import ACINodeChildrenView
 from ..fabric.pods import ACIPodChildrenView
 from ..tenant.tenants import ACITenantChildrenView
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
+
 
 #
 # Fabric views
@@ -30,7 +41,21 @@ class ACIFabricView(GetRelatedModelsMixin, generic.ObjectView):
 
     def get_extra_context(self, request, instance) -> dict:
         """Return related models as extra context."""
-        return {"related_models": self.get_related_models(request, instance)}
+        # Get extra related models of directly referenced models
+        extra_related_models: tuple[tuple[QuerySet, str], ...] = (
+            (
+                ACINode.objects.restrict(request.user, "view").filter(
+                    aci_pod__aci_fabric=instance
+                ),
+                "aci_fabric_id",
+            ),
+        )
+
+        return {
+            "related_models": self.get_related_models(
+                request, instance, extra=extra_related_models
+            )
+        }
 
 
 @register_model_view(ACIFabric, "list", path="", detail=False)
@@ -69,6 +94,37 @@ class ACIFabricPodView(ACIPodChildrenView):
     def get_children(self, request, parent):
         """Return all ACIPod objects for the current ACIFabric."""
         return super().get_children(request, parent).filter(aci_fabric_id=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACIFabric colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIFabric column
+        table.columns.hide("aci_fabric")
+
+        return table
+
+
+@register_model_view(ACIFabric, "nodes", path="nodes")
+class ACIFabricNodeView(ACINodeChildrenView):
+    """Children view of ACI Node of ACI Fabric."""
+
+    queryset = ACIFabric.objects.all()
+    tab = ViewTab(
+        label=_("Nodes"),
+        badge=lambda obj: ACINodeChildrenView.child_model.objects.filter(
+            aci_pod__aci_fabric=obj.pk
+        ).count(),
+        permission="netbox_aci_plugin.view_acinode",
+        weight=1000,
+    )
+    template_name = "netbox_aci_plugin/inc/acifabric/nodes.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super().get_children(request, parent).filter(aci_pod__aci_fabric=parent.pk)
+        )
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACIFabric colum hidden."""

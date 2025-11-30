@@ -17,6 +17,7 @@ from ...forms.fabric.pods import (
 )
 from ...models.fabric.pods import ACIPod
 from ...tables.fabric.pods import ACIPodTable
+from ..fabric.nodes import ACINodeChildrenView
 
 #
 # Base children views
@@ -99,6 +100,27 @@ class ACIPodDeleteView(generic.ObjectDeleteView):
     queryset = ACIPod.objects.select_related(
         "aci_fabric", "tep_pool", "nb_tenant"
     ).prefetch_related("tags")
+
+
+@register_model_view(ACIPod, "nodes", path="nodes")
+class ACIPodNodeView(ACINodeChildrenView):
+    """Children view of ACI Pod of ACI Pod."""
+
+    queryset = ACIPod.objects.all()
+    template_name = "netbox_aci_plugin/inc/acipod/nodes.html"
+
+    def get_children(self, request, parent):
+        """Return all ACINode objects for the current ACIPod."""
+        return super().get_children(request, parent).filter(aci_pod_id=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACIPod colum hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIPod column
+        table.columns.hide("aci_pod")
+
+        return table
 
 
 @register_model_view(ACIPod, "bulk_import", path="import", detail=False)

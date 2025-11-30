@@ -20,6 +20,8 @@ from ..choices import (
     ContractSubjectFilterActionChoices,
     ContractSubjectFilterApplyDirectionChoices,
     ContractSubjectFilterPriorityChoices,
+    NodeRoleChoices,
+    NodeTypeChoices,
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
     USegAttributeMatchOperatorChoices,
@@ -44,6 +46,8 @@ __all__ = (
     "ContractSubjectFilterActionEnum",
     "ContractSubjectFilterApplyDirectionEnum",
     "ContractSubjectFilterPriorityEnum",
+    "NodeRoleEnum",
+    "NodeTypeEnum",
     "QualityOfServiceClassEnum",
     "QualityOfServiceDSCPEnum",
     "USegAttributeMatchOperatorEnum",
@@ -107,6 +111,13 @@ ContractSubjectFilterApplyDirectionEnum = strawberry.enum(
 ContractSubjectFilterPriorityEnum = strawberry.enum(
     ContractSubjectFilterPriorityChoices.as_enum()
 )
+
+#
+# Node
+#
+
+NodeRoleEnum = strawberry.enum(NodeRoleChoices.as_enum())
+NodeTypeEnum = strawberry.enum(NodeTypeChoices.as_enum())
 
 #
 # Quality of Service (QoS)

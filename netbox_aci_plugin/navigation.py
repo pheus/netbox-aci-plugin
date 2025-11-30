@@ -297,6 +297,28 @@ acipod_item = PluginMenuItem(
         ),
     ),
 )
+
+# ACI Node
+acinode_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acinode_list",
+    link_text="Nodes",
+    permissions=["netbox_aci_plugin.view_acinode"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acinode_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acinode"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acinode_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acinode"],
+        ),
+    ),
+)
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -336,6 +358,7 @@ menu = PluginMenu(
             (
                 acifabric_item,
                 acipod_item,
+                acinode_item,
             ),
         ),
     ),
