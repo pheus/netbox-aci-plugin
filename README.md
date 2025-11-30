@@ -35,6 +35,7 @@ Bridge Domains (BD), and VRFs (Contexts).
     - Fabrics
         - Fabrics
         - Pods
+        - Nodes
     - Tenants
         - Tenants
         - Application Profiles
