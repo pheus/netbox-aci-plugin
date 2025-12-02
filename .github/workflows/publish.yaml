@@ -29,9 +29,9 @@ jobs:
 
     steps:
       - name: Checkout repository 🧩
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Python 🐍
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: "pip"
@@ -46,7 +46,7 @@ jobs:
         run: |
           twine check dist/*
       - name: Upload the distribution packages 📦
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: python-package-distributions
           path: dist/
@@ -61,9 +61,9 @@ jobs:
 
     steps:
       - name: Checkout repository 🧩
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Python 🐍
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: "pip"
@@ -95,13 +95,13 @@ jobs:
 
     steps:
       - name: Checkout repository 🧩
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Capture version from tag 📝
         run: |
           TAG=$(git describe HEAD --tags --abbrev=0 | sed 's/^v//')
           echo "PACKAGE_VERSION=$TAG" >> "$GITHUB_ENV"
       - name: Download dists 📦
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: python-package-distributions
           path: dist/
@@ -151,7 +151,7 @@ jobs:
       contents: read
     steps:
       - name: Download dists 📦
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: python-package-distributions
           path: dist/

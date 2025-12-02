@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up repository 🧩
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Python 🐍
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.x"
           cache: "pip"
@@ -54,19 +54,19 @@ jobs:
 
     steps:
       - name: Checkout repository of the plugin 🧩
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: netbox_aci_plugin
 
       - name: Checkout repository of NetBox ${{ matrix.netbox-version }} 📦
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: "netbox-community/netbox"
           ref: ${{ matrix.netbox-version }}
           path: netbox
 
       - name: Set up Python ${{ matrix.python-version }} 🐍
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
