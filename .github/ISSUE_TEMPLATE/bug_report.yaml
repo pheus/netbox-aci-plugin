@@ -20,7 +20,7 @@ body:
     attributes:
       label: NetBox version
       description: What version of NetBox are you currently running?
-      placeholder: v4.4.0
+      placeholder: v4.5.0
     validations:
       required: true
   - type: dropdown
@@ -28,9 +28,9 @@ body:
       label: Python version
       description: What version of Python are you currently running?
       options:
-        - "3.10"
-        - "3.11"
         - "3.12"
+        - "3.13"
+        - "3.14"
     validations:
       required: true
   - type: textarea
