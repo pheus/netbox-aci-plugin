@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Annotated
 import strawberry
 import strawberry_django
 from dcim.graphql.filter_mixins import ScopedFilterMixin
-from netbox.graphql.filter_mixins import NetBoxModelFilterMixin
+from netbox.graphql.filters import NetBoxModelFilter
 from strawberry.scalars import ID
 from strawberry_django import ComparisonFilterLookup, FilterLookup
 
@@ -23,7 +23,7 @@ __all__ = ("ACIFabricFilter",)
 
 
 @strawberry_django.filter(models.ACIFabric, lookups=True)
-class ACIFabricFilter(ScopedFilterMixin, NetBoxModelFilterMixin):
+class ACIFabricFilter(ScopedFilterMixin, NetBoxModelFilter):
     """GraphQL filter definition for the ACIFabric model."""
 
     name: FilterLookup[str] | None = strawberry_django.filter_field()

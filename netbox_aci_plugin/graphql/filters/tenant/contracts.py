@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Annotated
 
 import strawberry
 import strawberry_django
-from netbox.graphql.filter_mixins import NetBoxModelFilterMixin
+from netbox.graphql.filters import NetBoxModelFilter
 from strawberry.scalars import ID
 from strawberry_django import FilterLookup
 
@@ -73,7 +73,7 @@ class ACIContractFilter(ACIBaseFilterMixin):
 
 
 @strawberry_django.filter(models.ACIContractRelation, lookups=True)
-class ACIContractRelationFilter(NetBoxModelFilterMixin):
+class ACIContractRelationFilter(NetBoxModelFilter):
     """GraphQL filter definition for the ACIContractRelation model."""
 
     aci_contract: (
@@ -98,7 +98,7 @@ class ACIContractRelationFilter(NetBoxModelFilterMixin):
 
 
 @strawberry_django.filter(models.ACIContractSubject, lookups=True)
-class ACIContractSubjectFilter(NetBoxModelFilterMixin):
+class ACIContractSubjectFilter(NetBoxModelFilter):
     """GraphQL filter definition for the ACIContractSubject model."""
 
     aci_contract: (
