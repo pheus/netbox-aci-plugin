@@ -3,12 +3,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
-from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
+from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
-from utilities.api import get_serializer_for_model
 
 from ....constants import CONTRACT_RELATION_OBJECT_TYPES
 from ....models.tenant.contracts import (
@@ -81,7 +80,7 @@ class ACIContractRelationSerializer(NetBoxModelSerializer):
         default=None,
         allow_null=True,
     )
-    aci_object = serializers.SerializerMethodField(read_only=True)
+    aci_object = GFKSerializerField(read_only=True)
 
     class Meta:
         model = ACIContractRelation
@@ -110,15 +109,6 @@ class ACIContractRelationSerializer(NetBoxModelSerializer):
             "aci_object",
             "role",
         )
-
-    @extend_schema_field(serializers.JSONField(allow_null=True))
-    def get_aci_object(self, obj):
-        """Return the ACI object as nested JSON."""
-        if obj.aci_object_id is None:
-            return None
-        serializer = get_serializer_for_model(obj.aci_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.aci_object, nested=True, context=context).data
 
 
 class ACIContractSubjectSerializer(NetBoxModelSerializer):
