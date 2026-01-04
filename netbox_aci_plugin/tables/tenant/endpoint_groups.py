@@ -46,6 +46,15 @@ class ACIEndpointGroupTable(NetBoxTable):
     qos_class = columns.ChoiceFieldColumn(
         verbose_name=_("QoS class"),
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -56,11 +65,11 @@ class ACIEndpointGroupTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_app_profile",
             "aci_bridge_domain",
             "nb_tenant",
-            "description",
             "admin_shutdown",
             "custom_qos_policy_name",
             "flood_in_encap_enabled",
@@ -68,6 +77,7 @@ class ACIEndpointGroupTable(NetBoxTable):
             "qos_class",
             "preferred_group_member_enabled",
             "proxy_arp_enabled",
+            "owner",
             "tags",
             "comments",
         )
@@ -114,6 +124,15 @@ class ACIUSegEndpointGroupTable(NetBoxTable):
     qos_class = columns.ChoiceFieldColumn(
         verbose_name=_("QoS class"),
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -124,17 +143,18 @@ class ACIUSegEndpointGroupTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_app_profile",
             "aci_bridge_domain",
             "nb_tenant",
-            "description",
             "admin_shutdown",
             "custom_qos_policy_name",
             "flood_in_encap_enabled",
             "intra_epg_isolation_enabled",
             "qos_class",
             "preferred_group_member_enabled",
+            "owner",
             "tags",
             "comments",
         )
@@ -191,6 +211,15 @@ class ACIUSegNetworkAttributeTable(NetBoxTable):
     type = columns.ChoiceFieldColumn(
         verbose_name=_("Type"),
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -201,15 +230,16 @@ class ACIUSegNetworkAttributeTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_app_profile",
             "aci_useg_endpoint_group",
             "attr_object_type",
             "attr_object",
             "nb_tenant",
-            "description",
             "type",
             "use_epg_subnet",
+            "owner",
             "tags",
             "comments",
         )

@@ -46,6 +46,15 @@ class ACIContractTable(NetBoxTable):
     target_dscp = columns.ChoiceFieldColumn(
         verbose_name=_("Target DSCP"),
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -56,12 +65,13 @@ class ACIContractTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "nb_tenant",
-            "description",
             "qos_class",
             "scope",
             "target_dscp",
+            "owner",
             "tags",
             "comments",
         )
@@ -200,6 +210,15 @@ class ACIContractSubjectTable(NetBoxTable):
     target_dscp_prov_to_cons = columns.ChoiceFieldColumn(
         verbose_name=_("Target DSCP (prov->cons)"),
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -210,10 +229,10 @@ class ACIContractSubjectTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_contract",
             "nb_tenant",
-            "description",
             "apply_both_directions_enabled",
             "qos_class",
             "qos_class_cons_to_prov",
@@ -225,6 +244,7 @@ class ACIContractSubjectTable(NetBoxTable):
             "target_dscp",
             "target_dscp_cons_to_prov",
             "target_dscp_prov_to_cons",
+            "owner",
             "tags",
             "comments",
         )

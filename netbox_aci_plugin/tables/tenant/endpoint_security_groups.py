@@ -42,6 +42,15 @@ class ACIEndpointSecurityGroupTable(NetBoxTable):
     nb_tenant = tables.Column(
         linkify=True,
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -52,14 +61,15 @@ class ACIEndpointSecurityGroupTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_app_profile",
             "aci_vrf",
             "nb_tenant",
-            "description",
             "admin_shutdown",
             "intra_esg_isolation_enabled",
             "preferred_group_member_enabled",
+            "owner",
             "tags",
             "comments",
         )
@@ -121,6 +131,15 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
     nb_tenant = tables.Column(
         linkify=True,
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -131,6 +150,7 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_app_profile",
             "aci_endpoint_security_group",
@@ -139,7 +159,7 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
             "aci_epg_object_type",
             "aci_epg_object",
             "nb_tenant",
-            "description",
+            "owner",
             "tags",
             "comments",
         )
@@ -196,6 +216,15 @@ class ACIEsgEndpointSelectorTable(NetBoxTable):
     nb_tenant = tables.Column(
         linkify=True,
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -206,13 +235,14 @@ class ACIEsgEndpointSelectorTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_app_profile",
             "aci_endpoint_security_group",
             "ep_object_type",
             "ep_object",
             "nb_tenant",
-            "description",
+            "owner",
             "tags",
             "comments",
         )

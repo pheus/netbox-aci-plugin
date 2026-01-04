@@ -84,6 +84,15 @@ class ACIBridgeDomainTable(NetBoxTable):
         orderable=False,
         template_code=BRIDGEDOMAIN_SUBNETS,
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -94,10 +103,10 @@ class ACIBridgeDomainTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_vrf",
             "nb_tenant",
-            "description",
             "advertise_host_routes_enabled",
             "arp_flooding_enabled",
             "clear_remote_mac_enabled",
@@ -118,6 +127,7 @@ class ACIBridgeDomainTable(NetBoxTable):
             "unknown_ipv6_multicast",
             "unknown_unicast",
             "virtual_mac_address",
+            "owner",
             "tags",
             "comments",
         )
@@ -189,6 +199,15 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
     virtual_ip_enabled = columns.BooleanColumn(
         verbose_name=_("VIP"),
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -200,11 +219,11 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
             "name",
             "gateway_ip_address",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_vrf",
             "aci_bridge_domain",
             "nb_tenant",
-            "description",
             "advertised_externally_enabled",
             "igmp_querier_enabled",
             "ip_data_plane_learning_enabled",
@@ -214,6 +233,7 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
             "preferred_ip_address_enabled",
             "shared_enabled",
             "virtual_ip_enabled",
+            "owner",
             "tags",
             "comments",
         )

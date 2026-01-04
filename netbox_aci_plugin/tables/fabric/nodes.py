@@ -59,6 +59,15 @@ class ACINodeTable(NetBoxTable):
     nb_tenant = tables.Column(
         linkify=True,
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -79,6 +88,7 @@ class ACINodeTable(NetBoxTable):
             "node_type",
             "tep_ip_address",
             "nb_tenant",
+            "owner",
             "tags",
             "comments",
         )
