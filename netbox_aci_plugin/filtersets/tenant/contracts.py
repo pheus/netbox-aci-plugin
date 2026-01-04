@@ -9,6 +9,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
+from users.filterset_mixins import OwnerFilterMixin
 from utilities.filters import ContentTypeFilter
 
 from ...choices import (
@@ -35,7 +36,10 @@ from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
 class ACIContractFilterSet(
-    ACITenantFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+    ACITenantFilterSetMixin,
+    NBTenantFilterSetMixin,
+    OwnerFilterMixin,
+    NetBoxModelFilterSet,
 ):
     """Filter set for the ACI Contract model."""
 
@@ -232,7 +236,9 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         return queryset.filter(queryset_filter)
 
 
-class ACIContractSubjectFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
+class ACIContractSubjectFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI Contract Subject model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(

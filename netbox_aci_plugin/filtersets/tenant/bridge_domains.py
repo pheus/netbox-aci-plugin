@@ -10,6 +10,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from ipam.models import IPAddress
 from netbox.filtersets import NetBoxModelFilterSet
+from users.filterset_mixins import OwnerFilterMixin
 from utilities.filters import MultiValueMACAddressFilter
 
 from ...choices import (
@@ -28,7 +29,10 @@ from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
 class ACIBridgeDomainFilterSet(
-    ACITenantFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+    ACITenantFilterSetMixin,
+    NBTenantFilterSetMixin,
+    OwnerFilterMixin,
+    NetBoxModelFilterSet,
 ):
     """Filter set for the ACI Bridge Domain model."""
 
@@ -140,7 +144,9 @@ class ACIBridgeDomainFilterSet(
         )
 
 
-class ACIBridgeDomainSubnetFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
+class ACIBridgeDomainSubnetFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI Bridge Domain Subnet model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(

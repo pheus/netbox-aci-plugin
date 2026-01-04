@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from ipam.models import VRF, IPAddress, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
+from users.filterset_mixins import OwnerFilterMixin
 from utilities.filters import ContentTypeFilter
 
 from ...models.fabric.fabrics import ACIFabric
@@ -25,7 +26,9 @@ from ...models.tenant.vrfs import ACIVRF
 from ..mixins import NBTenantFilterSetMixin
 
 
-class ACIEndpointSecurityGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
+class ACIEndpointSecurityGroupFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI Endpoint Security Group model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
@@ -103,7 +106,7 @@ class ACIEndpointSecurityGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilte
 
 
 class ACIEsgEndpointGroupSelectorFilterSet(
-    NBTenantFilterSetMixin, NetBoxModelFilterSet
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
 ):
     """Filter set for the ACI ESG Endpoint Group (EPG) Selector model."""
 
@@ -239,7 +242,9 @@ class ACIEsgEndpointGroupSelectorFilterSet(
         return queryset.filter(queryset_filter)
 
 
-class ACIEsgEndpointSelectorFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
+class ACIEsgEndpointSelectorFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI ESG Endpoint Selector model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(

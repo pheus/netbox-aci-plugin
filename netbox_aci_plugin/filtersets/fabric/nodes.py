@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from ipam.models import IPAddress
 from netbox.filtersets import NetBoxModelFilterSet
+from users.filterset_mixins import OwnerFilterMixin
 from utilities.filters import ContentTypeFilter
 from virtualization.models import VirtualMachine
 
@@ -18,7 +19,10 @@ from ..mixins import ACIFabricFilterSetMixin, NBTenantFilterSetMixin
 
 
 class ACINodeFilterSet(
-    ACIFabricFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+    ACIFabricFilterSetMixin,
+    NBTenantFilterSetMixin,
+    OwnerFilterMixin,
+    NetBoxModelFilterSet,
 ):
     """Filter set for the ACI Node model."""
 

@@ -4,13 +4,17 @@
 
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
+from users.filterset_mixins import OwnerFilterMixin
 
 from ...models.tenant.app_profiles import ACIAppProfile
 from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
 class ACIAppProfileFilterSet(
-    ACITenantFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+    ACITenantFilterSetMixin,
+    NBTenantFilterSetMixin,
+    OwnerFilterMixin,
+    NetBoxModelFilterSet,
 ):
     """Filter set for the ACI Application Profile model."""
 

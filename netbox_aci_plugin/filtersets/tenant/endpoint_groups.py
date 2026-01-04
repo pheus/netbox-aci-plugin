@@ -10,6 +10,7 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from ipam.models import VRF, IPAddress, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
+from users.filterset_mixins import OwnerFilterMixin
 from utilities.filters import ContentTypeFilter
 
 from ...choices import QualityOfServiceClassChoices, USegAttributeTypeChoices
@@ -27,7 +28,9 @@ from ...models.tenant.vrfs import ACIVRF
 from ..mixins import NBTenantFilterSetMixin
 
 
-class ACIEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
+class ACIEndpointGroupFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI Endpoint Group model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
@@ -142,7 +145,9 @@ class ACIEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
         )
 
 
-class ACIUSegEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
+class ACIUSegEndpointGroupFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI uSeg Endpoint Group model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
@@ -256,7 +261,9 @@ class ACIUSegEndpointGroupFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet
         )
 
 
-class ACIUSegNetworkAttributeFilterSet(NBTenantFilterSetMixin, NetBoxModelFilterSet):
+class ACIUSegNetworkAttributeFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI uSeg Network Attribute model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
