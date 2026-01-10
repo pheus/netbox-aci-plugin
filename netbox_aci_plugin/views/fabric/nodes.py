@@ -45,6 +45,7 @@ class ACINodeChildrenView(generic.ObjectChildrenView):
                 "node_object_type",
                 "tep_ip_address",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "node_object",
@@ -63,7 +64,7 @@ class ACINodeView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Node."""
 
     queryset = ACINode.objects.select_related(
-        "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant"
+        "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant", "owner"
     ).prefetch_related("node_object", "tags")
 
 
@@ -72,7 +73,7 @@ class ACINodeListView(generic.ObjectListView):
     """List view for listing all objects of ACI Node."""
 
     queryset = ACINode.objects.select_related(
-        "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant"
+        "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant", "owner"
     ).prefetch_related("node_object", "tags")
     filterset = ACINodeFilterSet
     filterset_form = ACINodeFilterForm
@@ -85,7 +86,7 @@ class ACINodeEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Node."""
 
     queryset = ACINode.objects.select_related(
-        "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant"
+        "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant", "owner"
     ).prefetch_related("node_object", "tags")
     form = ACINodeEditForm
 
@@ -95,7 +96,7 @@ class ACINodeDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Node."""
 
     queryset = ACINode.objects.select_related(
-        "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant"
+        "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant", "owner"
     ).prefetch_related("node_object", "tags")
 
 

@@ -57,6 +57,7 @@ class ACITenantChildrenView(generic.ObjectChildrenView):
             .select_related(
                 "aci_fabric",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -76,6 +77,7 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
     queryset = ACITenant.objects.select_related(
         "aci_fabric",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -112,6 +114,7 @@ class ACITenantListView(generic.ObjectListView):
     queryset = ACITenant.objects.select_related(
         "aci_fabric",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -128,6 +131,7 @@ class ACITenantEditView(generic.ObjectEditView):
     queryset = ACITenant.objects.select_related(
         "aci_fabric",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -141,6 +145,7 @@ class ACITenantDeleteView(generic.ObjectDeleteView):
     queryset = ACITenant.objects.select_related(
         "aci_fabric",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )

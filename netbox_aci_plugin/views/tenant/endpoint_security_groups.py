@@ -64,6 +64,7 @@ class ACIEndpointSecurityGroupChildrenView(generic.ObjectChildrenView):
                 "aci_app_profile",
                 "aci_vrf",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -92,6 +93,7 @@ class ACIEsgEndpointGroupSelectorChildrenView(generic.ObjectChildrenView):
                 "aci_endpoint_security_group",
                 "aci_epg_object_type",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "aci_epg_object",
@@ -121,6 +123,7 @@ class ACIEsgEndpointSelectorChildrenView(generic.ObjectChildrenView):
                 "aci_endpoint_security_group",
                 "ep_object_type",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "ep_object",
@@ -142,6 +145,7 @@ class ACIEndpointSecurityGroupView(generic.ObjectView):
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -155,6 +159,7 @@ class ACIEndpointSecurityGroupListView(generic.ObjectListView):
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -172,6 +177,7 @@ class ACIEndpointSecurityGroupEditView(generic.ObjectEditView):
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -186,6 +192,7 @@ class ACIEndpointSecurityGroupDeleteView(generic.ObjectDeleteView):
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -340,6 +347,7 @@ class ACIEsgEndpointGroupSelectorView(generic.ObjectView):
         "aci_endpoint_security_group",
         "aci_epg_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "aci_epg_object",
         "tags",
@@ -354,6 +362,7 @@ class ACIEsgEndpointGroupSelectorListView(generic.ObjectListView):
         "aci_endpoint_security_group",
         "aci_epg_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "aci_epg_object",
         "tags",
@@ -372,6 +381,7 @@ class ACIEsgEndpointGroupSelectorEditView(generic.ObjectEditView):
         "aci_endpoint_security_group",
         "aci_epg_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "aci_epg_object",
         "tags",
@@ -387,6 +397,7 @@ class ACIEsgEndpointGroupSelectorDeleteView(generic.ObjectDeleteView):
         "aci_endpoint_security_group",
         "aci_epg_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "aci_epg_object",
         "tags",
@@ -439,6 +450,7 @@ class ACIEsgEndpointSelectorView(generic.ObjectView):
         "aci_endpoint_security_group",
         "ep_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "ep_object",
         "tags",
@@ -453,6 +465,7 @@ class ACIEsgEndpointSelectorListView(generic.ObjectListView):
         "aci_endpoint_security_group",
         "ep_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "ep_object",
         "tags",
@@ -471,6 +484,7 @@ class ACIEsgEndpointSelectorEditView(generic.ObjectEditView):
         "aci_endpoint_security_group",
         "ep_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "ep_object",
         "tags",
@@ -486,6 +500,7 @@ class ACIEsgEndpointSelectorDeleteView(generic.ObjectDeleteView):
         "aci_endpoint_security_group",
         "ep_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "ep_object",
         "tags",
