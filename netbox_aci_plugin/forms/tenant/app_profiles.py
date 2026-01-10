@@ -11,6 +11,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
+from users.models import Owner, OwnerGroup
 from utilities.forms.fields import (
     CommentField,
     CSVModelChoiceField,
@@ -56,6 +57,19 @@ class ACIAppProfileEditForm(NetBoxModelForm):
         required=False,
         label=_("NetBox tenant"),
     )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -83,6 +97,7 @@ class ACIAppProfileEditForm(NetBoxModelForm):
             "description",
             "aci_tenant",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -110,6 +125,12 @@ class ACIAppProfileBulkEditForm(NetBoxModelBulkEditForm):
         queryset=Tenant.objects.all(),
         required=False,
         label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -157,6 +178,11 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -191,6 +217,19 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
+    )
     tag = TagFilterField(model)
 
 
@@ -218,16 +257,23 @@ class ACIAppProfileImportForm(NetBoxModelImportForm):
         label=_("NetBox Tenant"),
         help_text=_("Assigned NetBox Tenant"),
     )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIAppProfile
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
-            "description",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )

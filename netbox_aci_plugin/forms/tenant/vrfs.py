@@ -12,6 +12,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
+from users.models import Owner, OwnerGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
     CommentField,
@@ -50,18 +51,6 @@ class ACIVRFEditForm(NetBoxModelForm):
         queryset=ACITenant.objects.all(),
         query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI Tenant"),
-    )
-    nb_tenant_group = DynamicModelChoiceField(
-        queryset=TenantGroup.objects.all(),
-        initial_params={"tenants": "$nb_tenant"},
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group"},
-        required=False,
-        label=_("NetBox tenant"),
     )
     nb_vrf = DynamicModelChoiceField(
         queryset=VRF.objects.all(),
@@ -118,6 +107,31 @@ class ACIVRFEditForm(NetBoxModelForm):
             "Default is disabled."
         ),
     )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -168,7 +182,6 @@ class ACIVRFEditForm(NetBoxModelForm):
             "name_alias",
             "description",
             "aci_tenant",
-            "nb_tenant",
             "nb_vrf",
             "bd_enforcement_enabled",
             "dns_labels",
@@ -178,6 +191,8 @@ class ACIVRFEditForm(NetBoxModelForm):
             "pc_enforcement_direction",
             "pc_enforcement_preference",
             "preferred_group_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -200,11 +215,6 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
         queryset=ACITenant.objects.all(),
         required=False,
         label=_("ACI Tenant"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
     )
     nb_vrf = DynamicModelChoiceField(
         queryset=VRF.objects.all(),
@@ -260,6 +270,17 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Enabled preferred group"),
     )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     model = ACIVRF
@@ -304,9 +325,9 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
     nullable_fields: tuple = (
         "name_alias",
         "description",
-        "nb_tenant",
         "nb_vrf",
         "dns_labels",
+        "nb_tenant",
         "comments",
     )
 
@@ -350,13 +371,18 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
             name=_("Additional Settings"),
         ),
         FieldSet(
+            "nb_vrf_id",
+            name=_("NetBox Networking"),
+        ),
+        FieldSet(
             "nb_tenant_group_id",
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
         FieldSet(
-            "nb_vrf_id",
-            name=_("NetBox Networking"),
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
         ),
     )
 
@@ -378,19 +404,6 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         queryset=ACITenant.objects.all(),
         required=False,
         label=_("ACI Tenant"),
-    )
-    nb_tenant_group_id = DynamicModelMultipleChoiceField(
-        queryset=TenantGroup.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant_id = DynamicModelMultipleChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group_id"},
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant"),
     )
     nb_vrf_id = DynamicModelMultipleChoiceField(
         queryset=VRF.objects.all(),
@@ -448,6 +461,32 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Enabled preferred group"),
     )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
+    )
     tag = TagFilterField(model)
 
 
@@ -468,13 +507,6 @@ class ACIVRFImportForm(NetBoxModelImportForm):
         label=_("ACI Tenant"),
         help_text=_("Assigned ACI Tenant"),
     )
-    nb_tenant = CSVModelChoiceField(
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        required=False,
-        label=_("NetBox Tenant"),
-        help_text=_("Assigned NetBox Tenant"),
-    )
     nb_vrf = CSVModelChoiceField(
         queryset=VRF.objects.all(),
         to_field_name="name",
@@ -494,16 +526,28 @@ class ACIVRFImportForm(NetBoxModelImportForm):
         label=_("Policy control enforcement preference"),
         help_text=_("Controls policy enforcement preference for VRF."),
     )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIVRF
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
-            "description",
-            "nb_tenant",
             "nb_vrf",
             "bd_enforcement_enabled",
             "dns_labels",
@@ -513,6 +557,8 @@ class ACIVRFImportForm(NetBoxModelImportForm):
             "pim_ipv4_enabled",
             "pim_ipv6_enabled",
             "preferred_group_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )

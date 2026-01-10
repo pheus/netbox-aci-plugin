@@ -14,6 +14,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
+from users.models import Owner, OwnerGroup
 from utilities.forms import (
     BOOLEAN_WITH_BLANK_CHOICES,
     get_field_value,
@@ -88,18 +89,6 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
         },
         label=_("ACI VRF"),
     )
-    nb_tenant_group = DynamicModelChoiceField(
-        queryset=TenantGroup.objects.all(),
-        initial_params={"tenants": "$nb_tenant"},
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group"},
-        required=False,
-        label=_("NetBox tenant"),
-    )
     admin_shutdown = forms.BooleanField(
         required=False,
         label=_("Admin state shutdown"),
@@ -123,6 +112,31 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
             "Whether this ESG is a member of the preferred group and allows "
             "communication without contracts. Default is disabled."
         ),
+    )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -156,13 +170,14 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_app_profile",
             "aci_vrf",
-            "description",
-            "nb_tenant",
             "admin_shutdown",
             "intra_esg_isolation_enabled",
             "preferred_group_member_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -191,11 +206,6 @@ class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI VRF"),
     )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
-    )
     admin_shutdown = forms.NullBooleanField(
         required=False,
         widget=forms.Select(
@@ -216,6 +226,17 @@ class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
         label=_("Preferred group member enabled"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -280,6 +301,11 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -313,19 +339,6 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI VRF"),
     )
-    nb_tenant_group_id = DynamicModelMultipleChoiceField(
-        queryset=TenantGroup.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant_id = DynamicModelMultipleChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group_id"},
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant"),
-    )
     admin_shutdown = forms.NullBooleanField(
         required=False,
         widget=forms.Select(
@@ -346,6 +359,32 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
         label=_("Preferred group member enabled"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
     )
     tag = TagFilterField(model)
 
@@ -393,22 +432,29 @@ class ACIEndpointSecurityGroupImportForm(NetBoxModelImportForm):
         label=_("NetBox Tenant"),
         help_text=_("Assigned NetBox Tenant"),
     )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIEndpointSecurityGroup
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_vrf",
-            "description",
-            "nb_tenant",
             "is_aci_vrf_in_common",
             "admin_shutdown",
             "intra_esg_isolation_enabled",
             "preferred_group_member_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -533,6 +579,19 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
         required=False,
         label=_("NetBox tenant"),
     )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -565,10 +624,11 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_endpoint_security_group",
             "aci_epg_object_type",
-            "description",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -683,6 +743,12 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("NetBox Tenant"),
     )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     model = ACIEsgEndpointGroupSelector
@@ -776,6 +842,11 @@ class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -842,6 +913,19 @@ class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
+    )
     tag = TagFilterField(model)
 
 
@@ -892,20 +976,27 @@ class ACIEsgEndpointGroupSelectorImportForm(NetBoxModelImportForm):
         label=_("NetBox Tenant"),
         help_text=_("Assigned NetBox Tenant"),
     )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIEsgEndpointGroupSelector
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_endpoint_security_group",
             "aci_epg_object_id",
             "aci_epg_object_type",
-            "description",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -1015,6 +1106,19 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
         required=False,
         label=_("NetBox tenant"),
     )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -1046,10 +1150,11 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_endpoint_security_group",
             "ep_object_type",
-            "description",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -1151,6 +1256,12 @@ class ACIEsgEndpointSelectorBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("NetBox Tenant"),
     )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     model = ACIEsgEndpointSelector
@@ -1240,6 +1351,11 @@ class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -1310,6 +1426,19 @@ class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
+    )
     tag = TagFilterField(model)
 
 
@@ -1360,20 +1489,27 @@ class ACIEsgEndpointSelectorImportForm(NetBoxModelImportForm):
         label=_("NetBox Tenant"),
         help_text=_("Assigned NetBox Tenant"),
     )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIEsgEndpointSelector
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_endpoint_security_group",
             "ep_object_id",
             "ep_object_type",
-            "description",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
