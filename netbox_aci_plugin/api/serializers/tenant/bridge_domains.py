@@ -6,6 +6,7 @@ from ipam.api.serializers import IPAddressSerializer
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -15,7 +16,7 @@ from .tenants import ACITenantSerializer
 from .vrfs import ACIVRFSerializer
 
 
-class ACIBridgeDomainSerializer(NetBoxModelSerializer):
+class ACIBridgeDomainSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Bridge Domain model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -63,6 +64,7 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
             "unknown_ipv6_multicast",
             "unknown_unicast",
             "virtual_mac_address",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -82,7 +84,7 @@ class ACIBridgeDomainSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIBridgeDomainSubnetSerializer(NetBoxModelSerializer):
+class ACIBridgeDomainSubnetSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Bridge Domain Subnet model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -113,6 +115,7 @@ class ACIBridgeDomainSubnetSerializer(NetBoxModelSerializer):
             "preferred_ip_address_enabled",
             "shared_enabled",
             "virtual_ip_enabled",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

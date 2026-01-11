@@ -8,6 +8,7 @@ from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....constants import (
     ESG_ENDPOINT_GROUP_SELECTORS_MODELS,
@@ -22,7 +23,7 @@ from .app_profiles import ACIAppProfileSerializer
 from .vrfs import ACIVRFSerializer
 
 
-class ACIEndpointSecurityGroupSerializer(NetBoxModelSerializer):
+class ACIEndpointSecurityGroupSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Endpoint Security Group model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -47,6 +48,7 @@ class ACIEndpointSecurityGroupSerializer(NetBoxModelSerializer):
             "admin_shutdown",
             "intra_esg_isolation_enabled",
             "preferred_group_member_enabled",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -66,7 +68,7 @@ class ACIEndpointSecurityGroupSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
+class ACIEsgEndpointGroupSelectorSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI ESG Endpoint Group (EPG) Selector model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -103,6 +105,7 @@ class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
             "aci_epg_object_id",
             "aci_epg_object",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -124,7 +127,7 @@ class ACIEsgEndpointGroupSelectorSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIEsgEndpointSelectorSerializer(NetBoxModelSerializer):
+class ACIEsgEndpointSelectorSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI ESG Endpoint Selector model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -161,6 +164,7 @@ class ACIEsgEndpointSelectorSerializer(NetBoxModelSerializer):
             "ep_object_id",
             "ep_object",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

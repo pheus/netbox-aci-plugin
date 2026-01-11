@@ -9,13 +9,14 @@ from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....constants import NODE_OBJECT_TYPES
 from ....models.fabric.nodes import ACINode
 from .pods import ACIPodSerializer
 
 
-class ACINodeSerializer(NetBoxModelSerializer):
+class ACINodeSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Node model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -55,6 +56,7 @@ class ACINodeSerializer(NetBoxModelSerializer):
             "node_type",
             "tep_ip_address",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

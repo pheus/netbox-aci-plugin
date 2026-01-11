@@ -10,11 +10,12 @@ from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....models.fabric.fabrics import ACIFabric
 
 
-class ACIFabricSerializer(NetBoxModelSerializer):
+class ACIFabricSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Fabric model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -52,6 +53,7 @@ class ACIFabricSerializer(NetBoxModelSerializer):
             "scope_id",
             "scope",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

@@ -5,6 +5,7 @@
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....models.tenant.contract_filters import (
     ACIContractFilter,
@@ -13,7 +14,7 @@ from ....models.tenant.contract_filters import (
 from .tenants import ACITenantSerializer
 
 
-class ACIContractFilterSerializer(NetBoxModelSerializer):
+class ACIContractFilterSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Contract Filter model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -51,13 +52,14 @@ class ACIContractFilterSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIContractFilterEntrySerializer(NetBoxModelSerializer):
+class ACIContractFilterEntrySerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Contract Filter Entry model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:acicontractfilterentry-detail"
     )
     aci_contract_filter = ACIContractFilterSerializer(nested=True, required=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
         model = ACIContractFilterEntry
@@ -82,6 +84,8 @@ class ACIContractFilterEntrySerializer(NetBoxModelSerializer):
             "source_to_port",
             "stateful_enabled",
             "tcp_rules",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

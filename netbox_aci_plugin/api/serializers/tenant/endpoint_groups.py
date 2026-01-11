@@ -8,6 +8,7 @@ from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....constants import USEG_NETWORK_ATTRIBUTES_MODELS
 from ....models.tenant.endpoint_groups import (
@@ -19,7 +20,7 @@ from .app_profiles import ACIAppProfileSerializer
 from .bridge_domains import ACIBridgeDomainSerializer
 
 
-class ACIEndpointGroupSerializer(NetBoxModelSerializer):
+class ACIEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -48,6 +49,7 @@ class ACIEndpointGroupSerializer(NetBoxModelSerializer):
             "qos_class",
             "preferred_group_member_enabled",
             "proxy_arp_enabled",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -67,7 +69,7 @@ class ACIEndpointGroupSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIUSegEndpointGroupSerializer(NetBoxModelSerializer):
+class ACIUSegEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -96,6 +98,7 @@ class ACIUSegEndpointGroupSerializer(NetBoxModelSerializer):
             "match_operator",
             "qos_class",
             "preferred_group_member_enabled",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -115,7 +118,7 @@ class ACIUSegEndpointGroupSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
+class ACIUSegNetworkAttributeSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI uSeg Network Attribute model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -151,6 +154,7 @@ class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
             "attr_object",
             "nb_tenant",
             "use_epg_subnet",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

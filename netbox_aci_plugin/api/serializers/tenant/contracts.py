@@ -8,6 +8,7 @@ from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....constants import CONTRACT_RELATION_OBJECT_TYPES
 from ....models.tenant.contracts import (
@@ -20,7 +21,7 @@ from .contract_filters import ACIContractFilterSerializer
 from .tenants import ACITenantSerializer
 
 
-class ACIContractSerializer(NetBoxModelSerializer):
+class ACIContractSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Contract model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -43,6 +44,7 @@ class ACIContractSerializer(NetBoxModelSerializer):
             "qos_class",
             "scope",
             "target_dscp",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -111,7 +113,7 @@ class ACIContractRelationSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIContractSubjectSerializer(NetBoxModelSerializer):
+class ACIContractSubjectSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Contract Subject model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -142,6 +144,7 @@ class ACIContractSubjectSerializer(NetBoxModelSerializer):
             "target_dscp",
             "target_dscp_cons_to_prov",
             "target_dscp_prov_to_cons",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
