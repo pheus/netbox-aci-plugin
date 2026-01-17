@@ -5,11 +5,13 @@
 from django.db.models import Q
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
+from utilities.filtersets import register_filterset
 
 from ...models.tenant.app_profiles import ACIAppProfile
 from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
+@register_filterset
 class ACIAppProfileFilterSet(
     ACITenantFilterSetMixin,
     NBTenantFilterSetMixin,

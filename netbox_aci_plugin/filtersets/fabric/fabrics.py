@@ -9,11 +9,13 @@ from django.utils.translation import gettext_lazy as _
 from ipam.models import VLAN, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
+from utilities.filtersets import register_filterset
 
 from ...models.fabric.fabrics import ACIFabric
 from ..mixins import NBTenantFilterSetMixin
 
 
+@register_filterset
 class ACIFabricFilterSet(
     NBTenantFilterSetMixin, OwnerFilterMixin, ScopedFilterSet, NetBoxModelFilterSet
 ):

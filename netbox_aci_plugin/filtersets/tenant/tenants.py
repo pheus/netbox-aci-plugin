@@ -7,12 +7,14 @@ from django.db.models import Q
 from django.utils.translation import gettext as _
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
+from utilities.filtersets import register_filterset
 
 from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.tenants import ACITenant
 from ..mixins import NBTenantFilterSetMixin
 
 
+@register_filterset
 class ACITenantFilterSet(
     NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
 ):

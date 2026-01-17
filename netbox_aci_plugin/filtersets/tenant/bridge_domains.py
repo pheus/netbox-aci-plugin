@@ -12,6 +12,7 @@ from ipam.models import IPAddress
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
 from utilities.filters import MultiValueMACAddressFilter
+from utilities.filtersets import register_filterset
 
 from ...choices import (
     BDMultiDestinationFloodingChoices,
@@ -28,6 +29,7 @@ from ...models.tenant.vrfs import ACIVRF
 from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
+@register_filterset
 class ACIBridgeDomainFilterSet(
     ACITenantFilterSetMixin,
     NBTenantFilterSetMixin,
@@ -144,6 +146,7 @@ class ACIBridgeDomainFilterSet(
         )
 
 
+@register_filterset
 class ACIBridgeDomainSubnetFilterSet(
     NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
 ):

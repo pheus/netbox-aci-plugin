@@ -11,6 +11,7 @@ from drf_spectacular.utils import extend_schema_field
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
 from users.filterset_mixins import OwnerFilterMixin
+from utilities.filtersets import register_filterset
 
 from ...choices import (
     ContractFilterARPOpenPeripheralCodesChoices,
@@ -31,6 +32,7 @@ from ...models.tenant.tenants import ACITenant
 from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
+@register_filterset
 class ACIContractFilterFilterSet(
     ACITenantFilterSetMixin,
     NBTenantFilterSetMixin,
@@ -82,6 +84,7 @@ class ACIContractFilterFilterSet(
         )
 
 
+@register_filterset
 class ACIContractFilterEntryFilterSet(OwnerFilterMixin, NetBoxModelFilterSet):
     """Filter set for the ACI Contract Filter Entry model."""
 

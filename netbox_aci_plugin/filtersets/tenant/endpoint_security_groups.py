@@ -9,6 +9,7 @@ from ipam.models import VRF, IPAddress, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
 from utilities.filters import ContentTypeFilter
+from utilities.filtersets import register_filterset
 
 from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.app_profiles import ACIAppProfile
@@ -26,6 +27,7 @@ from ...models.tenant.vrfs import ACIVRF
 from ..mixins import NBTenantFilterSetMixin
 
 
+@register_filterset
 class ACIEndpointSecurityGroupFilterSet(
     NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
 ):
@@ -105,6 +107,7 @@ class ACIEndpointSecurityGroupFilterSet(
         return queryset.filter(queryset_filter)
 
 
+@register_filterset
 class ACIEsgEndpointGroupSelectorFilterSet(
     NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
 ):
@@ -242,6 +245,7 @@ class ACIEsgEndpointGroupSelectorFilterSet(
         return queryset.filter(queryset_filter)
 
 
+@register_filterset
 class ACIEsgEndpointSelectorFilterSet(
     NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
 ):

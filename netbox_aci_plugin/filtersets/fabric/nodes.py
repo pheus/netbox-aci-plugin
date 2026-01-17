@@ -10,6 +10,7 @@ from ipam.models import IPAddress
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
 from utilities.filters import ContentTypeFilter
+from utilities.filtersets import register_filterset
 from virtualization.models import VirtualMachine
 
 from ...models.fabric.fabrics import ACIFabric
@@ -18,6 +19,7 @@ from ...models.fabric.pods import ACIPod
 from ..mixins import ACIFabricFilterSetMixin, NBTenantFilterSetMixin
 
 
+@register_filterset
 class ACINodeFilterSet(
     ACIFabricFilterSetMixin,
     NBTenantFilterSetMixin,
