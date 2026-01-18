@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Annotated
 import strawberry
 import strawberry_django
 from strawberry.scalars import ID
-from strawberry_django import FilterLookup
+from strawberry_django import BaseFilterLookup, FilterLookup
 
 from .... import models
 from ..mixins import ACIBaseFilterMixin
@@ -54,16 +54,20 @@ class ACIVRFFilter(ACIBaseFilterMixin):
         strawberry_django.filter_field()
     )
     pc_enforcement_direction: (
-        Annotated[
-            "VRFPCEnforcementDirectionEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "VRFPCEnforcementDirectionEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     pc_enforcement_preference: (
-        Annotated[
-            "VRFPCEnforcementPreferenceEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "VRFPCEnforcementPreferenceEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()

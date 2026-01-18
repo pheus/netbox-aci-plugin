@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Annotated
 import strawberry
 import strawberry_django
 from strawberry.scalars import ID
-from strawberry_django import FilterLookup
+from strawberry_django import BaseFilterLookup, FilterLookup
 
 from .... import models
 from ..mixins import ACIBaseFilterMixin
@@ -80,9 +80,11 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
     limit_ip_learn_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     mac_address: FilterLookup[str] | None = strawberry_django.filter_field()
     multi_destination_flooding: (
-        Annotated[
-            "BDMultiDestinationFloodingEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "BDMultiDestinationFloodingEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
@@ -97,23 +99,29 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
     )
     pim_ipv6_source_filter: FilterLookup[str] | None = strawberry_django.filter_field()
     unknown_ipv4_multicast: (
-        Annotated[
-            "BDUnknownMulticastEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "BDUnknownMulticastEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     unknown_ipv6_multicast: (
-        Annotated[
-            "BDUnknownMulticastEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "BDUnknownMulticastEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     unknown_unicast: (
-        Annotated[
-            "BDUnknownUnicastEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "BDUnknownUnicastEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()

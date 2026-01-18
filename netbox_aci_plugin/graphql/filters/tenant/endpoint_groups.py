@@ -9,7 +9,7 @@ import strawberry
 import strawberry_django
 from core.graphql.filters import ContentTypeFilter
 from strawberry.scalars import ID
-from strawberry_django import FilterLookup
+from strawberry_django import BaseFilterLookup, FilterLookup
 
 from .... import models
 from ..mixins import ACIBaseFilterMixin
@@ -58,9 +58,11 @@ class ACIEndpointGroupBaseFilterMixin(ACIBaseFilterMixin):
         strawberry_django.filter_field()
     )
     qos_class: (
-        Annotated[
-            "QualityOfServiceClassEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceClassEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
@@ -81,9 +83,11 @@ class ACIUSegEndpointGroupFilter(ACIEndpointGroupBaseFilterMixin):
     """GraphQL filter definition for the ACIUSegEndpointGroup model."""
 
     match_operator: (
-        Annotated[
-            "USegAttributeMatchOperatorEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "USegAttributeMatchOperatorEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
@@ -102,9 +106,11 @@ class ACIUSegAttributeBaseFilterMixin(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
     aci_useg_endpoint_group_id: ID | None = strawberry_django.filter_field()
     type: (
-        Annotated[
-            "USegAttributeTypeEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "USegAttributeTypeEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()

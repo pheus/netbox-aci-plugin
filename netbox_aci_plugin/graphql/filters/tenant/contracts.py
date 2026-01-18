@@ -8,7 +8,7 @@ import strawberry
 import strawberry_django
 from netbox.graphql.filters import NetBoxModelFilter
 from strawberry.scalars import ID
-from strawberry_django import FilterLookup
+from strawberry_django import BaseFilterLookup, FilterLookup
 
 from .... import models
 from ..mixins import ACIBaseFilterMixin
@@ -50,23 +50,28 @@ class ACIContractFilter(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
     aci_tenant_id: ID | None = strawberry_django.filter_field()
     qos_class: (
-        Annotated[
-            "QualityOfServiceClassEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceClassEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     scope: (
-        Annotated[
-            "ContractScopeEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractScopeEnum", strawberry.lazy("netbox_aci_plugin.graphql.enums")
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     target_dscp: (
-        Annotated[
-            "QualityOfServiceDSCPEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceDSCPEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
@@ -89,9 +94,11 @@ class ACIContractRelationFilter(NetBoxModelFilter):
     ) = strawberry_django.filter_field()
     aci_object_id: ID | None = strawberry_django.filter_field()
     role: (
-        Annotated[
-            "ContractRelationRoleEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractRelationRoleEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
@@ -113,23 +120,29 @@ class ACIContractSubjectFilter(NetBoxModelFilter):
         strawberry_django.filter_field()
     )
     qos_class: (
-        Annotated[
-            "QualityOfServiceClassEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceClassEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     qos_class_cons_to_prov: (
-        Annotated[
-            "QualityOfServiceClassEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceClassEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     qos_class_prov_to_cons: (
-        Annotated[
-            "QualityOfServiceClassEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceClassEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
@@ -144,23 +157,29 @@ class ACIContractSubjectFilter(NetBoxModelFilter):
         strawberry_django.filter_field()
     )
     target_dscp: (
-        Annotated[
-            "QualityOfServiceDSCPEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceDSCPEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     target_dscp_cons_to_prov: (
-        Annotated[
-            "QualityOfServiceDSCPEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceDSCPEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     target_dscp_prov_to_cons: (
-        Annotated[
-            "QualityOfServiceDSCPEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceDSCPEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
@@ -187,16 +206,20 @@ class ACIContractSubjectFilterFilter(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
     aci_contract_subject_id: ID | None = strawberry_django.filter_field()
     action: (
-        Annotated[
-            "ContractSubjectFilterActionEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractSubjectFilterActionEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     apply_direction: (
-        Annotated[
-            "ContractSubjectFilterApplyDirectionEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractSubjectFilterApplyDirectionEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
@@ -205,9 +228,11 @@ class ACIContractSubjectFilterFilter(ACIBaseFilterMixin):
         strawberry_django.filter_field()
     )
     priority: (
-        Annotated[
-            "ContractSubjectFilterPriorityEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractSubjectFilterPriorityEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
