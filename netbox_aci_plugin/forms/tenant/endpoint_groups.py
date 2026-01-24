@@ -15,6 +15,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
+from users.models import Owner, OwnerGroup
 from utilities.forms import (
     BOOLEAN_WITH_BLANK_CHOICES,
     add_blank_choice,
@@ -99,18 +100,6 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
         },
         label=_("ACI Bridge Domain"),
     )
-    nb_tenant_group = DynamicModelChoiceField(
-        queryset=TenantGroup.objects.all(),
-        initial_params={"tenants": "$nb_tenant"},
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group"},
-        required=False,
-        label=_("NetBox tenant"),
-    )
     admin_shutdown = forms.BooleanField(
         required=False,
         label=_("Admin state shutdown"),
@@ -157,6 +146,31 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
         label=_("Proxy ARP enabled"),
         help_text=_("Whether proxy ARP is enabled for the EPG. Default is disabled."),
     )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -200,10 +214,9 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_app_profile",
             "aci_bridge_domain",
-            "description",
-            "nb_tenant",
             "admin_shutdown",
             "custom_qos_policy_name",
             "flood_in_encap_enabled",
@@ -211,6 +224,8 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
             "qos_class",
             "preferred_group_member_enabled",
             "proxy_arp_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -238,11 +253,6 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         queryset=ACIBridgeDomain.objects.all(),
         required=False,
         label=_("ACI Bridge Domain"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
     )
     admin_shutdown = forms.NullBooleanField(
         required=False,
@@ -288,6 +298,17 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Proxy ARP enabled"),
     )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     model = ACIEndpointGroup
@@ -325,8 +346,8 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     nullable_fields: tuple = (
         "name_alias",
         "description",
-        "nb_tenant",
         "custom_qos_policy_name",
+        "nb_tenant",
         "comments",
     )
 
@@ -373,6 +394,11 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -411,19 +437,6 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         query_params={"aci_vrf_id": "$aci_vrf_id"},
         required=False,
         label=_("ACI Bridge Domain"),
-    )
-    nb_tenant_group_id = DynamicModelMultipleChoiceField(
-        queryset=TenantGroup.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant_id = DynamicModelMultipleChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group_id"},
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant"),
     )
     admin_shutdown = forms.NullBooleanField(
         required=False,
@@ -465,6 +478,32 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Proxy ARP enabled"),
     )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
+    )
     tag = TagFilterField(model)
 
 
@@ -504,13 +543,6 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
         required=False,
         help_text=_("Assigned ACI Bridge Domain is in ACI Tenant 'common'"),
     )
-    nb_tenant = CSVModelChoiceField(
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        required=False,
-        label=_("NetBox Tenant"),
-        help_text=_("Assigned NetBox Tenant"),
-    )
     qos_class = CSVChoiceField(
         choices=QualityOfServiceClassChoices,
         required=True,
@@ -520,18 +552,30 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
             "traffic sourced in the EPG."
         ),
     )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIEndpointGroup
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_bridge_domain",
-            "description",
-            "nb_tenant",
             "is_aci_bd_in_common",
             "admin_shutdown",
             "custom_qos_policy_name",
@@ -540,6 +584,8 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
             "qos_class",
             "preferred_group_member_enabled",
             "proxy_arp_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -626,18 +672,6 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
         },
         label=_("ACI Bridge Domain"),
     )
-    nb_tenant_group = DynamicModelChoiceField(
-        queryset=TenantGroup.objects.all(),
-        initial_params={"tenants": "$nb_tenant"},
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group"},
-        required=False,
-        label=_("NetBox tenant"),
-    )
     admin_shutdown = forms.BooleanField(
         required=False,
         label=_("Admin state shutdown"),
@@ -678,6 +712,31 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
             "Whether this uSeg EPG is a member of the preferred group and "
             "allows communication without contracts. Default is disabled."
         ),
+    )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -721,16 +780,17 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_app_profile",
             "aci_bridge_domain",
-            "description",
-            "nb_tenant",
             "admin_shutdown",
             "custom_qos_policy_name",
             "flood_in_encap_enabled",
             "intra_epg_isolation_enabled",
             "qos_class",
             "preferred_group_member_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -758,11 +818,6 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         queryset=ACIBridgeDomain.objects.all(),
         required=False,
         label=_("ACI Bridge Domain"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
     )
     admin_shutdown = forms.NullBooleanField(
         required=False,
@@ -801,6 +856,17 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Preferred group member enabled"),
     )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     model = ACIUSegEndpointGroup
@@ -837,8 +903,8 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     nullable_fields: tuple = (
         "name_alias",
         "description",
-        "nb_tenant",
         "custom_qos_policy_name",
+        "nb_tenant",
         "comments",
     )
 
@@ -884,6 +950,11 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -923,19 +994,6 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Bridge Domain"),
     )
-    nb_tenant_group_id = DynamicModelMultipleChoiceField(
-        queryset=TenantGroup.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant_id = DynamicModelMultipleChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group_id"},
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant"),
-    )
     admin_shutdown = forms.NullBooleanField(
         required=False,
         widget=forms.Select(
@@ -968,6 +1026,32 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
         label=_("Preferred group member enabled"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
     )
     tag = TagFilterField(model)
 
@@ -1008,13 +1092,6 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
         required=False,
         help_text=_("Assigned ACI Bridge Domain is in ACI Tenant 'common'"),
     )
-    nb_tenant = CSVModelChoiceField(
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        required=False,
-        label=_("NetBox Tenant"),
-        help_text=_("Assigned NetBox Tenant"),
-    )
     qos_class = CSVChoiceField(
         choices=QualityOfServiceClassChoices,
         required=True,
@@ -1024,18 +1101,30 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
             "traffic sourced in the uSeg EPG."
         ),
     )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIUSegEndpointGroup
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_bridge_domain",
-            "description",
-            "nb_tenant",
             "is_aci_bd_in_common",
             "admin_shutdown",
             "custom_qos_policy_name",
@@ -1043,6 +1132,8 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
             "intra_epg_isolation_enabled",
             "qos_class",
             "preferred_group_member_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -1139,6 +1230,13 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
         label=_("Attribute Object"),
         disabled=True,
     )
+    use_epg_subnet = forms.BooleanField(
+        required=False,
+        label=_("Use EPG subnet"),
+        help_text=_(
+            "Whether the EPG subnet is applied as uSeg attribute. Default is disabled."
+        ),
+    )
     nb_tenant_group = DynamicModelChoiceField(
         queryset=TenantGroup.objects.all(),
         initial_params={"tenants": "$nb_tenant"},
@@ -1151,12 +1249,18 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
         required=False,
         label=_("NetBox tenant"),
     )
-    use_epg_subnet = forms.BooleanField(
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
         required=False,
-        label=_("Use EPG subnet"),
-        help_text=_(
-            "Whether the EPG subnet is applied as uSeg attribute. Default is disabled."
-        ),
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -1193,11 +1297,12 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_useg_endpoint_group",
             "attr_object_type",
-            "description",
-            "nb_tenant",
             "use_epg_subnet",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -1295,17 +1400,23 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
         label=_("Attribute Object"),
         disabled=True,
     )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
-    )
     use_epg_subnet = forms.NullBooleanField(
         required=False,
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
         ),
         label=_("Use EPG subnet"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -1405,6 +1516,11 @@ class ACIUSegNetworkAttributeFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -1473,6 +1589,13 @@ class ACIUSegNetworkAttributeFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Prefix"),
     )
+    use_epg_subnet = forms.NullBooleanField(
+        required=False,
+        widget=forms.Select(
+            choices=BOOLEAN_WITH_BLANK_CHOICES,
+        ),
+        label=_("Use EPG subnet"),
+    )
     nb_tenant_group_id = DynamicModelMultipleChoiceField(
         queryset=TenantGroup.objects.all(),
         null_option="None",
@@ -1486,12 +1609,18 @@ class ACIUSegNetworkAttributeFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("NetBox tenant"),
     )
-    use_epg_subnet = forms.NullBooleanField(
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
         required=False,
-        widget=forms.Select(
-            choices=BOOLEAN_WITH_BLANK_CHOICES,
-        ),
-        label=_("Use EPG subnet"),
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
     )
     tag = TagFilterField(model)
 
@@ -1543,21 +1672,28 @@ class ACIUSegNetworkAttributeImportForm(NetBoxModelImportForm):
         label=_("NetBox Tenant"),
         help_text=_("Assigned NetBox Tenant"),
     )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIUSegNetworkAttribute
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_app_profile",
             "aci_useg_endpoint_group",
             "attr_object_id",
             "attr_object_type",
-            "description",
-            "nb_tenant",
             "use_epg_subnet",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )

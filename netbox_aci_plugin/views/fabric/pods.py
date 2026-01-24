@@ -45,6 +45,7 @@ class ACIPodChildrenView(generic.ObjectChildrenView):
                 "aci_fabric",
                 "tep_pool",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -62,7 +63,7 @@ class ACIPodView(GetRelatedModelsMixin, generic.ObjectView):
     """Detail view for displaying a single object of ACI Pod."""
 
     queryset = ACIPod.objects.select_related(
-        "aci_fabric", "tep_pool", "nb_tenant"
+        "aci_fabric", "tep_pool", "nb_tenant", "owner"
     ).prefetch_related("tags")
 
     def get_extra_context(self, request, instance) -> dict:
@@ -75,7 +76,7 @@ class ACIPodListView(generic.ObjectListView):
     """List view for listing all objects of ACI Pod."""
 
     queryset = ACIPod.objects.select_related(
-        "aci_fabric", "tep_pool", "nb_tenant"
+        "aci_fabric", "tep_pool", "nb_tenant", "owner"
     ).prefetch_related("tags")
     filterset = ACIPodFilterSet
     filterset_form = ACIPodFilterForm
@@ -88,7 +89,7 @@ class ACIPodEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Pod."""
 
     queryset = ACIPod.objects.select_related(
-        "aci_fabric", "tep_pool", "nb_tenant"
+        "aci_fabric", "tep_pool", "nb_tenant", "owner"
     ).prefetch_related("tags")
     form = ACIPodEditForm
 
@@ -98,7 +99,7 @@ class ACIPodDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Pod."""
 
     queryset = ACIPod.objects.select_related(
-        "aci_fabric", "tep_pool", "nb_tenant"
+        "aci_fabric", "tep_pool", "nb_tenant", "owner"
     ).prefetch_related("tags")
 
 

@@ -34,6 +34,15 @@ class ACIContractFilterTable(NetBoxTable):
     nb_tenant = tables.Column(
         linkify=True,
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -44,9 +53,10 @@ class ACIContractFilterTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "nb_tenant",
-            "description",
+            "owner",
             "tags",
             "comments",
         )
@@ -123,6 +133,18 @@ class ACIContractFilterEntryTable(NetBoxTable):
     tcp_rules = columns.ArrayColumn(
         verbose_name=_("TCP rules"),
     )
+    nb_tenant = tables.Column(
+        linkify=True,
+    )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -133,9 +155,9 @@ class ACIContractFilterEntryTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "aci_contract_filter",
-            "description",
             "arp_opc",
             "destination_from_port",
             "destination_to_port",
@@ -149,6 +171,8 @@ class ACIContractFilterEntryTable(NetBoxTable):
             "source_to_port",
             "stateful_enabled",
             "tcp_rules",
+            "nb_tenant",
+            "owner",
             "tags",
             "comments",
         )

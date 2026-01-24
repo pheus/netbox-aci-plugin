@@ -57,6 +57,7 @@ class ACIBridgeDomainChildrenView(generic.ObjectChildrenView):
                 "aci_tenant",
                 "aci_vrf",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -85,6 +86,7 @@ class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
                 "aci_bridge_domain",
                 "gateway_ip_address",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -105,6 +107,7 @@ class ACIBridgeDomainView(generic.ObjectView):
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -129,6 +132,7 @@ class ACIBridgeDomainListView(generic.ObjectListView):
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -146,6 +150,7 @@ class ACIBridgeDomainEditView(generic.ObjectEditView):
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -160,6 +165,7 @@ class ACIBridgeDomainDeleteView(generic.ObjectDeleteView):
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -247,6 +253,7 @@ class ACIBridgeDomainSubnetView(generic.ObjectView):
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -260,6 +267,7 @@ class ACIBridgeDomainSubnetListView(generic.ObjectListView):
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -277,6 +285,7 @@ class ACIBridgeDomainSubnetEditView(generic.ObjectEditView):
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -291,6 +300,7 @@ class ACIBridgeDomainSubnetDeleteView(generic.ObjectDeleteView):
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )

@@ -95,6 +95,7 @@ class ACIFabricListViewSet(NetBoxModelViewSet):
         "infra_vlan",
         "gipo_pool",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -109,6 +110,7 @@ class ACIPodListViewSet(NetBoxModelViewSet):
         "aci_fabric",
         "tep_pool",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -124,6 +126,7 @@ class ACINodeListViewSet(NetBoxModelViewSet):
         "node_object_type",
         "tep_ip_address",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "node_object",
         "tags",
@@ -137,6 +140,7 @@ class ACITenantListViewSet(NetBoxModelViewSet):
 
     queryset = ACITenant.objects.select_related(
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -150,6 +154,7 @@ class ACIAppProfileListViewSet(NetBoxModelViewSet):
     queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -163,6 +168,7 @@ class ACIVRFListViewSet(NetBoxModelViewSet):
     queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
         "nb_vrf",
     ).prefetch_related(
         "tags",
@@ -178,6 +184,7 @@ class ACIBridgeDomainListViewSet(NetBoxModelViewSet):
         "aci_tenant",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -192,6 +199,7 @@ class ACIBridgeDomainSubnetListViewSet(NetBoxModelViewSet):
         "aci_bridge_domain",
         "gateway_ip_address",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -206,6 +214,7 @@ class ACIEndpointGroupListViewSet(NetBoxModelViewSet):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -220,6 +229,7 @@ class ACIUSegEndpointGroupListViewSet(NetBoxModelViewSet):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -234,6 +244,7 @@ class ACIUSegNetworkAttributeListViewSet(NetBoxModelViewSet):
         "aci_useg_endpoint_group",
         "attr_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "attr_object",
         "tags",
@@ -249,6 +260,7 @@ class ACIEndpointSecurityGroupListViewSet(NetBoxModelViewSet):
         "aci_app_profile",
         "aci_vrf",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -263,6 +275,7 @@ class ACIEsgEndpointGroupSelectorListViewSet(NetBoxModelViewSet):
         "aci_endpoint_security_group",
         "aci_epg_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "aci_epg_object",
         "tags",
@@ -278,6 +291,7 @@ class ACIEsgEndpointSelectorListViewSet(NetBoxModelViewSet):
         "aci_endpoint_security_group",
         "ep_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "ep_object",
         "tags",
@@ -292,6 +306,7 @@ class ACIContractFilterListViewSet(NetBoxModelViewSet):
     queryset = ACIContractFilter.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -317,6 +332,7 @@ class ACIContractListViewSet(NetBoxModelViewSet):
     queryset = ACIContract.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -344,6 +360,7 @@ class ACIContractSubjectListViewSet(NetBoxModelViewSet):
     queryset = ACIContractSubject.objects.select_related(
         "aci_contract",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )

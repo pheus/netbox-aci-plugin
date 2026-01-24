@@ -37,7 +37,9 @@ if TYPE_CHECKING:
 class ACIFabricView(GetRelatedModelsMixin, generic.ObjectView):
     """Detail view for displaying a single object of ACI Fabric."""
 
-    queryset = ACIFabric.objects.select_related("nb_tenant").prefetch_related("tags")
+    queryset = ACIFabric.objects.select_related("nb_tenant", "owner").prefetch_related(
+        "tags"
+    )
 
     def get_extra_context(self, request, instance) -> dict:
         """Return related models as extra context."""
@@ -62,7 +64,9 @@ class ACIFabricView(GetRelatedModelsMixin, generic.ObjectView):
 class ACIFabricListView(generic.ObjectListView):
     """List view for listing all objects of ACI Fabric."""
 
-    queryset = ACIFabric.objects.select_related("nb_tenant").prefetch_related("tags")
+    queryset = ACIFabric.objects.select_related("nb_tenant", "owner").prefetch_related(
+        "tags"
+    )
     filterset = ACIFabricFilterSet
     filterset_form = ACIFabricFilterForm
     table = ACIFabricTable
@@ -73,7 +77,9 @@ class ACIFabricListView(generic.ObjectListView):
 class ACIFabricEditView(generic.ObjectEditView):
     """Edit view for editing an object of ACI Fabric."""
 
-    queryset = ACIFabric.objects.select_related("nb_tenant").prefetch_related("tags")
+    queryset = ACIFabric.objects.select_related("nb_tenant", "owner").prefetch_related(
+        "tags"
+    )
     form = ACIFabricEditForm
 
 
@@ -81,7 +87,9 @@ class ACIFabricEditView(generic.ObjectEditView):
 class ACIFabricDeleteView(generic.ObjectDeleteView):
     """Delete view for deleting an object of ACI Fabric."""
 
-    queryset = ACIFabric.objects.select_related("nb_tenant").prefetch_related("tags")
+    queryset = ACIFabric.objects.select_related("nb_tenant", "owner").prefetch_related(
+        "tags"
+    )
 
 
 @register_model_view(ACIFabric, "pods", path="pods")

@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
-from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
+from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
-from utilities.api import get_serializer_for_model
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....constants import CONTRACT_RELATION_OBJECT_TYPES
 from ....models.tenant.contracts import (
@@ -21,7 +21,7 @@ from .contract_filters import ACIContractFilterSerializer
 from .tenants import ACITenantSerializer
 
 
-class ACIContractSerializer(NetBoxModelSerializer):
+class ACIContractSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Contract model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -44,6 +44,7 @@ class ACIContractSerializer(NetBoxModelSerializer):
             "qos_class",
             "scope",
             "target_dscp",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -81,7 +82,7 @@ class ACIContractRelationSerializer(NetBoxModelSerializer):
         default=None,
         allow_null=True,
     )
-    aci_object = serializers.SerializerMethodField(read_only=True)
+    aci_object = GFKSerializerField(read_only=True)
 
     class Meta:
         model = ACIContractRelation
@@ -111,17 +112,8 @@ class ACIContractRelationSerializer(NetBoxModelSerializer):
             "role",
         )
 
-    @extend_schema_field(serializers.JSONField(allow_null=True))
-    def get_aci_object(self, obj):
-        """Return the ACI object as nested JSON."""
-        if obj.aci_object_id is None:
-            return None
-        serializer = get_serializer_for_model(obj.aci_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.aci_object, nested=True, context=context).data
 
-
-class ACIContractSubjectSerializer(NetBoxModelSerializer):
+class ACIContractSubjectSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Contract Subject model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -152,6 +144,7 @@ class ACIContractSubjectSerializer(NetBoxModelSerializer):
             "target_dscp",
             "target_dscp_cons_to_prov",
             "target_dscp_prov_to_cons",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

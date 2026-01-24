@@ -8,12 +8,17 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from ipam.models import VLAN, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
+from users.filterset_mixins import OwnerFilterMixin
+from utilities.filtersets import register_filterset
 
 from ...models.fabric.fabrics import ACIFabric
 from ..mixins import NBTenantFilterSetMixin
 
 
-class ACIFabricFilterSet(NBTenantFilterSetMixin, ScopedFilterSet, NetBoxModelFilterSet):
+@register_filterset
+class ACIFabricFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, ScopedFilterSet, NetBoxModelFilterSet
+):
     """Filter set for the ACI Fabric model."""
 
     infra_vlan = django_filters.ModelMultipleChoiceFilter(

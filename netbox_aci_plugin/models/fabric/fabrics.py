@@ -10,6 +10,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
+from netbox.models.mixins import OwnerMixin
 
 from ...constants import (
     ACI_DESC_MAX_LEN,
@@ -22,7 +23,7 @@ from ...constants import (
 from ...validators import ACIPolicyDescriptionValidator, ACIPolicyNameRequiredValidator
 
 
-class ACIFabric(CachedScopeMixin, NetBoxModel):
+class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
     """NetBox model for ACI Fabric."""
 
     name = models.CharField(

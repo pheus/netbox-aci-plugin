@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Annotated
 
 import strawberry
 import strawberry_django
-from netbox.graphql.filter_mixins import NetBoxModelFilterMixin
+from netbox.graphql.filters import NetBoxModelFilter
 from strawberry import ID
 from strawberry_django import FilterLookup
 
@@ -19,7 +19,7 @@ __all__ = ("ACIBaseFilterMixin",)
 
 
 @dataclass
-class ACIBaseFilterMixin(NetBoxModelFilterMixin):
+class ACIBaseFilterMixin(NetBoxModelFilter):
     """Base GraphQL filter mixin for ACI models."""
 
     name: FilterLookup[str] | None = strawberry_django.filter_field()

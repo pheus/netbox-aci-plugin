@@ -44,6 +44,7 @@ class ACIVRFChildrenView(generic.ObjectChildrenView):
             .select_related(
                 "aci_tenant",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -63,6 +64,7 @@ class ACIVRFView(generic.ObjectView):
     queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -75,6 +77,7 @@ class ACIVRFListView(generic.ObjectListView):
     queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -91,6 +94,7 @@ class ACIVRFEditView(generic.ObjectEditView):
     queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -104,6 +108,7 @@ class ACIVRFDeleteView(generic.ObjectDeleteView):
     queryset = ACIVRF.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )

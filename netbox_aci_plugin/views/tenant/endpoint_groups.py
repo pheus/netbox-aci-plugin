@@ -64,6 +64,7 @@ class ACIEndpointGroupChildrenView(generic.ObjectChildrenView):
                 "aci_app_profile",
                 "aci_bridge_domain",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -92,6 +93,7 @@ class ACIUSegEndpointGroupChildrenView(generic.ObjectChildrenView):
                 "aci_app_profile",
                 "aci_bridge_domain",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -120,6 +122,7 @@ class ACIUSegNetworkAttributeChildrenView(generic.ObjectChildrenView):
                 "aci_useg_endpoint_group",
                 "attr_object_type",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "attr_object",
@@ -154,6 +157,7 @@ class ACIEndpointGroupListView(generic.ObjectListView):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -171,6 +175,7 @@ class ACIEndpointGroupEditView(generic.ObjectEditView):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -185,6 +190,7 @@ class ACIEndpointGroupDeleteView(generic.ObjectDeleteView):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -267,6 +273,7 @@ class ACIUSegEndpointGroupView(generic.ObjectView):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -280,6 +287,7 @@ class ACIUSegEndpointGroupListView(generic.ObjectListView):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -297,6 +305,7 @@ class ACIUSegEndpointGroupEditView(generic.ObjectEditView):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -311,6 +320,7 @@ class ACIUSegEndpointGroupDeleteView(generic.ObjectDeleteView):
         "aci_app_profile",
         "aci_bridge_domain",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -426,6 +436,7 @@ class ACIUSegNetworkAttributeView(generic.ObjectView):
         "aci_useg_endpoint_group",
         "attr_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "attr_object",
         "tags",
@@ -440,6 +451,7 @@ class ACIUSegNetworkAttributeListView(generic.ObjectListView):
         "aci_useg_endpoint_group",
         "attr_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "attr_object",
         "tags",
@@ -458,6 +470,7 @@ class ACIUSegNetworkAttributeEditView(generic.ObjectEditView):
         "aci_useg_endpoint_group",
         "attr_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "attr_object",
         "tags",
@@ -473,6 +486,7 @@ class ACIUSegNetworkAttributeDeleteView(generic.ObjectDeleteView):
         "aci_useg_endpoint_group",
         "attr_object_type",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "attr_object",
         "tags",

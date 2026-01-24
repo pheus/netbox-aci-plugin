@@ -13,6 +13,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
+from users.models import Owner, OwnerGroup
 from utilities.forms import (
     BOOLEAN_WITH_BLANK_CHOICES,
     add_blank_choice,
@@ -77,18 +78,6 @@ class ACIContractEditForm(NetBoxModelForm):
         query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI Tenant"),
     )
-    nb_tenant_group = DynamicModelChoiceField(
-        queryset=TenantGroup.objects.all(),
-        initial_params={"tenants": "$nb_tenant"},
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group"},
-        required=False,
-        label=_("NetBox tenant"),
-    )
     qos_class = forms.ChoiceField(
         choices=QualityOfServiceClassChoices,
         required=False,
@@ -116,6 +105,31 @@ class ACIContractEditForm(NetBoxModelForm):
             "Rewrites the DSCP value of the incoming traffic to the specified "
             "value. Default is 'unspecified'."
         ),
+    )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -152,10 +166,11 @@ class ACIContractEditForm(NetBoxModelForm):
             "name_alias",
             "description",
             "aci_tenant",
-            "nb_tenant",
             "qos_class",
             "scope",
             "target_dscp",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -179,11 +194,6 @@ class ACIContractBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI Tenant"),
     )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
-    )
     qos_class = forms.ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
@@ -198,6 +208,17 @@ class ACIContractBulkEditForm(NetBoxModelBulkEditForm):
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -265,6 +286,11 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -286,18 +312,6 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Tenant"),
     )
-    nb_tenant_group_id = DynamicModelMultipleChoiceField(
-        queryset=TenantGroup.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant_id = DynamicModelMultipleChoiceField(
-        queryset=Tenant.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant"),
-    )
     qos_class = forms.MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
@@ -312,6 +326,31 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
     )
     tag = TagFilterField(model)
 
@@ -332,13 +371,6 @@ class ACIContractImportForm(NetBoxModelImportForm):
         required=True,
         label=_("ACI Tenant"),
         help_text=_("Assigned ACI Tenant"),
-    )
-    nb_tenant = CSVModelChoiceField(
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        required=False,
-        label=_("NetBox Tenant"),
-        help_text=_("Assigned NetBox Tenant"),
     )
     qos_class = CSVChoiceField(
         choices=QualityOfServiceClassChoices,
@@ -368,6 +400,19 @@ class ACIContractImportForm(NetBoxModelImportForm):
             "value. Default is 'unspecified'."
         ),
     )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIContract
@@ -377,10 +422,11 @@ class ACIContractImportForm(NetBoxModelImportForm):
             "aci_fabric",
             "aci_tenant",
             "description",
-            "nb_tenant",
             "qos_class",
             "scope",
             "target_dscp",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -796,18 +842,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
         },
         label=_("ACI Contract"),
     )
-    nb_tenant_group = DynamicModelChoiceField(
-        queryset=TenantGroup.objects.all(),
-        initial_params={"tenants": "$nb_tenant"},
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group"},
-        required=False,
-        label=_("NetBox tenant"),
-    )
     apply_both_directions_enabled = forms.BooleanField(
         required=False,
         label=_("Apply both directions enabled"),
@@ -883,6 +917,31 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "Default is 'unspecified'."
         ),
     )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -946,7 +1005,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "name_alias",
             "description",
             "aci_contract",
-            "nb_tenant",
             "apply_both_directions_enabled",
             "qos_class",
             "qos_class_cons_to_prov",
@@ -958,6 +1016,8 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "target_dscp",
             "target_dscp_cons_to_prov",
             "target_dscp_prov_to_cons",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -1007,11 +1067,6 @@ class ACIContractSubjectBulkEditForm(NetBoxModelBulkEditForm):
         query_params={"aci_tenant_id": "$aci_tenant"},
         required=False,
         label=_("ACI Contract"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
     )
     apply_both_direction_enabled = forms.NullBooleanField(
         required=False,
@@ -1068,6 +1123,17 @@ class ACIContractSubjectBulkEditForm(NetBoxModelBulkEditForm):
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP (provider to consumer)"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
     )
     comments = CommentField()
 
@@ -1163,6 +1229,11 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -1188,18 +1259,6 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
         queryset=ACIContract.objects.all(),
         required=False,
         label=_("ACI Contract"),
-    )
-    nb_tenant_group_id = DynamicModelMultipleChoiceField(
-        queryset=TenantGroup.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant_id = DynamicModelMultipleChoiceField(
-        queryset=Tenant.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant"),
     )
     apply_both_directions_enabled = forms.NullBooleanField(
         required=False,
@@ -1257,6 +1316,31 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Target DSCP (provider to consumer)"),
     )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
+    )
     tag = TagFilterField(model)
 
 
@@ -1283,13 +1367,6 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
         required=True,
         label=_("ACI Contract"),
         help_text=_("Assigned ACI Contract"),
-    )
-    nb_tenant = CSVModelChoiceField(
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        required=False,
-        label=_("NetBox Tenant"),
-        help_text=_("Assigned NetBox Tenant"),
     )
     qos_class = CSVChoiceField(
         choices=QualityOfServiceClassChoices,
@@ -1350,17 +1427,29 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
             "Default is 'unspecified'."
         ),
     )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIContractSubject
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_contract",
-            "description",
-            "nb_tenant",
             "apply_both_directions_enabled",
             "qos_class",
             "qos_class_cons_to_prov",
@@ -1372,6 +1461,8 @@ class ACIContractSubjectImportForm(NetBoxModelImportForm):
             "target_dscp",
             "target_dscp_cons_to_prov",
             "target_dscp_prov_to_cons",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )

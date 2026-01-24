@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Annotated
 import strawberry
 import strawberry_django
 from strawberry.scalars import ID
-from strawberry_django import FilterLookup
+from strawberry_django import BaseFilterLookup, FilterLookup
 
 from .... import models
 from ...filter_lookups import TCPRulesArrayLookup
@@ -58,46 +58,58 @@ class ACIContractFilterEntryFilter(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
     aci_contract_filter_id: ID | None = strawberry_django.filter_field()
     arp_opc: (
-        Annotated[
-            "ContractFilterARPOpenPeripheralCodesEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractFilterARPOpenPeripheralCodesEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     destination_from_port: FilterLookup[str] | None = strawberry_django.filter_field()
     destination_to_port: FilterLookup[str] | None = strawberry_django.filter_field()
     ether_type: (
-        Annotated[
-            "ContractFilterEtherTypeEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractFilterEtherTypeEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     icmp_v4_type: (
-        Annotated[
-            "ContractFilterICMPv4TypesEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractFilterICMPv4TypesEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     icmp_v6_type: (
-        Annotated[
-            "ContractFilterICMPv6TypesEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractFilterICMPv6TypesEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     ip_protocol: (
-        Annotated[
-            "ContractFilterIPProtocolEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "ContractFilterIPProtocolEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()
     match_dscp: (
-        Annotated[
-            "QualityOfServiceDSCPEnum",
-            strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+        BaseFilterLookup[
+            Annotated[
+                "QualityOfServiceDSCPEnum",
+                strawberry.lazy("netbox_aci_plugin.graphql.enums"),
+            ]
         ]
         | None
     ) = strawberry_django.filter_field()

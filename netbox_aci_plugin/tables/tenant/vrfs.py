@@ -54,6 +54,15 @@ class ACIVRFTable(NetBoxTable):
     preferred_group_enabled = columns.BooleanColumn(
         verbose_name=_("Preferred group"),
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -64,10 +73,10 @@ class ACIVRFTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "nb_tenant",
             "nb_vrf",
-            "description",
             "bd_enforcement_enabled",
             "dns_labels",
             "ip_data_plane_learning_enabled",
@@ -76,6 +85,7 @@ class ACIVRFTable(NetBoxTable):
             "pim_ipv4_enabled",
             "pim_ipv6_enabled",
             "preferred_group_enabled",
+            "owner",
             "tags",
             "comments",
         )

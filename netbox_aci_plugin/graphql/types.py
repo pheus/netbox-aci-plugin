@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Annotated
 import strawberry
 import strawberry_django
 from netbox.graphql.types import NetBoxObjectType
+from users.graphql.mixins import OwnerMixin
 
 from .. import models
 from .filters import (
@@ -56,7 +57,7 @@ if TYPE_CHECKING:
     exclude=["scope_type", "scope_id", "_location", "_region", "_site", "_site_group"],
     filters=ACIFabricFilter,
 )
-class ACIFabricType(NetBoxObjectType):
+class ACIFabricType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIFabric model."""
 
     # Model fields
@@ -91,7 +92,7 @@ class ACIFabricType(NetBoxObjectType):
     exclude=["scope_type", "scope_id", "_location", "_region", "_site", "_site_group"],
     filters=ACIPodFilter,
 )
-class ACIPodType(NetBoxObjectType):
+class ACIPodType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIPod model."""
 
     # Model fields
@@ -129,7 +130,7 @@ class ACIPodType(NetBoxObjectType):
     exclude=["node_object_type", "node_object_id", "_device", "_virtual_machine"],
     filters=ACINodeFilter,
 )
-class ACINodeType(NetBoxObjectType):
+class ACINodeType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACINode model."""
 
     # Model fields
@@ -160,7 +161,7 @@ class ACINodeType(NetBoxObjectType):
 
 
 @strawberry_django.type(models.ACITenant, fields="__all__", filters=ACITenantFilter)
-class ACITenantType(NetBoxObjectType):
+class ACITenantType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACITenant model."""
 
     # Model fields
@@ -203,7 +204,7 @@ class ACITenantType(NetBoxObjectType):
 @strawberry_django.type(
     models.ACIAppProfile, fields="__all__", filters=ACIAppProfileFilter
 )
-class ACIAppProfileType(NetBoxObjectType):
+class ACIAppProfileType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIAppProfile model."""
 
     # Model fields
@@ -234,7 +235,7 @@ class ACIAppProfileType(NetBoxObjectType):
 
 
 @strawberry_django.type(models.ACIVRF, fields="__all__", filters=ACIVRFFilter)
-class ACIVRFType(NetBoxObjectType):
+class ACIVRFType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIVRF model."""
 
     # Model fields
@@ -269,7 +270,7 @@ class ACIVRFType(NetBoxObjectType):
 @strawberry_django.type(
     models.ACIBridgeDomain, fields="__all__", filters=ACIBridgeDomainFilter
 )
-class ACIBridgeDomainType(NetBoxObjectType):
+class ACIBridgeDomainType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIBridgeDomain model."""
 
     # Model fields
@@ -302,7 +303,7 @@ class ACIBridgeDomainType(NetBoxObjectType):
     fields="__all__",
     filters=ACIBridgeDomainSubnetFilter,
 )
-class ACIBridgeDomainSubnetType(NetBoxObjectType):
+class ACIBridgeDomainSubnetType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIBridgeDomainSubnet model."""
 
     # Model fields
@@ -321,7 +322,7 @@ class ACIBridgeDomainSubnetType(NetBoxObjectType):
     fields="__all__",
     filters=ACIEndpointGroupFilter,
 )
-class ACIEndpointGroupType(NetBoxObjectType):
+class ACIEndpointGroupType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIEndpointGroup model."""
 
     # Model fields
@@ -348,7 +349,7 @@ class ACIEndpointGroupType(NetBoxObjectType):
     fields="__all__",
     filters=ACIUSegEndpointGroupFilter,
 )
-class ACIUSegEndpointGroupType(NetBoxObjectType):
+class ACIUSegEndpointGroupType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIUSegEndpointGroup model."""
 
     # Model fields
@@ -387,7 +388,7 @@ class ACIUSegEndpointGroupType(NetBoxObjectType):
     ],
     filters=ACIUSegNetworkAttributeFilter,
 )
-class ACIUSegNetworkAttributeType(NetBoxObjectType):
+class ACIUSegNetworkAttributeType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIUSegNetworkAttribute model."""
 
     # Model fields
@@ -418,7 +419,7 @@ class ACIUSegNetworkAttributeType(NetBoxObjectType):
     fields="__all__",
     filters=ACIEndpointSecurityGroupFilter,
 )
-class ACIEndpointSecurityGroupType(NetBoxObjectType):
+class ACIEndpointSecurityGroupType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIEndpointSecurityGroup model."""
 
     # Model fields
@@ -462,7 +463,7 @@ class ACIEndpointSecurityGroupType(NetBoxObjectType):
     ],
     filters=ACIEsgEndpointGroupSelectorFilter,
 )
-class ACIEsgEndpointGroupSelectorType(NetBoxObjectType):
+class ACIEsgEndpointGroupSelectorType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIEsgEndpointGroupSelector model."""
 
     # Model fields
@@ -503,7 +504,7 @@ class ACIEsgEndpointGroupSelectorType(NetBoxObjectType):
     ],
     filters=ACIEsgEndpointSelectorFilter,
 )
-class ACIEsgEndpointSelectorType(NetBoxObjectType):
+class ACIEsgEndpointSelectorType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIEsgEndpointSelector model."""
 
     # Model fields
@@ -533,7 +534,7 @@ class ACIEsgEndpointSelectorType(NetBoxObjectType):
     fields="__all__",
     filters=ACIContractFilterFilter,
 )
-class ACIContractFilterType(NetBoxObjectType):
+class ACIContractFilterType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIContractFilter model."""
 
     # Model fields
@@ -562,7 +563,7 @@ class ACIContractFilterType(NetBoxObjectType):
     fields="__all__",
     filters=ACIContractFilterEntryFilter,
 )
-class ACIContractFilterEntryType(NetBoxObjectType):
+class ACIContractFilterEntryType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIContractFilterEntry model."""
 
     # Model fields
@@ -578,7 +579,7 @@ class ACIContractFilterEntryType(NetBoxObjectType):
     fields="__all__",
     filters=ACIContractFilter,
 )
-class ACIContractType(NetBoxObjectType):
+class ACIContractType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIContract model."""
 
     # Model fields
@@ -656,7 +657,7 @@ class ACIContractRelationType(NetBoxObjectType):
     fields="__all__",
     filters=ACIContractSubjectFilter,
 )
-class ACIContractSubjectType(NetBoxObjectType):
+class ACIContractSubjectType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIContractSubject model."""
 
     # Model fields

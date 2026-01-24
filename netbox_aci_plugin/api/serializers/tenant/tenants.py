@@ -5,12 +5,13 @@
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....models.tenant.tenants import ACITenant
 from ..fabric.fabrics import ACIFabricSerializer
 
 
-class ACITenantSerializer(NetBoxModelSerializer):
+class ACITenantSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Tenant model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -30,6 +31,7 @@ class ACITenantSerializer(NetBoxModelSerializer):
             "description",
             "aci_fabric",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

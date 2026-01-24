@@ -46,6 +46,7 @@ class ACIAppProfileChildrenView(generic.ObjectChildrenView):
             .select_related(
                 "aci_tenant",
                 "nb_tenant",
+                "owner",
             )
             .prefetch_related(
                 "tags",
@@ -65,6 +66,7 @@ class ACIAppProfileView(generic.ObjectView):
     queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -77,6 +79,7 @@ class ACIAppProfileListView(generic.ObjectListView):
     queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -93,6 +96,7 @@ class ACIAppProfileEditView(generic.ObjectEditView):
     queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -106,6 +110,7 @@ class ACIAppProfileDeleteView(generic.ObjectDeleteView):
     queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
         "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )

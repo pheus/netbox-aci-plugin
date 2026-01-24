@@ -10,6 +10,8 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from ipam.models import VRF
 from netbox.filtersets import NetBoxModelFilterSet
+from users.filterset_mixins import OwnerFilterMixin
+from utilities.filtersets import register_filterset
 
 from ...choices import (
     VRFPCEnforcementDirectionChoices,
@@ -20,8 +22,12 @@ from ...models.tenant.vrfs import ACIVRF
 from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
 
 
+@register_filterset
 class ACIVRFFilterSet(
-    ACITenantFilterSetMixin, NBTenantFilterSetMixin, NetBoxModelFilterSet
+    ACITenantFilterSetMixin,
+    NBTenantFilterSetMixin,
+    OwnerFilterMixin,
+    NetBoxModelFilterSet,
 ):
     """Filter set for the ACI VRF model."""
 

@@ -12,6 +12,7 @@ from netbox.forms import (
     NetBoxModelImportForm,
 )
 from tenancy.models import Tenant, TenantGroup
+from users.models import Owner, OwnerGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
     CommentField,
@@ -63,18 +64,6 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "present_in_aci_tenant_or_common_id": "$aci_tenant",
         },
         label=_("ACI VRF"),
-    )
-    nb_tenant_group = DynamicModelChoiceField(
-        queryset=TenantGroup.objects.all(),
-        initial_params={"tenants": "$nb_tenant"},
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group"},
-        required=False,
-        label=_("NetBox tenant"),
     )
     advertise_host_routes_enabled = forms.BooleanField(
         required=False,
@@ -178,6 +167,31 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "Defines the layer 2 unknown unicast forwarding method. Default is 'proxy'."
         ),
     )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -241,7 +255,6 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "description",
             "aci_tenant",
             "aci_vrf",
-            "nb_tenant",
             "advertise_host_routes_enabled",
             "arp_flooding_enabled",
             "clear_remote_mac_enabled",
@@ -262,6 +275,8 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "unknown_ipv6_multicast",
             "unknown_unicast",
             "virtual_mac_address",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -289,11 +304,6 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         queryset=ACIVRF.objects.all(),
         required=False,
         label=_("ACI VRF"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
     )
     advertise_host_routes_enabled = forms.NullBooleanField(
         required=False,
@@ -406,6 +416,17 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("Virtual MAC address"),
     )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     model = ACIBridgeDomain
@@ -462,13 +483,13 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
     nullable_fields: tuple = (
         "name_alias",
         "description",
-        "nb_tenant",
         "dhcp_labels",
         "igmp_interface_policy_name",
         "igmp_snooping_policy_name",
         "pim_ipv4_destination_filter",
         "pim_ipv4_source_filter",
         "virtual_mac_address",
+        "nb_tenant",
         "comments",
     )
 
@@ -532,6 +553,11 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -552,19 +578,6 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         queryset=ACITenant.objects.all(),
         required=False,
         label=_("ACI Tenant"),
-    )
-    nb_tenant_group_id = DynamicModelMultipleChoiceField(
-        queryset=TenantGroup.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant_id = DynamicModelMultipleChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group_id"},
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant"),
     )
     advertise_host_routes_enabled = forms.NullBooleanField(
         required=False,
@@ -653,6 +666,32 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Unknown unicast"),
     )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
+    )
     tag = TagFilterField(model)
 
 
@@ -685,13 +724,6 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         label=_("Is ACI VRF in 'common'"),
         help_text=_("Assigned ACI VRF is in ACI Tenant 'common'"),
     )
-    nb_tenant = CSVModelChoiceField(
-        queryset=Tenant.objects.all(),
-        to_field_name="name",
-        required=False,
-        label=_("NetBox Tenant"),
-        help_text=_("Assigned NetBox Tenant"),
-    )
     multi_destination_flooding = CSVChoiceField(
         choices=BDMultiDestinationFloodingChoices,
         required=True,
@@ -718,17 +750,29 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
         label=_("Unknown unicast"),
         help_text=_("Defines the layer 2 unknown unicast forwarding method."),
     )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant"),
+    )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIBridgeDomain
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_vrf",
-            "description",
-            "nb_tenant",
             "is_aci_vrf_in_common",
             "advertise_host_routes_enabled",
             "arp_flooding_enabled",
@@ -750,6 +794,8 @@ class ACIBridgeDomainImportForm(NetBoxModelImportForm):
             "unknown_ipv6_multicast",
             "unknown_unicast",
             "virtual_mac_address",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -831,18 +877,6 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
         query_params={"present_in_vrf_id": "$nb_vrf"},
         label=_("Gateway IP address"),
     )
-    nb_tenant_group = DynamicModelChoiceField(
-        queryset=TenantGroup.objects.all(),
-        initial_params={"tenants": "$nb_tenant"},
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group"},
-        required=False,
-        label=_("NetBox tenant"),
-    )
     advertised_externally_enabled = forms.BooleanField(
         required=False,
         label=_("Advertised externally enabled"),
@@ -904,6 +938,31 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
         label=_("Virtual IP enabled"),
         help_text=_("Treat the gateway IP as virtual IP. Default is disabled."),
     )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        label=_("Owner group"),
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        initial_params={"members": "$owner"},
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -953,11 +1012,10 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "gateway_ip_address",
             "aci_bridge_domain",
-            "description",
             "aci_vrf",
-            "nb_tenant",
             "advertised_externally_enabled",
             "igmp_querier_enabled",
             "ip_data_plane_learning_enabled",
@@ -967,6 +1025,8 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
             "preferred_ip_address_enabled",
             "shared_enabled",
             "virtual_ip_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )
@@ -989,11 +1049,6 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
         queryset=ACIBridgeDomain.objects.all(),
         required=False,
         label=_("ACI Bridge Domain"),
-    )
-    nb_tenant = DynamicModelChoiceField(
-        queryset=Tenant.objects.all(),
-        required=False,
-        label=_("NetBox Tenant"),
     )
     advertised_externally_enabled = forms.NullBooleanField(
         required=False,
@@ -1055,6 +1110,17 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Virtual IP enabled"),
     )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
     comments = CommentField()
 
     model = ACIBridgeDomainSubnet
@@ -1097,8 +1163,8 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
     nullable_fields: tuple = (
         "name_alias",
         "description",
-        "nb_tenant",
         "nd_ra_prefix_policy_name",
+        "nb_tenant",
         "comments",
     )
 
@@ -1151,6 +1217,11 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
             "nb_tenant_id",
             name=_("NetBox Tenancy"),
         ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
     )
 
     name = forms.CharField(
@@ -1189,19 +1260,6 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
         null_option="None",
         required=False,
         label=_("ACI Bridge Domain"),
-    )
-    nb_tenant_group_id = DynamicModelMultipleChoiceField(
-        queryset=TenantGroup.objects.all(),
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant group"),
-    )
-    nb_tenant_id = DynamicModelMultipleChoiceField(
-        queryset=Tenant.objects.all(),
-        query_params={"group_id": "$nb_tenant_group_id"},
-        null_option="None",
-        required=False,
-        label=_("NetBox tenant"),
     )
     advertised_externally_enabled = forms.NullBooleanField(
         required=False,
@@ -1263,6 +1321,32 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Virtual IP enabled"),
     )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        required=False,
+        null_option="None",
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        null_option="None",
+        query_params={"group_id": "$owner_group_id"},
+        label=_("Owner"),
+    )
     tag = TagFilterField(model)
 
 
@@ -1311,19 +1395,24 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
         label=_("NetBox Tenant"),
         help_text=_("Assigned NetBox Tenant"),
     )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
 
     class Meta:
         model = ACIBridgeDomainSubnet
         fields: tuple = (
             "name",
             "name_alias",
+            "description",
             "aci_fabric",
             "aci_tenant",
             "aci_vrf",
             "aci_bridge_domain",
             "gateway_ip_address",
-            "description",
-            "nb_tenant",
             "advertised_externally_enabled",
             "igmp_querier_enabled",
             "ip_data_plane_learning_enabled",
@@ -1333,6 +1422,8 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
             "preferred_ip_address_enabled",
             "shared_enabled",
             "virtual_ip_enabled",
+            "nb_tenant",
+            "owner",
             "comments",
             "tags",
         )

@@ -31,6 +31,15 @@ class ACIAppProfileTable(NetBoxTable):
     nb_tenant = tables.Column(
         linkify=True,
     )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+        verbose_name=_("Owner"),
+    )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 
@@ -41,9 +50,10 @@ class ACIAppProfileTable(NetBoxTable):
             "id",
             "name",
             "name_alias",
+            "description",
             "aci_tenant",
             "nb_tenant",
-            "description",
+            "owner",
             "tags",
             "comments",
         )

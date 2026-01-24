@@ -6,12 +6,13 @@ from ipam.api.serializers import VRFSerializer
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....models.tenant.vrfs import ACIVRF
 from .tenants import ACITenantSerializer
 
 
-class ACIVRFSerializer(NetBoxModelSerializer):
+class ACIVRFSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI VRF model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -41,6 +42,7 @@ class ACIVRFSerializer(NetBoxModelSerializer):
             "pim_ipv4_enabled",
             "pim_ipv6_enabled",
             "preferred_group_enabled",
+            "owner",
             "comments",
             "tags",
             "custom_fields",

@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
-from drf_spectacular.utils import extend_schema_field
 from netbox.api.fields import ContentTypeField
+from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
-from utilities.api import get_serializer_for_model
+from users.api.serializers_.mixins import OwnerMixin
 
 from ....constants import USEG_NETWORK_ATTRIBUTES_MODELS
 from ....models.tenant.endpoint_groups import (
@@ -20,7 +20,7 @@ from .app_profiles import ACIAppProfileSerializer
 from .bridge_domains import ACIBridgeDomainSerializer
 
 
-class ACIEndpointGroupSerializer(NetBoxModelSerializer):
+class ACIEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -49,6 +49,7 @@ class ACIEndpointGroupSerializer(NetBoxModelSerializer):
             "qos_class",
             "preferred_group_member_enabled",
             "proxy_arp_enabled",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -68,7 +69,7 @@ class ACIEndpointGroupSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIUSegEndpointGroupSerializer(NetBoxModelSerializer):
+class ACIUSegEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -97,6 +98,7 @@ class ACIUSegEndpointGroupSerializer(NetBoxModelSerializer):
             "match_operator",
             "qos_class",
             "preferred_group_member_enabled",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -116,7 +118,7 @@ class ACIUSegEndpointGroupSerializer(NetBoxModelSerializer):
         )
 
 
-class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
+class ACIUSegNetworkAttributeSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI uSeg Network Attribute model."""
 
     url = serializers.HyperlinkedIdentityField(
@@ -134,7 +136,7 @@ class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
         default=None,
         allow_null=True,
     )
-    attr_object = serializers.SerializerMethodField(read_only=True)
+    attr_object = GFKSerializerField(read_only=True)
     nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
@@ -152,6 +154,7 @@ class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
             "attr_object",
             "nb_tenant",
             "use_epg_subnet",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
@@ -171,12 +174,3 @@ class ACIUSegNetworkAttributeSerializer(NetBoxModelSerializer):
             "attr_object",
             "use_epg_subnet",
         )
-
-    @extend_schema_field(serializers.JSONField(allow_null=True))
-    def get_attr_object(self, obj):
-        """Return the attribute object as nested JSON."""
-        if obj.attr_object_id is None:
-            return None
-        serializer = get_serializer_for_model(obj.attr_object)
-        context = {"request": self.context["request"]}
-        return serializer(obj.attr_object, nested=True, context=context).data

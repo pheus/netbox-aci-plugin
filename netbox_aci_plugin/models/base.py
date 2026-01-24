@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from netbox.models import NetBoxModel
+from netbox.models.mixins import OwnerMixin
 
 from ..constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
 from ..validators import (
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
     from .tenant.tenants import ACITenant
 
 
-class ACIBaseModel(NetBoxModel):
+class ACIBaseModel(OwnerMixin, NetBoxModel):
     """Base model for ACI policies."""
 
     name = models.CharField(
