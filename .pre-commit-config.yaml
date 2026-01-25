@@ -23,7 +23,7 @@ repos:
       - id: requirements-txt-fixer
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.12.11"
+    rev: "v0.14.14"
     hooks:
       # Run the linter.
       - id: ruff-check
@@ -32,13 +32,13 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/adrienverge/yamllint
-    rev: "v1.37.1"
+    rev: "v1.38.0"
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
 
   - repo: https://github.com/mgedmin/check-manifest
-    rev: "0.50"
+    rev: "0.51"
     hooks:
       - id: check-manifest
         stages: [manual]
