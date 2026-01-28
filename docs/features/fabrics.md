@@ -120,7 +120,7 @@ The **ACINode** model has the following fields:
       Site/Region/Group or Location hierarchy)
 - **Role**: functional role of the node in the topology.
     - Values: **Leaf**, **Spine**, **APIC**
-- **Type Type**: documents the deployment type of the node.
+- **Node Type**: documents the deployment type of the node.
     - Examples: virtual leaf, remote leaf (WAN), tier‑2 leaf
 - **TEP IP Address**: optional reference to a NetBox IPAddress
   documenting the node’s Tunnel Endpoint (TEP).
