@@ -251,7 +251,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
         # Validate ACI object assignment before validation of any other fields
-        if self.aci_object_type and not (self.aci_object or self.aci_object_id):
+        if self.aci_object_type_id and not (self.aci_object or self.aci_object_id):
             aci_model_class = self.aci_object_type.model_class()
             raise ValidationError(
                 {
@@ -269,8 +269,8 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         # Validate the assigned ACI Contract and ACI Object shares the same
         # ACI Tenant
         if (
-            hasattr(self, "aci_contract")
-            and hasattr(self, "aci_object")
+            self.aci_contract_id
+            and self.aci_object_id
             and self.aci_contract.aci_tenant != self.aci_object.aci_tenant
         ):
             aci_model_class = self.aci_object_type.model_class()

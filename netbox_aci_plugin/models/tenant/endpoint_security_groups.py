@@ -110,8 +110,8 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
         # Validate the assigned ACIVRF belongs to the same ACIFabric as
         # the ACIAppProfile
         if (
-            hasattr(self, "aci_vrf")
-            and hasattr(self, "aci_app_profile")
+            self.aci_vrf_id
+            and self.aci_app_profile_id
             and self.aci_vrf.aci_tenant.aci_fabric
             != self.aci_app_profile.aci_tenant.aci_fabric
         ):
@@ -125,8 +125,8 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
         # Validate the assigned ACIVRF belongs to either the same ACITenant as
         # the ACIAppProfile or to the special ACITenant 'common'
         if (
-            hasattr(self, "aci_vrf")
-            and hasattr(self, "aci_app_profile")
+            self.aci_vrf_id
+            and self.aci_app_profile_id
             and self.aci_vrf.aci_tenant != self.aci_app_profile.aci_tenant
             and self.aci_vrf.aci_tenant.name != "common"
         ):
@@ -324,7 +324,7 @@ class ACIEsgEndpointGroupSelector(
         """Override the model's clean method for custom field validation."""
         # Validate Endpoint Group object assignment before validation of
         # any other fields
-        if self.aci_epg_object_type and not (
+        if self.aci_epg_object_type_id and not (
             self.aci_epg_object or self.aci_epg_object_id
         ):
             aci_epg_model_class = self.aci_epg_object_type.model_class()
@@ -504,7 +504,7 @@ class ACIEsgEndpointSelector(ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMix
         """Override the model's clean method for custom field validation."""
         # Validate Endpoint object assignment before validation of any other
         # fields
-        if self.ep_object_type and not (self.ep_object or self.ep_object_id):
+        if self.ep_object_type_id and not (self.ep_object or self.ep_object_id):
             ep_model_class = self.ep_object_type.model_class()
             raise ValidationError(
                 {

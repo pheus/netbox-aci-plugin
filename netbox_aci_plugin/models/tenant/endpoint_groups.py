@@ -129,8 +129,8 @@ class ACIEndpointGroupBaseModel(ACITenantBaseModel):
         # Validate the assigned ACIBridgeDomain belongs to the same
         # ACIFabric as the ACIAppProfile
         if (
-            hasattr(self, "aci_bridge_domain")
-            and hasattr(self, "aci_app_profile")
+            self.aci_bridge_domain_id
+            and self.aci_app_profile_id
             and self.aci_bridge_domain.aci_tenant.aci_fabric
             != self.aci_app_profile.aci_tenant.aci_fabric
         ):
@@ -144,8 +144,8 @@ class ACIEndpointGroupBaseModel(ACITenantBaseModel):
         # Validate the assigned ACIBridgeDomain belongs to either the same
         # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
         if (
-            hasattr(self, "aci_bridge_domain")
-            and hasattr(self, "aci_app_profile")
+            self.aci_bridge_domain_id
+            and self.aci_app_profile_id
             and self.aci_bridge_domain.aci_tenant != self.aci_app_profile.aci_tenant
             and self.aci_bridge_domain.aci_tenant.name != "common"
         ):
@@ -480,7 +480,7 @@ class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKey
         """Override the model's clean method for custom field validation."""
         # Validate Attribute object assignment before validation of any other
         # fields
-        if self.attr_object_type and not (self.attr_object or self.attr_object_id):
+        if self.attr_object_type_id and not (self.attr_object or self.attr_object_id):
             attr_model_class = self.attr_object_type.model_class()
             raise ValidationError(
                 {

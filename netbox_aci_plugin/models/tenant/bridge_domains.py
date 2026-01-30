@@ -254,7 +254,7 @@ class ACIBridgeDomain(ACITenantBaseModel):
         # Validate the assigned ACIVRF belongs to the same ACIFabric as
         # the ACIBridgeDomain
         if (
-            hasattr(self, "aci_vrf")
+            self.aci_vrf_id
             and self.aci_vrf.aci_tenant.aci_fabric != self.aci_tenant.aci_fabric
         ):
             errors.setdefault("aci_vrf", []).append(
@@ -267,7 +267,7 @@ class ACIBridgeDomain(ACITenantBaseModel):
         # Validate the assigned ACIVRF belongs to either the same ACITenant as
         # the ACIBridgeDomain or to the special ACITenant 'common'
         if (
-            hasattr(self, "aci_vrf")
+            self.aci_vrf_id
             and self.aci_vrf.aci_tenant != self.aci_tenant
             and self.aci_vrf.aci_tenant.name != "common"
         ):
