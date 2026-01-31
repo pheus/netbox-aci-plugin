@@ -32,6 +32,7 @@ The **ACIFabric** model has the following fields:
 - **Name**: the ACI Fabric name.
 - **Fabric ID**: numeric identifier configured during APIC fabric setup.
     - Values: `1`–`128`
+    - Distinct from the Multi-Site **Site ID**; not globally unique.
 - **Infrastructure VLAN ID**: fabric-wide infrastructure VLAN used for
   APIC-to-switch communication.
     - Values: `1`–`4094`

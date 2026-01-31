@@ -205,13 +205,3 @@ class ACIFabricTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(IntegrityError):
             duplicate_fabric.save()
-
-    def test_constraint_unique_aci_fabric_id(self) -> None:
-        """Test unique constraint of ACI Fabric ID."""
-        duplicate_fabric = ACIFabric(
-            name="ACITestFabric1",
-            fabric_id=self.aci_fabric_id,
-            infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
-        )
-        with self.assertRaises(IntegrityError):
-            duplicate_fabric.save()

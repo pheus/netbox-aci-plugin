@@ -39,7 +39,9 @@ class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
     )
     fabric_id = models.PositiveSmallIntegerField(
         verbose_name=_("Fabric ID"),
-        help_text=_("ACI Fabric ID (1–128). Used by GOLF Auto‑RT if enabled."),
+        help_text=_(
+            "ACI Fabric ID (1–128). Distinct from Site ID; not globally unique."
+        ),
         validators=[
             MinValueValidator(FABRIC_ID_MIN),
             MaxValueValidator(FABRIC_ID_MAX),
@@ -99,10 +101,6 @@ class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
             models.UniqueConstraint(
                 fields=("name",),
                 name="%(app_label)s_%(class)s_unique_name",
-            ),
-            models.UniqueConstraint(
-                fields=("fabric_id",),
-                name="%(app_label)s_%(class)s_unique_fabric_id",
             ),
         ]
         ordering: tuple = ("name",)
