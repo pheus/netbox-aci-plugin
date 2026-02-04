@@ -266,24 +266,40 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
         super().clean()
 
-        # Validate the assigned ACI Contract and ACI Object shares the same
-        # ACI Tenant
-        if (
-            self.aci_contract_id
-            and self.aci_object_id
-            and self.aci_contract.aci_tenant != self.aci_object.aci_tenant
-        ):
+        errors = {}
+
+        # Validate the assigned ACI Contract belongs to the same ACI
+        # Tenant as the ACI Object, or to the "common" tenant of the
+        # same ACI Fabric.
+        if self.aci_contract_id and self.aci_object_id:
+            aci_contract_tenant = self.aci_contract.aci_tenant
+            aci_object_tenant = self.aci_object.aci_tenant
             aci_model_class = self.aci_object_type.model_class()
-            raise ValidationError(
-                {
-                    "aci_object": _(
-                        "An assigned {aci_object} must belong to the same "
-                        "ACI Tenant as the ACI Contract.".format(
+
+            if aci_contract_tenant.aci_fabric_id != aci_object_tenant.aci_fabric_id:
+                errors.setdefault("aci_object", []).append(
+                    _(
+                        "The assigned {aci_object} must belong to the same "
+                        "ACI Fabric as the ACI Contract.".format(
                             aci_object=aci_model_class._meta.verbose_name
                         )
                     )
-                }
-            )
+                )
+            if (
+                aci_contract_tenant != aci_object_tenant
+                and aci_contract_tenant.name != "common"
+            ):
+                errors.setdefault("aci_object", []).append(
+                    _(
+                        "The selected {aci_object} must belong to the same "
+                        "ACI Tenant or to the ACI Tenant 'common'.".format(
+                            aci_object=aci_model_class._meta.verbose_name
+                        )
+                    )
+                )
+
+        if errors:
+            raise ValidationError(errors)
 
         # Perform the mixin's unique constraint validation
         self._validate_generic_uniqueness()

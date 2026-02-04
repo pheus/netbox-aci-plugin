@@ -15,6 +15,7 @@ from ....choices import (
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
 )
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.contract_filters import ACIContractFilter
 from ....models.tenant.contracts import (
     ACIContract,
@@ -604,9 +605,10 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
         )
 
     def test_invalid_aci_contract_relation_aci_tenant(self) -> None:
-        """Test validation of the same ACI Tenant assignment for Relation."""
+        """Test validation of a Relation using another non-common tenant."""
         other_tenant = ACITenant.objects.create(
-            name="OtherTenant", aci_fabric=self.aci_fabric
+            name="OtherTenant",
+            aci_fabric=self.aci_fabric,
         )
         contract = ACIContract.objects.create(
             name="ACIContractOtherTenant",
@@ -622,6 +624,73 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError):
             contract_relation.full_clean()
+
+    def test_valid_aci_contract_relation_common_tenant_same_fabric(self) -> None:
+        """Test valid assignment of Contract from tenant 'common'."""
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common",
+            aci_fabric=self.aci_fabric,
+        )[0]
+        common_contract = ACIContract.objects.create(
+            name="ACIContractOtherTenant",
+            aci_tenant=tenant_common,
+            qos_class=self.aci_contract_qos_class,
+            scope=self.aci_contract_scope,
+            target_dscp=self.aci_contract_target_dscp,
+        )
+        contract_relation = ACIContractRelation(
+            aci_contract=common_contract,
+            aci_object=self.aci_epg1,
+            role=self.aci_contract_relation_role_cons,
+        )
+        contract_relation.full_clean()
+
+    def test_invalid_aci_contract_relation_other_tenant_same_fabric(self) -> None:
+        """Test invalid assignment of an ACI Contract from another tenant."""
+        other_tenant = ACITenant.objects.create(
+            name="Other",
+            aci_fabric=self.aci_fabric,
+        )
+        other_contract = ACIContract.objects.create(
+            name="other-ct",
+            aci_tenant=other_tenant,
+        )
+        relation = ACIContractRelation(
+            aci_contract=other_contract,
+            aci_object=self.aci_epg1,
+            role=self.aci_contract_relation_role_cons,
+        )
+        with self.assertRaises(ValidationError):
+            relation.full_clean()
+
+    def test_invalid_aci_contract_relation_common_tenant_other_fabric(self) -> None:
+        """Test validation rejects contracts from 'common' in other fabric."""
+        other_fabric = ACIFabric.objects.create(
+            name="ACIBaseTestFabricOther",
+            fabric_id=self.aci_fabric_id + 1,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid + 1,
+        )
+        other_common_tenant = ACITenant.objects.create(
+            name="common",
+            aci_fabric=other_fabric,
+        )
+        other_common_contract = ACIContract.objects.create(
+            name="ACIContractCommonOtherFabric",
+            aci_tenant=other_common_tenant,
+            qos_class=self.aci_contract_qos_class,
+            scope=self.aci_contract_scope,
+            target_dscp=self.aci_contract_target_dscp,
+        )
+        contract_relation = ACIContractRelation(
+            aci_contract=other_common_contract,
+            aci_object=self.aci_epg1,
+            role=self.aci_contract_relation_role_cons,
+        )
+
+        with self.assertRaises(ValidationError) as error:
+            contract_relation.full_clean()
+
+        self.assertIn("aci_object", error.exception.message_dict)
 
     def test_invalid_aci_contract_relation_aci_object(self) -> None:
         """Test validation of the correct object assignment for Relation."""
