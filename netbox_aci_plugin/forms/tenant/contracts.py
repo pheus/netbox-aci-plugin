@@ -470,14 +470,13 @@ class ACIContractRelationEditForm(NetBoxModelForm):
 
     aci_fabric = DynamicModelChoiceField(
         queryset=ACIFabric.objects.all(),
-        initial_params={"aci_tenants__aci_contracts": "$aci_contract"},
+        initial_params={"aci_tenants": "$aci_tenant"},
         required=False,
         label=_("ACI Fabric"),
     )
     aci_tenant = DynamicModelChoiceField(
         queryset=ACITenant.objects.all(),
         query_params={"aci_fabric_id": "$aci_fabric"},
-        initial_params={"aci_contracts": "$aci_contract"},
         required=False,
         label=_("ACI Tenant"),
     )
@@ -551,6 +550,15 @@ class ACIContractRelationEditForm(NetBoxModelForm):
         if instance is not None and instance.aci_object:
             # Initialize ACI object field
             initial["aci_object"] = instance.aci_object
+
+            # Initialize tenant/fabric from the OBJECT tenant, not the
+            # contract tenant.  When the contract comes from "common",
+            # the helper tenant must still point at the object's tenant
+            # so that the aci_object dropdown filters correctly and
+            # the aci_contract dropdown shows both own + common
+            # contracts.
+            initial["aci_tenant"] = instance.aci_object_tenant
+            initial["aci_fabric"] = instance.aci_object_tenant.aci_fabric
 
         kwargs["initial"] = initial
 
