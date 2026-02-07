@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from django.core.exceptions import FieldDoesNotExist
-from django.core.validators import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.utils.translation import gettext as _
 
 
