@@ -3,7 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import django_filters
+from django.db.models import Q
 from django.utils.translation import gettext as _
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from tenancy.models import Tenant, TenantGroup
 from utilities.filters import TreeNodeMultipleChoiceFilter
 
@@ -54,6 +57,29 @@ class ACITenantFilterSetMixin(django_filters.FilterSet):
         to_field_name="id",
         label=_("ACI Tenant (ID)"),
     )
+
+
+class ACITenantOrCommonFilterSetMixin(django_filters.FilterSet):
+    """Filter set mixin for objects present in an ACI Tenant or 'common'."""
+
+    present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
+        queryset=ACITenant.objects.all(),
+        method="filter_present_in_aci_tenant_or_common_id",
+        label=_("ACI Tenant (ID)"),
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_present_in_aci_tenant_or_common_id(self, queryset, name, aci_tenant):
+        """Return a QuerySet filtered by given ACI Tenant or 'common'."""
+        if aci_tenant is None:
+            return queryset.none()
+        return queryset.filter(
+            Q(aci_tenant=aci_tenant)
+            | Q(
+                aci_tenant__name="common",
+                aci_tenant__aci_fabric_id=aci_tenant.aci_fabric_id,
+            )
+        )
 
 
 class NBTenantFilterSetMixin(django_filters.FilterSet):

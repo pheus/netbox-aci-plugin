@@ -6,8 +6,6 @@ import django_filters
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
 from ipam.models import VRF
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
@@ -17,14 +15,18 @@ from ...choices import (
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
-from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
-from ..mixins import ACITenantFilterSetMixin, NBTenantFilterSetMixin
+from ..mixins import (
+    ACITenantFilterSetMixin,
+    ACITenantOrCommonFilterSetMixin,
+    NBTenantFilterSetMixin,
+)
 
 
 @register_filterset
 class ACIVRFFilterSet(
     ACITenantFilterSetMixin,
+    ACITenantOrCommonFilterSetMixin,
     NBTenantFilterSetMixin,
     OwnerFilterMixin,
     NetBoxModelFilterSet,
@@ -49,13 +51,6 @@ class ACIVRFFilterSet(
     pc_enforcement_preference = django_filters.MultipleChoiceFilter(
         choices=VRFPCEnforcementPreferenceChoices,
         null_value=None,
-    )
-
-    # Filters extended with a custom filter method
-    present_in_aci_tenant_or_common_id = django_filters.ModelChoiceFilter(
-        queryset=ACITenant.objects.all(),
-        method="filter_present_in_aci_tenant_or_common_id",
-        label=_("ACI Tenant (ID)"),
     )
 
     class Meta:
@@ -96,16 +91,3 @@ class ACIVRFFilterSet(
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def filter_present_in_aci_tenant_or_common_id(self, queryset, name, aci_tenant):
-        """Return a QuerySet filtered by given ACI Tenant or 'common'."""
-        if aci_tenant is None:
-            return queryset.none()
-        return queryset.filter(
-            Q(aci_tenant=aci_tenant)
-            | Q(
-                aci_tenant__name="common",
-                aci_tenant__aci_fabric_id=aci_tenant.aci_fabric_id,
-            )
-        )
