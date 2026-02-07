@@ -616,6 +616,11 @@ class ACIContractSubjectFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             aci_tenant=aci_tenant2,
             nb_tenant=nb_tenant1,
         )
+        aci_contract_filter5 = ACIContractFilter.objects.create(
+            name="ACIContractFilterTestAPI5",
+            aci_tenant=aci_tenant1,
+            nb_tenant=nb_tenant1,
+        )
         aci_contract1 = ACIContract.objects.create(
             name="ACIContractTestAPI1",
             aci_tenant=aci_tenant1,
@@ -671,8 +676,8 @@ class ACIContractSubjectFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 priority="level1",
             ),
             ACIContractSubjectFilter(
-                aci_contract_filter=aci_contract_filter1,
-                aci_contract_subject=aci_contract_subject2,
+                aci_contract_filter=aci_contract_filter3,
+                aci_contract_subject=aci_contract_subject1,
                 action="deny",
                 apply_direction="ctp",
                 log_enabled=False,
@@ -684,8 +689,8 @@ class ACIContractSubjectFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
 
         cls.create_data: list[dict] = [
             {
-                "aci_contract_filter": aci_contract_filter3.id,
-                "aci_contract_subject": aci_contract_subject1.id,
+                "aci_contract_filter": aci_contract_filter4.id,
+                "aci_contract_subject": aci_contract_subject2.id,
                 "action": "permit",
                 "apply_direction": "both",
                 "log_enabled": True,
@@ -693,8 +698,8 @@ class ACIContractSubjectFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "priority": "default",
             },
             {
-                "aci_contract_filter": aci_contract_filter4.id,
-                "aci_contract_subject": aci_contract_subject2.id,
+                "aci_contract_filter": aci_contract_filter5.id,
+                "aci_contract_subject": aci_contract_subject1.id,
                 "action": "permit",
                 "apply_direction": "both",
                 "log_enabled": True,

@@ -1221,6 +1221,103 @@ class ACIContractSubjectFilterTestCase(ACIBaseTestCase):
             ),
         )
 
+    def test_valid_aci_contract_subject_filter_same_tenant(self) -> None:
+        """Test valid assignment of Contract Filter from the same Tenant."""
+        contract_filter = ACIContractFilter.objects.create(
+            name="ACITestContractFilterSameTenant",
+            aci_tenant=self.aci_tenant,
+            nb_tenant=self.nb_tenant,
+        )
+        contract_subject_filter = ACIContractSubjectFilter(
+            aci_contract_filter=contract_filter,
+            aci_contract_subject=self.aci_contract_subject,
+            action=self.aci_contract_subject_filter_action,
+            apply_direction=self.aci_contract_subject_filter_apply_direction,
+            log_enabled=self.aci_contract_subject_filter_log_enabled,
+            policy_compression_enabled=self.aci_contract_subject_filter_policy_compression_enabled,
+            priority=self.aci_contract_subject_filter_priority,
+        )
+        contract_subject_filter.full_clean()
+
+    def test_valid_aci_contract_subject_filter_common_tenant_same_fabric(self) -> None:
+        """Test valid assignment of Contract Filter from tenant 'common'."""
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common",
+            aci_fabric=self.aci_fabric,
+        )[0]
+        contract_filter = ACIContractFilter.objects.create(
+            name="ACITestContractFilterCommon",
+            aci_tenant=tenant_common,
+            nb_tenant=self.nb_tenant,
+        )
+        contract_subject_filter = ACIContractSubjectFilter(
+            aci_contract_filter=contract_filter,
+            aci_contract_subject=self.aci_contract_subject,
+            action=self.aci_contract_subject_filter_action,
+            apply_direction=self.aci_contract_subject_filter_apply_direction,
+            log_enabled=self.aci_contract_subject_filter_log_enabled,
+            policy_compression_enabled=self.aci_contract_subject_filter_policy_compression_enabled,
+            priority=self.aci_contract_subject_filter_priority,
+        )
+        contract_subject_filter.full_clean()
+
+    def test_invalid_aci_contract_subject_filter_other_tenant_same_fabric(self) -> None:
+        """Test invalid assignment of Contract Filter from another tenant."""
+        other_tenant = ACITenant.objects.create(
+            name="OtherTenant",
+            aci_fabric=self.aci_fabric,
+        )
+        contract_filter = ACIContractFilter.objects.create(
+            name="ACITestContractFilterOtherTenant",
+            aci_tenant=other_tenant,
+            nb_tenant=self.nb_tenant,
+        )
+        contract_subject_filter = ACIContractSubjectFilter(
+            aci_contract_filter=contract_filter,
+            aci_contract_subject=self.aci_contract_subject,
+            action=self.aci_contract_subject_filter_action,
+            apply_direction=self.aci_contract_subject_filter_apply_direction,
+            log_enabled=self.aci_contract_subject_filter_log_enabled,
+            policy_compression_enabled=self.aci_contract_subject_filter_policy_compression_enabled,
+            priority=self.aci_contract_subject_filter_priority,
+        )
+        with self.assertRaises(ValidationError) as error:
+            contract_subject_filter.full_clean()
+
+        self.assertIn("aci_contract_filter", error.exception.message_dict)
+
+    def test_invalid_aci_contract_subject_filter_common_tenant_different_fabric(
+        self,
+    ) -> None:
+        """Test validation rejects Filters from 'common' in other fabric."""
+        other_fabric = ACIFabric.objects.create(
+            name="ACIBaseTestFabricOther",
+            fabric_id=self.aci_fabric_id + 1,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid + 1,
+        )
+        other_common_tenant = ACITenant.objects.create(
+            name="common",
+            aci_fabric=other_fabric,
+        )
+        contract_filter = ACIContractFilter.objects.create(
+            name="ACITestContractFilterOtherFabric",
+            aci_tenant=other_common_tenant,
+            nb_tenant=self.nb_tenant,
+        )
+        contract_subject_filter = ACIContractSubjectFilter(
+            aci_contract_filter=contract_filter,
+            aci_contract_subject=self.aci_contract_subject,
+            action=self.aci_contract_subject_filter_action,
+            apply_direction=self.aci_contract_subject_filter_apply_direction,
+            log_enabled=self.aci_contract_subject_filter_log_enabled,
+            policy_compression_enabled=self.aci_contract_subject_filter_policy_compression_enabled,
+            priority=self.aci_contract_subject_filter_priority,
+        )
+        with self.assertRaises(ValidationError) as error:
+            contract_subject_filter.full_clean()
+
+        self.assertIn("aci_contract_filter", error.exception.message_dict)
+
     def test_constraint_unique_aci_contract_subject_filter_per_aci_contract_subject(
         self,
     ) -> None:

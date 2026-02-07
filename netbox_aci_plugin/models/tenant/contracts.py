@@ -658,9 +658,48 @@ class ACIContractSubjectFilter(NetBoxModel):
         """Return string representation of the instance."""
         return f"{self.aci_contract_subject.name}-{self.aci_contract_filter.name}"
 
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+        super().clean()
+
+        errors = {}
+
+        # Validate the assigned ACI Contract Filter belongs to the same
+        # ACI Tenant as the ACI Contract Subject, or to the "common"
+        # tenant of the same ACI Fabric.
+        if self.aci_contract_filter_id and self.aci_contract_subject_id:
+            aci_contract_filter_tenant = self.aci_contract_filter.aci_tenant
+            aci_contract_subject_tenant = (
+                self.aci_contract_subject.aci_contract.aci_tenant
+            )
+
+            if (
+                aci_contract_filter_tenant.aci_fabric_id
+                != aci_contract_subject_tenant.aci_fabric_id
+            ):
+                errors.setdefault("aci_contract_filter", []).append(
+                    _(
+                        "The assigned ACI Contract Filter must belong to "
+                        "the same ACI Fabric as the ACI Contract Subject."
+                    )
+                )
+            if (
+                aci_contract_filter_tenant != aci_contract_subject_tenant
+                and aci_contract_filter_tenant.name != "common"
+            ):
+                errors.setdefault("aci_contract_filter", []).append(
+                    _(
+                        "The selected ACI Contract Filter must belong to "
+                        "the same ACI Tenant or to the ACI Tenant 'common'."
+                    )
+                )
+
+        if errors:
+            raise ValidationError(errors)
+
     @property
     def aci_fabric(self) -> ACIFabric:
-        """Return the ACFabric instance of related ACITenant."""
+        """Return the ACIFabric instance of related ACITenant."""
         return self.aci_tenant.aci_fabric
 
     @property
