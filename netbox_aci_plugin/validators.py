@@ -46,9 +46,6 @@ ACIPolicyDescriptionValidator = RegexValidator(
 def validate_contract_filter_ip_protocol(value: str) -> None:
     """Validate the IP protocol value for ContractFilterEntry."""
     # Check if the protocol value is a valid choice in the ChoiceSet
-    if value in dict(ContractFilterIPProtocolChoices):
-        return
-
     if value in dict(ContractFilterIPProtocolChoices) or value in [
         str(i) for i in range(0, 256)
     ]:
