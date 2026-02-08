@@ -22,13 +22,12 @@ from virtualization.models import VirtualMachine
 from ...choices import NodeRoleChoices, NodeTypeChoices
 from ...constants import NODE_ID_MAX, NODE_ID_MIN, NODE_OBJECT_TYPES
 from ..base import ACIFabricBaseModel
-from ..mixins import UniqueGenericForeignKeyMixin
 
 if TYPE_CHECKING:
     from ..fabric.fabrics import ACIFabric
 
 
-class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
+class ACINode(ACIFabricBaseModel):
     """NetBox model for ACI Node."""
 
     aci_pod = models.ForeignKey(
@@ -114,10 +113,6 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
     )
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIPod",)
 
-    # Unique GenericForeignKey validation
-    generic_fk_field = "node_object"
-    generic_unique_fields = ("aci_pod",)
-
     class Meta:
         constraints: tuple[models.UniqueConstraint] = [
             models.UniqueConstraint(
@@ -129,9 +124,15 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                 name="%(app_label)s_%(class)s_unique_nodename_per_pod",
             ),
             models.UniqueConstraint(
-                fields=("node_object_id", "node_object_type"),
-                name="%(app_label)s_%(class)s_unique_node_object",
-                violation_error_message=_("ACI Node must be unique per ACI Fabric."),
+                fields=("node_object_type", "node_object_id"),
+                condition=models.Q(
+                    node_object_type__isnull=False,
+                    node_object_id__isnull=False,
+                ),
+                name="%(app_label)s_%(class)s_unique_assigned_node_object",
+                violation_error_message=_(
+                    "The selected object is already assigned to another ACI Node."
+                ),
             ),
         ]
         ordering: tuple = ("aci_pod", "node_id")
@@ -251,11 +252,21 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                         )
                     )
 
+        # Validate Node Object uniqueness
+        if self.node_object_type_id and self.node_object_id:
+            qs = type(self).objects.filter(
+                node_object_type=self.node_object_type,
+                node_object_id=self.node_object_id,
+            )
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            if qs.exists():
+                errors.setdefault("node_object", []).append(
+                    _("The selected object is already assigned to another ACI Node.")
+                )
+
         if errors:
             raise ValidationError(errors)
-
-        # Perform the mixin's unique constraint validation
-        self._validate_generic_uniqueness()
 
     def save(self, *args, **kwargs) -> None:
         """Save the current instance to the database."""
