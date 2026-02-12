@@ -788,6 +788,11 @@ class ACIContractRelationImportForm(NetBoxModelImportForm):
             "Default is 'prov' (Provider)."
         ),
     )
+    is_aci_contract_in_common = forms.BooleanField(
+        required=False,
+        label=_("Is ACI Contract in 'common'"),
+        help_text=_("Assigned ACI Contract is in ACI Tenant 'common'"),
+    )
 
     class Meta:
         model = ACIContractRelation
@@ -814,11 +819,19 @@ class ACIContractRelationImportForm(NetBoxModelImportForm):
             self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
                 aci_fabric__name=data["aci_fabric"]
             )
-            # Limit ACIContract queryset by parent ACITenant
-            self.fields["aci_contract"].queryset = ACIContract.objects.filter(
-                aci_tenant__aci_fabric__name=data["aci_fabric"],
-                aci_tenant__name=data["aci_tenant"],
-            )
+
+            if data.get("is_aci_contract_in_common") == "true":
+                # Limit ACIContract queryset by "common" tenant
+                self.fields["aci_contract"].queryset = ACIContract.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name="common",
+                )
+            else:
+                # Limit ACIContract queryset by selected ACITenant
+                self.fields["aci_contract"].queryset = ACIContract.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name=data["aci_tenant"],
+                )
 
 
 #
