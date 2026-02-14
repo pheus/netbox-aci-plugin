@@ -31,7 +31,7 @@ __all__ = (
 )
 
 
-@strawberry_django.filter(models.ACIBridgeDomain, lookups=True)
+@strawberry_django.filter_type(models.ACIBridgeDomain, lookups=True)
 class ACIBridgeDomainFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIBridgeDomain model."""
 
@@ -128,7 +128,7 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
     virtual_mac_address: FilterLookup[str] | None = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIBridgeDomainSubnet, lookups=True)
+@strawberry_django.filter_type(models.ACIBridgeDomainSubnet, lookups=True)
 class ACIBridgeDomainSubnetFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIBridgeDomainSubnet model."""
 

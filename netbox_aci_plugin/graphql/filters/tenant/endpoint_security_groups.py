@@ -26,7 +26,7 @@ __all__ = (
 )
 
 
-@strawberry_django.filter(models.ACIEndpointSecurityGroup, lookups=True)
+@strawberry_django.filter_type(models.ACIEndpointSecurityGroup, lookups=True)
 class ACIEndpointSecurityGroupFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIEndpointSecurityGroup model."""
 
@@ -69,7 +69,7 @@ class ACIEsgSelectorBaseFilterMixin(ACIBaseFilterMixin):
     aci_endpoint_security_group_id: ID | None = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIEsgEndpointGroupSelector, lookups=True)
+@strawberry_django.filter_type(models.ACIEsgEndpointGroupSelector, lookups=True)
 class ACIEsgEndpointGroupSelectorFilter(ACIEsgSelectorBaseFilterMixin):
     """GraphQL filter definition for the ACIEsgEndpointGroupSelector model."""
 
@@ -79,7 +79,7 @@ class ACIEsgEndpointGroupSelectorFilter(ACIEsgSelectorBaseFilterMixin):
     aci_epg_object_id: ID | None = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIEsgEndpointSelector, lookups=True)
+@strawberry_django.filter_type(models.ACIEsgEndpointSelector, lookups=True)
 class ACIEsgEndpointSelectorFilter(ACIEsgSelectorBaseFilterMixin):
     """GraphQL filter definition for the ACIEsgEndpointSelector model."""
 

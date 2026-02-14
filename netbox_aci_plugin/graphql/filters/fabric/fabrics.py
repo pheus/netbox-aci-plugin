@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 __all__ = ("ACIFabricFilter",)
 
 
-@strawberry_django.filter(models.ACIFabric, lookups=True)
+@strawberry_django.filter_type(models.ACIFabric, lookups=True)
 class ACIFabricFilter(ScopedFilterMixin, NetBoxModelFilter):
     """GraphQL filter definition for the ACIFabric model."""
 

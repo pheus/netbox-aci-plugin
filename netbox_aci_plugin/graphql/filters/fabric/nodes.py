@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 __all__ = ("ACINodeFilter",)
 
 
-@strawberry_django.filter(models.ACINode, lookups=True)
+@strawberry_django.filter_type(models.ACINode, lookups=True)
 class ACINodeFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACINode model."""
 

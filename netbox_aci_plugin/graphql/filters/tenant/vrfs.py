@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 __all__ = ("ACIVRFFilter",)
 
 
-@strawberry_django.filter(models.ACIVRF, lookups=True)
+@strawberry_django.filter_type(models.ACIVRF, lookups=True)
 class ACIVRFFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIVRF model."""
 

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 __all__ = ("ACIPodFilter",)
 
 
-@strawberry_django.filter(models.ACIPod, lookups=True)
+@strawberry_django.filter_type(models.ACIPod, lookups=True)
 class ACIPodFilter(ScopedFilterMixin, ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIPod model."""
 

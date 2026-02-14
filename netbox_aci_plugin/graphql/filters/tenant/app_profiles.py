@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 __all__ = ("ACIAppProfileFilter",)
 
 
-@strawberry_django.filter(models.ACIAppProfile, lookups=True)
+@strawberry_django.filter_type(models.ACIAppProfile, lookups=True)
 class ACIAppProfileFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIAppProfile model."""
 

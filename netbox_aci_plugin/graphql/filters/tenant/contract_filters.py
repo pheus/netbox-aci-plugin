@@ -31,7 +31,7 @@ __all__ = (
 )
 
 
-@strawberry_django.filter(models.ACIContractFilter, lookups=True)
+@strawberry_django.filter_type(models.ACIContractFilter, lookups=True)
 class ACIContractFilterFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIContractFilter model."""
 
@@ -45,7 +45,7 @@ class ACIContractFilterFilter(ACIBaseFilterMixin):
     aci_tenant_id: ID | None = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIContractFilterEntry, lookups=True)
+@strawberry_django.filter_type(models.ACIContractFilterEntry, lookups=True)
 class ACIContractFilterEntryFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIContractFilterEntry model."""
 

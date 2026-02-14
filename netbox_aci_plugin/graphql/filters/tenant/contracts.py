@@ -37,7 +37,7 @@ __all__ = (
 )
 
 
-@strawberry_django.filter(models.ACIContract, lookups=True)
+@strawberry_django.filter_type(models.ACIContract, lookups=True)
 class ACIContractFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIContract model."""
 
@@ -77,7 +77,7 @@ class ACIContractFilter(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIContractRelation, lookups=True)
+@strawberry_django.filter_type(models.ACIContractRelation, lookups=True)
 class ACIContractRelationFilter(NetBoxModelFilter):
     """GraphQL filter definition for the ACIContractRelation model."""
 
@@ -104,7 +104,7 @@ class ACIContractRelationFilter(NetBoxModelFilter):
     ) = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIContractSubject, lookups=True)
+@strawberry_django.filter_type(models.ACIContractSubject, lookups=True)
 class ACIContractSubjectFilter(NetBoxModelFilter):
     """GraphQL filter definition for the ACIContractSubject model."""
 
@@ -185,7 +185,7 @@ class ACIContractSubjectFilter(NetBoxModelFilter):
     ) = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIContractSubjectFilter, lookups=True)
+@strawberry_django.filter_type(models.ACIContractSubjectFilter, lookups=True)
 class ACIContractSubjectFilterFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIContractSubjectFilter model."""
 

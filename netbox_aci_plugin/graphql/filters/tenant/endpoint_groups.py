@@ -71,14 +71,14 @@ class ACIEndpointGroupBaseFilterMixin(ACIBaseFilterMixin):
     )
 
 
-@strawberry_django.filter(models.ACIEndpointGroup, lookups=True)
+@strawberry_django.filter_type(models.ACIEndpointGroup, lookups=True)
 class ACIEndpointGroupFilter(ACIEndpointGroupBaseFilterMixin):
     """GraphQL filter definition for the ACIEndpointGroup model."""
 
     proxy_arp_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIUSegEndpointGroup, lookups=True)
+@strawberry_django.filter_type(models.ACIUSegEndpointGroup, lookups=True)
 class ACIUSegEndpointGroupFilter(ACIEndpointGroupBaseFilterMixin):
     """GraphQL filter definition for the ACIUSegEndpointGroup model."""
 
@@ -116,7 +116,7 @@ class ACIUSegAttributeBaseFilterMixin(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
 
 
-@strawberry_django.filter(models.ACIUSegNetworkAttribute, lookups=True)
+@strawberry_django.filter_type(models.ACIUSegNetworkAttribute, lookups=True)
 class ACIUSegNetworkAttributeFilter(ACIUSegAttributeBaseFilterMixin):
     """GraphQL filter definition for the ACIUSegNetworkAttribute model."""
 

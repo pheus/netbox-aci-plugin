@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 __all__ = ("ACITenantFilter",)
 
 
-@strawberry_django.filter(models.ACITenant, lookups=True)
+@strawberry_django.filter_type(models.ACITenant, lookups=True)
 class ACITenantFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACITenant model."""
 
