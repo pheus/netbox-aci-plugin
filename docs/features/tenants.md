@@ -668,8 +668,10 @@ The *ACIContract* model has the following fields:
 
 ## Contract Relation
 
-A *Contract Relation* links a *Contract* to specific ACI objects such as
-*Endpoint Groups* (EPG) or *Virtual Routing and Forwarding* (VRF) instances.
+A *Contract Relation* links a *Contract* to supported ACI objects such
+as *Endpoint Groups* (EPG), *uSeg Endpoint Groups* (uSeg EPG),
+*Endpoint Security Groups* (ESG) or *Virtual Routing and Forwarding* (VRF)
+instances.
 A *Contract Relation* specifies the role of a given *Contract* for an
 associated ACI object, either as a **Provider** or a **Consumer**.
 Both the *Contract* and the associated ACI object must belong to the same
@@ -684,7 +686,12 @@ The *ACIContractRelation* model has the following fields:
 - **ACI Object Type**: the type of the target ACI object (e.g.,
   *Endpoint Group* or *VRF*) in the form `app.model`.
     - Values: `netbox_aci_plugin.aciendpointgroup` (Endpoint Group),
+      `netbox_aci_plugin.aciendpointsecuritygroup` (Endpoint Security Group),
+      `netbox_aci_plugin.aciusegendpointgroup` (uSeg Endpoint Group),
       `netbox_aci_plugin.acivrf` (VRF)
+    - **Note**: A single ACI Contract cannot be associated with an
+      *Endpoint Security Group* together with *Endpoint Groups* or
+      *uSeg Endpoint Groups*.
 - **ACI Object ID**: represents the (database) identifier for the specific
   ACI object.
 
