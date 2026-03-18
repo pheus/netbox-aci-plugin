@@ -9,7 +9,12 @@ import strawberry_django
 from dcim.graphql.filter_mixins import ScopedFilterMixin
 from netbox.graphql.filters import NetBoxModelFilter
 from strawberry.scalars import ID
-from strawberry_django import ComparisonFilterLookup, FilterLookup
+from strawberry_django import ComparisonFilterLookup
+
+try:
+    from strawberry_django import StrFilterLookup
+except ImportError:
+    from strawberry_django import FilterLookup as StrFilterLookup
 
 from .... import models
 
@@ -26,8 +31,8 @@ __all__ = ("ACIFabricFilter",)
 class ACIFabricFilter(ScopedFilterMixin, NetBoxModelFilter):
     """GraphQL filter definition for the ACIFabric model."""
 
-    name: FilterLookup[str] | None = strawberry_django.filter_field()
-    description: FilterLookup[str] | None = strawberry_django.filter_field()
+    name: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    description: StrFilterLookup[str] | None = strawberry_django.filter_field()
     fabric_id: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
     infra_vlan_vid: ComparisonFilterLookup[int] | None = (
         strawberry_django.filter_field()

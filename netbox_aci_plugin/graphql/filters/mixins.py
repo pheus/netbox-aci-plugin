@@ -9,7 +9,11 @@ import strawberry
 import strawberry_django
 from netbox.graphql.filters import NetBoxModelFilter
 from strawberry import ID
-from strawberry_django import FilterLookup
+
+try:
+    from strawberry_django import StrFilterLookup
+except ImportError:
+    from strawberry_django import FilterLookup as StrFilterLookup
 
 if TYPE_CHECKING:
     from netbox.graphql.filter_lookups import TreeNodeFilter
@@ -22,9 +26,9 @@ __all__ = ("ACIBaseFilterMixin",)
 class ACIBaseFilterMixin(NetBoxModelFilter):
     """Base GraphQL filter mixin for ACI models."""
 
-    name: FilterLookup[str] | None = strawberry_django.filter_field()
-    name_alias: FilterLookup[str] | None = strawberry_django.filter_field()
-    description: FilterLookup[str] | None = strawberry_django.filter_field()
+    name: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    name_alias: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    description: StrFilterLookup[str] | None = strawberry_django.filter_field()
 
     nb_tenant: (
         Annotated["TenantFilter", strawberry.lazy("tenancy.graphql.filters")] | None

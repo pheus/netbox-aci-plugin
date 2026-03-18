@@ -10,6 +10,11 @@ from netbox.graphql.filters import NetBoxModelFilter
 from strawberry.scalars import ID
 from strawberry_django import BaseFilterLookup, FilterLookup
 
+try:
+    from strawberry_django import StrFilterLookup
+except ImportError:
+    from strawberry_django import FilterLookup as StrFilterLookup
+
 from .... import models
 from ..mixins import ACIBaseFilterMixin
 
@@ -149,11 +154,11 @@ class ACIContractSubjectFilter(NetBoxModelFilter):
     reverse_filter_ports_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    service_graph_name: FilterLookup[str] | None = strawberry_django.filter_field()
-    service_graph_name_cons_to_prov: FilterLookup[str] | None = (
+    service_graph_name: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    service_graph_name_cons_to_prov: StrFilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
-    service_graph_name_prov_to_cons: FilterLookup[str] | None = (
+    service_graph_name_prov_to_cons: StrFilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
     target_dscp: (

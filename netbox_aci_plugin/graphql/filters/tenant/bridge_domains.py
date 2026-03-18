@@ -9,6 +9,11 @@ import strawberry_django
 from strawberry.scalars import ID
 from strawberry_django import BaseFilterLookup, FilterLookup
 
+try:
+    from strawberry_django import StrFilterLookup
+except ImportError:
+    from strawberry_django import FilterLookup as StrFilterLookup
+
 from .... import models
 from ..mixins import ACIBaseFilterMixin
 
@@ -68,17 +73,17 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
     ep_move_detection_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    igmp_interface_policy_name: FilterLookup[str] | None = (
+    igmp_interface_policy_name: StrFilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
-    igmp_snooping_policy_name: FilterLookup[str] | None = (
+    igmp_snooping_policy_name: StrFilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
     ip_data_plane_learning_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
     limit_ip_learn_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    mac_address: FilterLookup[str] | None = strawberry_django.filter_field()
+    mac_address: StrFilterLookup[str] | None = strawberry_django.filter_field()
     multi_destination_flooding: (
         BaseFilterLookup[
             Annotated[
@@ -89,15 +94,19 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
         | None
     ) = strawberry_django.filter_field()
     pim_ipv4_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    pim_ipv4_destination_filter: FilterLookup[str] | None = (
+    pim_ipv4_destination_filter: StrFilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
-    pim_ipv4_source_filter: FilterLookup[str] | None = strawberry_django.filter_field()
+    pim_ipv4_source_filter: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
     pim_ipv6_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    pim_ipv6_destination_filter: FilterLookup[str] | None = (
+    pim_ipv6_destination_filter: StrFilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
-    pim_ipv6_source_filter: FilterLookup[str] | None = strawberry_django.filter_field()
+    pim_ipv6_source_filter: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
     unknown_ipv4_multicast: (
         BaseFilterLookup[
             Annotated[
@@ -125,7 +134,7 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
-    virtual_mac_address: FilterLookup[str] | None = strawberry_django.filter_field()
+    virtual_mac_address: StrFilterLookup[str] | None = strawberry_django.filter_field()
 
 
 @strawberry_django.filter_type(models.ACIBridgeDomainSubnet, lookups=True)
@@ -153,7 +162,7 @@ class ACIBridgeDomainSubnetFilter(ACIBaseFilterMixin):
     )
     no_default_gateway: FilterLookup[bool] | None = strawberry_django.filter_field()
     nd_ra_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    nd_ra_prefix_policy_name: FilterLookup[str] | None = (
+    nd_ra_prefix_policy_name: StrFilterLookup[str] | None = (
         strawberry_django.filter_field()
     )
     preferred_ip_address_enabled: FilterLookup[bool] | None = (
