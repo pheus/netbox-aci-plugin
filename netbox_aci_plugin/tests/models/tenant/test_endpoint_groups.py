@@ -2,9 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dcim.models import MACAddress
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
+
+from dcim.models import MACAddress
 from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
 

@@ -44,31 +44,45 @@ respect-gitignore = true
 # When running with --fix, shows which fixes are applied/available
 show-fixes = true
 
-# Always generate Python 3.10-compatible code.
-target-version = "py310"
+# Always generate Python 3.12-compatible code.
+target-version = "py312"
 
 [lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-select = ["E4", "E7", "E9", "F"]
+select = [
+    "E4",   # pycodestyle: import-related errors
+    "E7",   # pycodestyle: statement-related errors (e.g., multiple statements on one line)
+    "E9",   # pycodestyle: runtime errors (syntax errors, IO errors)
+    "F",    # pyflakes: detects unused imports/variables, undefined names, etc.
+]
 extend-select = [
+    "C4",    # flake8-comprehensions: unnecessary list/dict/set comprehensions
+    "E1",    # pycodestyle: indentation errors (unexpected/missing indent)
+    "E2",    # pycodestyle: whitespace errors (missing/extra spaces around operators)
+    "E3",    # pycodestyle: blank line violations around definitions
+    "E501",  # pycodestyle: line too long
     "D",    # pydocstyle
     "I",    # import sorting (isort-equivalent)
+    "ISC",   # flake8-implicit-str-concat: implicit string concatenation detection
+    "RET",   # flake8-return: return statement consistency (redundant else, missing returns)
+    "RUF022",# ruff: enforce sorted `__all__` lists
+    "SIM",   # flake8-simplify: code simplification suggestions
+    "SLF",   # flake8-self: private member access violations (_prefixed attributes)
     "UP",   # pyupgrade
-    "C4",   # flake8-comprehensions
-    "ISC",  # implicit str concat checks
-    "RET",  # return semantics
-    "SIM",  # simplifications
     "PTH",  # pathlib over os.path
-    "SLF",  # flake8-self
     "W505", # docstring line-length (paired with max-doc-length)
+    "W",     # pycodestyle warnings: style warnings (whitespace, newlines, deprecations)
 ]
 ignore = [
-    "D100", # missing docstring in public module
-    "D104", # missing docstring in public package (__init__.py)
-    "D106", # missing docstring in nested classes
-    "D105", # missing docstring in magic method
-    "D107", # missing docstring in __init__
+    "D100",   # pydocstyle: missing docstring in public module
+    "D104",   # pydocstyle: missing docstring in public package (__init__.py)
+    "D105",   # pydocstyle: missing docstring in magic method
+    "D106",   # pydocstyle: missing docstring in nested class
+    "D107",   # pydocstyle: missing docstring in __init__
+    "RET504", # flake8-return: unnecessary variable assignment before `return`
+    "UP032",  # pyupgrade: prefer f-strings over `str.format()`
 ]
+preview = true
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -77,13 +91,31 @@ unfixable = []
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
+[lint.per-file-ignores]
+"**/__init__.py"   = ["D104"]  # missing docstring in public package (__init__.py)
+"**/migrations/*.py" = ["D", "E501"]   # For Django/NetBox plugin migrations
+"**/tests/*.py" = ["D"]
+"**/views/__init__.py" = ["RUF022"]
+
 [lint.flake8-self]
 ignore-names = ["_meta", "Meta"]
 
-[lint.per-file-ignores]
-"**/tests/*.py" = ["D"]
-"**/migrations/*.py" = ["D"]   # For Django/NetBox plugin migrations
-"**/__init__.py"   = ["D104"]  # missing docstring in public package (__init__.py)
+[lint.isort]
+known-first-party = [
+    "account",
+    "circuits",
+    "core",
+    "dcim",
+    "extras",
+    "ipam",
+    "netbox",
+    "tenancy",
+    "users",
+    "utilities",
+    "virtualization",
+    "vpn",
+    "wireless",
+]
 
 [lint.pycodestyle]
 max-doc-length = 79

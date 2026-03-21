@@ -4,11 +4,12 @@
 
 from __future__ import annotations
 
-from dcim.models.mixins import CachedScopeMixin
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from dcim.models.mixins import CachedScopeMixin
 from netbox.models import NetBoxModel
 from netbox.models.mixins import OwnerMixin
 

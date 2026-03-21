@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.db.models import Q
+
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
 from utilities.filtersets import register_filterset

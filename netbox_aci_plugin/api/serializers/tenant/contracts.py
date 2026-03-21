@@ -3,10 +3,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
+from rest_framework import serializers
+
 from netbox.api.fields import ContentTypeField
 from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
-from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 from users.api.serializers_.mixins import OwnerMixin
 

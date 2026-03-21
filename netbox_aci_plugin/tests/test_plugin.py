@@ -4,6 +4,7 @@
 
 from django.conf import settings
 from django.test import TestCase
+
 from netbox.plugins.navigation import PluginMenu, PluginMenuItem
 from netbox.registry import registry
 

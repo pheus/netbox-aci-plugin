@@ -3,9 +3,10 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import django_filters
-from dcim.models import Device
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+
+from dcim.models import Device
 from ipam.models import IPAddress
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin

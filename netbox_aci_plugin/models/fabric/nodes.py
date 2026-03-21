@@ -6,7 +6,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from dcim.models import Device
 from django.apps import apps
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,
@@ -16,6 +15,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from dcim.models import Device
 from utilities.templatetags.builtins.filters import bettertitle
 from virtualization.models import VirtualMachine
 
@@ -67,7 +68,8 @@ class ACINode(ACIFabricBaseModel):
         default=NodeRoleChoices.ROLE_LEAF,
         choices=NodeRoleChoices,
         help_text=_(
-            "The functional role of the node within the ACI fabric topology (e.g., Spine, Leaf, or APIC)."
+            "The functional role of the node within the ACI fabric topology "
+            "(e.g., Spine, Leaf, or APIC)."
         ),
     )
     node_type = models.CharField(
@@ -76,7 +78,8 @@ class ACINode(ACIFabricBaseModel):
         default=NodeTypeChoices.TYPE_UNKNOWN,
         choices=NodeTypeChoices,
         help_text=_(
-            "The specific deployment type of the node, such as a virtual leaf, a remote leaf over WAN, or a Tier-2 leaf."
+            "The specific deployment type of the node, such as a virtual leaf, "
+            "a remote leaf over WAN, or a Tier-2 leaf."
         ),
     )
     tep_ip_address = models.ForeignKey(
@@ -167,7 +170,8 @@ class ACINode(ACIFabricBaseModel):
         elif not is_apic and self.node_id <= 100:
             errors.setdefault("node_id", []).append(
                 _(
-                    "Node ID must be greater than or equal to 101 for Leaf or Spine nodes."
+                    "Node ID must be greater than or equal to 101 for Leaf or "
+                    "Spine nodes."
                 )
             )
 
@@ -203,7 +207,8 @@ class ACINode(ACIFabricBaseModel):
 
                 errors.setdefault("node_object", []).append(
                     _(
-                        "The assigned {model} does not match the Pod's scope: {type} ({path})."
+                        "The assigned {model} does not match the Pod's scope: "
+                        "{type} ({path})."
                     ).format(
                         model=obj._meta.verbose_name,
                         type=bettertitle(pod_scope._meta.verbose_name),

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
 from netbox.models import NetBoxModel
 from netbox.models.mixins import OwnerMixin
 

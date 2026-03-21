@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dcim.models import DeviceRole, DeviceType, Manufacturer, Site
 from django.test import TestCase
+
+from dcim.models import DeviceRole, DeviceType, Manufacturer, Site
 from ipam.models import VRF, Prefix
 from tenancy.models import Tenant
 
@@ -18,7 +19,10 @@ from ...models.tenant.vrfs import ACIVRF
 class ACIBaseFormTestCase(TestCase):
     """Base test case for netbox_aci_plugin forms."""
 
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
+    name_error_message: str = (
+        "Only alphanumeric characters, periods, underscores, colons and "
+        "hyphens are allowed."
+    )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )

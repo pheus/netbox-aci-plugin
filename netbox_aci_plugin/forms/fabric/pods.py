@@ -2,10 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dcim.forms.mixins import ScopedBulkEditForm, ScopedForm, ScopedImportForm
-from dcim.models import Location, Region, Site, SiteGroup
 from django import forms
 from django.utils.translation import gettext_lazy as _
+
+from dcim.forms.mixins import ScopedBulkEditForm, ScopedForm, ScopedImportForm
+from dcim.models import Location, Region, Site, SiteGroup
 from ipam.models import Prefix
 from netbox.forms import (
     NetBoxModelBulkEditForm,

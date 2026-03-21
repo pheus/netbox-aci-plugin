@@ -30,36 +30,25 @@ from .tenant.tenants import ACITenantSerializer
 from .tenant.vrfs import ACIVRFSerializer
 
 __all__ = (
-    # From fabric
-    "ACIFabricSerializer",
-    # From nodes
-    "ACINodeSerializer",
-    # From pods
-    "ACIPodSerializer",
-    # From app_profiles
     "ACIAppProfileSerializer",
-    "ACIEndpointGroupSerializer",
-    # From bridge_domains
     "ACIBridgeDomainSerializer",
     "ACIBridgeDomainSubnetSerializer",
-    # From contract_filters
     "ACIContractFilterEntrySerializer",
     "ACIContractFilterSerializer",
-    # From contracts
     "ACIContractRelationSerializer",
     "ACIContractSerializer",
     "ACIContractSubjectFilterSerializer",
     "ACIContractSubjectSerializer",
-    # From endpoint_groups
     "ACIEndpointGroupSerializer",
-    "ACIUSegEndpointGroupSerializer",
-    "ACIUSegNetworkAttributeSerializer",
-    # From endpoint_security_groups
+    "ACIEndpointGroupSerializer",
     "ACIEndpointSecurityGroupSerializer",
     "ACIEsgEndpointGroupSelectorSerializer",
     "ACIEsgEndpointSelectorSerializer",
-    # From vrfs
-    "ACIVRFSerializer",
-    # From tenants
+    "ACIFabricSerializer",
+    "ACINodeSerializer",
+    "ACIPodSerializer",
     "ACITenantSerializer",
+    "ACIUSegEndpointGroupSerializer",
+    "ACIUSegNetworkAttributeSerializer",
+    "ACIVRFSerializer",
 )

@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from netbox.api.serializers import NetBoxModelSerializer
 from rest_framework import serializers
+
+from netbox.api.serializers import NetBoxModelSerializer
 from tenancy.api.serializers import TenantSerializer
 from users.api.serializers_.mixins import OwnerMixin
 

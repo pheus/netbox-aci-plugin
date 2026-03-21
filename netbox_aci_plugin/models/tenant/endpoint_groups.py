@@ -6,7 +6,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from dcim.models import MACAddress
 from django.apps import apps
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,
@@ -15,6 +14,8 @@ from django.contrib.contenttypes.fields import (
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from dcim.models import MACAddress
 from ipam.models import IPAddress, Prefix
 
 from ...choices import (

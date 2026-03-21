@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
+
 from ipam.models import IPAddress
 
 from ....forms.tenant.endpoint_security_groups import (

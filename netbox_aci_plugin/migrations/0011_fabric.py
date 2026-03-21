@@ -1,11 +1,11 @@
 import django.core.validators
 import django.db.models.deletion
-import netbox.models.deletion
 import taggit.managers
-import utilities.json
 from django.db import migrations, models
-from netbox.plugins.utils import get_plugin_config
 
+import netbox.models.deletion
+import utilities.json
+from netbox.plugins.utils import get_plugin_config
 from netbox_aci_plugin import ACIConfig
 
 

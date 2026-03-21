@@ -6,11 +6,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from dcim.models.mixins import CachedScopeMixin
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from dcim.models.mixins import CachedScopeMixin
 
 from ...constants import POD_ID_MAX, POD_ID_MIN
 from ..base import ACIFabricBaseModel

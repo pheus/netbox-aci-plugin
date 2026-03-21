@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dcim.models import Device
 from django.contrib.contenttypes.models import ContentType
+
+from dcim.models import Device
 from ipam.models import IPAddress
 
 from ....choices import NodeRoleChoices, NodeTypeChoices

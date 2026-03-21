@@ -5,6 +5,7 @@
 import django_filters
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+
 from netbox.filtersets import NetBoxModelFilterSet
 from tenancy.models import Tenant
 from users.filterset_mixins import OwnerFilterMixin

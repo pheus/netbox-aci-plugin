@@ -4,6 +4,7 @@
 
 import django_tables2 as tables
 from django.utils.translation import gettext_lazy as _
+
 from netbox.tables import NetBoxTable, columns
 
 from ...models.tenant.bridge_domains import (
@@ -13,7 +14,8 @@ from ...models.tenant.bridge_domains import (
 
 BRIDGEDOMAIN_SUBNETS = """
 {% for bd_subnet in value.all %}
-    <a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainsubnet' pk=bd_subnet.pk %}">
+    <a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainsubnet'
+        pk=bd_subnet.pk %}">
         {{ bd_subnet.gateway_ip_address }}
     </a>{% if not forloop.last %}<br />{% endif %}
 {% endfor %}
