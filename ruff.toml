@@ -92,9 +92,10 @@ unfixable = []
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [lint.per-file-ignores]
-"**/tests/*.py" = ["D"]
-"**/migrations/*.py" = ["D", "E501"]   # For Django/NetBox plugin migrations
 "**/__init__.py"   = ["D104"]  # missing docstring in public package (__init__.py)
+"**/migrations/*.py" = ["D", "E501"]   # For Django/NetBox plugin migrations
+"**/tests/*.py" = ["D"]
+"**/views/__init__.py" = ["RUF022"]
 
 [lint.flake8-self]
 ignore-names = ["_meta", "Meta"]
