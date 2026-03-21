@@ -216,11 +216,9 @@ class ACITenantEndpointSecurityGroupView(ACIEndpointSecurityGroupChildrenView):
     tab = ViewTab(
         label=_("Endpoint Security Groups"),
         badge=(
-            lambda obj: (
-                ACIEndpointSecurityGroupChildrenView.child_model.objects.filter(
-                    aci_app_profile__aci_tenant=obj.pk
-                ).count()
-            )
+            lambda obj: ACIEndpointSecurityGroupChildrenView.child_model.objects.filter(
+                aci_app_profile__aci_tenant=obj.pk
+            ).count()
         ),
         permission="netbox_aci_plugin.view_aciendpointsecuritygroup",
         weight=1000,

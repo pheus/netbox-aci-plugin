@@ -19,7 +19,10 @@ from ...models.tenant.vrfs import ACIVRF
 class ACIBaseFormTestCase(TestCase):
     """Base test case for netbox_aci_plugin forms."""
 
-    name_error_message: str = "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
+    name_error_message: str = (
+        "Only alphanumeric characters, periods, underscores, colons and "
+        "hyphens are allowed."
+    )
     description_error_message: str = (
         "Only alphanumeric characters and !#$%()*,-./:;@ _{|}~?&+ are allowed."
     )

@@ -1185,7 +1185,9 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
     aci_fabric = DynamicModelChoiceField(
         queryset=ACIFabric.objects.all(),
         initial_params={
-            "aci_tenants__aci_app_profiles__aci_useg_endpoint_groups": "$aci_useg_endpoint_group"
+            "aci_tenants__aci_app_profiles__aci_useg_endpoint_groups": (
+                "$aci_useg_endpoint_group"
+            ),
         },
         required=False,
         label=_("ACI Fabric"),

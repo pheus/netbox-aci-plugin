@@ -22,7 +22,8 @@ from .constants import DESC_CHAR_CLASS, NAME_CHAR_CLASS
 ACIPolicyNameRequiredValidator = RegexValidator(
     regex=rf"^{NAME_CHAR_CLASS}+$",
     message=_(
-        "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
+        "Only alphanumeric characters, periods, underscores, colons and "
+        "hyphens are allowed."
     ),
     code="invalid",
 )
@@ -31,7 +32,8 @@ ACIPolicyNameRequiredValidator = RegexValidator(
 ACIPolicyNameOptionalValidator = RegexValidator(
     regex=rf"^{NAME_CHAR_CLASS}*$",
     message=_(
-        "Only alphanumeric characters, periods, underscores, colons and hyphens are allowed."
+        "Only alphanumeric characters, periods, underscores, colons and "
+        "hyphens are allowed."
     ),
     code="invalid",
 )
