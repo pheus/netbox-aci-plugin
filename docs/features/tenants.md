@@ -668,36 +668,38 @@ The *ACIContract* model has the following fields:
 
 ## Contract Relation
 
-A *Contract Relation* links a *Contract* to supported ACI objects such
-as *Endpoint Groups* (EPG), *uSeg Endpoint Groups* (uSeg EPG),
-*Endpoint Security Groups* (ESG) or *Virtual Routing and Forwarding* (VRF)
-instances.
-A *Contract Relation* specifies the role of a given *Contract* for an
-associated ACI object, either as a **Provider** or a **Consumer**.
-Both the *Contract* and the associated ACI object must belong to the same
-*ACI Tenant*.
+A *Contract Relation* links an *ACI Contract* to supported ACI objects,
+such as *Endpoint Groups* (EPG), *uSeg Endpoint Groups* (uSeg EPG),
+*Endpoint Security Groups* (ESG) and *Virtual Routing and Forwarding*
+(VRF) instances.
+
+A *Contract Relation* defines whether the associated *ACI Contract* acts
+as a **Provider** or **Consumer** for the linked ACI object.
+
+The assigned *ACI Contract* and the associated ACI object must belong to
+the same *ACI Fabric*.
+In addition, the *ACI Contract* must either belong to the same
+*ACI Tenant* as the ACI object, or to the `common` *ACI Tenant* within
+that same *ACI Fabric*.
 
 The *ACIContractRelation* model has the following fields:
 
 *Required fields*:
 
 - **ACI Contract**: a reference to the related `ACIContract` model.
-  This defines the Contract associated with the relation.
-- **ACI Object Type**: the type of the target ACI object (e.g.,
-  *Endpoint Group* or *VRF*) in the form `app.model`.
+  This defines the ACI Contract associated with the relation.
+- **ACI Object Type**: the type of the target ACI object in the form
+  `app.model`.
     - Values: `netbox_aci_plugin.aciendpointgroup` (Endpoint Group),
       `netbox_aci_plugin.aciendpointsecuritygroup` (Endpoint Security Group),
       `netbox_aci_plugin.aciusegendpointgroup` (uSeg Endpoint Group),
       `netbox_aci_plugin.acivrf` (VRF)
-    - **Note**: A single ACI Contract cannot be associated with an
-      *Endpoint Security Group* together with *Endpoint Groups* or
-      *uSeg Endpoint Groups*.
-- **ACI Object ID**: represents the (database) identifier for the specific
-  ACI object.
+- **ACI Object ID**: the primary key of the specific ACI object.
 
 *Optional fields*:
 
-- **Role**: specifies the role of the Contract for the associated ACI object.
+- **Role**: specifies the role of the ACI Contract for the associated
+  ACI object.
     - Values: `prov` (Provider), `cons` (Consumer)
     - Default: `prov`
 - **Comments**: a text field for additional notes or comments.
