@@ -48,30 +48,30 @@ show-fixes = true
 target-version = "py312"
 
 [lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Enable the core Ruff/pyflakes checks plus a focused set of pycodestyle rules.
 select = [
     "E4",   # pycodestyle: import-related errors
-    "E7",   # pycodestyle: statement-related errors (e.g., multiple statements on one line)
-    "E9",   # pycodestyle: runtime errors (syntax errors, IO errors)
-    "F",    # pyflakes: detects unused imports/variables, undefined names, etc.
+    "E7",   # pycodestyle: statement-related errors
+    "E9",   # pycodestyle: syntax/runtime errors
+    "F",    # pyflakes: unused imports/variables, undefined names, etc.
 ]
 extend-select = [
-    "C4",    # flake8-comprehensions: unnecessary list/dict/set comprehensions
-    "E1",    # pycodestyle: indentation errors (unexpected/missing indent)
-    "E2",    # pycodestyle: whitespace errors (missing/extra spaces around operators)
-    "E3",    # pycodestyle: blank line violations around definitions
+    "C4",    # flake8-comprehensions: avoid unnecessary comprehension patterns
+    "E1",    # pycodestyle: indentation errors
+    "E2",    # pycodestyle: whitespace around operators and delimiters
+    "E3",    # pycodestyle: blank-line spacing around definitions
     "E501",  # pycodestyle: line too long
-    "D",    # pydocstyle
-    "I",    # import sorting (isort-equivalent)
-    "ISC",   # flake8-implicit-str-concat: implicit string concatenation detection
-    "RET",   # flake8-return: return statement consistency (redundant else, missing returns)
-    "RUF022",# ruff: enforce sorted `__all__` lists
-    "SIM",   # flake8-simplify: code simplification suggestions
-    "SLF",   # flake8-self: private member access violations (_prefixed attributes)
-    "UP",   # pyupgrade
-    "PTH",  # pathlib over os.path
-    "W505", # docstring line-length (paired with max-doc-length)
-    "W",     # pycodestyle warnings: style warnings (whitespace, newlines, deprecations)
+    "D",     # pydocstyle: docstring style and coverage
+    "I",     # isort-equivalent: import sorting
+    "ISC",   # flake8-implicit-str-concat: implicit string concatenation
+    "RET",   # flake8-return: return statement consistency
+    "RUF022",# Ruff: sorted `__all__` lists
+    "SIM",   # flake8-simplify: simplification opportunities
+    "SLF",   # flake8-self: private member access
+    "UP",    # pyupgrade: modern Python syntax upgrades
+    "PTH",   # pathlib: prefer pathlib over os.path
+    "W505",  # pydocstyle: docstring line length
+    "W",     # pycodestyle warnings: style warnings and deprecated patterns
 ]
 ignore = [
     "D100",   # pydocstyle: missing docstring in public module
@@ -79,7 +79,7 @@ ignore = [
     "D105",   # pydocstyle: missing docstring in magic method
     "D106",   # pydocstyle: missing docstring in nested class
     "D107",   # pydocstyle: missing docstring in __init__
-    "RET504", # flake8-return: unnecessary variable assignment before `return`
+    "RET504", # flake8-return: unnecessary temporary variable before `return`
     "UP032",  # pyupgrade: prefer f-strings over `str.format()`
 ]
 preview = true
