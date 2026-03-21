@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Annotated
 
 import strawberry
 import strawberry_django
+
 from netbox.graphql.types import NetBoxObjectType
 from users.graphql.mixins import OwnerMixin
 

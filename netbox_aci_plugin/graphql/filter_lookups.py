@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import strawberry
+
 from netbox.graphql.filter_lookups import ArrayLookup
 
 from .enums import ContractFilterTCPRulesEnum

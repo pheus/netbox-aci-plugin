@@ -4,6 +4,7 @@
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
+
 from ipam.models import VRF
 from netbox.forms import (
     NetBoxModelBulkEditForm,

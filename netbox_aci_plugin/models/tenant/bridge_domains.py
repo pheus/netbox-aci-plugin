@@ -6,11 +6,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from dcim.fields import MACAddressField
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from dcim.fields import MACAddressField
 
 from ...choices import (
     BDMultiDestinationFloodingChoices,

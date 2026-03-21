@@ -4,6 +4,7 @@
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
 from netbox.models import NetBoxModel
 
 from ..base import ACITenantBaseModel

@@ -2,11 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dcim.models import MACAddress
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
+
+from dcim.models import MACAddress
 from ipam.models import VRF, IPAddress, Prefix
 from netbox.forms import (
     NetBoxModelBulkEditForm,

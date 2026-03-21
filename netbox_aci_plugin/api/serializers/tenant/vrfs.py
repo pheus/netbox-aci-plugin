@@ -2,9 +2,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from rest_framework import serializers
+
 from ipam.api.serializers import VRFSerializer
 from netbox.api.serializers import NetBoxModelSerializer
-from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 from users.api.serializers_.mixins import OwnerMixin
 

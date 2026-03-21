@@ -4,6 +4,7 @@
 
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
+
 from tenancy.models import Tenant
 
 from ....choices import (

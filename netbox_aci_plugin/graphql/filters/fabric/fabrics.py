@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING, Annotated
 
 import strawberry
 import strawberry_django
-from dcim.graphql.filter_mixins import ScopedFilterMixin
-from netbox.graphql.filters import NetBoxModelFilter
 from strawberry.scalars import ID
 from strawberry_django import ComparisonFilterLookup
+
+from dcim.graphql.filter_mixins import ScopedFilterMixin
+from netbox.graphql.filters import NetBoxModelFilter
 
 try:
     from strawberry_django import StrFilterLookup

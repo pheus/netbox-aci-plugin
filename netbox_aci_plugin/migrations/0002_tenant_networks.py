@@ -1,10 +1,11 @@
-import dcim.fields
 import django.contrib.postgres.fields
 import django.core.validators
 import django.db.models.deletion
 import taggit.managers
-import utilities.json
 from django.db import migrations, models
+
+import dcim.fields
+import utilities.json
 
 
 class Migration(migrations.Migration):

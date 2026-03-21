@@ -2,13 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dcim.constants import LOCATION_SCOPE_TYPES
 from django.contrib.contenttypes.models import ContentType
+from rest_framework import serializers
+
+from dcim.constants import LOCATION_SCOPE_TYPES
 from ipam.api.serializers import PrefixSerializer
 from netbox.api.fields import ContentTypeField
 from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
-from rest_framework import serializers
 from tenancy.api.serializers import TenantSerializer
 from users.api.serializers_.mixins import OwnerMixin
 

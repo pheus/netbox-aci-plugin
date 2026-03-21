@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from dcim.models import Device, DeviceRole, DeviceType, MACAddress, Manufacturer, Site
 from django.test import TestCase
+
+from dcim.models import Device, DeviceRole, DeviceType, MACAddress, Manufacturer, Site
 from ipam.models import VRF, IPAddress, Prefix
 from tenancy.models import Tenant
 

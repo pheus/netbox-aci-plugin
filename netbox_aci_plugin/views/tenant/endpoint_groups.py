@@ -4,6 +4,7 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
+
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
