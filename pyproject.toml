@@ -39,14 +39,14 @@ classifiers = [
 [project.optional-dependencies]
 docs = [
     "mkdocs==1.6.1",
-    "mkdocs-material==9.7.1",
+    "mkdocs-material==9.7.6",
     "mkdocs-include-markdown-plugin==7.2.1",
 ]
 test = [
     "check-manifest==0.51",
     "pre-commit==4.5.1",
     "pytest==9.0.2",
-    "ruff==0.14.14",
+    "ruff==0.15.7",
     "yamllint==1.38.0",
 ]
 
