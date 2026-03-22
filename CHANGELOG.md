@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
+## [0.2.1] – 2026-03-22
+
+> **Compatibility:** NetBox v4.5
+
+### Added
+
+- Allow Contract Relations to use Contracts from the `common` ACI Tenant.
+
+### Changed
+
+- Clarify Contract Relation documentation, including ESG and uSeg EPG support
+  and the same-fabric / tenant-or-`common` requirements.
+- Remove the uniqueness constraint on ACI Fabric IDs to support multi-fabric
+  deployments.
+- Add validation to ensure Contract Filters belong to the same ACI Tenant as the
+  Contract Subject, or to the `common` Tenant in the same fabric.
+- Refactor Contract Relation form initialization so Tenant and Fabric values are
+  derived from the selected ACI object.
+- Update GraphQL filter compatibility for newer `strawberry-graphql-django`
+  APIs.
+- Replace deprecated GraphQL filter decorators with the current API.
+- Refactor tenant-or-common filtering into reusable FilterSet mixins.
+- Update project linting, formatting, and dependency configuration.
+
+### Fixed
+
+- Remove a redundant validation check in Contract Filter protocol validation.
+- Simplify Node uniqueness validation by moving logic into model clean methods.
+- Initialize ESG and uSeg EPG cache attributes in Contract Relations.
+
+---
+
 ## [0.2.0] – 2026-01-25
 
 > **Compatibility:** NetBox v4.5
@@ -60,6 +92,7 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
-[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pheus/netbox-aci-plugin/releases/tag/v0.1.0
