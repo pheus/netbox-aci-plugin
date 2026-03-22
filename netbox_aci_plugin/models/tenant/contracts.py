@@ -293,7 +293,9 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                 errors.setdefault("aci_object", []).append(
                     _(
                         "The selected {aci_object} must belong to the same "
-                        "ACI Tenant or to the ACI Tenant 'common'.".format(
+                        "ACI Tenant as the ACI Contract, unless the "
+                        "ACI Contract belongs to the ACI Tenant "
+                        "'common'.".format(
                             aci_object=aci_model_class._meta.verbose_name
                         )
                     )
