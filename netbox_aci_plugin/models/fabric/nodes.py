@@ -150,10 +150,8 @@ class ACINode(ACIFabricBaseModel):
                 {
                     "node_object": _(
                         "The {node_object} field is required, if an Object Type "
-                        "is selected.".format(
-                            node_object=model_class._meta.verbose_name
-                        )
-                    )
+                        "is selected."
+                    ).format(node_object=model_class._meta.verbose_name)
                 }
             )
 

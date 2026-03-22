@@ -333,10 +333,8 @@ class ACIEsgEndpointGroupSelector(
                 {
                     "aci_epg_object": _(
                         "The {aci_epg_object} field is required, if an Endpoint "
-                        "Object Type is selected.".format(
-                            aci_epg_object=aci_epg_model_class._meta.verbose_name
-                        )
-                    )
+                        "Object Type is selected."
+                    ).format(aci_epg_object=aci_epg_model_class._meta.verbose_name)
                 }
             )
 
@@ -355,10 +353,8 @@ class ACIEsgEndpointGroupSelector(
             errors.setdefault("aci_epg_object", []).append(
                 _(
                     "The assigned {aci_epg_object} must belong to the "
-                    "same ACI Tenant as the ACI Endpoint Security Group.".format(
-                        aci_epg_object=aci_model_class._meta.verbose_name
-                    )
-                )
+                    "same ACI Tenant as the ACI Endpoint Security Group."
+                ).format(aci_epg_object=aci_model_class._meta.verbose_name)
             )
 
         # Validate the assigned ACI EPG Object belongs to the same
@@ -371,10 +367,8 @@ class ACIEsgEndpointGroupSelector(
             errors.setdefault("aci_epg_object", []).append(
                 _(
                     "The assigned {aci_epg_object} must belong to the "
-                    "same ACI VRF as the ACI Endpoint Security Group.".format(
-                        aci_epg_object=aci_model_class._meta.verbose_name
-                    )
-                )
+                    "same ACI VRF as the ACI Endpoint Security Group."
+                ).format(aci_epg_object=aci_model_class._meta.verbose_name)
             )
 
         if errors:
@@ -511,10 +505,8 @@ class ACIEsgEndpointSelector(ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMix
                 {
                     "ep_object": _(
                         "The {ep_object} field is required, if an Endpoint "
-                        "Object Type is selected.".format(
-                            ep_object=ep_model_class._meta.verbose_name
-                        )
-                    )
+                        "Object Type is selected."
+                    ).format(ep_object=ep_model_class._meta.verbose_name)
                 }
             )
 

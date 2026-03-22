@@ -258,10 +258,8 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                 {
                     "aci_object": _(
                         "The {aci_object} field is required, if an ACI Object "
-                        "Type is selected.".format(
-                            aci_object=aci_model_class._meta.verbose_name
-                        )
-                    )
+                        "Type is selected."
+                    ).format(aci_object=aci_model_class._meta.verbose_name)
                 }
             )
 
@@ -281,10 +279,8 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                 errors.setdefault("aci_object", []).append(
                     _(
                         "The assigned {aci_object} must belong to the same "
-                        "ACI Fabric as the ACI Contract.".format(
-                            aci_object=aci_model_class._meta.verbose_name
-                        )
-                    )
+                        "ACI Fabric as the ACI Contract."
+                    ).format(aci_object=aci_model_class._meta.verbose_name)
                 )
             if (
                 aci_contract_tenant != aci_object_tenant
@@ -295,10 +291,8 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                         "The selected {aci_object} must belong to the same "
                         "ACI Tenant as the ACI Contract, unless the "
                         "ACI Contract belongs to the ACI Tenant "
-                        "'common'.".format(
-                            aci_object=aci_model_class._meta.verbose_name
-                        )
-                    )
+                        "'common'."
+                    ).format(aci_object=aci_model_class._meta.verbose_name)
                 )
 
         if errors:

@@ -487,10 +487,8 @@ class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKey
                 {
                     "attr_object": _(
                         "The {attr_object} field is required, if an Attribute "
-                        "Object Type is selected.".format(
-                            attr_object=attr_model_class._meta.verbose_name
-                        )
-                    )
+                        "Object Type is selected."
+                    ).format(attr_object=attr_model_class._meta.verbose_name)
                 }
             )
 
