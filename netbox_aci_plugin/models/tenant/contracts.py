@@ -358,7 +358,10 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
     def cache_related_objects(self) -> None:
         """Cache the related objects for faster access."""
-        self._aci_endpoint_group = self._aci_vrf = None
+        self._aci_endpoint_group = None
+        self._aci_endpoint_security_group = None
+        self._aci_useg_endpoint_group = None
+        self._aci_vrf = None
         if self.aci_object_type:
             aci_object_type = self.aci_object_type.model_class()
             if aci_object_type == apps.get_model(
