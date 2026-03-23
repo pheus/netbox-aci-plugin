@@ -1,3 +1,4 @@
+from .access_policies.domains import ACIRoutedDomain
 from .fabric.fabrics import ACIFabric
 from .fabric.nodes import ACINode
 from .fabric.pods import ACIPod
@@ -41,6 +42,7 @@ __all__ = (
     "ACIFabric",
     "ACINode",
     "ACIPod",
+    "ACIRoutedDomain",
     "ACITenant",
     "ACIUSegEndpointGroup",
     "ACIUSegNetworkAttribute",
