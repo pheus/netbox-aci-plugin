@@ -1,3 +1,4 @@
+from .access_policies.domains import ACIRoutedDomainFilterSet
 from .fabric.fabrics import ACIFabricFilterSet
 from .fabric.nodes import ACINodeFilterSet
 from .fabric.pods import ACIPodFilterSet
@@ -46,6 +47,7 @@ __all__ = (
     "ACIFabricFilterSet",
     "ACINodeFilterSet",
     "ACIPodFilterSet",
+    "ACIRoutedDomainFilterSet",
     "ACITenantFilterSet",
     "ACIUSegEndpointGroupFilterSet",
     "ACIUSegNetworkAttributeFilterSet",
