@@ -1,3 +1,11 @@
+from .access_policies.domains import (
+    ACIRoutedDomainBulkDeleteView,
+    ACIRoutedDomainBulkEditView,
+    ACIRoutedDomainBulkImportView,
+    ACIRoutedDomainEditView,
+    ACIRoutedDomainListView,
+    ACIRoutedDomainView,
+)
 from .fabric.fabrics import (
     ACIFabricBulkDeleteView,
     ACIFabricBulkEditView,
@@ -218,6 +226,13 @@ __all__ = (
     "ACIPodBulkImportView",
     "ACIPodEditView",
     "ACIPodListView",
+    # ACIRoutedDomain
+    "ACIRoutedDomainBulkDeleteView",
+    "ACIRoutedDomainBulkEditView",
+    "ACIRoutedDomainBulkImportView",
+    "ACIRoutedDomainEditView",
+    "ACIRoutedDomainListView",
+    "ACIRoutedDomainView",
     # ACITenant
     "ACITenantBulkDeleteView",
     "ACITenantBulkEditView",
