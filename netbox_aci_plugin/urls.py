@@ -36,6 +36,15 @@ urlpatterns: tuple = (
         "nodes/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acinode")),
     ),
+    # ACI Routed Domain
+    path(
+        "routed-domains/",
+        include(get_model_urls("netbox_aci_plugin", "acirouteddomain", detail=False)),
+    ),
+    path(
+        "routed-domains/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acirouteddomain")),
+    ),
     # ACI Tenants
     path(
         "tenants/",
