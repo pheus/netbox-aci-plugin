@@ -217,7 +217,7 @@ acicontractfilterentry_item = PluginMenuItem(
 # ACI Contract
 acicontract_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acicontract_list",
-    link_text="Contract",
+    link_text="Contracts",
     permissions=["netbox_aci_plugin.view_acicontract"],
     buttons=(
         PluginMenuButton(
@@ -319,6 +319,27 @@ acinode_item = PluginMenuItem(
     ),
 )
 
+# ACI Routed Domain
+acirouteddomain_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acirouteddomain_list",
+    link_text="Routed Domains",
+    permissions=["netbox_aci_plugin.view_acirouteddomain"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acirouteddomain_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acirouteddomain"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acirouteddomain_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acirouteddomain"],
+        ),
+    ),
+)
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -354,12 +375,16 @@ menu = PluginMenu(
             ),
         ),
         (
-            "Fabrics",
+            "Fabric Inventory",
             (
                 acifabric_item,
                 acipod_item,
                 acinode_item,
             ),
+        ),
+        (
+            "Fabric Access Policies",
+            (acirouteddomain_item,),
         ),
     ),
     icon_class="mdi mdi-router",
