@@ -1,3 +1,4 @@
+from .access_policies.domains import ACIRoutedDomainSerializer
 from .fabric.fabrics import ACIFabricSerializer
 from .fabric.nodes import ACINodeSerializer
 from .fabric.pods import ACIPodSerializer
@@ -40,13 +41,13 @@ __all__ = (
     "ACIContractSubjectFilterSerializer",
     "ACIContractSubjectSerializer",
     "ACIEndpointGroupSerializer",
-    "ACIEndpointGroupSerializer",
     "ACIEndpointSecurityGroupSerializer",
     "ACIEsgEndpointGroupSelectorSerializer",
     "ACIEsgEndpointSelectorSerializer",
     "ACIFabricSerializer",
     "ACINodeSerializer",
     "ACIPodSerializer",
+    "ACIRoutedDomainSerializer",
     "ACITenantSerializer",
     "ACIUSegEndpointGroupSerializer",
     "ACIUSegNetworkAttributeSerializer",
