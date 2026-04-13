@@ -14,6 +14,9 @@ router.register("fabrics", views.ACIFabricListViewSet)
 router.register("nodes", views.ACINodeListViewSet)
 router.register("pods", views.ACIPodListViewSet)
 
+# ACI Access Policies
+router.register("routed-domains", views.ACIRoutedDomainListViewSet)
+
 # ACI Tenant
 router.register("tenants", views.ACITenantListViewSet)
 router.register("app-profiles", views.ACIAppProfileListViewSet)

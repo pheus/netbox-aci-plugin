@@ -4,6 +4,7 @@
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
+from ..filtersets.access_policies.domains import ACIRoutedDomainFilterSet
 from ..filtersets.fabric.fabrics import ACIFabricFilterSet
 from ..filtersets.fabric.nodes import ACINodeFilterSet
 from ..filtersets.fabric.pods import ACIPodFilterSet
@@ -34,6 +35,7 @@ from ..filtersets.tenant.endpoint_security_groups import (
 )
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
+from ..models.access_policies.domains import ACIRoutedDomain
 from ..models.fabric.fabrics import ACIFabric
 from ..models.fabric.nodes import ACINode
 from ..models.fabric.pods import ACIPod
@@ -81,6 +83,7 @@ from .serializers import (
     ACIFabricSerializer,
     ACINodeSerializer,
     ACIPodSerializer,
+    ACIRoutedDomainSerializer,
     ACITenantSerializer,
     ACIUSegEndpointGroupSerializer,
     ACIUSegNetworkAttributeSerializer,
@@ -133,6 +136,20 @@ class ACINodeListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACINodeSerializer
     filterset_class = ACINodeFilterSet
+
+
+class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Routed Domain instances."""
+
+    queryset = ACIRoutedDomain.objects.select_related(
+        "aci_fabric",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIRoutedDomainSerializer
+    filterset_class = ACIRoutedDomainFilterSet
 
 
 class ACITenantListViewSet(NetBoxModelViewSet):
