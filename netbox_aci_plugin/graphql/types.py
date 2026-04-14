@@ -28,6 +28,7 @@ from .filters import (
     ACIFabricFilter,
     ACINodeFilter,
     ACIPodFilter,
+    ACIRoutedDomainFilter,
     ACITenantFilter,
     ACIUSegEndpointGroupFilter,
     ACIUSegNetworkAttributeFilter,
@@ -85,6 +86,11 @@ class ACIFabricType(OwnerMixin, NetBoxObjectType):
     # Related models
     aci_pods: list[
         Annotated["ACIPodType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+    ]
+    aci_routed_domains: list[
+        Annotated[
+            "ACIRoutedDomainType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+        ]
     ]
 
 
@@ -159,6 +165,22 @@ class ACINodeType(OwnerMixin, NetBoxObjectType):
     ):
         """Return the node_object object."""
         return self.node_object
+
+
+@strawberry_django.type(
+    models.ACIRoutedDomain,
+    fields="__all__",
+    filters=ACIRoutedDomainFilter,
+)
+class ACIRoutedDomainType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIRoutedDomain model."""
+
+    # Model fields
+    aci_fabric: Annotated[
+        "ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+    security_domains: list[str] | None
 
 
 @strawberry_django.type(models.ACITenant, fields="__all__", filters=ACITenantFilter)
@@ -612,6 +634,7 @@ class ACIContractType(OwnerMixin, NetBoxObjectType):
         "_aci_endpoint_group",
         "_aci_endpoint_security_group",
         "_aci_useg_endpoint_group",
+        "_aci_external_endpoint_group",
         "_aci_vrf",
     ],
     filters=ACIContractRelationFilter,

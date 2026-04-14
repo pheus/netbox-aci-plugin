@@ -22,6 +22,7 @@ from .types import (
     ACIFabricType,
     ACINodeType,
     ACIPodType,
+    ACIRoutedDomainType,
     ACITenantType,
     ACIUSegEndpointGroupType,
     ACIUSegNetworkAttributeType,
@@ -41,6 +42,9 @@ class NetBoxACIQuery:
 
     aci_node: ACINodeType = strawberry_django.field()
     aci_node_list: list[ACINodeType] = strawberry_django.field()
+
+    aci_routed_domain: ACIRoutedDomainType = strawberry_django.field()
+    aci_routed_domain_list: list[ACIRoutedDomainType] = strawberry_django.field()
 
     aci_tenant: ACITenantType = strawberry_django.field()
     aci_tenant_list: list[ACITenantType] = strawberry_django.field()
