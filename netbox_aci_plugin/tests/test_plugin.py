@@ -13,7 +13,7 @@ class PluginTest(TestCase):
     """Test case for plugin integration in NetBox."""
 
     config_name: str = "ACIConfig"
-    menu_group_count: int = 5
+    menu_group_count: int = 6
     menu_name: str = "ACI"
 
     # Menu group: Tenants
@@ -25,8 +25,10 @@ class PluginTest(TestCase):
     # Menu group: Tenant Networking
     menu_group_tenant_networking_item_count: int = 3
 
-    # Menu group: Fabrics
+    # Menu group: Fabric Inventory
     menu_group_fabrics_item_count: int = 3
+    # Menu group: Fabric Access Policies
+    menu_group_fabric_access_policies_item_count: int = 1
 
     def test_configuration(self) -> None:
         """Test for plugin configuration in NetBox."""
@@ -90,10 +92,21 @@ class PluginTest(TestCase):
     def test_menu_group_fabrics_items(self) -> None:
         """Test for group 4 submenu entries of the plugin in NetBox UI."""
         menu_plugin_reg_groups = registry["plugins"]["menus"][0].groups
-        # Menu group: Fabrics
-        self.assertEqual(menu_plugin_reg_groups[4].label, "Fabrics")
+        # Menu group: Fabric Inventory
+        self.assertEqual(menu_plugin_reg_groups[4].label, "Fabric Inventory")
         self.assertEqual(
             len(menu_plugin_reg_groups[4].items),
             self.menu_group_fabrics_item_count,
         )
         self.assertIsInstance(menu_plugin_reg_groups[4].items[0], PluginMenuItem)
+
+    def test_menu_group_fabric_access_policies_items(self) -> None:
+        """Test for group 5 submenu entries of the plugin in NetBox UI."""
+        menu_plugin_reg_groups = registry["plugins"]["menus"][0].groups
+        # Menu group: Fabric Access Policies
+        self.assertEqual(menu_plugin_reg_groups[5].label, "Fabric Access Policies")
+        self.assertEqual(
+            len(menu_plugin_reg_groups[5].items),
+            self.menu_group_fabric_access_policies_item_count,
+        )
+        self.assertIsInstance(menu_plugin_reg_groups[5].items[0], PluginMenuItem)
