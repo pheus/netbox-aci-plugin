@@ -4,6 +4,7 @@
 
 from netbox.search import SearchIndex, register_search
 
+from .models.access_policies.domains import ACIRoutedDomain
 from .models.fabric.fabrics import ACIFabric
 from .models.fabric.nodes import ACINode
 from .models.fabric.pods import ACIPod
@@ -96,6 +97,26 @@ class ACINodeIndex(SearchIndex):
         "description",
         "aci_pod",
         "node_id",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIRoutedDomainIndex(SearchIndex):
+    """NetBox search definition for the ACI Routed Domain model."""
+
+    model = ACIRoutedDomain
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
         "nb_tenant",
     )
 
