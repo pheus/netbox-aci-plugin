@@ -8,6 +8,7 @@ nav:
   - Home: index.md
   - Features:
       - Fabrics: features/fabrics.md
+      - Access Policies: features/access_policies.md
       - Tenants: features/tenants.md
   - Development:
       - Code of Conduct: development/code_of_conduct.md
