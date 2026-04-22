@@ -95,9 +95,9 @@ class ACIUSegNetworkAttributeFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIUSegNetworkAttribute form."""
 
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         """Set up required objects for ACIUSegNetworkAttributeForm tests."""
-        super().setUp()
+        super().setUpTestData()
 
         cls.aci_useg_epg = ACIUSegEndpointGroup.objects.create(
             name="ACIUSegEndpointGroup1",

@@ -12,9 +12,9 @@ class ACIPodFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIPod form."""
 
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         """Set up required objects for ACIPod tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Invalid field values
         cls.invalid_tep_pool = Prefix.objects.create(prefix="10.0.0.0/27")

@@ -16,9 +16,9 @@ class ACINodeFormTestCase(ACIBaseFormTestCase):
     """Test case for ACINode form."""
 
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         """Set up required objects for ACINode tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Invalid field values
         cls.invalid_tep_ip = IPAddress(address="192.168.1.1/32")

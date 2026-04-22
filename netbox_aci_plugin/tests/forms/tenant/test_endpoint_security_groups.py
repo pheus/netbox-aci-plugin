@@ -57,9 +57,9 @@ class ACIEsgEndpointGroupSelectorFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIEsgEndpointGroupSelector form."""
 
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         """Set up required objects for ACIEsgEndpointGroupSelector tests."""
-        super().setUp()
+        super().setUpTestData()
 
         cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
             name="ACIEndpointSecurityGroup1",
@@ -126,9 +126,9 @@ class ACIEsgEndpointSelectorFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIEsgEndpointSelector form."""
 
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         """Set up required objects for ACIEsgEndpointSelector tests."""
-        super().setUp()
+        super().setUpTestData()
 
         cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
             name="ACIEndpointSecurityGroup1",
