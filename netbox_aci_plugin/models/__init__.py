@@ -21,6 +21,11 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelector,
     ACIEsgEndpointSelector,
 )
+from .tenant.l3outs import (
+    ACIExternalEndpointGroup,
+    ACIExternalSubnet,
+    ACIL3Out,
+)
 from .tenant.tenants import ACITenant
 from .tenant.vrfs import ACIVRF
 
@@ -39,7 +44,10 @@ __all__ = (
     "ACIEndpointSecurityGroup",
     "ACIEsgEndpointGroupSelector",
     "ACIEsgEndpointSelector",
+    "ACIExternalEndpointGroup",
+    "ACIExternalSubnet",
     "ACIFabric",
+    "ACIL3Out",
     "ACINode",
     "ACIPod",
     "ACIRoutedDomain",
