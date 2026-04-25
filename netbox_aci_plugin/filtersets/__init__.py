@@ -27,6 +27,11 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorFilterSet,
     ACIEsgEndpointSelectorFilterSet,
 )
+from .tenant.l3outs import (
+    ACIExternalEndpointGroupFilterSet,
+    ACIExternalSubnetFilterSet,
+    ACIL3OutFilterSet,
+)
 from .tenant.tenants import ACITenantFilterSet
 from .tenant.vrfs import ACIVRFFilterSet
 
@@ -44,7 +49,10 @@ __all__ = (
     "ACIEndpointSecurityGroupFilterSet",
     "ACIEsgEndpointGroupSelectorFilterSet",
     "ACIEsgEndpointSelectorFilterSet",
+    "ACIExternalEndpointGroupFilterSet",
+    "ACIExternalSubnetFilterSet",
     "ACIFabricFilterSet",
+    "ACIL3OutFilterSet",
     "ACINodeFilterSet",
     "ACIPodFilterSet",
     "ACIRoutedDomainFilterSet",
