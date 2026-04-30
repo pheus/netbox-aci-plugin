@@ -27,6 +27,11 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorFilterForm,
     ACIEsgEndpointSelectorFilterForm,
 )
+from .tenant.l3outs import (
+    ACIExternalEndpointGroupFilterForm,
+    ACIExternalSubnetFilterForm,
+    ACIL3OutFilterForm,
+)
 from .tenant.tenants import ACITenantFilterForm
 from .tenant.vrfs import ACIVRFFilterForm
 
@@ -44,7 +49,10 @@ __all__ = (
     "ACIEndpointSecurityGroupFilterForm",
     "ACIEsgEndpointGroupSelectorFilterForm",
     "ACIEsgEndpointSelectorFilterForm",
+    "ACIExternalEndpointGroupFilterForm",
+    "ACIExternalSubnetFilterForm",
     "ACIFabricFilterForm",
+    "ACIL3OutFilterForm",
     "ACINodeFilterForm",
     "ACIPodFilterForm",
     "ACIRoutedDomainFilterForm",
