@@ -153,6 +153,37 @@ urlpatterns: tuple = (
         "bridge-domain-subnets/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acibridgedomainsubnet")),
     ),
+    # ACI L3Out
+    path(
+        "l3outs/",
+        include(get_model_urls("netbox_aci_plugin", "acil3out", detail=False)),
+    ),
+    path(
+        "l3outs/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acil3out")),
+    ),
+    # ACI External Endpoint Group
+    path(
+        "external-endpoint-groups/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "aciexternalendpointgroup", detail=False
+            )
+        ),
+    ),
+    path(
+        "external-endpoint-groups/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciexternalendpointgroup")),
+    ),
+    # ACI External Endpoint Group Subnet
+    path(
+        "external-endpoint-groups/subnets/",
+        include(get_model_urls("netbox_aci_plugin", "aciexternalsubnet", detail=False)),
+    ),
+    path(
+        "external-endpoint-groups/subnets/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciexternalsubnet")),
+    ),
     # ACI VRF
     path(
         "vrfs/",
