@@ -114,6 +114,23 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointSelectorEditView,
     ACIEsgEndpointSelectorListView,
 )
+from .tenant.l3outs import (
+    ACIExternalEndpointGroupBulkDeleteView,
+    ACIExternalEndpointGroupBulkEditView,
+    ACIExternalEndpointGroupBulkImportView,
+    ACIExternalEndpointGroupEditView,
+    ACIExternalEndpointGroupListView,
+    ACIExternalSubnetBulkDeleteView,
+    ACIExternalSubnetBulkEditView,
+    ACIExternalSubnetBulkImportView,
+    ACIExternalSubnetEditView,
+    ACIExternalSubnetListView,
+    ACIL3OutBulkDeleteView,
+    ACIL3OutBulkEditView,
+    ACIL3OutBulkImportView,
+    ACIL3OutEditView,
+    ACIL3OutListView,
+)
 from .tenant.tenants import (
     ACITenantBulkDeleteView,
     ACITenantBulkEditView,
@@ -208,12 +225,30 @@ __all__ = (
     "ACIEsgEndpointSelectorBulkImportView",
     "ACIEsgEndpointSelectorEditView",
     "ACIEsgEndpointSelectorListView",
+    # ACIExternalEndpointGroup
+    "ACIExternalEndpointGroupBulkDeleteView",
+    "ACIExternalEndpointGroupBulkEditView",
+    "ACIExternalEndpointGroupBulkImportView",
+    "ACIExternalEndpointGroupEditView",
+    "ACIExternalEndpointGroupListView",
+    # ACIExternalSubnet
+    "ACIExternalSubnetBulkDeleteView",
+    "ACIExternalSubnetBulkEditView",
+    "ACIExternalSubnetBulkImportView",
+    "ACIExternalSubnetEditView",
+    "ACIExternalSubnetListView",
     # ACIFabric
     "ACIFabricBulkDeleteView",
     "ACIFabricBulkEditView",
     "ACIFabricBulkImportView",
     "ACIFabricEditView",
     "ACIFabricListView",
+    # ACIL3Out
+    "ACIL3OutBulkDeleteView",
+    "ACIL3OutBulkEditView",
+    "ACIL3OutBulkImportView",
+    "ACIL3OutEditView",
+    "ACIL3OutListView",
     # ACINode
     "ACINodeBulkDeleteView",
     "ACINodeBulkEditView",
@@ -245,7 +280,7 @@ __all__ = (
     "ACIUSegEndpointGroupBulkImportView",
     "ACIUSegEndpointGroupEditView",
     "ACIUSegEndpointGroupListView",
-    # ACIUsegNetworkAttribute
+    # ACIUSegNetworkAttribute
     "ACIUSegNetworkAttributeBulkDeleteView",
     "ACIUSegNetworkAttributeBulkEditView",
     "ACIUSegNetworkAttributeBulkImportView",
