@@ -23,7 +23,7 @@ class PluginTest(TestCase):
     # Menu group: Tenant Contracts
     menu_group_tenant_contracts_item_count: int = 4
     # Menu group: Tenant Networking
-    menu_group_tenant_networking_item_count: int = 3
+    menu_group_tenant_networking_item_count: int = 6
 
     # Menu group: Fabric Inventory
     menu_group_fabrics_item_count: int = 3
