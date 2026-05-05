@@ -41,7 +41,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12", "3.13", "3.14"]
-        netbox-version: ["v4.5.0", "main"]
+        netbox-version: ["v4.5.0", "v4.5.10", "v4.6.0", "main"]
     services:
       redis:
         image: redis
