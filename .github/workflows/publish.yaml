@@ -29,9 +29,11 @@ jobs:
 
     steps:
       - name: Checkout repository 🧩
-        uses: actions/checkout@v5
+        # Pinned to actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Set up Python 🐍
-        uses: actions/setup-python@v6
+        # Pinned to actions/setup-python@v6.2.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.12"
           cache: "pip"
@@ -46,7 +48,8 @@ jobs:
         run: |
           twine check dist/*
       - name: Upload the distribution packages 📦
-        uses: actions/upload-artifact@v5
+        # Pinned to actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: python-package-distributions
           path: dist/
@@ -61,9 +64,11 @@ jobs:
 
     steps:
       - name: Checkout repository 🧩
-        uses: actions/checkout@v5
+        # Pinned to actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Set up Python 🐍
-        uses: actions/setup-python@v6
+        # Pinned to actions/setup-python@v6.2.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.12"
           cache: "pip"
@@ -95,13 +100,15 @@ jobs:
 
     steps:
       - name: Checkout repository 🧩
-        uses: actions/checkout@v5
+        # Pinned to actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Capture version from tag 📝
         run: |
           TAG=$(git describe HEAD --tags --abbrev=0 | sed 's/^v//')
           echo "PACKAGE_VERSION=$TAG" >> "$GITHUB_ENV"
       - name: Download dists 📦
-        uses: actions/download-artifact@v6
+        # Pinned to actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: python-package-distributions
           path: dist/
@@ -121,7 +128,8 @@ jobs:
             } > RELEASE.md
           fi
       - name: Create draft release 🚀
-        uses: softprops/action-gh-release@v2
+        # Pinned to softprops/action-gh-release@v3.0.0
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda  # yamllint disable-line rule:line-length
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -151,12 +159,14 @@ jobs:
       contents: read
     steps:
       - name: Download dists 📦
-        uses: actions/download-artifact@v6
+        # Pinned to actions/download-artifact@v8.0.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: python-package-distributions
           path: dist/
       - name: Publish to PyPI 🐍
-        uses: pypa/gh-action-pypi-publish@release/v1
+        # Pinned to pypa/gh-action-pypi-publish@v1.14.0
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b  # yamllint disable-line rule:line-length
         with:
           packages-dir: dist/
           skip-existing: true

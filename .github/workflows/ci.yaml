@@ -14,14 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up repository 🧩
-        uses: actions/checkout@v5
+        # Pinned to actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Set up Python 🐍
-        uses: actions/setup-python@v6
+        # Pinned to actions/setup-python@v6.2.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: "3.x"
           cache: "pip"
+      - name: Install test dependencies 🧪
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[test]"
+
       - name: Run pre-commit hooks 🪝
-        uses: pre-commit/action@v3.0.1
+        run: |
+          pre-commit run --all-files --show-diff-on-failure
 
   test-plugin-integration:
     name: >-
@@ -54,19 +62,22 @@ jobs:
 
     steps:
       - name: Checkout repository of the plugin 🧩
-        uses: actions/checkout@v5
+        # Pinned to actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           path: netbox_aci_plugin
 
       - name: Checkout repository of NetBox ${{ matrix.netbox-version }} 📦
-        uses: actions/checkout@v5
+        # Pinned to actions/checkout@v6.0.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: "netbox-community/netbox"
           ref: ${{ matrix.netbox-version }}
           path: netbox
 
       - name: Set up Python ${{ matrix.python-version }} 🐍
-        uses: actions/setup-python@v6
+        # Pinned to actions/setup-python@v6.2.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -81,7 +92,7 @@ jobs:
         working-directory: netbox
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt -U
+          python -m pip install -r requirements.txt
 
       - name: Install Plugin in NetBox environment 🧩
         working-directory: netbox_aci_plugin
