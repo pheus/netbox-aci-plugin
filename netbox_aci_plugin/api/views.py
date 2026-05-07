@@ -33,6 +33,11 @@ from ..filtersets.tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorFilterSet,
     ACIEsgEndpointSelectorFilterSet,
 )
+from ..filtersets.tenant.l3outs import (
+    ACIExternalEndpointGroupFilterSet,
+    ACIExternalSubnetFilterSet,
+    ACIL3OutFilterSet,
+)
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
 from ..models.access_policies.domains import ACIRoutedDomain
@@ -64,6 +69,11 @@ from ..models.tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelector,
     ACIEsgEndpointSelector,
 )
+from ..models.tenant.l3outs import (
+    ACIExternalEndpointGroup,
+    ACIExternalSubnet,
+    ACIL3Out,
+)
 from ..models.tenant.tenants import ACITenant
 from ..models.tenant.vrfs import ACIVRF
 from .serializers import (
@@ -80,7 +90,10 @@ from .serializers import (
     ACIEndpointSecurityGroupSerializer,
     ACIEsgEndpointGroupSelectorSerializer,
     ACIEsgEndpointSelectorSerializer,
+    ACIExternalEndpointGroupSerializer,
+    ACIExternalSubnetSerializer,
     ACIFabricSerializer,
+    ACIL3OutSerializer,
     ACINodeSerializer,
     ACIPodSerializer,
     ACIRoutedDomainSerializer,
@@ -222,6 +235,54 @@ class ACIBridgeDomainSubnetListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIBridgeDomainSubnetSerializer
     filterset_class = ACIBridgeDomainSubnetFilterSet
+
+
+class ACIL3OutListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI L3Out instances."""
+
+    queryset = ACIL3Out.objects.select_related(
+        "aci_tenant",
+        "aci_vrf",
+        "aci_routed_domain",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIL3OutSerializer
+    filterset_class = ACIL3OutFilterSet
+
+
+class ACIExternalEndpointGroupListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI External EPG instances."""
+
+    queryset = ACIExternalEndpointGroup.objects.select_related(
+        "aci_l3out",
+        "aci_l3out__aci_tenant",
+        "aci_l3out__aci_vrf",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIExternalEndpointGroupSerializer
+    filterset_class = ACIExternalEndpointGroupFilterSet
+
+
+class ACIExternalSubnetListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI External Subnet instances."""
+
+    queryset = ACIExternalSubnet.objects.select_related(
+        "aci_external_endpoint_group",
+        "aci_external_endpoint_group__aci_l3out",
+        "nb_prefix",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIExternalSubnetSerializer
+    filterset_class = ACIExternalSubnetFilterSet
 
 
 class ACIEndpointGroupListViewSet(NetBoxModelViewSet):
