@@ -27,6 +27,11 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorSerializer,
     ACIEsgEndpointSelectorSerializer,
 )
+from .tenant.l3outs import (
+    ACIExternalEndpointGroupSerializer,
+    ACIExternalSubnetSerializer,
+    ACIL3OutSerializer,
+)
 from .tenant.tenants import ACITenantSerializer
 from .tenant.vrfs import ACIVRFSerializer
 
@@ -44,7 +49,10 @@ __all__ = (
     "ACIEndpointSecurityGroupSerializer",
     "ACIEsgEndpointGroupSelectorSerializer",
     "ACIEsgEndpointSelectorSerializer",
+    "ACIExternalEndpointGroupSerializer",
+    "ACIExternalSubnetSerializer",
     "ACIFabricSerializer",
+    "ACIL3OutSerializer",
     "ACINodeSerializer",
     "ACIPodSerializer",
     "ACIRoutedDomainSerializer",
