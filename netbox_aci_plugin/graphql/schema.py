@@ -19,7 +19,10 @@ from .types import (
     ACIEndpointSecurityGroupType,
     ACIEsgEndpointGroupSelectorType,
     ACIEsgEndpointSelectorType,
+    ACIExternalEndpointGroupType,
+    ACIExternalSubnetType,
     ACIFabricType,
+    ACIL3OutType,
     ACINodeType,
     ACIPodType,
     ACIRoutedDomainType,
@@ -62,6 +65,19 @@ class NetBoxACIQuery:
     aci_bridge_domain_subnet_list: list[ACIBridgeDomainSubnetType] = (
         strawberry_django.field()
     )
+
+    aci_l3out: ACIL3OutType = strawberry_django.field()
+    aci_l3out_list: list[ACIL3OutType] = strawberry_django.field()
+
+    aci_external_endpoint_group: ACIExternalEndpointGroupType = (
+        strawberry_django.field()
+    )
+    aci_external_endpoint_group_list: list[ACIExternalEndpointGroupType] = (
+        strawberry_django.field()
+    )
+
+    aci_external_subnet: ACIExternalSubnetType = strawberry_django.field()
+    aci_external_subnet_list: list[ACIExternalSubnetType] = strawberry_django.field()
 
     aci_endpoint_group: ACIEndpointGroupType = strawberry_django.field()
     aci_endpoint_group_list: list[ACIEndpointGroupType] = strawberry_django.field()

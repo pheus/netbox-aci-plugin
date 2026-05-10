@@ -25,7 +25,10 @@ from .filters import (
     ACIEndpointSecurityGroupFilter,
     ACIEsgEndpointGroupSelectorFilter,
     ACIEsgEndpointSelectorFilter,
+    ACIExternalEndpointGroupFilter,
+    ACIExternalSubnetFilter,
     ACIFabricFilter,
+    ACIL3OutFilter,
     ACINodeFilter,
     ACIPodFilter,
     ACIRoutedDomainFilter,
@@ -219,6 +222,9 @@ class ACITenantType(OwnerMixin, NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+    aci_l3outs: list[
+        Annotated["ACIL3OutType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+    ]
     aci_vrfs: list[
         Annotated["ACIVRFType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
     ]
@@ -337,6 +343,76 @@ class ACIBridgeDomainSubnetType(OwnerMixin, NetBoxObjectType):
     gateway_ip_address: Annotated[
         "IPAddressType", strawberry.lazy("ipam.graphql.types")
     ]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+
+@strawberry_django.type(models.ACIL3Out, fields="__all__", filters=ACIL3OutFilter)
+class ACIL3OutType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIL3Out model."""
+
+    # Model fields
+    aci_tenant: Annotated[
+        "ACITenantType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_vrf: Annotated["ACIVRFType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+    aci_routed_domain: Annotated[
+        "ACIRoutedDomainType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    # Related models
+    aci_external_endpoint_groups: list[
+        Annotated[
+            "ACIExternalEndpointGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACIExternalEndpointGroup,
+    fields="__all__",
+    filters=ACIExternalEndpointGroupFilter,
+)
+class ACIExternalEndpointGroupType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIExternalEndpointGroup model."""
+
+    # Model fields
+    aci_l3out: Annotated[
+        "ACIL3OutType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    # Related models
+    aci_contract_relations: list[
+        Annotated[
+            "ACIContractRelationType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_external_subnets: list[
+        Annotated[
+            "ACIExternalSubnetType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACIExternalSubnet,
+    fields="__all__",
+    filters=ACIExternalSubnetFilter,
+)
+class ACIExternalSubnetType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIExternalSubnet model."""
+
+    # Model fields
+    aci_external_endpoint_group: Annotated[
+        "ACIExternalEndpointGroupType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    matched_prefix: str | None
+    nb_prefix: Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")] | None
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
 
@@ -658,6 +734,10 @@ class ACIContractRelationType(NetBoxObjectType):
             ]
             | Annotated[
                 "ACIEndpointSecurityGroupType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
+            ]
+            | Annotated[
+                "ACIExternalEndpointGroupType",
                 strawberry.lazy("netbox_aci_plugin.graphql.types"),
             ]
             | Annotated[
