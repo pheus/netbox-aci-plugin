@@ -33,6 +33,11 @@ from .models.tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelector,
     ACIEsgEndpointSelector,
 )
+from .models.tenant.l3outs import (
+    ACIExternalEndpointGroup,
+    ACIExternalSubnet,
+    ACIL3Out,
+)
 from .models.tenant.tenants import ACITenant
 from .models.tenant.vrfs import ACIVRF
 
@@ -218,6 +223,70 @@ class ACIBridgeDomainSubnetIndex(SearchIndex):
         "description",
         "aci_bridge_domain",
         "gateway_ip_address",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIL3OutIndex(SearchIndex):
+    """NetBox search definition for the ACI L3Out model."""
+
+    model = ACIL3Out
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_tenant",
+        "aci_vrf",
+        "aci_routed_domain",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIExternalEndpointGroupIndex(SearchIndex):
+    """NetBox search definition for the ACI External EPG model."""
+
+    model = ACIExternalEndpointGroup
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_l3out",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIExternalSubnetIndex(SearchIndex):
+    """NetBox search definition for the ACI External Subnet model."""
+
+    model = ACIExternalSubnet
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("matched_prefix", 400),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_external_endpoint_group",
+        "matched_prefix",
         "nb_tenant",
     )
 
@@ -427,6 +496,7 @@ class ACIContractRelationIndex(SearchIndex):
         ("_aci_endpoint_group", 300),
         ("_aci_useg_endpoint_group", 300),
         ("_aci_endpoint_security_group", 300),
+        ("_aci_external_endpoint_group", 300),
         ("_aci_vrf", 400),
     )
     display_attrs: tuple = (
