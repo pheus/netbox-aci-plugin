@@ -12,6 +12,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from dcim.fields import MACAddressField
+from netbox.models import NetBoxModel
 
 from ...choices import (
     BDMultiDestinationFloodingChoices,
@@ -23,6 +24,9 @@ from ...validators import ACIPolicyNameOptionalValidator
 from ..base import ACITenantBaseModel
 
 if TYPE_CHECKING:
+    from core.models import ObjectChange
+
+    from ..fabric.fabrics import ACIFabric
     from .tenants import ACITenant
     from .vrfs import ACIVRF
 
@@ -474,5 +478,110 @@ class ACIBridgeDomainSubnet(ACITenantBaseModel):
 
     @property
     def parent_object(self) -> ACITenantBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_bridge_domain
+
+
+class ACIBridgeDomainL3OutBinding(NetBoxModel):
+    """NetBox model for ACI Bridge Domain to L3Out relation."""
+
+    aci_bridge_domain = models.ForeignKey(
+        to="netbox_aci_plugin.ACIBridgeDomain",
+        on_delete=models.CASCADE,
+        related_name="aci_l3out_bindings",
+        verbose_name=_("ACI Bridge Domain"),
+    )
+    aci_l3out = models.ForeignKey(
+        to="netbox_aci_plugin.ACIL3Out",
+        on_delete=models.CASCADE,
+        related_name="aci_bridge_domain_bindings",
+        verbose_name=_("ACI L3Out"),
+    )
+    comments = models.TextField(
+        verbose_name=_("comments"),
+        blank=True,
+    )
+
+    clone_fields: tuple = (
+        "aci_bridge_domain",
+        "aci_l3out",
+    )
+    prerequisite_models: tuple = (
+        "netbox_aci_plugin.ACIBridgeDomain",
+        "netbox_aci_plugin.ACIL3Out",
+    )
+
+    class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_bridge_domain", "aci_l3out"),
+                name="%(app_label)s_%(class)s_unique_binding",
+            ),
+        ]
+        ordering: tuple = ("aci_bridge_domain", "aci_l3out")
+        verbose_name: str = _("ACI Bridge Domain L3Out Binding")
+
+    def __str__(self) -> str:
+        """Return string representation of the instance."""
+        return f"{self.aci_bridge_domain} - {self.aci_l3out}"
+
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+        super().clean()
+        errors = {}
+
+        if self.aci_bridge_domain_id and self.aci_l3out_id:
+            if self.aci_bridge_domain.aci_fabric != self.aci_l3out.aci_fabric:
+                errors.setdefault("aci_l3out", []).append(
+                    _(
+                        "The assigned ACI L3Out must belong to the same "
+                        "ACI Fabric as the ACI Bridge Domain."
+                    )
+                )
+            if self.aci_bridge_domain.aci_vrf != self.aci_l3out.aci_vrf:
+                errors.setdefault("aci_l3out", []).append(
+                    _(
+                        "The assigned ACI L3Out must use the same ACI VRF "
+                        "as the ACI Bridge Domain."
+                    )
+                )
+            if (
+                self.aci_l3out.aci_tenant != self.aci_bridge_domain.aci_tenant
+                and self.aci_l3out.aci_tenant.name != "common"
+            ):
+                errors.setdefault("aci_l3out", []).append(
+                    _(
+                        "The assigned ACI L3Out must belong to the same "
+                        "ACI Tenant as the ACI Bridge Domain, or to the "
+                        "ACI Tenant 'common'."
+                    )
+                )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def to_objectchange(self, action) -> ObjectChange:
+        """Return an ObjectChange for the change made to an instance."""
+        objectchange = super().to_objectchange(action)
+        objectchange.related_object = self.aci_bridge_domain
+        return objectchange
+
+    @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACIFabric instance of related ACI Bridge Domain."""
+        return self.aci_bridge_domain.aci_fabric
+
+    @property
+    def aci_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of related ACI Bridge Domain."""
+        return self.aci_bridge_domain.aci_tenant
+
+    @property
+    def aci_vrf(self) -> ACIVRF:
+        """Return the ACIVRF instance of related ACI Bridge Domain."""
+        return self.aci_bridge_domain.aci_vrf
+
+    @property
+    def parent_object(self) -> ACIBridgeDomain:
         """Return the parent object of the instance."""
         return self.aci_bridge_domain

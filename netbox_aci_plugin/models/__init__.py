@@ -3,7 +3,11 @@ from .fabric.fabrics import ACIFabric
 from .fabric.nodes import ACINode
 from .fabric.pods import ACIPod
 from .tenant.app_profiles import ACIAppProfile
-from .tenant.bridge_domains import ACIBridgeDomain, ACIBridgeDomainSubnet
+from .tenant.bridge_domains import (
+    ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
+    ACIBridgeDomainSubnet,
+)
 from .tenant.contract_filters import ACIContractFilter, ACIContractFilterEntry
 from .tenant.contracts import (
     ACIContract,
@@ -33,6 +37,7 @@ __all__ = (
     "ACIVRF",
     "ACIAppProfile",
     "ACIBridgeDomain",
+    "ACIBridgeDomainL3OutBinding",
     "ACIBridgeDomainSubnet",
     "ACIContract",
     "ACIContractFilter",
