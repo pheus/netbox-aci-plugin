@@ -21,8 +21,10 @@ from ...choices import (
 from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
+from ...models.tenant.l3outs import ACIL3Out
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
 from ..mixins import (
@@ -228,3 +230,76 @@ class ACIBridgeDomainSubnetFilterSet(
             | Q(gateway_ip__istartswith=value)
         )
         return queryset.filter(queryset_filter)
+
+
+@register_filterset
+class ACIBridgeDomainL3OutBindingFilterSet(NetBoxModelFilterSet):
+    """Filterset for ACIBridgeDomainL3OutBinding model."""
+
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_tenant__aci_fabric__name",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_tenant__aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        label=_("ACI Fabric (ID)"),
+    )
+    aci_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_tenant__name",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant (name)"),
+    )
+    aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        label=_("ACI Tenant (ID)"),
+    )
+    aci_vrf = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_vrf__name",
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        label=_("ACI VRF (name)"),
+    )
+    aci_vrf_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__aci_vrf",
+        queryset=ACIVRF.objects.all(),
+        label=_("ACI VRF (ID)"),
+    )
+    aci_bridge_domain = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_bridge_domain__name",
+        queryset=ACIBridgeDomain.objects.all(),
+        to_field_name="name",
+        label=_("ACI Bridge Domain (name)"),
+    )
+    aci_bridge_domain_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIBridgeDomain.objects.all(),
+        label=_("ACI Bridge Domain (ID)"),
+    )
+    aci_l3out = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_l3out__name",
+        queryset=ACIL3Out.objects.all(),
+        to_field_name="name",
+        label=_("ACI L3Out (name)"),
+    )
+    aci_l3out_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACIL3Out.objects.all(),
+        label=_("ACI L3Out (ID)"),
+    )
+
+    class Meta:
+        model = ACIBridgeDomainL3OutBinding
+        fields = ("id", "comments")
+
+    def search(self, queryset, name, value):
+        """Search ACIBridgeDomainL3OutBinding instances."""
+        if not value.strip():
+            return queryset
+        return queryset.filter(
+            Q(aci_bridge_domain__name__icontains=value)
+            | Q(aci_l3out__name__icontains=value)
+            | Q(comments__icontains=value)
+        )

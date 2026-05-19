@@ -5,6 +5,7 @@ from .fabric.pods import ACIPodFilterSet
 from .tenant.app_profiles import ACIAppProfileFilterSet
 from .tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
+    ACIBridgeDomainL3OutBindingFilterSet,
     ACIBridgeDomainSubnetFilterSet,
 )
 from .tenant.contract_filters import (
@@ -38,6 +39,7 @@ from .tenant.vrfs import ACIVRFFilterSet
 __all__ = (
     "ACIAppProfileFilterSet",
     "ACIBridgeDomainFilterSet",
+    "ACIBridgeDomainL3OutBindingFilterSet",
     "ACIBridgeDomainSubnetFilterSet",
     "ACIContractFilterEntryFilterSet",
     "ACIContractFilterFilterSet",
