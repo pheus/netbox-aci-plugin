@@ -9,6 +9,7 @@ from netbox.tables import NetBoxTable, columns
 
 from ...models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
 
@@ -277,4 +278,52 @@ class ACIBridgeDomainSubnetReducedTable(NetBoxTable):
         default_columns: tuple = (
             "name",
             "gateway_ip_address",
+        )
+
+
+class ACIBridgeDomainL3OutBindingTable(NetBoxTable):
+    """Table for ACIBridgeDomainL3OutBinding model."""
+
+    aci_fabric = tables.Column(
+        verbose_name=_("ACI Fabric"),
+        accessor="aci_bridge_domain__aci_tenant__aci_fabric",
+        linkify=True,
+    )
+    aci_tenant = tables.Column(
+        verbose_name=_("ACI Tenant"),
+        accessor="aci_bridge_domain__aci_tenant",
+        linkify=True,
+    )
+    aci_vrf = tables.Column(
+        verbose_name=_("ACI VRF"),
+        accessor="aci_bridge_domain__aci_vrf",
+        linkify=True,
+    )
+    aci_bridge_domain = tables.Column(
+        verbose_name=_("ACI Bridge Domain"),
+        linkify=True,
+    )
+    aci_l3out = tables.Column(verbose_name=_("ACI L3Out"), linkify=True)
+    tags = columns.TagColumn()
+    comments = columns.MarkdownColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIBridgeDomainL3OutBinding
+        fields: tuple = (
+            "pk",
+            "id",
+            "aci_fabric",
+            "aci_tenant",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "aci_l3out",
+            "comments",
+            "tags",
+        )
+        default_columns: tuple = (
+            "aci_fabric",
+            "aci_tenant",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "aci_l3out",
         )
