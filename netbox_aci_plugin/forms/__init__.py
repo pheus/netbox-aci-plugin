@@ -5,6 +5,7 @@ from .fabric.pods import ACIPodFilterForm
 from .tenant.app_profiles import ACIAppProfileFilterForm
 from .tenant.bridge_domains import (
     ACIBridgeDomainFilterForm,
+    ACIBridgeDomainL3OutBindingFilterForm,
     ACIBridgeDomainSubnetFilterForm,
 )
 from .tenant.contract_filters import (
@@ -38,6 +39,7 @@ from .tenant.vrfs import ACIVRFFilterForm
 __all__ = (
     "ACIAppProfileFilterForm",
     "ACIBridgeDomainFilterForm",
+    "ACIBridgeDomainL3OutBindingFilterForm",
     "ACIBridgeDomainSubnetFilterForm",
     "ACIContractFilterEntryFilterForm",
     "ACIContractFilterFilterForm",

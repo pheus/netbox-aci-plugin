@@ -34,8 +34,10 @@ from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
 from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
+from ...models.tenant.l3outs import ACIL3Out
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
 
@@ -1453,3 +1455,220 @@ class ACIBridgeDomainSubnetImportForm(NetBoxModelImportForm):
                 aci_vrf__name=data["aci_vrf"],
             )
             self.fields["aci_bridge_domain"].queryset = aci_bd_queryset
+
+
+#
+# Bridge Domain L3Out Binding forms
+#
+
+
+class ACIBridgeDomainL3OutBindingEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACIBridgeDomainL3OutBinding model."""
+
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_tenants__aci_bridge_domains": "$aci_bridge_domain"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
+    aci_tenant = DynamicModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
+        initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_vrf = DynamicModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
+        initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
+        required=False,
+        label=_("ACI VRF"),
+    )
+    aci_bridge_domain = DynamicModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant", "aci_vrf_id": "$aci_vrf"},
+        label=_("ACI Bridge Domain"),
+    )
+    aci_l3out = DynamicModelChoiceField(
+        queryset=ACIL3Out.objects.all(),
+        query_params={
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
+            "aci_vrf_id": "$aci_vrf",
+        },
+        label=_("ACI L3Out"),
+    )
+    comments = CommentField()
+
+    fieldsets: tuple = (
+        FieldSet(
+            "aci_fabric",
+            "aci_tenant",
+            "aci_vrf",
+            "aci_bridge_domain",
+            name=_("ACI Bridge Domain"),
+        ),
+        FieldSet("aci_l3out", name=_("Attached L3Out")),
+        FieldSet("tags", name=_("Tags")),
+    )
+
+    class Meta:
+        model = ACIBridgeDomainL3OutBinding
+        fields: tuple = ("aci_bridge_domain", "aci_l3out", "comments", "tags")
+
+
+class ACIBridgeDomainL3OutBindingBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for the ACIBridgeDomainL3OutBinding model."""
+
+    aci_bridge_domain = DynamicModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        required=False,
+        label=_("ACI Bridge Domain"),
+    )
+    aci_l3out = DynamicModelChoiceField(
+        queryset=ACIL3Out.objects.all(),
+        required=False,
+        label=_("ACI L3Out"),
+    )
+    comments = CommentField()
+
+    model = ACIBridgeDomainL3OutBinding
+    fieldsets: tuple = (
+        FieldSet("aci_bridge_domain", name=_("ACI Bridge Domain")),
+        FieldSet("aci_l3out", name=_("Attached L3Out")),
+    )
+    nullable_fields: tuple = ("comments",)
+
+
+class ACIBridgeDomainL3OutBindingFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for the ACIBridgeDomainL3OutBinding model."""
+
+    model = ACIBridgeDomainL3OutBinding
+    fieldsets: tuple = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "aci_fabric_id",
+            "aci_tenant_id",
+            "aci_vrf_id",
+            "aci_bridge_domain_id",
+            "aci_l3out_id",
+            name=_("Attributes"),
+        ),
+    )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
+    aci_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric_id"},
+        required=False,
+        label=_("ACI Tenant"),
+    )
+    aci_vrf_id = DynamicModelMultipleChoiceField(
+        queryset=ACIVRF.objects.all(),
+        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant_id"},
+        required=False,
+        label=_("ACI VRF"),
+    )
+    aci_bridge_domain_id = DynamicModelMultipleChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        query_params={"aci_tenant_id": "$aci_tenant_id", "aci_vrf_id": "$aci_vrf_id"},
+        required=False,
+        label=_("ACI Bridge Domain"),
+    )
+    aci_l3out_id = DynamicModelMultipleChoiceField(
+        queryset=ACIL3Out.objects.all(),
+        query_params={
+            "present_in_aci_tenant_or_common_id": "$aci_tenant_id",
+            "aci_vrf_id": "$aci_vrf_id",
+        },
+        required=False,
+        label=_("ACI L3Out"),
+    )
+    tag = TagFilterField(model)
+
+
+class ACIBridgeDomainL3OutBindingImportForm(NetBoxModelImportForm):
+    """NetBox import form for the ACIBridgeDomainL3OutBinding model."""
+
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+    )
+    aci_tenant = CSVModelChoiceField(
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Tenant"),
+    )
+    aci_vrf = CSVModelChoiceField(
+        queryset=ACIVRF.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("ACI VRF"),
+        help_text=_(
+            "Optional. Disambiguates same-named Bridge Domains across "
+            "different VRFs of the same ACI Tenant."
+        ),
+    )
+    aci_bridge_domain = CSVModelChoiceField(
+        queryset=ACIBridgeDomain.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Bridge Domain"),
+    )
+    aci_l3out = CSVModelChoiceField(
+        queryset=ACIL3Out.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI L3Out"),
+    )
+    is_aci_l3out_in_common = forms.BooleanField(
+        required=False,
+        label=_("Is ACI L3Out in 'common'"),
+        help_text=_("Assigned ACI L3Out is in ACI Tenant 'common'"),
+    )
+
+    class Meta:
+        model = ACIBridgeDomainL3OutBinding
+        fields: tuple = (
+            "aci_fabric",
+            "aci_tenant",
+            "aci_vrf",
+            "aci_bridge_domain",
+            "aci_l3out",
+            "is_aci_l3out_in_common",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+        if not data:
+            return
+        if data.get("aci_fabric") and data.get("aci_tenant"):
+            self.fields["aci_tenant"].queryset = ACITenant.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
+            bd_qs = ACIBridgeDomain.objects.filter(
+                aci_tenant__aci_fabric__name=data["aci_fabric"],
+                aci_tenant__name=data["aci_tenant"],
+            )
+            if data.get("aci_vrf"):
+                bd_qs = bd_qs.filter(aci_vrf__name=data["aci_vrf"])
+            self.fields["aci_bridge_domain"].queryset = bd_qs
+            if data.get("is_aci_l3out_in_common") == "true":
+                self.fields["aci_l3out"].queryset = ACIL3Out.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name="common",
+                )
+            else:
+                self.fields["aci_l3out"].queryset = ACIL3Out.objects.filter(
+                    aci_tenant__aci_fabric__name=data["aci_fabric"],
+                    aci_tenant__name=data["aci_tenant"],
+                )
