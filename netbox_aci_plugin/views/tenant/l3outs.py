@@ -42,6 +42,7 @@ from ...tables.tenant.l3outs import (
     ACIExternalSubnetTable,
     ACIL3OutTable,
 )
+from .bridge_domains import ACIBridgeDomainL3OutBindingChildrenView
 from .contracts import ACIContractRelationChildrenView
 
 
@@ -210,6 +211,30 @@ class ACIL3OutExternalEndpointGroupsView(ACIExternalEndpointGroupChildrenView):
 
     queryset = ACIL3Out.objects.all()
     template_name = "netbox_aci_plugin/inc/acil3out/externalendpointgroups.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects of the current parent object."""
+        return super().get_children(request, parent).filter(aci_l3out=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return table with ACI L3Out column hidden."""
+        table = super().get_table(*args, **kwargs)
+        table.columns.hide("aci_l3out")
+        return table
+
+
+@register_model_view(ACIL3Out, "bridgedomainbindings", path="bridge-domain-bindings")
+class ACIL3OutBridgeDomainBindingsView(ACIBridgeDomainL3OutBindingChildrenView):
+    """Children view of BD L3Out bindings of ACI L3Out."""
+
+    queryset = ACIL3Out.objects.all()
+    template_name = "netbox_aci_plugin/inc/acil3out/bridgedomains.html"
+    tab = ViewTab(
+        label=_("Bridge Domains"),
+        badge=lambda obj: obj.aci_bridge_domain_bindings.count(),
+        permission="netbox_aci_plugin.view_acibridgedomainl3outbinding",
+        weight=1000,
+    )
 
     def get_children(self, request, parent):
         """Return all children objects of the current parent object."""
