@@ -4,6 +4,7 @@ from .fabric.nodes import ACINodeSerializer
 from .fabric.pods import ACIPodSerializer
 from .tenant.app_profiles import ACIAppProfileSerializer
 from .tenant.bridge_domains import (
+    ACIBridgeDomainL3OutBindingSerializer,
     ACIBridgeDomainSerializer,
     ACIBridgeDomainSubnetSerializer,
 )
@@ -37,6 +38,7 @@ from .tenant.vrfs import ACIVRFSerializer
 
 __all__ = (
     "ACIAppProfileSerializer",
+    "ACIBridgeDomainL3OutBindingSerializer",
     "ACIBridgeDomainSerializer",
     "ACIBridgeDomainSubnetSerializer",
     "ACIContractFilterEntrySerializer",
