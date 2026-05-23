@@ -11,6 +11,7 @@ from .models.fabric.pods import ACIPod
 from .models.tenant.app_profiles import ACIAppProfile
 from .models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
 from .models.tenant.contract_filters import (
@@ -289,6 +290,15 @@ class ACIExternalSubnetIndex(SearchIndex):
         "matched_prefix",
         "nb_tenant",
     )
+
+
+@register_search
+class ACIBridgeDomainL3OutBindingIndex(SearchIndex):
+    """NetBox search definition for the ACI BD L3Out Relation model."""
+
+    model = ACIBridgeDomainL3OutBinding
+    fields: tuple = (("aci_bridge_domain", 100), ("aci_l3out", 300))
+    display_attrs: tuple = ("aci_bridge_domain", "aci_l3out")
 
 
 @register_search
