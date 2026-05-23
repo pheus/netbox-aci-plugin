@@ -11,6 +11,7 @@ from ..filtersets.fabric.pods import ACIPodFilterSet
 from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ..filtersets.tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
+    ACIBridgeDomainL3OutBindingFilterSet,
     ACIBridgeDomainSubnetFilterSet,
 )
 from ..filtersets.tenant.contract_filters import (
@@ -47,6 +48,7 @@ from ..models.fabric.pods import ACIPod
 from ..models.tenant.app_profiles import ACIAppProfile
 from ..models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
 from ..models.tenant.contract_filters import (
@@ -78,6 +80,7 @@ from ..models.tenant.tenants import ACITenant
 from ..models.tenant.vrfs import ACIVRF
 from .serializers import (
     ACIAppProfileSerializer,
+    ACIBridgeDomainL3OutBindingSerializer,
     ACIBridgeDomainSerializer,
     ACIBridgeDomainSubnetSerializer,
     ACIContractFilterEntrySerializer,
@@ -283,6 +286,17 @@ class ACIExternalSubnetListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIExternalSubnetSerializer
     filterset_class = ACIExternalSubnetFilterSet
+
+
+class ACIBridgeDomainL3OutBindingListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Bridge Domain L3Out Relation instances."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
+        "aci_bridge_domain",
+        "aci_l3out",
+    ).prefetch_related("tags")
+    serializer_class = ACIBridgeDomainL3OutBindingSerializer
+    filterset_class = ACIBridgeDomainL3OutBindingFilterSet
 
 
 class ACIEndpointGroupListViewSet(NetBoxModelViewSet):
