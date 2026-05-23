@@ -992,3 +992,21 @@ The *ACIExternalSubnet* model has the following fields:
 - **NetBox Tenant**: a reference to the NetBox tenant model.
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
+
+## Bridge Domain L3Out Binding
+
+A *Bridge Domain L3Out Binding* links an ACI Bridge Domain to an ACI L3Out. The
+binding documents which L3Outs are associated with a Bridge Domain for routed
+external connectivity.
+
+The *ACIBridgeDomainL3OutBinding* model has the following fields:
+
+*Required fields*:
+
+- **ACI Bridge Domain**: a reference to the `ACIBridgeDomain` model.
+- **ACI L3Out**: a reference to the `ACIL3Out` model.
+
+*Optional fields*:
+
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
