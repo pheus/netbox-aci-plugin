@@ -7,6 +7,7 @@ import strawberry_django
 
 from .types import (
     ACIAppProfileType,
+    ACIBridgeDomainL3OutBindingType,
     ACIBridgeDomainSubnetType,
     ACIBridgeDomainType,
     ACIContractFilterEntryType,
@@ -78,6 +79,13 @@ class NetBoxACIQuery:
 
     aci_external_subnet: ACIExternalSubnetType = strawberry_django.field()
     aci_external_subnet_list: list[ACIExternalSubnetType] = strawberry_django.field()
+
+    aci_bridge_domain_l3out_binding: ACIBridgeDomainL3OutBindingType = (
+        strawberry_django.field()
+    )
+    aci_bridge_domain_l3out_binding_list: list[ACIBridgeDomainL3OutBindingType] = (
+        strawberry_django.field()
+    )
 
     aci_endpoint_group: ACIEndpointGroupType = strawberry_django.field()
     aci_endpoint_group_list: list[ACIEndpointGroupType] = strawberry_django.field()

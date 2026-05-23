@@ -14,6 +14,7 @@ from .. import models
 from .filters import (
     ACIAppProfileFilter,
     ACIBridgeDomainFilter,
+    ACIBridgeDomainL3OutBindingFilter,
     ACIBridgeDomainSubnetFilter,
     ACIContractFilter,
     ACIContractFilterEntryFilter,
@@ -325,6 +326,12 @@ class ACIBridgeDomainType(OwnerMixin, NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+    aci_l3out_bindings: list[
+        Annotated[
+            "ACIBridgeDomainL3OutBindingType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
 
 
 @strawberry_django.type(
@@ -364,6 +371,12 @@ class ACIL3OutType(OwnerMixin, NetBoxObjectType):
     aci_external_endpoint_groups: list[
         Annotated[
             "ACIExternalEndpointGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_bridge_domain_bindings: list[
+        Annotated[
+            "ACIBridgeDomainL3OutBindingType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
@@ -414,6 +427,24 @@ class ACIExternalSubnetType(OwnerMixin, NetBoxObjectType):
     matched_prefix: str | None
     nb_prefix: Annotated["PrefixType", strawberry.lazy("ipam.graphql.types")] | None
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+
+@strawberry_django.type(
+    models.ACIBridgeDomainL3OutBinding,
+    fields="__all__",
+    filters=ACIBridgeDomainL3OutBindingFilter,
+)
+class ACIBridgeDomainL3OutBindingType(NetBoxObjectType):
+    """GraphQL type definition for the ACIBridgeDomainL3OutBinding model."""
+
+    # Model fields
+    aci_bridge_domain: Annotated[
+        "ACIBridgeDomainType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    aci_l3out: Annotated[
+        "ACIL3OutType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
 
 
 @strawberry_django.type(
