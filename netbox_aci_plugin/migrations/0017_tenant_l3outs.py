@@ -563,6 +563,13 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddConstraint(
+            model_name="acil3out",
+            constraint=models.CheckConstraint(
+                condition=models.Q(export_route_control_enforcement_enabled=True),
+                name="netbox_aci_plugin_acil3out_export_rtctrl_enabled",
+            ),
+        ),
+        migrations.AddConstraint(
             model_name="aciexternalendpointgroup",
             constraint=models.UniqueConstraint(
                 fields=("aci_l3out", "name"),

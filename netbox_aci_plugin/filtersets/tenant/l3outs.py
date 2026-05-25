@@ -86,7 +86,6 @@ class ACIL3OutFilterSet(
             "nb_tenant",
             "target_dscp",
             "import_route_control_enforcement_enabled",
-            "export_route_control_enforcement_enabled",
             "bgp_enabled",
             "ospf_enabled",
             "eigrp_enabled",

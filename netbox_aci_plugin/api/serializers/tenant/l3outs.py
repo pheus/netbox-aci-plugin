@@ -81,6 +81,7 @@ class ACIL3OutSerializer(OwnerMixin, NetBoxModelSerializer):
             "aci_tenant",
             "aci_vrf",
         )
+        read_only_fields: tuple = ("export_route_control_enforcement_enabled",)
 
 
 class ACIExternalEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):

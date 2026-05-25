@@ -86,10 +86,12 @@ class ACIL3OutEditForm(NetBoxModelForm):
     )
     export_route_control_enforcement_enabled = forms.BooleanField(
         required=False,
+        disabled=True,
+        initial=True,
         label=_("Export route control enforcement enabled"),
         help_text=_(
-            "Enables export route control enforcement for the L3Out. "
-            "Default is enabled."
+            "Export route control enforcement is always enabled for APIC "
+            "L3Outs and cannot be disabled."
         ),
     )
     bgp_enabled = forms.BooleanField(
@@ -334,11 +336,6 @@ class ACIL3OutBulkEditForm(NetBoxModelBulkEditForm):
         widget=forms.Select(choices=BOOLEAN_WITH_BLANK_CHOICES),
         label=_("Import route control enforcement enabled"),
     )
-    export_route_control_enforcement_enabled = forms.NullBooleanField(
-        required=False,
-        widget=forms.Select(choices=BOOLEAN_WITH_BLANK_CHOICES),
-        label=_("Export route control enforcement enabled"),
-    )
     bgp_enabled = forms.NullBooleanField(
         required=False,
         widget=forms.Select(choices=BOOLEAN_WITH_BLANK_CHOICES),
@@ -391,7 +388,6 @@ class ACIL3OutBulkEditForm(NetBoxModelBulkEditForm):
         FieldSet(
             "target_dscp",
             "import_route_control_enforcement_enabled",
-            "export_route_control_enforcement_enabled",
             "bgp_enabled",
             "ospf_enabled",
             "eigrp_enabled",
@@ -433,7 +429,6 @@ class ACIL3OutFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "target_dscp",
             "import_route_control_enforcement_enabled",
-            "export_route_control_enforcement_enabled",
             name=_("Policy"),
         ),
         FieldSet(
@@ -486,11 +481,6 @@ class ACIL3OutFilterForm(NetBoxModelFilterSetForm):
         required=False,
         widget=forms.Select(choices=BOOLEAN_WITH_BLANK_CHOICES),
         label=_("Import route control enforcement enabled"),
-    )
-    export_route_control_enforcement_enabled = forms.NullBooleanField(
-        required=False,
-        widget=forms.Select(choices=BOOLEAN_WITH_BLANK_CHOICES),
-        label=_("Export route control enforcement enabled"),
     )
     bgp_enabled = forms.NullBooleanField(
         required=False,
@@ -614,7 +604,6 @@ class ACIL3OutImportForm(NetBoxModelImportForm):
             "aci_routed_domain",
             "target_dscp",
             "import_route_control_enforcement_enabled",
-            "export_route_control_enforcement_enabled",
             "bgp_enabled",
             "ospf_enabled",
             "eigrp_enabled",

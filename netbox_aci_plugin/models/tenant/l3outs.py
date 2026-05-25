@@ -84,8 +84,8 @@ class ACIL3Out(ACITenantBaseModel):
         verbose_name=_("export route control enforcement enabled"),
         default=True,
         help_text=_(
-            "Enables export route control enforcement for the L3Out. "
-            "Default is enabled."
+            "Export route control enforcement is always enabled for APIC "
+            "L3Outs and cannot be disabled."
         ),
     )
     igmp_interface_policy_name = models.CharField(
@@ -177,7 +177,6 @@ class ACIL3Out(ACITenantBaseModel):
         "egress_data_plane_policing_policy_name",
         "eigrp_enabled",
         "eigrp_interface_policy_name",
-        "export_route_control_enforcement_enabled",
         "igmp_interface_policy_name",
         "import_route_control_enforcement_enabled",
         "ingress_data_plane_policing_policy_name",
@@ -197,10 +196,14 @@ class ACIL3Out(ACITenantBaseModel):
     )
 
     class Meta:
-        constraints: list[models.UniqueConstraint] = [
+        constraints: list[models.BaseConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_tenant", "name"),
                 name="%(app_label)s_%(class)s_unique_per_aci_tenant",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(export_route_control_enforcement_enabled=True),
+                name="%(app_label)s_%(class)s_export_rtctrl_enabled",
             ),
         ]
         ordering: tuple = ("aci_tenant", "name")
@@ -287,6 +290,13 @@ class ACIL3Out(ACITenantBaseModel):
                     "Import route control enforcement requires BGP or OSPF "
                     "to be enabled for the ACI L3Out."
                 )
+            )
+
+        # Ensure that export route control enforcement stays enabled, as
+        # APIC always enforces export route control for L3Outs.
+        if not self.export_route_control_enforcement_enabled:
+            errors.setdefault("export_route_control_enforcement_enabled", []).append(
+                _("Export route control enforcement is always enabled by APIC.")
             )
 
         # Ensure that an OSPF external policy is only assigned when OSPF

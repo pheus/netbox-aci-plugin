@@ -470,6 +470,38 @@ class ACIL3OutTestCase(ACIBaseTestCase):
         with self.assertRaises(IntegrityError):
             duplicate_l3out.save()
 
+    def test_invalid_aci_l3out_export_route_control_enforcement_disabled(
+        self,
+    ) -> None:
+        """Test that export route control enforcement cannot be disabled."""
+        l3out = ACIL3Out(
+            name="ACIL3OutExportRtctrl",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
+            aci_routed_domain=self.aci_routed_domain,
+            export_route_control_enforcement_enabled=False,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            l3out.full_clean()
+        self.assertIn(
+            "export_route_control_enforcement_enabled",
+            cm.exception.message_dict,
+        )
+
+    def test_constraint_aci_l3out_export_route_control_enforcement_enabled(
+        self,
+    ) -> None:
+        """Test DB constraint forcing export route control enforcement."""
+        invalid_l3out = ACIL3Out(
+            name="ACIL3OutExportRtctrlDB",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
+            aci_routed_domain=self.aci_routed_domain,
+            export_route_control_enforcement_enabled=False,
+        )
+        with self.assertRaises(IntegrityError):
+            invalid_l3out.save()
+
     def test_invalid_aci_l3out_eigrp_with_bgp(self) -> None:
         """Test invalid EIGRP enabled together with BGP on ACI L3Out."""
         l3out = ACIL3Out(

@@ -12,6 +12,7 @@ from tenancy.models import Tenant
 from users.models import ObjectPermission
 from utilities.testing import APIViewTestCases
 
+from ....api.serializers.tenant.l3outs import ACIL3OutSerializer
 from ....api.urls import app_name
 from ....choices import QualityOfServiceClassChoices, QualityOfServiceDSCPChoices
 from ....models.access_policies.domains import ACIRoutedDomain
@@ -156,7 +157,6 @@ class ACIL3OutAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "custom_qos_policy_name": "CustomQoSPolicy4",
                 "egress_data_plane_policing_policy_name": "EgressDPPPolicy4",
                 "eigrp_enabled": False,
-                "export_route_control_enforcement_enabled": True,
                 "import_route_control_enforcement_enabled": False,
                 "ingress_data_plane_policing_policy_name": "IngressDPPPolicy4",
                 "interleak_route_map_name": "InterleakRouteMap4",
@@ -178,7 +178,6 @@ class ACIL3OutAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "nb_tenant": nb_tenant2.id,
                 "bgp_enabled": False,
                 "eigrp_enabled": True,
-                "export_route_control_enforcement_enabled": False,
                 "import_route_control_enforcement_enabled": False,
                 "multipod_enabled": False,
                 "ospf_enabled": False,
@@ -188,6 +187,27 @@ class ACIL3OutAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+
+    def test_export_route_control_enforcement_read_only(self) -> None:
+        """Test export route control enforcement is read-only in the API."""
+        serializer = ACIL3OutSerializer()
+        self.assertTrue(
+            serializer.fields["export_route_control_enforcement_enabled"].read_only
+        )
+
+    def test_export_route_control_enforcement_false_is_ignored(self) -> None:
+        """Test API input cannot change export route control enforcement."""
+        l3out = ACIL3Out.objects.first()
+        serializer = ACIL3OutSerializer(
+            l3out,
+            data={"export_route_control_enforcement_enabled": False},
+            partial=True,
+        )
+        self.assertTrue(serializer.is_valid())
+        self.assertNotIn(
+            "export_route_control_enforcement_enabled",
+            serializer.validated_data,
+        )
 
 
 class ACIExternalEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):

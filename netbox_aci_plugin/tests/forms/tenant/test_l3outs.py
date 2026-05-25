@@ -115,6 +115,15 @@ class ACIL3OutFormTestCase(ACIBaseFormTestCase):
         self.assertTrue(form.is_valid())
         self.assertEqual(form.errors.get("multipod_enabled"), None)
 
+    def test_aci_l3out_export_route_control_enforcement_disabled_field(
+        self,
+    ) -> None:
+        """Test that the export route control enforcement field is disabled."""
+        form = ACIL3OutEditForm()
+        field = form.fields["export_route_control_enforcement_enabled"]
+        self.assertTrue(field.disabled)
+        self.assertTrue(field.initial)
+
 
 class ACIExternalEndpointGroupFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIExternalEndpointGroup form."""
