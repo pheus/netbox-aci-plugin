@@ -38,6 +38,7 @@ CONTRACT_RELATION_OBJECT_TYPES = Q(
     model__in=(
         "aciendpointgroup",
         "aciendpointsecuritygroup",
+        "aciexternalendpointgroup",
         "aciusegendpointgroup",
         "acivrf",
     ),

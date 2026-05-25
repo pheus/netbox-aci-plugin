@@ -26,12 +26,14 @@ if TYPE_CHECKING:
         BDUnknownMulticastEnum,
         BDUnknownUnicastEnum,
     )
+    from .l3outs import ACIL3OutFilter
     from .tenants import ACITenantFilter
     from .vrfs import ACIVRFFilter
 
 
 __all__ = (
     "ACIBridgeDomainFilter",
+    "ACIBridgeDomainL3OutBindingFilter",
     "ACIBridgeDomainSubnetFilter",
 )
 
@@ -153,7 +155,7 @@ class ACIBridgeDomainSubnetFilter(ACIBaseFilterMixin):
         Annotated["IPAddressFilter", strawberry.lazy("ipam.graphql.filters")] | None
     ) = strawberry_django.filter_field()
     gateway_ip_address_id: ID | None = strawberry_django.filter_field()
-    advertise_externally_enabled: FilterLookup[bool] | None = (
+    advertised_externally_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
     igmp_querier_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
@@ -170,3 +172,25 @@ class ACIBridgeDomainSubnetFilter(ACIBaseFilterMixin):
     )
     shared_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     virtual_ip_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
+
+
+@strawberry_django.filter_type(models.ACIBridgeDomainL3OutBinding, lookups=True)
+class ACIBridgeDomainL3OutBindingFilter(ACIBaseFilterMixin):
+    """GraphQL filter definition for the ACIBridgeDomainL3OutBinding model."""
+
+    aci_bridge_domain: (
+        Annotated[
+            "ACIBridgeDomainFilter",
+            strawberry.lazy("netbox_aci_plugin.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    aci_bridge_domain_id: ID | None = strawberry_django.filter_field()
+    aci_l3out: (
+        Annotated[
+            "ACIL3OutFilter",
+            strawberry.lazy("netbox_aci_plugin.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    aci_l3out_id: ID | None = strawberry_django.filter_field()

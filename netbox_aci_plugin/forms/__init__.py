@@ -1,9 +1,11 @@
+from .access_policies.domains import ACIRoutedDomainFilterForm
 from .fabric.fabrics import ACIFabricFilterForm
 from .fabric.nodes import ACINodeFilterForm
 from .fabric.pods import ACIPodFilterForm
 from .tenant.app_profiles import ACIAppProfileFilterForm
 from .tenant.bridge_domains import (
     ACIBridgeDomainFilterForm,
+    ACIBridgeDomainL3OutBindingFilterForm,
     ACIBridgeDomainSubnetFilterForm,
 )
 from .tenant.contract_filters import (
@@ -26,12 +28,18 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorFilterForm,
     ACIEsgEndpointSelectorFilterForm,
 )
+from .tenant.l3outs import (
+    ACIExternalEndpointGroupFilterForm,
+    ACIExternalSubnetFilterForm,
+    ACIL3OutFilterForm,
+)
 from .tenant.tenants import ACITenantFilterForm
 from .tenant.vrfs import ACIVRFFilterForm
 
 __all__ = (
     "ACIAppProfileFilterForm",
     "ACIBridgeDomainFilterForm",
+    "ACIBridgeDomainL3OutBindingFilterForm",
     "ACIBridgeDomainSubnetFilterForm",
     "ACIContractFilterEntryFilterForm",
     "ACIContractFilterFilterForm",
@@ -43,9 +51,13 @@ __all__ = (
     "ACIEndpointSecurityGroupFilterForm",
     "ACIEsgEndpointGroupSelectorFilterForm",
     "ACIEsgEndpointSelectorFilterForm",
+    "ACIExternalEndpointGroupFilterForm",
+    "ACIExternalSubnetFilterForm",
     "ACIFabricFilterForm",
+    "ACIL3OutFilterForm",
     "ACINodeFilterForm",
     "ACIPodFilterForm",
+    "ACIRoutedDomainFilterForm",
     "ACITenantFilterForm",
     "ACIUSegEndpointGroupFilterForm",
     "ACIUSegNetworkAttributeFilterForm",

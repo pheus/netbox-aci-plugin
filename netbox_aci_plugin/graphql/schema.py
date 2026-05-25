@@ -7,6 +7,7 @@ import strawberry_django
 
 from .types import (
     ACIAppProfileType,
+    ACIBridgeDomainL3OutBindingType,
     ACIBridgeDomainSubnetType,
     ACIBridgeDomainType,
     ACIContractFilterEntryType,
@@ -19,9 +20,13 @@ from .types import (
     ACIEndpointSecurityGroupType,
     ACIEsgEndpointGroupSelectorType,
     ACIEsgEndpointSelectorType,
+    ACIExternalEndpointGroupType,
+    ACIExternalSubnetType,
     ACIFabricType,
+    ACIL3OutType,
     ACINodeType,
     ACIPodType,
+    ACIRoutedDomainType,
     ACITenantType,
     ACIUSegEndpointGroupType,
     ACIUSegNetworkAttributeType,
@@ -42,6 +47,9 @@ class NetBoxACIQuery:
     aci_node: ACINodeType = strawberry_django.field()
     aci_node_list: list[ACINodeType] = strawberry_django.field()
 
+    aci_routed_domain: ACIRoutedDomainType = strawberry_django.field()
+    aci_routed_domain_list: list[ACIRoutedDomainType] = strawberry_django.field()
+
     aci_tenant: ACITenantType = strawberry_django.field()
     aci_tenant_list: list[ACITenantType] = strawberry_django.field()
 
@@ -56,6 +64,26 @@ class NetBoxACIQuery:
 
     aci_bridge_domain_subnet: ACIBridgeDomainSubnetType = strawberry_django.field()
     aci_bridge_domain_subnet_list: list[ACIBridgeDomainSubnetType] = (
+        strawberry_django.field()
+    )
+
+    aci_l3out: ACIL3OutType = strawberry_django.field()
+    aci_l3out_list: list[ACIL3OutType] = strawberry_django.field()
+
+    aci_external_endpoint_group: ACIExternalEndpointGroupType = (
+        strawberry_django.field()
+    )
+    aci_external_endpoint_group_list: list[ACIExternalEndpointGroupType] = (
+        strawberry_django.field()
+    )
+
+    aci_external_subnet: ACIExternalSubnetType = strawberry_django.field()
+    aci_external_subnet_list: list[ACIExternalSubnetType] = strawberry_django.field()
+
+    aci_bridge_domain_l3out_binding: ACIBridgeDomainL3OutBindingType = (
+        strawberry_django.field()
+    )
+    aci_bridge_domain_l3out_binding_list: list[ACIBridgeDomainL3OutBindingType] = (
         strawberry_django.field()
     )
 

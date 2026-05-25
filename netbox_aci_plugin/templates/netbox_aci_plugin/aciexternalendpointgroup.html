@@ -1,0 +1,93 @@
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load helpers %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciexternalendpointgroup_list' %}?aci_fabric_id={{ object.aci_fabric.pk }}">{{ object.aci_fabric }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciexternalendpointgroup_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciexternalendpointgroup_list' %}?aci_l3out_id={{ object.aci_l3out.pk }}">{{ object.aci_l3out }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+<div class="row">
+  <div class="col col-md-6">
+    <div class="card">
+      <h2 class="card-header">{% trans "ACI External EPG" %}</h2>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">{% trans "ACI Fabric" %}</th>
+          <td>{{ object.aci_fabric|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI Tenant" %}</th>
+          <td>{{ object.aci_tenant|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI VRF" %}</th>
+          <td>{{ object.aci_vrf|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI L3Out" %}</th>
+          <td>{{ object.aci_l3out|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Name Alias" %}</th>
+          <td>{{ object.name_alias|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Description" %}</th>
+          <td>{{ object.description|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "NetBox Tenant" %}</th>
+          <td>
+            {% if object.nb_tenant.group %}
+              {{ object.nb_tenant.group|linkify }} /
+            {% endif %}
+            {{ object.nb_tenant|linkify|placeholder }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2 class="card-header">{% trans "Policy" %}</h2>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">{% trans "Preferred Group Member" %}</th>
+          <td>{% checkmark object.preferred_group_member_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Target DSCP" %}</th>
+          <td>{% badge object.get_target_dscp_display bg_color=object.get_target_dscp_color %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "QoS Class" %}</th>
+          <td>{% badge object.get_qos_class_display bg_color=object.get_qos_class_color %}</td>
+        </tr>
+      </table>
+    </div>
+    {% include 'inc/panels/custom_fields.html' %}
+  </div>
+  <div class="col col-md-6">
+    <div class="card">
+      <h2 class="card-header">
+        {% trans "External Subnets" %}
+        {% if perms.netbox_aci_plugin.add_aciexternalsubnet %}
+          <div class="card-actions">
+            <a href="{% url 'plugins:netbox_aci_plugin:aciexternalsubnet_add' %}?aci_external_endpoint_group={{ object.pk }}&nb_tenant={{ object.nb_tenant.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+              <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add a Subnet" %}
+            </a>
+          </div>
+        {% endif %}
+      </h2>
+      <div class="table-responsive">
+        {% render_table subnets_table %}
+      </div>
+    </div>
+    {% include 'inc/panels/tags.html' %}
+    {% include 'inc/panels/comments.html' %}
+  </div>
+</div>
+{% endblock content %}

@@ -11,8 +11,10 @@ from users.api.serializers_.mixins import OwnerMixin
 
 from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
+from .l3outs import ACIL3OutSerializer
 from .tenants import ACITenantSerializer
 from .vrfs import ACIVRFSerializer
 
@@ -134,3 +136,31 @@ class ACIBridgeDomainSubnetSerializer(OwnerMixin, NetBoxModelSerializer):
             "aci_bridge_domain",
             "nb_tenant",
         )
+
+
+class ACIBridgeDomainL3OutBindingSerializer(NetBoxModelSerializer):
+    """Serializer for ACIBridgeDomainL3OutBinding model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name=(
+            "plugins-api:netbox_aci_plugin-api:acibridgedomainl3outbinding-detail"
+        ),
+    )
+    aci_bridge_domain = ACIBridgeDomainSerializer(nested=True, required=True)
+    aci_l3out = ACIL3OutSerializer(nested=True, required=True)
+
+    class Meta:
+        model = ACIBridgeDomainL3OutBinding
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "aci_bridge_domain",
+            "aci_l3out",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = ("id", "url", "display", "aci_bridge_domain", "aci_l3out")

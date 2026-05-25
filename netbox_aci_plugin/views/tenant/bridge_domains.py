@@ -11,11 +11,16 @@ from ...filtersets import (
     ACIBridgeDomainFilterSet,
     ACIBridgeDomainSubnetFilterSet,
 )
+from ...filtersets.tenant.bridge_domains import ACIBridgeDomainL3OutBindingFilterSet
 from ...forms.tenant.bridge_domains import (
     ACIBridgeDomainBulkEditForm,
     ACIBridgeDomainEditForm,
     ACIBridgeDomainFilterForm,
     ACIBridgeDomainImportForm,
+    ACIBridgeDomainL3OutBindingBulkEditForm,
+    ACIBridgeDomainL3OutBindingEditForm,
+    ACIBridgeDomainL3OutBindingFilterForm,
+    ACIBridgeDomainL3OutBindingImportForm,
     ACIBridgeDomainSubnetBulkEditForm,
     ACIBridgeDomainSubnetEditForm,
     ACIBridgeDomainSubnetFilterForm,
@@ -23,9 +28,11 @@ from ...forms.tenant.bridge_domains import (
 )
 from ...models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
 from ...tables.tenant.bridge_domains import (
+    ACIBridgeDomainL3OutBindingTable,
     ACIBridgeDomainSubnetReducedTable,
     ACIBridgeDomainSubnetTable,
     ACIBridgeDomainTable,
@@ -92,6 +99,28 @@ class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
             .prefetch_related(
                 "tags",
             )
+        )
+
+
+class ACIBridgeDomainL3OutBindingChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching ACI BD L3Out bindings."""
+
+    child_model = ACIBridgeDomainL3OutBinding
+    filterset = ACIBridgeDomainL3OutBindingFilterSet
+    tab = ViewTab(
+        label=_("L3Outs"),
+        badge=lambda obj: obj.aci_l3out_bindings.count(),
+        permission="netbox_aci_plugin.view_acibridgedomainl3outbinding",
+        weight=1000,
+    )
+    table = ACIBridgeDomainL3OutBindingTable
+
+    def get_children(self, request, parent):
+        """Return all objects of ACIBridgeDomainL3OutBinding."""
+        return (
+            ACIBridgeDomainL3OutBinding.objects.restrict(request.user, "view")
+            .select_related("aci_bridge_domain", "aci_l3out")
+            .prefetch_related("tags")
         )
 
 
@@ -332,3 +361,98 @@ class ACIBridgeDomainSubnetBulkDeleteView(generic.BulkDeleteView):
     queryset = ACIBridgeDomainSubnet.objects.all()
     filterset = ACIBridgeDomainSubnetFilterSet
     table = ACIBridgeDomainSubnetTable
+
+
+#
+# Bridge Domain L3Out Binding views
+#
+@register_model_view(ACIBridgeDomainL3OutBinding)
+class ACIBridgeDomainL3OutBindingView(generic.ObjectView):
+    """Detail view for displaying a single object of ACI BD L3Out Binding."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
+        "aci_bridge_domain", "aci_l3out"
+    ).prefetch_related("tags")
+
+
+@register_model_view(ACIBridgeDomainL3OutBinding, "list", path="", detail=False)
+class ACIBridgeDomainL3OutBindingListView(generic.ObjectListView):
+    """List view for listing all objects of ACI BD L3Out Binding."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
+        "aci_bridge_domain", "aci_l3out"
+    ).prefetch_related("tags")
+    table = ACIBridgeDomainL3OutBindingTable
+    filterset = ACIBridgeDomainL3OutBindingFilterSet
+    filterset_form = ACIBridgeDomainL3OutBindingFilterForm
+
+
+@register_model_view(ACIBridgeDomainL3OutBinding, "add", detail=False)
+@register_model_view(ACIBridgeDomainL3OutBinding, "edit")
+class ACIBridgeDomainL3OutBindingEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACI BD L3Out Binding."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
+        "aci_bridge_domain", "aci_l3out"
+    ).prefetch_related("tags")
+    form = ACIBridgeDomainL3OutBindingEditForm
+
+
+@register_model_view(ACIBridgeDomainL3OutBinding, "delete")
+class ACIBridgeDomainL3OutBindingDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACI BD L3Out Binding."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
+        "aci_bridge_domain", "aci_l3out"
+    ).prefetch_related("tags")
+
+
+@register_model_view(
+    ACIBridgeDomainL3OutBinding, "bulk_import", path="import", detail=False
+)
+class ACIBridgeDomainL3OutBindingBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple ACI BD L3Out Bindings."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.all()
+    model_form = ACIBridgeDomainL3OutBindingImportForm
+
+
+@register_model_view(
+    ACIBridgeDomainL3OutBinding, "bulk_edit", path="edit", detail=False
+)
+class ACIBridgeDomainL3OutBindingBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple ACI BD L3Out Bindings."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.all()
+    filterset = ACIBridgeDomainL3OutBindingFilterSet
+    table = ACIBridgeDomainL3OutBindingTable
+    form = ACIBridgeDomainL3OutBindingBulkEditForm
+
+
+@register_model_view(
+    ACIBridgeDomainL3OutBinding, "bulk_delete", path="delete", detail=False
+)
+class ACIBridgeDomainL3OutBindingBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple ACI BD L3Out Bindings."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.all()
+    filterset = ACIBridgeDomainL3OutBindingFilterSet
+    table = ACIBridgeDomainL3OutBindingTable
+
+
+@register_model_view(ACIBridgeDomain, "l3outbindings", path="l3outs")
+class ACIBridgeDomainL3OutBindingsView(ACIBridgeDomainL3OutBindingChildrenView):
+    """Children view of ACI BD L3Out bindings of ACI Bridge Domain."""
+
+    queryset = ACIBridgeDomain.objects.all()
+    template_name = "netbox_aci_plugin/inc/acibridgedomain/l3outs.html"
+
+    def get_children(self, request, parent):
+        """Return all children objects of the current parent object."""
+        return super().get_children(request, parent).filter(aci_bridge_domain=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return table with ACI Bridge Domain column hidden."""
+        table = super().get_table(*args, **kwargs)
+        table.columns.hide("aci_bridge_domain")
+        return table

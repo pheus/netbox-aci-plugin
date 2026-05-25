@@ -1,0 +1,47 @@
+{% extends 'generic/object.html' %}
+{% load helpers %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainl3outbinding_list' %}?aci_fabric_id={{ object.aci_fabric.pk }}">{{ object.aci_fabric }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainl3outbinding_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acibridgedomainl3outbinding_list' %}?aci_bridge_domain_id={{ object.aci_bridge_domain.pk }}">{{ object.aci_bridge_domain }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+<div class="row">
+  <div class="col col-md-6">
+    <div class="card">
+      <h2 class="card-header">{% trans "ACI Bridge Domain L3Out Binding" %}</h2>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">{% trans "ACI Fabric" %}</th>
+          <td>{{ object.aci_fabric|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI Tenant" %}</th>
+          <td>{{ object.aci_tenant|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI VRF" %}</th>
+          <td>{{ object.aci_vrf|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI Bridge Domain" %}</th>
+          <td>{{ object.aci_bridge_domain|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI L3Out" %}</th>
+          <td>{{ object.aci_l3out|linkify }}</td>
+        </tr>
+      </table>
+    </div>
+    {% include 'inc/panels/custom_fields.html' %}
+  </div>
+  <div class="col col-md-6">
+    {% include 'inc/panels/tags.html' %}
+    {% include 'inc/panels/comments.html' %}
+  </div>
+</div>
+{% endblock content %}

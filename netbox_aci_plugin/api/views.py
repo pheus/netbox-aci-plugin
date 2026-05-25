@@ -4,12 +4,14 @@
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
+from ..filtersets.access_policies.domains import ACIRoutedDomainFilterSet
 from ..filtersets.fabric.fabrics import ACIFabricFilterSet
 from ..filtersets.fabric.nodes import ACINodeFilterSet
 from ..filtersets.fabric.pods import ACIPodFilterSet
 from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ..filtersets.tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
+    ACIBridgeDomainL3OutBindingFilterSet,
     ACIBridgeDomainSubnetFilterSet,
 )
 from ..filtersets.tenant.contract_filters import (
@@ -32,14 +34,21 @@ from ..filtersets.tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorFilterSet,
     ACIEsgEndpointSelectorFilterSet,
 )
+from ..filtersets.tenant.l3outs import (
+    ACIExternalEndpointGroupFilterSet,
+    ACIExternalSubnetFilterSet,
+    ACIL3OutFilterSet,
+)
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
+from ..models.access_policies.domains import ACIRoutedDomain
 from ..models.fabric.fabrics import ACIFabric
 from ..models.fabric.nodes import ACINode
 from ..models.fabric.pods import ACIPod
 from ..models.tenant.app_profiles import ACIAppProfile
 from ..models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
 from ..models.tenant.contract_filters import (
@@ -62,10 +71,16 @@ from ..models.tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelector,
     ACIEsgEndpointSelector,
 )
+from ..models.tenant.l3outs import (
+    ACIExternalEndpointGroup,
+    ACIExternalSubnet,
+    ACIL3Out,
+)
 from ..models.tenant.tenants import ACITenant
 from ..models.tenant.vrfs import ACIVRF
 from .serializers import (
     ACIAppProfileSerializer,
+    ACIBridgeDomainL3OutBindingSerializer,
     ACIBridgeDomainSerializer,
     ACIBridgeDomainSubnetSerializer,
     ACIContractFilterEntrySerializer,
@@ -78,9 +93,13 @@ from .serializers import (
     ACIEndpointSecurityGroupSerializer,
     ACIEsgEndpointGroupSelectorSerializer,
     ACIEsgEndpointSelectorSerializer,
+    ACIExternalEndpointGroupSerializer,
+    ACIExternalSubnetSerializer,
     ACIFabricSerializer,
+    ACIL3OutSerializer,
     ACINodeSerializer,
     ACIPodSerializer,
+    ACIRoutedDomainSerializer,
     ACITenantSerializer,
     ACIUSegEndpointGroupSerializer,
     ACIUSegNetworkAttributeSerializer,
@@ -133,6 +152,20 @@ class ACINodeListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACINodeSerializer
     filterset_class = ACINodeFilterSet
+
+
+class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Routed Domain instances."""
+
+    queryset = ACIRoutedDomain.objects.select_related(
+        "aci_fabric",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIRoutedDomainSerializer
+    filterset_class = ACIRoutedDomainFilterSet
 
 
 class ACITenantListViewSet(NetBoxModelViewSet):
@@ -205,6 +238,65 @@ class ACIBridgeDomainSubnetListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIBridgeDomainSubnetSerializer
     filterset_class = ACIBridgeDomainSubnetFilterSet
+
+
+class ACIL3OutListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI L3Out instances."""
+
+    queryset = ACIL3Out.objects.select_related(
+        "aci_tenant",
+        "aci_vrf",
+        "aci_routed_domain",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIL3OutSerializer
+    filterset_class = ACIL3OutFilterSet
+
+
+class ACIExternalEndpointGroupListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI External EPG instances."""
+
+    queryset = ACIExternalEndpointGroup.objects.select_related(
+        "aci_l3out",
+        "aci_l3out__aci_tenant",
+        "aci_l3out__aci_vrf",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIExternalEndpointGroupSerializer
+    filterset_class = ACIExternalEndpointGroupFilterSet
+
+
+class ACIExternalSubnetListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI External Subnet instances."""
+
+    queryset = ACIExternalSubnet.objects.select_related(
+        "aci_external_endpoint_group",
+        "aci_external_endpoint_group__aci_l3out",
+        "nb_prefix",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIExternalSubnetSerializer
+    filterset_class = ACIExternalSubnetFilterSet
+
+
+class ACIBridgeDomainL3OutBindingListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Bridge Domain L3Out Relation instances."""
+
+    queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
+        "aci_bridge_domain",
+        "aci_l3out",
+    ).prefetch_related("tags")
+    serializer_class = ACIBridgeDomainL3OutBindingSerializer
+    filterset_class = ACIBridgeDomainL3OutBindingFilterSet
 
 
 class ACIEndpointGroupListViewSet(NetBoxModelViewSet):

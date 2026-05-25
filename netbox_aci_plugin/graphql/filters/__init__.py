@@ -1,9 +1,11 @@
+from .access_policies.domains import ACIRoutedDomainFilter
 from .fabric.fabrics import ACIFabricFilter
 from .fabric.nodes import ACINodeFilter
 from .fabric.pods import ACIPodFilter
 from .tenant.app_profiles import ACIAppProfileFilter
 from .tenant.bridge_domains import (
     ACIBridgeDomainFilter,
+    ACIBridgeDomainL3OutBindingFilter,
     ACIBridgeDomainSubnetFilter,
 )
 from .tenant.contract_filters import (
@@ -26,12 +28,18 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelectorFilter,
     ACIEsgEndpointSelectorFilter,
 )
+from .tenant.l3outs import (
+    ACIExternalEndpointGroupFilter,
+    ACIExternalSubnetFilter,
+    ACIL3OutFilter,
+)
 from .tenant.tenants import ACITenantFilter
 from .tenant.vrfs import ACIVRFFilter
 
 __all__ = (
     "ACIAppProfileFilter",
     "ACIBridgeDomainFilter",
+    "ACIBridgeDomainL3OutBindingFilter",
     "ACIBridgeDomainSubnetFilter",
     "ACIContractFilter",
     "ACIContractFilterEntryFilter",
@@ -43,9 +51,13 @@ __all__ = (
     "ACIEndpointSecurityGroupFilter",
     "ACIEsgEndpointGroupSelectorFilter",
     "ACIEsgEndpointSelectorFilter",
+    "ACIExternalEndpointGroupFilter",
+    "ACIExternalSubnetFilter",
     "ACIFabricFilter",
+    "ACIL3OutFilter",
     "ACINodeFilter",
     "ACIPodFilter",
+    "ACIRoutedDomainFilter",
     "ACITenantFilter",
     "ACIUSegEndpointGroupFilter",
     "ACIUSegNetworkAttributeFilter",

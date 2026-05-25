@@ -14,11 +14,20 @@ router.register("fabrics", views.ACIFabricListViewSet)
 router.register("nodes", views.ACINodeListViewSet)
 router.register("pods", views.ACIPodListViewSet)
 
+# ACI Access Policies
+router.register("routed-domains", views.ACIRoutedDomainListViewSet)
+
 # ACI Tenant
 router.register("tenants", views.ACITenantListViewSet)
 router.register("app-profiles", views.ACIAppProfileListViewSet)
 router.register("bridge-domains", views.ACIBridgeDomainListViewSet)
 router.register("bridge-domain-subnets", views.ACIBridgeDomainSubnetListViewSet)
+router.register("l3outs", views.ACIL3OutListViewSet)
+router.register("external-endpoint-groups", views.ACIExternalEndpointGroupListViewSet)
+router.register("external-subnets", views.ACIExternalSubnetListViewSet)
+router.register(
+    "bridge-domain-l3out-bindings", views.ACIBridgeDomainL3OutBindingListViewSet
+)
 router.register("endpoint-groups", views.ACIEndpointGroupListViewSet)
 router.register("useg-endpoint-groups", views.ACIUSegEndpointGroupListViewSet)
 router.register("useg-network-attributes", views.ACIUSegNetworkAttributeListViewSet)

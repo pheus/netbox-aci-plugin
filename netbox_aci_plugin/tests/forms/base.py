@@ -28,7 +28,7 @@ class ACIBaseFormTestCase(TestCase):
     )
 
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         """Set up required objects for form tests."""
         # Create NetBox objects
         cls.nb_tenant = Tenant.objects.create(

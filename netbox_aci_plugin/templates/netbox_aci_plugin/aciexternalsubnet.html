@@ -1,0 +1,131 @@
+{% extends 'generic/object.html' %}
+{% load helpers %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciexternalsubnet_list' %}?aci_fabric_id={{ object.aci_fabric.pk }}">{{ object.aci_fabric }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciexternalsubnet_list' %}?aci_tenant_id={{ object.aci_tenant.pk }}">{{ object.aci_tenant }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciexternalsubnet_list' %}?aci_l3out_id={{ object.aci_l3out.pk }}">{{ object.aci_l3out }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:aciexternalsubnet_list' %}?aci_external_endpoint_group_id={{ object.aci_external_endpoint_group.pk }}">{{ object.aci_external_endpoint_group }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+<div class="row">
+  <div class="col col-md-6">
+    <div class="card">
+      <h2 class="card-header">{% trans "ACI External Subnet" %}</h2>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">{% trans "ACI Fabric" %}</th>
+          <td>{{ object.aci_fabric|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI Tenant" %}</th>
+          <td>{{ object.aci_tenant|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI L3Out" %}</th>
+          <td>{{ object.aci_l3out|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI External EPG" %}</th>
+          <td>{{ object.aci_external_endpoint_group|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Matched Prefix" %}</th>
+          <td>{{ object.matched_prefix|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "NetBox Prefix" %}</th>
+          <td>{{ object.nb_prefix|linkify|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Name Alias" %}</th>
+          <td>{{ object.name_alias|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Description" %}</th>
+          <td>{{ object.description|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "NetBox Tenant" %}</th>
+          <td>
+            {% if object.nb_tenant.group %}
+              {{ object.nb_tenant.group|linkify }} /
+            {% endif %}
+            {{ object.nb_tenant|linkify|placeholder }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2 class="card-header">{% trans "Subnet Scope" %}</h2>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">{% trans "Import Route Control" %}</th>
+          <td>{% checkmark object.import_route_control_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Export Route Control" %}</th>
+          <td>{% checkmark object.export_route_control_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Shared Route Control" %}</th>
+          <td>{% checkmark object.shared_route_control_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Import Security" %}</th>
+          <td>{% checkmark object.import_security_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Shared Security" %}</th>
+          <td>{% checkmark object.shared_security_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Aggregate Import Route Control" %}</th>
+          <td>{% checkmark object.aggregate_import_route_control_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Aggregate Export Route Control" %}</th>
+          <td>{% checkmark object.aggregate_export_route_control_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Aggregate Shared Route Control" %}</th>
+          <td>{% checkmark object.aggregate_shared_route_control_enabled %}</td>
+        </tr>
+      </table>
+    </div>
+    {% include 'inc/panels/custom_fields.html' %}
+  </div>
+  <div class="col col-md-6">
+    <div class="card">
+      <h2 class="card-header">{% trans "Route Summarization" %}</h2>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">{% trans "BGP Route Summarization" %}</th>
+          <td>{% checkmark object.bgp_route_summarization_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "BGP Policy" %}</th>
+          <td>{{ object.bgp_route_summarization_policy_name|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "OSPF Route Summarization" %}</th>
+          <td>{% checkmark object.ospf_route_summarization_enabled %}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "OSPF Policy" %}</th>
+          <td>{{ object.ospf_route_summarization_policy_name|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "EIGRP Route Summarization" %}</th>
+          <td>{% checkmark object.eigrp_route_summarization_enabled %}</td>
+        </tr>
+      </table>
+    </div>
+    {% include 'inc/panels/tags.html' %}
+    {% include 'inc/panels/comments.html' %}
+  </div>
+</div>
+{% endblock content %}

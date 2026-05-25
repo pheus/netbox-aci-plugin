@@ -6,6 +6,7 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
+from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.app_profiles import ACIAppProfile
 from ....models.tenant.bridge_domains import ACIBridgeDomain
@@ -21,6 +22,7 @@ from ....models.tenant.endpoint_groups import (
     ACIUSegEndpointGroup,
 )
 from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
+from ....models.tenant.l3outs import ACIExternalEndpointGroup, ACIL3Out
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
@@ -148,6 +150,9 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     user_permissions = (
         "netbox_aci_plugin.view_acicontract",
         "netbox_aci_plugin.view_aciendpointgroup",
+        "netbox_aci_plugin.view_aciendpointsecuritygroup",
+        "netbox_aci_plugin.view_aciexternalendpointgroup",
+        "netbox_aci_plugin.view_acil3out",
         "netbox_aci_plugin.view_aciusegendpointgroup",
         "netbox_aci_plugin.view_acivrf",
     )
@@ -273,6 +278,21 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             aci_app_profile=aci_app_profile2,
             aci_vrf=aci_vrf2,
             nb_tenant=nb_tenant2,
+        )
+        aci_routed_domain = ACIRoutedDomain.objects.create(
+            name="ACIContractRelTestRoutedDomainAPI",
+            aci_fabric=aci_fabric,
+        )
+        aci_l3out = ACIL3Out.objects.create(
+            name="ACIContractRelTestL3OutAPI",
+            aci_tenant=aci_tenant1,
+            aci_vrf=aci_vrf1,
+            aci_routed_domain=aci_routed_domain,
+        )
+        aci_ext_epg = ACIExternalEndpointGroup.objects.create(
+            name="ACIContractRelTestExtEPGAPI",
+            aci_l3out=aci_l3out,
+            nb_tenant=nb_tenant1,
         )
         aci_contract_epg1 = ACIContract.objects.create(
             name="ACIContractTestAPI1",
@@ -421,6 +441,13 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 "aci_object_type": f"{app_name}.acivrf",
                 "role": "cons",
                 "comments": "# ACI Test 17",
+            },
+            {
+                "aci_contract": aci_contract_epg1.id,
+                "aci_object_id": aci_ext_epg.id,
+                "aci_object_type": f"{app_name}.aciexternalendpointgroup",
+                "role": "prov",
+                "comments": "# ACI Test 18",
             },
         ]
         cls.bulk_update_data = {

@@ -36,6 +36,15 @@ urlpatterns: tuple = (
         "nodes/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acinode")),
     ),
+    # ACI Routed Domain
+    path(
+        "routed-domains/",
+        include(get_model_urls("netbox_aci_plugin", "acirouteddomain", detail=False)),
+    ),
+    path(
+        "routed-domains/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acirouteddomain")),
+    ),
     # ACI Tenants
     path(
         "tenants/",
@@ -143,6 +152,50 @@ urlpatterns: tuple = (
     path(
         "bridge-domain-subnets/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acibridgedomainsubnet")),
+    ),
+    # ACI L3Out
+    path(
+        "l3outs/",
+        include(get_model_urls("netbox_aci_plugin", "acil3out", detail=False)),
+    ),
+    path(
+        "l3outs/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acil3out")),
+    ),
+    # ACI External Endpoint Group
+    path(
+        "external-endpoint-groups/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "aciexternalendpointgroup", detail=False
+            )
+        ),
+    ),
+    path(
+        "external-endpoint-groups/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciexternalendpointgroup")),
+    ),
+    # ACI External Endpoint Group Subnet
+    path(
+        "external-endpoint-groups/subnets/",
+        include(get_model_urls("netbox_aci_plugin", "aciexternalsubnet", detail=False)),
+    ),
+    path(
+        "external-endpoint-groups/subnets/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciexternalsubnet")),
+    ),
+    # ACI Bridge Domain L3Out Binding
+    path(
+        "bridge-domains/l3out-bindings/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acibridgedomainl3outbinding", detail=False
+            )
+        ),
+    ),
+    path(
+        "bridge-domains/l3out-bindings/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acibridgedomainl3outbinding")),
     ),
     # ACI VRF
     path(

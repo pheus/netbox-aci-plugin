@@ -12,9 +12,9 @@ class ACIFabricFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIFabric form."""
 
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         """Set up required objects for ACIFabric tests."""
-        super().setUp()
+        super().setUpTestData()
 
         # Invalid field values
         cls.invalid_infra_vlan = VLAN.objects.create(vid=100, name="Invalid-Infra-Vlan")

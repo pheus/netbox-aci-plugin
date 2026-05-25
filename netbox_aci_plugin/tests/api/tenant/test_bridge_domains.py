@@ -7,11 +7,14 @@ from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
+from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
+from ....models.tenant.l3outs import ACIL3Out
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 
@@ -368,4 +371,136 @@ class ACIBridgeDomainSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+
+
+class ACIBridgeDomainL3OutBindingAPIViewTestCase(APIViewTestCases.APIViewTestCase):
+    """API view test case for ACI Bridge Domain L3Out Binding."""
+
+    model = ACIBridgeDomainL3OutBinding
+    view_namespace: str = f"plugins-api:{app_name}"
+    brief_fields: list[str] = [
+        "aci_bridge_domain",
+        "aci_l3out",
+        "display",
+        "id",
+        "url",
+    ]
+    user_permissions = (
+        "netbox_aci_plugin.view_acibridgedomain",
+        "netbox_aci_plugin.view_acifabric",
+        "netbox_aci_plugin.view_acil3out",
+        "netbox_aci_plugin.view_acirouteddomain",
+        "netbox_aci_plugin.view_acitenant",
+        "netbox_aci_plugin.view_acivrf",
+    )
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up ACI Bridge Domain L3Out Binding for API view testing."""
+        aci_fabric = ACIFabric.objects.create(
+            name="ACIBDL3OutRelationTestFabricAPI",
+            fabric_id=123,
+            infra_vlan_vid=3900,
+        )
+        aci_tenant = ACITenant.objects.create(
+            name="ACIBDL3OutRelationTestTenantAPI",
+            aci_fabric=aci_fabric,
+        )
+        aci_vrf = ACIVRF.objects.create(
+            name="ACIBDL3OutRelationTestVRFAPI",
+            aci_tenant=aci_tenant,
+        )
+        aci_routed_domain = ACIRoutedDomain.objects.create(
+            name="ACIBDL3OutRelationTestRoutedDomainAPI",
+            aci_fabric=aci_fabric,
+        )
+        aci_bd1 = ACIBridgeDomain.objects.create(
+            name="ACIBDL3OutRelationTestBDAPI1",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+        )
+        aci_bd2 = ACIBridgeDomain.objects.create(
+            name="ACIBDL3OutRelationTestBDAPI2",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+        )
+        aci_bd3 = ACIBridgeDomain.objects.create(
+            name="ACIBDL3OutRelationTestBDAPI3",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+        )
+        aci_bd4 = ACIBridgeDomain.objects.create(
+            name="ACIBDL3OutRelationTestBDAPI4",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+        )
+        aci_bd5 = ACIBridgeDomain.objects.create(
+            name="ACIBDL3OutRelationTestBDAPI5",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+        )
+        aci_l3out1 = ACIL3Out.objects.create(
+            name="ACIBDL3OutRelationTestL3OutAPI1",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+            aci_routed_domain=aci_routed_domain,
+        )
+        aci_l3out2 = ACIL3Out.objects.create(
+            name="ACIBDL3OutRelationTestL3OutAPI2",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+            aci_routed_domain=aci_routed_domain,
+        )
+        aci_l3out3 = ACIL3Out.objects.create(
+            name="ACIBDL3OutRelationTestL3OutAPI3",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+            aci_routed_domain=aci_routed_domain,
+        )
+        aci_l3out4 = ACIL3Out.objects.create(
+            name="ACIBDL3OutRelationTestL3OutAPI4",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+            aci_routed_domain=aci_routed_domain,
+        )
+        aci_l3out5 = ACIL3Out.objects.create(
+            name="ACIBDL3OutRelationTestL3OutAPI5",
+            aci_tenant=aci_tenant,
+            aci_vrf=aci_vrf,
+            aci_routed_domain=aci_routed_domain,
+        )
+        relations: tuple = (
+            ACIBridgeDomainL3OutBinding(
+                aci_bridge_domain=aci_bd1,
+                aci_l3out=aci_l3out1,
+                comments="# ACI Test 1",
+            ),
+            ACIBridgeDomainL3OutBinding(
+                aci_bridge_domain=aci_bd2,
+                aci_l3out=aci_l3out2,
+                comments="# ACI Test 2",
+            ),
+            ACIBridgeDomainL3OutBinding(
+                aci_bridge_domain=aci_bd3,
+                aci_l3out=aci_l3out3,
+                comments="# ACI Test 3",
+            ),
+        )
+        ACIBridgeDomainL3OutBinding.objects.bulk_create(relations)
+
+        cls.create_data: list[dict] = [
+            {
+                "aci_bridge_domain": aci_bd4.id,
+                "aci_l3out": aci_l3out4.id,
+                "comments": "# ACI Test 4",
+            },
+            {
+                "aci_bridge_domain": aci_bd5.id,
+                "aci_l3out": aci_l3out5.id,
+                "comments": "# ACI Test 5",
+            },
+        ]
+        cls.bulk_update_data = {
+            "comments": "# Updated ACI Test",
         }

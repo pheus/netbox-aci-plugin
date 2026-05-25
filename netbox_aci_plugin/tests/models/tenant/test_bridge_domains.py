@@ -13,10 +13,14 @@ from ....choices import (
     BDUnknownMulticastChoices,
     BDUnknownUnicastChoices,
 )
+from ....models.access_policies.domains import ACIRoutedDomain
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
+    ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
+from ....models.tenant.l3outs import ACIL3Out
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 from ..base import ACIBaseTestCase
@@ -637,3 +641,218 @@ class ACIBridgeDomainSubnetTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(IntegrityError):
             second_preferred_ip_subnet.save()
+
+
+class ACIBridgeDomainL3OutBindingTestCase(ACIBaseTestCase):
+    """Test case for ACIBridgeDomainL3OutBinding model."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIBridgeDomainL3OutBinding model."""
+        super().setUpTestData()
+
+        cls.aci_routed_domain = ACIRoutedDomain.objects.create(
+            name="ACIBaseTestRoutedDomain",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_l3out = ACIL3Out.objects.create(
+            name="ACIBaseTestL3Out",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+            aci_routed_domain=cls.aci_routed_domain,
+        )
+        cls.aci_bd_l3out_relation_comments = """
+        ACI Bridge Domain L3Out Relation for NetBox ACI Plugin testing.
+        """
+        cls.aci_bd_l3out_relation = ACIBridgeDomainL3OutBinding.objects.create(
+            aci_bridge_domain=cls.aci_bd,
+            aci_l3out=cls.aci_l3out,
+            comments=cls.aci_bd_l3out_relation_comments,
+        )
+
+    def test_aci_bd_l3out_relation_instance(self) -> None:
+        """Test instance of created ACI Bridge Domain L3Out Relation."""
+        self.assertTrue(
+            isinstance(self.aci_bd_l3out_relation, ACIBridgeDomainL3OutBinding)
+        )
+
+    def test_aci_bd_l3out_relation_str(self) -> None:
+        """Test string representation of ACI BD L3Out Relation."""
+        self.assertEqual(
+            self.aci_bd_l3out_relation.__str__(),
+            f"{self.aci_bd} - {self.aci_l3out}",
+        )
+
+    def test_aci_bd_l3out_relation_aci_bridge_domain_instance(self) -> None:
+        """Test ACI Bridge Domain instance in ACI BD L3Out Relation."""
+        self.assertTrue(
+            isinstance(
+                self.aci_bd_l3out_relation.aci_bridge_domain,
+                ACIBridgeDomain,
+            )
+        )
+        self.assertEqual(
+            self.aci_bd_l3out_relation.aci_bridge_domain.name,
+            self.aci_bd_name,
+        )
+
+    def test_aci_bd_l3out_relation_aci_l3out_instance(self) -> None:
+        """Test ACI L3Out instance in ACI BD L3Out Relation."""
+        self.assertTrue(isinstance(self.aci_bd_l3out_relation.aci_l3out, ACIL3Out))
+        self.assertEqual(
+            self.aci_bd_l3out_relation.aci_l3out.name,
+            self.aci_l3out.name,
+        )
+
+    def test_aci_bd_l3out_relation_comments(self) -> None:
+        """Test comments of ACI Bridge Domain L3Out Relation."""
+        self.assertEqual(
+            self.aci_bd_l3out_relation.comments,
+            self.aci_bd_l3out_relation_comments,
+        )
+
+    def test_aci_bd_l3out_relation_aci_tenant_instance(self) -> None:
+        """Test ACI Tenant instance in ACI BD L3Out Relation."""
+        self.assertTrue(isinstance(self.aci_bd_l3out_relation.aci_tenant, ACITenant))
+        self.assertEqual(
+            self.aci_bd_l3out_relation.aci_tenant.name,
+            self.aci_tenant_name,
+        )
+
+    def test_aci_bd_l3out_relation_aci_vrf_instance(self) -> None:
+        """Test ACI VRF instance in ACI BD L3Out Relation."""
+        self.assertTrue(isinstance(self.aci_bd_l3out_relation.aci_vrf, ACIVRF))
+        self.assertEqual(self.aci_bd_l3out_relation.aci_vrf.name, self.aci_vrf_name)
+
+    def test_aci_bd_l3out_relation_aci_fabric_instance(self) -> None:
+        """Test ACI Fabric instance of ACI Bridge Domain L3Out Relation."""
+        self.assertTrue(isinstance(self.aci_bd_l3out_relation.aci_fabric, ACIFabric))
+        self.assertEqual(
+            self.aci_bd_l3out_relation.aci_fabric.name,
+            self.aci_fabric_name,
+        )
+
+    def test_aci_bd_l3out_relation_parent_object(self) -> None:
+        """Test parent object of ACI Bridge Domain L3Out Relation."""
+        self.assertEqual(self.aci_bd_l3out_relation.parent_object, self.aci_bd)
+
+    def test_invalid_aci_bd_l3out_relation_l3out_from_other_fabric(self) -> None:
+        """Test invalid L3Out assignment from another ACI Fabric."""
+        aci_fabric_other = ACIFabric.objects.create(
+            name="OtherFabric3",
+            fabric_id=124,
+            infra_vlan_vid=3903,
+        )
+        tenant_other = ACITenant.objects.create(
+            name="other",
+            aci_fabric=aci_fabric_other,
+        )
+        routed_domain_other = ACIRoutedDomain.objects.create(
+            name="OtherRoutedDomain",
+            aci_fabric=aci_fabric_other,
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="other_vrf",
+            aci_tenant=tenant_other,
+        )
+        l3out_other = ACIL3Out.objects.create(
+            name="OtherL3Out",
+            aci_tenant=tenant_other,
+            aci_vrf=vrf_other,
+            aci_routed_domain=routed_domain_other,
+        )
+        relation = ACIBridgeDomainL3OutBinding(
+            aci_bridge_domain=self.aci_bd,
+            aci_l3out=l3out_other,
+        )
+        with self.assertRaises(ValidationError):
+            relation.full_clean()
+
+    def test_invalid_aci_bd_l3out_relation_l3out_with_other_vrf(self) -> None:
+        """Test invalid L3Out assignment using another ACI VRF."""
+        vrf_other = ACIVRF.objects.create(
+            name="other_vrf",
+            aci_tenant=self.aci_tenant,
+        )
+        l3out_other_vrf = ACIL3Out.objects.create(
+            name="OtherVRFL3Out",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_other,
+            aci_routed_domain=self.aci_routed_domain,
+        )
+        relation = ACIBridgeDomainL3OutBinding(
+            aci_bridge_domain=self.aci_bd,
+            aci_l3out=l3out_other_vrf,
+        )
+        with self.assertRaises(ValidationError):
+            relation.full_clean()
+
+    def test_invalid_aci_bd_l3out_relation_l3out_from_other_tenant(self) -> None:
+        """Test invalid L3Out assignment from another ACI Tenant."""
+        tenant_common = ACITenant.objects.create(
+            name="common",
+            aci_fabric=self.aci_fabric,
+        )
+        vrf_common = ACIVRF.objects.create(
+            name="common_vrf",
+            aci_tenant=tenant_common,
+        )
+        tenant_other = ACITenant.objects.create(
+            name="other",
+            aci_fabric=self.aci_fabric,
+        )
+        bd_common_vrf = ACIBridgeDomain.objects.create(
+            name="BDCommonVRF",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_common,
+        )
+        l3out_other_tenant = ACIL3Out.objects.create(
+            name="OtherTenantL3Out",
+            aci_tenant=tenant_other,
+            aci_vrf=vrf_common,
+            aci_routed_domain=self.aci_routed_domain,
+        )
+        relation = ACIBridgeDomainL3OutBinding(
+            aci_bridge_domain=bd_common_vrf,
+            aci_l3out=l3out_other_tenant,
+        )
+        with self.assertRaises(ValidationError):
+            relation.full_clean()
+
+    def test_valid_aci_bd_l3out_relation_l3out_from_tenant_common(self) -> None:
+        """Test valid L3Out assignment from ACI Tenant 'common'."""
+        tenant_common = ACITenant.objects.create(
+            name="common",
+            aci_fabric=self.aci_fabric,
+        )
+        vrf_common = ACIVRF.objects.create(
+            name="common_vrf",
+            aci_tenant=tenant_common,
+        )
+        bd_common_vrf = ACIBridgeDomain.objects.create(
+            name="BDCommonVRF",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_common,
+        )
+        l3out_common = ACIL3Out.objects.create(
+            name="CommonL3Out",
+            aci_tenant=tenant_common,
+            aci_vrf=vrf_common,
+            aci_routed_domain=self.aci_routed_domain,
+        )
+        relation = ACIBridgeDomainL3OutBinding(
+            aci_bridge_domain=bd_common_vrf,
+            aci_l3out=l3out_common,
+        )
+        relation.full_clean()
+        relation.save()
+        self.assertEqual(relation.aci_l3out, l3out_common)
+
+    def test_constraint_unique_aci_bd_l3out_relation(self) -> None:
+        """Test unique constraint of ACI Bridge Domain L3Out Relation."""
+        duplicate_relation = ACIBridgeDomainL3OutBinding(
+            aci_bridge_domain=self.aci_bd,
+            aci_l3out=self.aci_l3out,
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate_relation.save()

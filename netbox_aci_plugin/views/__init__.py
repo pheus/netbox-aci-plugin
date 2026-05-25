@@ -1,3 +1,11 @@
+from .access_policies.domains import (
+    ACIRoutedDomainBulkDeleteView,
+    ACIRoutedDomainBulkEditView,
+    ACIRoutedDomainBulkImportView,
+    ACIRoutedDomainEditView,
+    ACIRoutedDomainListView,
+    ACIRoutedDomainView,
+)
 from .fabric.fabrics import (
     ACIFabricBulkDeleteView,
     ACIFabricBulkEditView,
@@ -31,6 +39,11 @@ from .tenant.bridge_domains import (
     ACIBridgeDomainBulkEditView,
     ACIBridgeDomainBulkImportView,
     ACIBridgeDomainEditView,
+    ACIBridgeDomainL3OutBindingBulkDeleteView,
+    ACIBridgeDomainL3OutBindingBulkEditView,
+    ACIBridgeDomainL3OutBindingBulkImportView,
+    ACIBridgeDomainL3OutBindingEditView,
+    ACIBridgeDomainL3OutBindingListView,
     ACIBridgeDomainListView,
     ACIBridgeDomainSubnetBulkDeleteView,
     ACIBridgeDomainSubnetBulkEditView,
@@ -106,6 +119,23 @@ from .tenant.endpoint_security_groups import (
     ACIEsgEndpointSelectorEditView,
     ACIEsgEndpointSelectorListView,
 )
+from .tenant.l3outs import (
+    ACIExternalEndpointGroupBulkDeleteView,
+    ACIExternalEndpointGroupBulkEditView,
+    ACIExternalEndpointGroupBulkImportView,
+    ACIExternalEndpointGroupEditView,
+    ACIExternalEndpointGroupListView,
+    ACIExternalSubnetBulkDeleteView,
+    ACIExternalSubnetBulkEditView,
+    ACIExternalSubnetBulkImportView,
+    ACIExternalSubnetEditView,
+    ACIExternalSubnetListView,
+    ACIL3OutBulkDeleteView,
+    ACIL3OutBulkEditView,
+    ACIL3OutBulkImportView,
+    ACIL3OutEditView,
+    ACIL3OutListView,
+)
 from .tenant.tenants import (
     ACITenantBulkDeleteView,
     ACITenantBulkEditView,
@@ -134,6 +164,12 @@ __all__ = (
     "ACIBridgeDomainBulkImportView",
     "ACIBridgeDomainEditView",
     "ACIBridgeDomainListView",
+    # ACIBridgeDomainL3OutBinding
+    "ACIBridgeDomainL3OutBindingBulkDeleteView",
+    "ACIBridgeDomainL3OutBindingBulkEditView",
+    "ACIBridgeDomainL3OutBindingBulkImportView",
+    "ACIBridgeDomainL3OutBindingEditView",
+    "ACIBridgeDomainL3OutBindingListView",
     # ACIBridgeDomainSubnet
     "ACIBridgeDomainSubnetBulkDeleteView",
     "ACIBridgeDomainSubnetBulkEditView",
@@ -200,12 +236,30 @@ __all__ = (
     "ACIEsgEndpointSelectorBulkImportView",
     "ACIEsgEndpointSelectorEditView",
     "ACIEsgEndpointSelectorListView",
+    # ACIExternalEndpointGroup
+    "ACIExternalEndpointGroupBulkDeleteView",
+    "ACIExternalEndpointGroupBulkEditView",
+    "ACIExternalEndpointGroupBulkImportView",
+    "ACIExternalEndpointGroupEditView",
+    "ACIExternalEndpointGroupListView",
+    # ACIExternalSubnet
+    "ACIExternalSubnetBulkDeleteView",
+    "ACIExternalSubnetBulkEditView",
+    "ACIExternalSubnetBulkImportView",
+    "ACIExternalSubnetEditView",
+    "ACIExternalSubnetListView",
     # ACIFabric
     "ACIFabricBulkDeleteView",
     "ACIFabricBulkEditView",
     "ACIFabricBulkImportView",
     "ACIFabricEditView",
     "ACIFabricListView",
+    # ACIL3Out
+    "ACIL3OutBulkDeleteView",
+    "ACIL3OutBulkEditView",
+    "ACIL3OutBulkImportView",
+    "ACIL3OutEditView",
+    "ACIL3OutListView",
     # ACINode
     "ACINodeBulkDeleteView",
     "ACINodeBulkEditView",
@@ -218,6 +272,13 @@ __all__ = (
     "ACIPodBulkImportView",
     "ACIPodEditView",
     "ACIPodListView",
+    # ACIRoutedDomain
+    "ACIRoutedDomainBulkDeleteView",
+    "ACIRoutedDomainBulkEditView",
+    "ACIRoutedDomainBulkImportView",
+    "ACIRoutedDomainEditView",
+    "ACIRoutedDomainListView",
+    "ACIRoutedDomainView",
     # ACITenant
     "ACITenantBulkDeleteView",
     "ACITenantBulkEditView",
@@ -230,7 +291,7 @@ __all__ = (
     "ACIUSegEndpointGroupBulkImportView",
     "ACIUSegEndpointGroupEditView",
     "ACIUSegEndpointGroupListView",
-    # ACIUsegNetworkAttribute
+    # ACIUSegNetworkAttribute
     "ACIUSegNetworkAttributeBulkDeleteView",
     "ACIUSegNetworkAttributeBulkEditView",
     "ACIUSegNetworkAttributeBulkImportView",

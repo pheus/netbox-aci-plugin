@@ -172,6 +172,69 @@ acivrf_item = PluginMenuItem(
     ),
 )
 
+# ACI L3Out
+acil3out_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acil3out_list",
+    link_text="L3Outs",
+    permissions=["netbox_aci_plugin.view_acil3out"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acil3out_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acil3out"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acil3out_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acil3out"],
+        ),
+    ),
+)
+
+# ACI External Endpoint Group
+aciexternalendpointgroup_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:aciexternalendpointgroup_list",
+    link_text="External Endpoint Groups",
+    permissions=["netbox_aci_plugin.view_aciexternalendpointgroup"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciexternalendpointgroup_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_aciexternalendpointgroup"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciexternalendpointgroup_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_aciexternalendpointgroup"],
+        ),
+    ),
+)
+
+# ACI External Subnet
+aciexternalsubnet_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:aciexternalsubnet_list",
+    link_text="External Subnets",
+    permissions=["netbox_aci_plugin.view_aciexternalsubnet"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciexternalsubnet_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_aciexternalsubnet"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciexternalsubnet_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_aciexternalsubnet"],
+        ),
+    ),
+)
+
 # ACI Contract Filter
 acicontractfilter_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acicontractfilter_list",
@@ -217,7 +280,7 @@ acicontractfilterentry_item = PluginMenuItem(
 # ACI Contract
 acicontract_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acicontract_list",
-    link_text="Contract",
+    link_text="Contracts",
     permissions=["netbox_aci_plugin.view_acicontract"],
     buttons=(
         PluginMenuButton(
@@ -319,6 +382,27 @@ acinode_item = PluginMenuItem(
     ),
 )
 
+# ACI Routed Domain
+acirouteddomain_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acirouteddomain_list",
+    link_text="Routed Domains",
+    permissions=["netbox_aci_plugin.view_acirouteddomain"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acirouteddomain_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acirouteddomain"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acirouteddomain_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acirouteddomain"],
+        ),
+    ),
+)
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -339,9 +423,12 @@ menu = PluginMenu(
         (
             "Tenant Networking",
             (
+                acivrf_item,
                 acibridgedomain_item,
                 acibridgedomainsubnet_item,
-                acivrf_item,
+                acil3out_item,
+                aciexternalendpointgroup_item,
+                aciexternalsubnet_item,
             ),
         ),
         (
@@ -354,12 +441,16 @@ menu = PluginMenu(
             ),
         ),
         (
-            "Fabrics",
+            "Fabric Inventory",
             (
                 acifabric_item,
                 acipod_item,
                 acinode_item,
             ),
+        ),
+        (
+            "Fabric Access Policies",
+            (acirouteddomain_item,),
         ),
     ),
     icon_class="mdi mdi-router",
