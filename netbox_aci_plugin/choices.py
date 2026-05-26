@@ -419,8 +419,8 @@ class QualityOfServiceDSCPChoices(ChoiceSet):
     CHOICES = (
         (DSCP_UNSPECIFIED, _("unspecified")),
         (DSCP_AF11, _("AF11 low drop")),
-        (DSCP_AF12, _("AF11 medium drop")),
-        (DSCP_AF13, _("AF12 high drop")),
+        (DSCP_AF12, _("AF12 medium drop")),
+        (DSCP_AF13, _("AF13 high drop")),
         (DSCP_AF21, _("AF21 low drop")),
         (DSCP_AF22, _("AF22 medium drop")),
         (DSCP_AF23, _("AF23 high drop")),
