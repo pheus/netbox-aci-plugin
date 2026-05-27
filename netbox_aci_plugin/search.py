@@ -137,6 +137,7 @@ class ACITenantIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -156,6 +157,7 @@ class ACIAppProfileIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -176,6 +178,7 @@ class ACIVRFIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -197,6 +200,7 @@ class ACIBridgeDomainIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -217,6 +221,7 @@ class ACIBridgeDomainSubnetIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -311,6 +316,7 @@ class ACIEndpointGroupIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -332,6 +338,7 @@ class ACIUSegEndpointGroupIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -357,6 +364,7 @@ class ACIUSegNetworkAttributeIndex(SearchIndex):
         ("_ip_address", 300),
         ("_mac_address", 300),
         ("_prefix", 400),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -378,6 +386,7 @@ class ACIEndpointSecurityGroupIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -402,6 +411,7 @@ class ACIEsgEndpointGroupSelectorIndex(SearchIndex):
         ("aci_endpoint_security_group", 300),
         ("_aci_endpoint_group", 400),
         ("_aci_useg_endpoint_group", 400),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -426,6 +436,7 @@ class ACIEsgEndpointSelectorIndex(SearchIndex):
         ("aci_endpoint_security_group", 300),
         ("_ip_address", 400),
         ("_prefix", 400),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -447,6 +458,7 @@ class ACIContractFilterIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -467,6 +479,7 @@ class ACIContractFilterEntryIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -486,6 +499,7 @@ class ACIContractIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
@@ -526,6 +540,7 @@ class ACIContractSubjectIndex(SearchIndex):
         ("name", 100),
         ("name_alias", 300),
         ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "name",
