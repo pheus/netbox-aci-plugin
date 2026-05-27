@@ -163,7 +163,7 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
     )
     aci_fabric = tables.Column(
         verbose_name=_("ACI Fabric"),
-        accessor="aci_bridge_domain__ci_tenant__aci_fabric",
+        accessor="aci_bridge_domain__aci_tenant__aci_fabric",
         linkify=True,
     )
     aci_tenant = tables.Column(
