@@ -156,8 +156,8 @@ class ACITenantFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
-            "aci_fabric_id",
             "description",
+            "aci_fabric_id",
             name=_("Attributes"),
         ),
         FieldSet(

@@ -284,11 +284,11 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_tenant_id",
             "aci_app_profile_id",
             "aci_vrf_id",
-            "description",
             "admin_shutdown",
             name=_("Attributes"),
         ),

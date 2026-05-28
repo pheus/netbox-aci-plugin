@@ -346,9 +346,9 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_tenant_id",
-            "description",
             name=_("Attributes"),
         ),
         FieldSet(

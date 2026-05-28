@@ -363,9 +363,9 @@ class ACINodeFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_pod_id",
-            "description",
             name=_("Attributes"),
         ),
         FieldSet(

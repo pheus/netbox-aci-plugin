@@ -268,9 +268,9 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_tenant_id",
-            "description",
             name=_("Attributes"),
         ),
         FieldSet(
@@ -1220,10 +1220,10 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_tenant_id",
             "aci_contract_id",
-            "description",
             name=_("Attributes"),
         ),
         FieldSet(

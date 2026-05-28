@@ -510,10 +510,10 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_tenant_id",
             "aci_vrf_id",
-            "description",
             name=_("Attributes"),
         ),
         FieldSet(
@@ -1185,13 +1185,13 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_tenant_id",
             "aci_vrf_id",
             "aci_bridge_domain_id",
             "nb_vrf_id",
             "gateway_ip_address",
-            "description",
             "preferred_ip_address_enabled",
             "virtual_ip_enabled",
             name=_("Attributes"),
