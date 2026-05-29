@@ -31,7 +31,7 @@ The *ACIRoutedDomain* model has the following fields:
 
 - **Name alias**: a name alias in the ACI for the Routed Domain.
 - **Description**: a description of the Routed Domain.
-- **NetBox Tenant**: a reference to the NetBox tenant model.
 - **Security domains**: a comma-separated list of ACI security domains.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
 - **Comments**: a text field for additional notes.
-- **Tags**: a list of NetBox tags
+- **Tags**: a list of NetBox tags.
