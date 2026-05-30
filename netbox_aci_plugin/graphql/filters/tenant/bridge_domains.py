@@ -103,12 +103,6 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
         strawberry_django.filter_field()
     )
     pim_ipv6_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    pim_ipv6_destination_filter: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    pim_ipv6_source_filter: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
     unknown_ipv4_multicast: (
         BaseFilterLookup[
             Annotated[
