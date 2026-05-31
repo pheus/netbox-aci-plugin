@@ -72,6 +72,89 @@ extend-select = [
     "PTH",   # pathlib: prefer pathlib over os.path
     "W505",  # pydocstyle: docstring line length
     "W",     # pycodestyle warnings: style warnings and deprecated patterns
+
+    # Django/i18n safety. These pair well with NetBox's existing UP032 ignore,
+    # since translation strings should remain statically extractable.
+    "INT",     # flake8-gettext: no f-string/.format()/%-formatting inside gettext calls.
+
+    # Accidental debug code.
+    "T100",    # Catch breakpoint(), pdb, and similar debug statements before merge.
+
+    # Executable/shebang hygiene for scripts.
+    "EXE001",  # Catch files with shebangs that are not executable.
+    "EXE002",  # Catch executable files that are missing a shebang.
+    "EXE004",  # Catch leading whitespace before a shebang.
+    "EXE005",  # Catch shebangs that are not on the first line.
+
+    # Logging correctness.
+    "G010",    # Replace deprecated logging.warn with logging.warning.
+    "G101",    # Prevent collisions in logging extra= keys.
+    "G201",    # Prefer the clearer exception-logging form when logging an exception.
+    "G202",    # Avoid redundant exc_info=True with logging.exception.
+    "LOG001",  # Avoid direct Logger construction; use logging.getLogger().
+    "LOG002",  # Catch invalid logging.getLogger() arguments.
+    "LOG014",  # Avoid exc_info outside exception handlers.
+    "LOG015",  # Avoid root logger calls; use module loggers.
+    "PLE1205", # Catch too many arguments passed to logging format strings.
+    "PLE1206", # Catch too few arguments passed to logging format strings.
+
+    # Timezone-aware datetime usage. This is especially relevant in a Django app.
+    "DTZ003",  # Avoid datetime.utcnow(); use timezone-aware alternatives.
+    "DTZ005",  # Avoid datetime.now() without tz info.
+    "DTZ006",  # Avoid datetime.fromtimestamp() without tz info.
+    "DTZ901",  # Avoid naive datetime.min/datetime.max sentinels.
+
+    # Bugbear correctness checks.
+    "B002",    # Catch ++x/--x, which does not behave like increment/decrement.
+    "B004",    # Avoid unreliable callable checks based on __call__.
+    "B005",    # Catch likely misuse of str.strip() with multi-character strings.
+    "B006",    # Prevent mutable default arguments.
+    "B008",    # Prevent function calls in default arguments.
+    "B012",    # Avoid return/break/continue inside finally blocks.
+    "B013",    # Catch redundant tuples in exception handlers.
+    "B014",    # Catch duplicate exception classes in handlers.
+    "B016",    # Catch invalid raise of literals.
+    "B018",    # Catch useless expressions that are likely forgotten code.
+    "B020",    # Catch loop variables that override the iterator variable.
+    "B023",    # Catch late-binding loop-variable closures.
+    "B025",    # Catch duplicate exceptions across try/except handlers.
+    "B029",    # Catch except () handlers, which catch nothing.
+    "B030",    # Catch except handlers using non-exception classes.
+    "B033",    # Catch duplicate values where uniqueness is expected.
+    "B035",    # Catch dict comprehensions with static keys.
+    "B039",    # Prevent mutable defaults for context variables.
+
+    # Ruff-specific correctness and maintenance checks.
+    "RUF008",  # Prevent mutable dataclass defaults.
+    "RUF009",  # Prevent function-call dataclass defaults where default_factory is needed.
+    "RUF016",  # Catch invalid index types.
+    "RUF018",  # Catch assignment expressions inside assert.
+    "RUF024",  # Prevent shared mutable values from dict.fromkeys().
+    "RUF026",  # Catch suspicious default_factory usage.
+    "RUF028",  # Catch invalid Ruff formatter suppression comments.
+    "RUF030",  # Avoid print() as an assert message.
+    "RUF032",  # Avoid Decimal constructed from float literals.
+    "RUF040",  # Catch invalid assert message literal arguments.
+    "RUF041",  # Remove unnecessary nested literals.
+    "RUF046",  # Remove unnecessary int() casts.
+    "RUF051",  # Prefer pop/delete patterns that avoid redundant key checks.
+    "RUF057",  # Remove unnecessary round() calls.
+    "RUF059",  # Catch unused unpacked variables that should be named "_".
+    "RUF100",  # Keep noqa comments from going stale.
+    "RUF101",  # Catch noqa comments that target redirected/renamed rules.
+    "RUF200",  # Validate pyproject.toml syntax and structure.
+
+    # Security-adjacent control-flow checks. These may need targeted noqa comments
+    # in rare intentional cases, but they are worth surfacing.
+    "S102",    # Flag exec(); intentional dynamic execution should be explicitly documented.
+    "S110",    # Flag try/except/pass; silent failure should be intentional and visible.
+    "S112",    # Flag try/except/continue; silent failure in loops should be intentional and visible.
+
+    # Test/mock correctness.
+    "PGH005",  # Catch invalid access to mock attributes.
+
+    # pathlib correctness.
+    "PTH210",  # Catch invalid pathlib.with_suffix() calls.
 ]
 ignore = [
     "D100",   # pydocstyle: missing docstring in public module
@@ -96,6 +179,16 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "**/migrations/*.py" = ["D", "E501"]   # For Django/NetBox plugin migrations
 "**/tests/*.py" = ["D"]
 "**/views/__init__.py" = ["RUF022"]
+
+[lint.flake8-bugbear]
+# strawberry-django field specifiers return field-descriptor objects (the analogue of
+# dataclasses.field()), so using them as dataclass defaults is the intended idiom, not a
+# shared-mutable-default bug. Allow-listing keeps RUF009/B008 enabled without per-line noqa.
+extend-immutable-calls = [
+    "strawberry_django.field",
+    "strawberry_django.filter_field",
+    "strawberry_django.order_field",
+]
 
 [lint.flake8-self]
 ignore-names = ["_meta", "Meta"]
