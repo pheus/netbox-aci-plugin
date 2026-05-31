@@ -65,9 +65,9 @@ def validate_contract_filter_ip_protocol(value: str) -> None:
     valid_choices = ", ".join(dict(ContractFilterIPProtocolChoices).keys())
     raise ValidationError(
         _(
-            f"IP Protocol must be a number between 0 and 255 or"
-            f" one of the following values: {valid_choices}"
-        )
+            "IP Protocol must be a number between 0 and 255 or"
+            " one of the following values: {valid_choices}"
+        ).format(valid_choices=valid_choices)
     )
 
 
@@ -89,9 +89,9 @@ def validate_contract_filter_port(value: str) -> None:
     valid_choices = ", ".join(dict(ContractFilterPortChoices).keys())
     raise ValidationError(
         _(
-            f"Layer 4 Port must be a number between 0 and 65535 or"
-            f" one of the following values: {valid_choices}"
-        )
+            "Layer 4 Port must be a number between 0 and 65535 or"
+            " one of the following values: {valid_choices}"
+        ).format(valid_choices=valid_choices)
     )
 
 
