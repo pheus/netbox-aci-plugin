@@ -8,7 +8,7 @@ Bridge Domains (BD), and VRFs (Contexts).
 [![PyPI](https://img.shields.io/pypi/v/netbox-aci-plugin.svg)](https://pypi.org/project/netbox-aci-plugin/)
 [![Python versions](https://img.shields.io/pypi/pyversions/netbox-aci-plugin.svg)](https://pypi.org/project/netbox-aci-plugin/)
 [![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://pheus.github.io/netbox-aci-plugin/)
-[![License](https://img.shields.io/badge/license-See%20LICENSE-lightgrey.svg)](https://www.gnu.org/licenses/gpl-3.0.txt)
+[![License](https://img.shields.io/badge/license-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0.txt)
 
 > **Status:** Alpha – Interfaces and data models may change.
 
@@ -44,6 +44,7 @@ Bridge Domains (BD), and VRFs (Contexts).
         - Bridge Domains
         - VRFs (Contexts)
         - Contracts, Contract Subjects, and Contract Filters
+        - L3Outs, External EPGs, and External Subnets
 - Consistent UI patterns with NetBox core (tables, filtersets,
   detail views)
 - Ready for automation via NetBox’s REST API
@@ -55,8 +56,8 @@ The following table details the tested plugin versions for each NetBox version:
 
 | NetBox Version | Plugin Version |
 |:--------------:|:--------------:|
-|      4.6       |     0.2.2      |
-|      4.5       |     0.2.2      |
+|      4.6       |     0.3.0      |
+|      4.5       |     0.3.0      |
 |      4.4       |     0.1.0      |
 |      4.3       |     0.1.0      |
 

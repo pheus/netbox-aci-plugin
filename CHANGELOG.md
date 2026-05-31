@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
+## [0.3.0] – 2026-05-31
+
+> **Compatibility:** NetBox v4.5, NetBox v4.6
+
+### Added
+
+- Model ACI L3Outs, External Endpoint Groups, and External Subnets with full
+  UI, REST API, GraphQL, and search support.
+- Model ACI Routed Domains (external routed L3 domains).
+- Add ACI Bridge Domain to L3Out bindings.
+- Allow ACI External Endpoint Groups as Contract Relation targets.
+
+### Changed
+
+- Migrate the documentation toolchain to Zensical.
+
+### Fixed
+
+- Correct the AF12 and AF13 QoS DSCP value labels.
+- Index `comments` on the remaining ACI search indexes.
+- Group `description` with the identity fields in the filter forms.
+- Remove the unused PIM IPv6 source and destination filter fields from the
+  ACI Bridge Domain GraphQL filter.
+- Apply interpolation after translation in validator error messages so the
+  strings stay extractable.
+
+---
+
 ## [0.2.2] – 2026-05-05
 
 > **Compatibility:** NetBox v4.5, NetBox v4.6
@@ -102,7 +130,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
-[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.2...HEAD
+[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.1.0...v0.2.0
