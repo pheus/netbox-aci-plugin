@@ -40,7 +40,7 @@ classifiers = [
 docs = [
     "mkdocs==1.6.1",
     "mkdocs-material==9.7.6",
-    "mkdocs-include-markdown-plugin==7.2.2",
+    "zensical==0.0.43",
 ]
 test = [
     "check-manifest==0.51",

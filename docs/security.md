@@ -1,3 +1,1 @@
-{%
-  include-markdown "../SECURITY.md"
-%}
+--8<-- "SECURITY.md"

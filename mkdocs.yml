@@ -11,9 +11,9 @@ nav:
       - Access Policies: features/access_policies.md
       - Tenants: features/tenants.md
   - Development:
-      - Code of Conduct: development/code_of_conduct.md
       - Contributing: development/contributing.md
       - Releasing: development/releasing.md
+      - Code of Conduct: development/code_of_conduct.md
   - Changelog: changelog.md
   - Security: security.md
 theme:
@@ -47,8 +47,8 @@ theme:
 markdown_extensions:
   - attr_list
   - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:zensical.extensions.emoji.twemoji
+      emoji_generator: !!python/name:zensical.extensions.emoji.to_svg
   - pymdownx.critic
   - pymdownx.caret
   - pymdownx.mark
@@ -71,8 +71,11 @@ markdown_extensions:
       permalink: '#'
       slugify: !!python/object/apply:pymdownx.slugs.slugify {}
   - meta
+  - pymdownx.snippets:
+      base_path:
+        - "."
+      check_paths: true
 plugins:
-  - include-markdown
   - search:
       lang: en
 extra:
