@@ -14,7 +14,8 @@ each supported minor series.
 
 | Plugin Version | Supported                 |
 |----------------|---------------------------|
-| 0.2.x          | ✅ Security fixes accepted |
+| 0.3.x          | ✅ Security fixes accepted |
+| 0.2.x          | ❌ End of support          |
 | 0.1.x          | ❌ End of support          |
 | < 0.1.0        | ❌ End of support          |
 
