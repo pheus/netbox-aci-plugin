@@ -33,15 +33,24 @@ jobs:
 
   test-plugin-integration:
     name: >-
-      Run tests 🧪 [NB ${{ matrix.netbox-version }} |
-        Py ${{ matrix.python-version }}]
+      Run tests 🧪 [NB ${{ matrix.netbox-version }} | Py
+      ${{ matrix.python-version }}${{ matrix.coverage && ' | coverage' || '' }}]
     needs:
       - pre-commit
     runs-on: ubuntu-latest
+    env:
+      COVERAGE_RCFILE: ${{ github.workspace }}/netbox_aci_plugin/pyproject.toml
     strategy:
       matrix:
         python-version: ["3.12", "3.13", "3.14"]
         netbox-version: ["v4.5.0", "v4.5.10", "v4.6.0", "main"]
+        include:
+          # Collect coverage on a single leg (newest stack); the other legs
+          # run the plain test suite.
+          - coverage: false
+          - python-version: "3.14"
+            netbox-version: "main"
+            coverage: true
     services:
       redis:
         image: redis
@@ -97,10 +106,28 @@ jobs:
       - name: Install Plugin in NetBox environment 🧩
         working-directory: netbox_aci_plugin
         run: |
-          pip install -e .
+          pip install -e ".[test]"
 
       - name: Run Django tests 🧪
+        if: ${{ ! matrix.coverage }}
         working-directory: netbox
         run: |
           python netbox/manage.py test netbox_aci_plugin.tests --parallel -v 2
+
+      - name: Run Django tests with coverage 🧪
+        if: ${{ matrix.coverage }}
+        working-directory: netbox
+        run: |
+          coverage run netbox/manage.py test \
+            netbox_aci_plugin.tests --parallel -v 2
+
+      - name: Combine coverage data 🧪
+        if: ${{ matrix.coverage }}
+        working-directory: netbox
+        run: coverage combine
+
+      - name: Show coverage report 🧪
+        if: ${{ matrix.coverage }}
+        working-directory: netbox
+        run: coverage report
 ...

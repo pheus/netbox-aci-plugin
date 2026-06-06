@@ -45,9 +45,11 @@ docs = [
 ]
 test = [
     "check-manifest==0.51",
+    "coverage[toml]==7.6.10",
     "pre-commit==4.6.0",
     "pytest==9.0.3",
     "ruff==0.15.15",
+    "tblib==3.0.0",
     "yamllint==1.38.0",
 ]
 
@@ -66,6 +68,25 @@ ignore = [
     ".pypirc",
     "requirements_dev.txt",
     "ruff.toml",
+]
+
+[tool.coverage.run]
+source = ["netbox_aci_plugin"]
+omit = [
+    "*/netbox_aci_plugin/tests/*",
+    "*/netbox_aci_plugin/migrations/*",
+]
+concurrency = ["multiprocessing"]
+parallel = true
+sigterm = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under = 91
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
 ]
 
 [tool.setuptools]
