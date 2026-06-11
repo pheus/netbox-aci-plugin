@@ -223,7 +223,7 @@ class ACIL3OutExternalEndpointGroupsView(ACIExternalEndpointGroupChildrenView):
         return table
 
 
-@register_model_view(ACIL3Out, "bridgedomainbindings", path="bridge-domain-bindings")
+@register_model_view(ACIL3Out, "bridgedomainbindings", path="bridge-domains")
 class ACIL3OutBridgeDomainBindingsView(ACIBridgeDomainL3OutBindingChildrenView):
     """Children view of BD L3Out bindings of ACI L3Out."""
 
