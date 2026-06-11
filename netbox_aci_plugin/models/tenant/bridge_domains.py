@@ -582,6 +582,6 @@ class ACIBridgeDomainL3OutBinding(NetBoxModel):
         return self.aci_bridge_domain.aci_vrf
 
     @property
-    def parent_object(self) -> ACIBridgeDomain:
+    def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_bridge_domain
