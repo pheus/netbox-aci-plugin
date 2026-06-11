@@ -124,9 +124,6 @@ class ACIExternalEndpointGroupFilter(ACIBaseFilterMixin):
         | None
     ) = strawberry_django.filter_field()
     aci_l3out_id: ID | None = strawberry_django.filter_field()
-    preferred_group_member_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
     qos_class: (
         BaseFilterLookup[
             Annotated[
@@ -136,6 +133,9 @@ class ACIExternalEndpointGroupFilter(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
+    preferred_group_member_enabled: FilterLookup[bool] | None = (
+        strawberry_django.filter_field()
+    )
     target_dscp: (
         BaseFilterLookup[
             Annotated[
