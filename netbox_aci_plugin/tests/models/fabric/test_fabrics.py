@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from ipam.models import VLAN, Prefix
 from tenancy.models import Tenant
@@ -204,5 +204,5 @@ class ACIFabricTestCase(ACIBaseTestCase):
             fabric_id=14,
             infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_fabric.save()

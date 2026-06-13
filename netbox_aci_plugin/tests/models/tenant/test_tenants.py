@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from tenancy.models import Tenant
 
@@ -113,5 +113,5 @@ class ACITenantTestCase(ACIBaseTestCase):
             name=self.aci_tenant_name,
             aci_fabric=self.aci_fabric,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_tenant.save()

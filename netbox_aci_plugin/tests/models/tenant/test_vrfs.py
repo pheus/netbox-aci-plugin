@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from ipam.models import VRF
 from tenancy.models import Tenant
@@ -209,5 +209,5 @@ class ACIVRFTestCase(ACIBaseTestCase):
         """Test unique constraint of ACI VRF name per ACI Tenant."""
         tenant = ACITenant.objects.get(name=self.aci_tenant_name)
         duplicate_vrf = ACIVRF(name=self.aci_vrf_name, aci_tenant=tenant)
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_vrf.save()

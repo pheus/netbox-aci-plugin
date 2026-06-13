@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 from ipam.models import IPAddress
 from tenancy.models import Tenant
@@ -397,7 +397,7 @@ class ACIBridgeDomainTestCase(ACIBaseTestCase):
         duplicate_bd = ACIBridgeDomain(
             name=self.aci_bd_name, aci_tenant=tenant, aci_vrf=vrf
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_bd.save()
 
 
@@ -626,7 +626,7 @@ class ACIBridgeDomainSubnetTestCase(ACIBaseTestCase):
             aci_bridge_domain=bd,
             gateway_ip_address=gateway_ip,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_subnet.save()
 
     def test_constraint_unique_preferred_ip_per_bridge_domain(self) -> None:
@@ -639,7 +639,7 @@ class ACIBridgeDomainSubnetTestCase(ACIBaseTestCase):
             gateway_ip_address=gateway_ip,
             preferred_ip_address_enabled=True,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             second_preferred_ip_subnet.save()
 
 
@@ -854,5 +854,5 @@ class ACIBridgeDomainL3OutBindingTestCase(ACIBaseTestCase):
             aci_bridge_domain=self.aci_bd,
             aci_l3out=self.aci_l3out,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_relation.save()

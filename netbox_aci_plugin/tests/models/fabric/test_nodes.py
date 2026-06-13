@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from dcim.models import Device, Site
 from ipam.models import IPAddress
@@ -308,7 +308,7 @@ class ACINodeTestCase(ACIBaseTestCase):
             aci_pod=self.aci_pod,
             node_id=100,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_node.save()
 
     def test_constraint_unique_aci_node_id(self) -> None:
@@ -318,5 +318,5 @@ class ACINodeTestCase(ACIBaseTestCase):
             aci_pod=self.aci_pod,
             node_id=self.aci_node_id,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_node.save()

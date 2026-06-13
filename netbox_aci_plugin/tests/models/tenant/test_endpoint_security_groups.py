@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
@@ -231,7 +231,7 @@ class ACIEndpointSecurityGroupTestCase(ACIBaseTestCase):
             aci_app_profile=app_profile,
             aci_vrf=vrf,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_esg.save()
 
 
@@ -572,7 +572,7 @@ class ACIEsgEndpointGroupSelectorTestCase(ACIBaseTestCase):
             aci_endpoint_security_group=self.aci_esg,
             aci_epg_object=aci_epg,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_esg_epg_selector.save()
 
     def test_constraint_unique_aci_esg_epg_selector_epg_per_aci_app_profile(
@@ -584,7 +584,7 @@ class ACIEsgEndpointGroupSelectorTestCase(ACIBaseTestCase):
             aci_endpoint_security_group=self.aci_esg,
             aci_epg_object=self.aci_epg1,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_esg_epg_selector.save()
 
 
@@ -823,7 +823,7 @@ class ACIEsgEndpointSelectorTestCase(ACIBaseTestCase):
             aci_endpoint_security_group=self.aci_esg,
             ep_object=prefix2,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_esg_ep_selector.save()
 
     def test_constraint_unique_aci_esg_ep_selector_epg_per_aci_app_profile(
@@ -835,5 +835,5 @@ class ACIEsgEndpointSelectorTestCase(ACIBaseTestCase):
             aci_endpoint_security_group=self.aci_esg,
             ep_object=self.ip_address1,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_esg_ep_selector.save()

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from ipam.models import Prefix
 from tenancy.models import Tenant
@@ -188,7 +188,7 @@ class ACIPodTestCase(ACIBaseTestCase):
             aci_fabric=self.aci_fabric,
             pod_id=100,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_pod.save()
 
     def test_constraint_unique_aci_pod_id(self) -> None:
@@ -198,5 +198,5 @@ class ACIPodTestCase(ACIBaseTestCase):
             aci_fabric=self.aci_fabric,
             pod_id=self.aci_pod_id,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_pod.save()

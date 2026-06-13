@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from tenancy.models import Tenant
 
@@ -173,7 +173,7 @@ class ACIContractTestCase(ACIBaseTestCase):
         """Test unique constraint of ACI Contract name per ACI Tenant."""
         tenant = ACITenant.objects.get(name=self.aci_tenant_name)
         duplicate_contract = ACIContract(name=self.aci_contract_name, aci_tenant=tenant)
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_contract.save()
 
 
@@ -722,7 +722,7 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
             aci_object=self.aci_epg1,
             role=self.aci_contract_relation_role_cons,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_contract_relation.save()
 
 
@@ -1021,7 +1021,7 @@ class ACIContractSubjectTestCase(ACIBaseTestCase):
             name=self.aci_contract_subject_name,
             aci_contract=contract,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_contract_subject.save()
 
 
@@ -1330,5 +1330,5 @@ class ACIContractSubjectFilterTestCase(ACIBaseTestCase):
             aci_contract_filter=self.aci_contract_filter,
             aci_contract_subject=contract_subject,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_contract_subject_filter.save()

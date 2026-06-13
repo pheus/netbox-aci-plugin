@@ -6,7 +6,7 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 from ipam.models import VRF, Prefix
 from tenancy.models import Tenant
@@ -467,7 +467,7 @@ class ACIL3OutTestCase(ACIBaseTestCase):
             aci_vrf=self.aci_vrf,
             aci_routed_domain=self.aci_routed_domain,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_l3out.save()
 
     def test_invalid_aci_l3out_export_route_control_enforcement_disabled(
@@ -499,7 +499,7 @@ class ACIL3OutTestCase(ACIBaseTestCase):
             aci_routed_domain=self.aci_routed_domain,
             export_route_control_enforcement_enabled=False,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             invalid_l3out.save()
 
     def test_invalid_aci_l3out_eigrp_with_bgp(self) -> None:
@@ -943,7 +943,7 @@ class ACIExternalEndpointGroupTestCase(ACIBaseTestCase):
             name=self.aci_ext_epg_name,
             aci_l3out=self.aci_l3out,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_external_epg.save()
 
 
@@ -1358,7 +1358,7 @@ class ACIExternalSubnetTestCase(ACIBaseTestCase):
             aci_external_endpoint_group=self.aci_external_endpoint_group,
             nb_prefix=prefix_other,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_external_subnet.save()
 
     def test_constraint_unique_matched_prefix_per_external_epg(self) -> None:
@@ -1368,7 +1368,7 @@ class ACIExternalSubnetTestCase(ACIBaseTestCase):
             aci_external_endpoint_group=self.aci_external_endpoint_group,
             nb_prefix=self.prefix,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_external_subnet.save()
 
     def test_constraint_unique_direct_matched_prefix_per_external_epg(
@@ -1380,7 +1380,7 @@ class ACIExternalSubnetTestCase(ACIBaseTestCase):
             aci_external_endpoint_group=self.aci_external_endpoint_group,
             matched_prefix=self.aci_external_subnet_prefix_value,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_external_subnet.save()
 
     def test_valid_aci_external_subnet_import_rtctrl_with_enforcement(self) -> None:

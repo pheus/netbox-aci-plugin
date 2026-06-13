@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from dcim.models import MACAddress
 from ipam.models import IPAddress, Prefix
@@ -272,7 +272,7 @@ class ACIEndpointGroupTestCase(ACIBaseTestCase):
             aci_app_profile=app_profile,
             aci_bridge_domain=bd,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_epg.save()
 
 
@@ -535,7 +535,7 @@ class ACIUSegEndpointGroupTestCase(ACIBaseTestCase):
             aci_app_profile=app_profile,
             aci_bridge_domain=bd,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_epg.save()
 
 
@@ -902,7 +902,7 @@ class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
             name=self.aci_useg_network_attr_ip_name,
             aci_useg_endpoint_group=self.aci_useg_epg,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_useg_network_attr.save()
 
     def test_constraint_unique_aci_useg_network_attr_epg_subnet_per_aci_useg_epg(
@@ -914,5 +914,5 @@ class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
             aci_useg_endpoint_group=self.aci_useg_epg,
             use_epg_subnet=True,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_useg_network_attr_use_epg_subnet.save()

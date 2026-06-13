@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, transaction
 
 from tenancy.models import Tenant
 
@@ -141,7 +141,7 @@ class ACIContractFilterTestCase(ACIBaseTestCase):
         duplicate_contract_filter = ACIContractFilter(
             name=self.aci_contract_filter_name, aci_tenant=tenant
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_contract_filter.save()
 
 
@@ -724,5 +724,5 @@ class ACIContractFilterEntryTestCase(ACIBaseTestCase):
             name=self.aci_contract_filter_entry_name,
             aci_contract_filter=contract_filter,
         )
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_contract_filter_entry.save()
