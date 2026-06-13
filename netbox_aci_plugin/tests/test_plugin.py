@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.apps import apps
 from django.conf import settings
 from django.test import TestCase
 
@@ -110,3 +111,16 @@ class PluginTest(TestCase):
             self.menu_group_fabric_access_policies_item_count,
         )
         self.assertIsInstance(menu_plugin_reg_groups[5].items[0], PluginMenuItem)
+
+
+class PluginModelMetaTest(TestCase):
+    """Convention guards for plugin model Meta options."""
+
+    def test_all_models_define_default_related_name(self) -> None:
+        """Every concrete plugin model sets Meta.default_related_name."""
+        missing = [
+            model.__name__
+            for model in apps.get_app_config("netbox_aci_plugin").get_models()
+            if not model._meta.default_related_name
+        ]
+        self.assertEqual(missing, [], f"Models missing default_related_name: {missing}")

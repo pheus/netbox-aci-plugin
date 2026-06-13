@@ -59,6 +59,7 @@ class ACIContractFilter(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
+        default_related_name: str = "aci_contract_filters"
         ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Contract Filter")
 
@@ -236,6 +237,7 @@ class ACIContractFilterEntry(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_contract_filter",
             ),
         ]
+        default_related_name: str = "aci_contract_filter_entries"
         ordering: tuple = ("aci_contract_filter", "name")
         verbose_name: str = _("ACI Contract Filter Entry")
         verbose_name_plural: str = _("ACI Contract Filter Entries")

@@ -241,6 +241,7 @@ class ACIBridgeDomain(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
+        default_related_name: str = "aci_bridge_domains"
         ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Bridge Domain")
 
@@ -457,6 +458,7 @@ class ACIBridgeDomainSubnet(ACITenantBaseModel):
                 ),
             ),
         ]
+        default_related_name: str = "aci_bridge_domain_subnets"
         ordering: tuple = ("aci_bridge_domain", "name")
         verbose_name: str = _("ACI Bridge Domain Subnet")
 
@@ -518,6 +520,7 @@ class ACIBridgeDomainL3OutBinding(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_binding",
             ),
         ]
+        default_related_name: str = "aci_bridge_domain_l3out_bindings"
         ordering: tuple = ("aci_bridge_domain", "aci_l3out")
         verbose_name: str = _("ACI Bridge Domain L3Out Binding")
 

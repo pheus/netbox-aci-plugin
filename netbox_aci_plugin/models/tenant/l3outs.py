@@ -206,6 +206,7 @@ class ACIL3Out(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_export_rtctrl_enabled",
             ),
         ]
+        default_related_name: str = "aci_l3outs"
         ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI L3Out")
 
@@ -461,6 +462,7 @@ class ACIExternalEndpointGroup(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_l3out",
             ),
         ]
+        default_related_name: str = "aci_external_endpoint_groups"
         ordering: tuple = ("aci_l3out", "name")
         verbose_name: str = _("ACI External Endpoint Group")
 
@@ -660,6 +662,7 @@ class ACIExternalSubnet(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_matched_prefix_ext_epg",
             ),
         ]
+        default_related_name: str = "aci_external_subnets"
         ordering: tuple = ("aci_external_endpoint_group", "matched_prefix", "name")
         verbose_name: str = _("ACI External Subnet")
 

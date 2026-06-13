@@ -28,6 +28,7 @@ class ACIAppProfile(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
+        default_related_name: str = "aci_app_profiles"
         ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Application Profile")
 

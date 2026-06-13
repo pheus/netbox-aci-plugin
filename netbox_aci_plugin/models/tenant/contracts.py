@@ -94,6 +94,7 @@ class ACIContract(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
+        default_related_name: str = "aci_contracts"
         ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI Contract")
 
@@ -229,6 +230,7 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
                 name="%(app_label)s_%(class)s_unique_per_aci_contract_role",
             ),
         ]
+        default_related_name: str = "aci_contract_relations"
         indexes: tuple = (models.Index(fields=("aci_object_type", "aci_object_id")),)
         ordering: tuple = (
             "aci_contract",
@@ -546,6 +548,7 @@ class ACIContractSubject(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_contract",
             ),
         ]
+        default_related_name: str = "aci_contract_subjects"
         ordering: tuple = ("aci_contract", "name")
         verbose_name: str = _("ACI Contract Subject")
 
@@ -665,6 +668,7 @@ class ACIContractSubjectFilter(NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_contract_subject",
             ),
         ]
+        default_related_name: str = "aci_contract_subject_filters"
         ordering: tuple = ("aci_contract_subject", "aci_contract_filter")
         verbose_name: str = _("ACI Contract Subject Filter")
 

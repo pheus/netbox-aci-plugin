@@ -138,6 +138,7 @@ class ACINode(ACIFabricBaseModel):
                 ),
             ),
         ]
+        default_related_name: str = "aci_nodes"
         ordering: tuple = ("aci_pod", "node_id")
         verbose_name: str = _("ACI Node")
 

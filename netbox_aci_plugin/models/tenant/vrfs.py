@@ -124,6 +124,7 @@ class ACIVRF(ACITenantBaseModel):
                 name="%(app_label)s_%(class)s_unique_per_aci_tenant",
             ),
         ]
+        default_related_name: str = "aci_vrfs"
         ordering: tuple = ("aci_tenant", "name")
         verbose_name: str = _("ACI VRF")
 

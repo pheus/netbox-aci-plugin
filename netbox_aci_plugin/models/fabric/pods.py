@@ -67,6 +67,7 @@ class ACIPod(CachedScopeMixin, ACIFabricBaseModel):
                 name="%(app_label)s_%(class)s_unique_pod_name_per_aci_fabric",
             ),
         ]
+        default_related_name: str = "aci_pods"
         ordering: tuple = ("aci_fabric", "pod_id")
         verbose_name: str = _("ACI Pod")
 

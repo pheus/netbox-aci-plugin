@@ -71,6 +71,7 @@ class ACIRoutedDomain(ACIDomainBaseModel):
                 name="%(app_label)s_%(class)s_unique_name_per_aci_fabric",
             ),
         ]
+        default_related_name: str = "aci_routed_domains"
         ordering: tuple = ("aci_fabric", "name")
         verbose_name: str = _("ACI Routed Domain")
 

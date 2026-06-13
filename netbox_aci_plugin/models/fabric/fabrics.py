@@ -104,6 +104,7 @@ class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
                 name="%(app_label)s_%(class)s_unique_name",
             ),
         ]
+        default_related_name: str = "aci_fabrics"
         ordering: tuple = ("name",)
         verbose_name: str = _("ACI Fabric")
 
