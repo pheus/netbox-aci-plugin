@@ -93,6 +93,8 @@ class ACIL3OutTable(NetBoxTable):
             "aci_vrf",
             "aci_routed_domain",
             "export_route_control_enforcement_enabled",
+            "bgp_enabled",
+            "ospf_enabled",
         )
 
 
