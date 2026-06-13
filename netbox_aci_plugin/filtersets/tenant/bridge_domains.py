@@ -227,7 +227,7 @@ class ACIBridgeDomainSubnetFilterSet(
             Q(name__icontains=value)
             | Q(name_alias__icontains=value)
             | Q(description__icontains=value)
-            | Q(gateway_ip__istartswith=value)
+            | Q(gateway_ip_address__address__istartswith=value)
         )
         return queryset.filter(queryset_filter)
 
