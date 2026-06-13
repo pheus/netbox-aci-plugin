@@ -88,7 +88,7 @@ class ACIExternalEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for ACIExternalEndpointGroup model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name=("plugins-api:netbox_aci_plugin-api:aciexternalendpointgroup-detail"),
+        view_name="plugins-api:netbox_aci_plugin-api:aciexternalendpointgroup-detail",
     )
     aci_l3out = ACIL3OutSerializer(nested=True, required=True)
     nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)

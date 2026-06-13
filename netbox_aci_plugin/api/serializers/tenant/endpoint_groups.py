@@ -74,7 +74,7 @@ class ACIUSegEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
     """Serializer for the ACI Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name=("plugins-api:netbox_aci_plugin-api:aciusegendpointgroup-detail")
+        view_name="plugins-api:netbox_aci_plugin-api:aciusegendpointgroup-detail"
     )
     aci_app_profile = ACIAppProfileSerializer(nested=True, required=True)
     aci_bridge_domain = ACIBridgeDomainSerializer(nested=True, required=True)
