@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.fabric.pods import ACIPodTable
+from .. import base
 
 
-class ACIPodTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIPodTableTestCase(base.StandardTableTestCase):
     table = ACIPodTable

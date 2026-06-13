@@ -2,22 +2,21 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.tenant.endpoint_groups import (
     ACIEndpointGroupTable,
     ACIUSegEndpointGroupTable,
     ACIUSegNetworkAttributeTable,
 )
+from .. import base
 
 
-class ACIEndpointGroupTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIEndpointGroupTableTestCase(base.StandardTableTestCase):
     table = ACIEndpointGroupTable
 
 
-class ACIUSegEndpointGroupTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIUSegEndpointGroupTableTestCase(base.StandardTableTestCase):
     table = ACIUSegEndpointGroupTable
 
 
-class ACIUSegNetworkAttributeTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIUSegNetworkAttributeTableTestCase(base.StandardTableTestCase):
     table = ACIUSegNetworkAttributeTable

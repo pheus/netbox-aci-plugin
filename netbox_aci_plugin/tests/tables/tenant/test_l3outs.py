@@ -2,22 +2,21 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.tenant.l3outs import (
     ACIExternalEndpointGroupTable,
     ACIExternalSubnetTable,
     ACIL3OutTable,
 )
+from .. import base
 
 
-class ACIL3OutTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIL3OutTableTestCase(base.StandardTableTestCase):
     table = ACIL3OutTable
 
 
-class ACIExternalEndpointGroupTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIExternalEndpointGroupTableTestCase(base.StandardTableTestCase):
     table = ACIExternalEndpointGroupTable
 
 
-class ACIExternalSubnetTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIExternalSubnetTableTestCase(base.StandardTableTestCase):
     table = ACIExternalSubnetTable

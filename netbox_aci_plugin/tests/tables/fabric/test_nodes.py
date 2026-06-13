@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.fabric.nodes import ACINodeTable
+from .. import base
 
 
-class ACINodeTableTestCase(TableTestCases.StandardTableTestCase):
+class ACINodeTableTestCase(base.StandardTableTestCase):
     table = ACINodeTable

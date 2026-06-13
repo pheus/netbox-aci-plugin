@@ -2,27 +2,26 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.tenant.contracts import (
     ACIContractRelationTable,
     ACIContractSubjectFilterTable,
     ACIContractSubjectTable,
     ACIContractTable,
 )
+from .. import base
 
 
-class ACIContractTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIContractTableTestCase(base.StandardTableTestCase):
     table = ACIContractTable
 
 
-class ACIContractRelationTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIContractRelationTableTestCase(base.StandardTableTestCase):
     table = ACIContractRelationTable
 
 
-class ACIContractSubjectTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIContractSubjectTableTestCase(base.StandardTableTestCase):
     table = ACIContractSubjectTable
 
 
-class ACIContractSubjectFilterTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIContractSubjectFilterTableTestCase(base.StandardTableTestCase):
     table = ACIContractSubjectFilterTable

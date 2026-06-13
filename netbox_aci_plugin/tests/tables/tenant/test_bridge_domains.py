@@ -2,22 +2,21 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.tenant.bridge_domains import (
     ACIBridgeDomainL3OutBindingTable,
     ACIBridgeDomainSubnetTable,
     ACIBridgeDomainTable,
 )
+from .. import base
 
 
-class ACIBridgeDomainTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIBridgeDomainTableTestCase(base.StandardTableTestCase):
     table = ACIBridgeDomainTable
 
 
-class ACIBridgeDomainSubnetTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIBridgeDomainSubnetTableTestCase(base.StandardTableTestCase):
     table = ACIBridgeDomainSubnetTable
 
 
-class ACIBridgeDomainL3OutBindingTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIBridgeDomainL3OutBindingTableTestCase(base.StandardTableTestCase):
     table = ACIBridgeDomainL3OutBindingTable

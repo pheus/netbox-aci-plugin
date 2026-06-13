@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.access_policies.domains import ACIRoutedDomainTable
+from .. import base
 
 
-class ACIRoutedDomainTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIRoutedDomainTableTestCase(base.StandardTableTestCase):
     table = ACIRoutedDomainTable

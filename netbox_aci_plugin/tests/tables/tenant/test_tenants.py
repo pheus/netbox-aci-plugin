@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.tenant.tenants import ACITenantTable
+from .. import base
 
 
-class ACITenantTableTestCase(TableTestCases.StandardTableTestCase):
+class ACITenantTableTestCase(base.StandardTableTestCase):
     table = ACITenantTable

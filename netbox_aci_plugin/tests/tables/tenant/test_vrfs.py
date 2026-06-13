@@ -2,10 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from utilities.testing import TableTestCases
-
 from ....tables.tenant.vrfs import ACIVRFTable
+from .. import base
 
 
-class ACIVRFTableTestCase(TableTestCases.StandardTableTestCase):
+class ACIVRFTableTestCase(base.StandardTableTestCase):
     table = ACIVRFTable
