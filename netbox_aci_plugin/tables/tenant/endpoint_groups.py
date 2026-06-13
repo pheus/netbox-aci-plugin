@@ -111,6 +111,7 @@ class ACIUSegEndpointGroupTable(NetBoxTable):
     )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant"),
+        orderable=False,
         linkify=True,
     )
     aci_app_profile = tables.Column(
@@ -188,10 +189,12 @@ class ACIUSegNetworkAttributeTable(NetBoxTable):
     )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant"),
+        orderable=False,
         linkify=True,
     )
     aci_app_profile = tables.Column(
         verbose_name=_("ACI App Profile"),
+        orderable=False,
         linkify=True,
     )
     aci_useg_endpoint_group = tables.Column(

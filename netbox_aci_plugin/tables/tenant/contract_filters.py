@@ -89,6 +89,7 @@ class ACIContractFilterEntryTable(NetBoxTable):
     )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant"),
+        orderable=False,
         linkify=True,
     )
     aci_contract_filter = tables.Column(

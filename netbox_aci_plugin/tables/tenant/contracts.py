@@ -97,6 +97,7 @@ class ACIContractRelationTable(NetBoxTable):
     )
     aci_contract_tenant = tables.Column(
         verbose_name=_("ACI Tenant (Contract)"),
+        orderable=False,
         linkify=True,
     )
     aci_contract = tables.Column(
@@ -105,6 +106,7 @@ class ACIContractRelationTable(NetBoxTable):
     )
     aci_object_tenant = tables.Column(
         verbose_name=_("ACI Tenant (Object)"),
+        orderable=False,
         linkify=True,
     )
     aci_object_type = columns.ContentTypeColumn(
@@ -169,6 +171,7 @@ class ACIContractSubjectTable(NetBoxTable):
     )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant"),
+        orderable=False,
         linkify=True,
     )
     aci_contract = tables.Column(
@@ -299,10 +302,12 @@ class ACIContractSubjectFilterTable(NetBoxTable):
     )
     aci_contract = tables.Column(
         verbose_name=_("Contract"),
+        orderable=False,
         linkify=True,
     )
     aci_contract_filter_tenant = tables.Column(
         verbose_name=_("ACI Tenant (Filter)"),
+        orderable=False,
         linkify=True,
     )
     aci_contract_filter = tables.Column(
@@ -311,6 +316,7 @@ class ACIContractSubjectFilterTable(NetBoxTable):
     )
     aci_contract_subject_tenant = tables.Column(
         verbose_name=_("ACI Tenant (Subject)"),
+        orderable=False,
         linkify=True,
     )
     aci_contract_subject = tables.Column(
@@ -370,6 +376,7 @@ class ACIContractSubjectFilterReducedTable(NetBoxTable):
 
     aci_contract_filter_tenant = tables.Column(
         verbose_name=_("ACI Tenant (Filter)"),
+        orderable=False,
         linkify=True,
     )
     aci_contract_filter = tables.Column(

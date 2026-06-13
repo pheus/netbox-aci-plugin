@@ -32,6 +32,7 @@ class ACIEndpointSecurityGroupTable(NetBoxTable):
     )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant"),
+        orderable=False,
         linkify=True,
     )
     aci_app_profile = tables.Column(
@@ -103,10 +104,12 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
     )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant (ESG)"),
+        orderable=False,
         linkify=True,
     )
     aci_app_profile = tables.Column(
         verbose_name=_("ACI App Profile (ESG)"),
+        orderable=False,
         linkify=True,
     )
     aci_endpoint_security_group = tables.Column(
@@ -115,10 +118,12 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
     )
     aci_epg_object_tenant = tables.Column(
         verbose_name=_("ACI Tenant (EPG)"),
+        orderable=False,
         linkify=True,
     )
     aci_epg_object_app_profile = tables.Column(
         verbose_name=_("ACI App Profile (EPG)"),
+        orderable=False,
         linkify=True,
     )
     aci_epg_object_type = columns.ContentTypeColumn(
@@ -196,10 +201,12 @@ class ACIEsgEndpointSelectorTable(NetBoxTable):
     )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant"),
+        orderable=False,
         linkify=True,
     )
     aci_app_profile = tables.Column(
         verbose_name=_("ACI App Profile"),
+        orderable=False,
         linkify=True,
     )
     aci_endpoint_security_group = tables.Column(
