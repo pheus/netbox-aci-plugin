@@ -22,6 +22,9 @@ flowchart TD
     SJF(Subject Filter)
     FT(Filter)
     FTE(Filter Entry)
+    L3O(L3Out)
+    EXTEPG(External Endpoint Group)
+    EXTSN(External Subnet)
     subgraph graphTN [Tenant]
         TN
     end
@@ -51,6 +54,12 @@ flowchart TD
             TN -->|1:n| BD
             BD -->|1:n| SN
         end
+        subgraph graphL3O [L3Out]
+            TN -->|1:n| L3O
+            L3O -->|1:n| EXTEPG
+            EXTEPG -->|1:n| EXTSN
+        end
+        L3O -.->|n:1| VRF
     end
     subgraph graphCT [Contract]
         subgraph graphCTS [Contract]
@@ -68,6 +77,7 @@ flowchart TD
         CTR -.->|n:1| USEGEPG
         CTR -.->|n:1| ESG
         CTR -.->|n:1| VRF
+        CTR -.->|n:1| EXTEPG
     end
     EPG -.->|n:1| BD
     USEGEPG -.->|n:1| BD

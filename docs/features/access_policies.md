@@ -8,10 +8,12 @@ ACI Fabric and can be referenced by tenant policy objects such as L3Outs.
 flowchart TD
     FAB[Fabric]
     RD(Routed Domain)
+    L3O(L3Out)
 
     subgraph graphAP [Access Policies]
         FAB -->|1:n| RD
     end
+    L3O -.->|n:1| RD
 ```
 
 ## Routed Domain
