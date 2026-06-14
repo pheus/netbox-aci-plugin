@@ -4,6 +4,7 @@
 
 """View tests for tenant Bridge Domain binding models."""
 
+from ipam.models import IPAddress
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
@@ -11,6 +12,7 @@ from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
     ACIBridgeDomainL3OutBinding,
+    ACIBridgeDomainSubnet,
 )
 from ....models.tenant.l3outs import ACIL3Out
 from ....models.tenant.tenants import ACITenant
@@ -173,3 +175,151 @@ class ACIBridgeDomainL3OutBindingViewTestCase(
             kwargs={"pk": self.l3outs[0].pk},
         )
         self.assertHttpStatus(self.client.get(url), 200)
+
+
+class ACIBridgeDomainViewTestCase(
+    ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTestCase
+):
+    """Standard view tests for ACIBridgeDomain."""
+
+    model = ACIBridgeDomain
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIBridgeDomain view tests."""
+        super().setUpTestData()
+
+        # 3 ACIBridgeDomain instances under the shared base tenant + VRF
+        # (the base class already provides cls.aci_bd as a 4th).
+        ACIBridgeDomain.objects.create(
+            name="ACIViewTestBridgeDomain1",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+        )
+        ACIBridgeDomain.objects.create(
+            name="ACIViewTestBridgeDomain2",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+        )
+        ACIBridgeDomain.objects.create(
+            name="ACIViewTestBridgeDomain3",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+        )
+
+        tags = create_tags("Alpha", "Bravo", "Charlie")
+
+        cls.form_data = {
+            "name": "ACIViewTestBridgeDomainX",
+            "name_alias": "BridgeDomainXAlias",
+            "description": "Form-data Bridge Domain",
+            "aci_tenant": cls.aci_tenant.pk,
+            "aci_vrf": cls.aci_vrf.pk,
+            "nb_tenant": cls.nb_tenant.pk,
+            "tags": [t.pk for t in tags],
+        }
+
+        fabric = cls.aci_fabric.name
+        tenant = cls.aci_tenant.name
+        vrf = cls.aci_vrf.name
+        cls.csv_data = (
+            (
+                "name,aci_fabric,aci_tenant,aci_vrf,is_aci_vrf_in_common,"
+                "multi_destination_flooding,unknown_ipv4_multicast,"
+                "unknown_ipv6_multicast,unknown_unicast"
+            ),
+            (
+                f"ACIViewTestBridgeDomain4,{fabric},{tenant},{vrf},,"
+                "bd-flood,flood,flood,proxy"
+            ),
+            (
+                f"ACIViewTestBridgeDomain5,{fabric},{tenant},{vrf},,"
+                "bd-flood,flood,flood,proxy"
+            ),
+            (
+                f"ACIViewTestBridgeDomain6,{fabric},{tenant},{vrf},,"
+                "bd-flood,flood,flood,proxy"
+            ),
+        )
+
+        bds = list(ACIBridgeDomain.objects.exclude(pk=cls.aci_bd.pk).order_by("pk"))
+        cls.csv_update_data = (
+            "id,description",
+            f"{bds[0].pk},Updated Bridge Domain 1",
+            f"{bds[1].pk},Updated Bridge Domain 2",
+            f"{bds[2].pk},Updated Bridge Domain 3",
+        )
+
+        cls.bulk_edit_data = {"description": "Bulk-edited Bridge Domain"}
+
+
+class ACIBridgeDomainSubnetViewTestCase(
+    ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTestCase
+):
+    """Standard view tests for ACIBridgeDomainSubnet."""
+
+    model = ACIBridgeDomainSubnet
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACIBridgeDomainSubnet view tests."""
+        super().setUpTestData()
+
+        cls.aci_subnet_bd = ACIBridgeDomain.objects.create(
+            name="ACIViewTestSubnetBD",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+        )
+        # Each subnet needs a distinct gateway IPAddress (CSV import looks
+        # the gateway up by its unique address string).
+        gateways = [
+            IPAddress.objects.create(address=f"10.60.{i}.1/24") for i in range(1, 8)
+        ]
+
+        ACIBridgeDomainSubnet.objects.create(
+            name="ACIViewTestSubnet1",
+            aci_bridge_domain=cls.aci_subnet_bd,
+            gateway_ip_address=gateways[0],
+        )
+        ACIBridgeDomainSubnet.objects.create(
+            name="ACIViewTestSubnet2",
+            aci_bridge_domain=cls.aci_subnet_bd,
+            gateway_ip_address=gateways[1],
+        )
+        ACIBridgeDomainSubnet.objects.create(
+            name="ACIViewTestSubnet3",
+            aci_bridge_domain=cls.aci_subnet_bd,
+            gateway_ip_address=gateways[2],
+        )
+
+        tags = create_tags("Alpha", "Bravo", "Charlie")
+
+        cls.form_data = {
+            "name": "ACIViewTestSubnetX",
+            "name_alias": "SubnetXAlias",
+            "description": "Form-data Subnet",
+            "aci_bridge_domain": cls.aci_subnet_bd.pk,
+            "gateway_ip_address": gateways[3].pk,
+            "tags": [t.pk for t in tags],
+        }
+
+        fabric = cls.aci_fabric.name
+        tenant = cls.aci_tenant.name
+        vrf = cls.aci_vrf.name
+        bd = cls.aci_subnet_bd.name
+        cls.csv_data = (
+            ("name,aci_fabric,aci_tenant,aci_vrf,aci_bridge_domain,gateway_ip_address"),
+            (f"ACIViewTestSubnet4,{fabric},{tenant},{vrf},{bd},{gateways[4].address}"),
+            (f"ACIViewTestSubnet5,{fabric},{tenant},{vrf},{bd},{gateways[5].address}"),
+            (f"ACIViewTestSubnet6,{fabric},{tenant},{vrf},{bd},{gateways[6].address}"),
+        )
+
+        subnets = list(ACIBridgeDomainSubnet.objects.order_by("pk"))
+        cls.csv_update_data = (
+            "id,description",
+            f"{subnets[0].pk},Updated Subnet 1",
+            f"{subnets[1].pk},Updated Subnet 2",
+            f"{subnets[2].pk},Updated Subnet 3",
+        )
+
+        cls.bulk_edit_data = {"description": "Bulk-edited Subnet"}
