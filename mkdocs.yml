@@ -9,7 +9,15 @@ nav:
   - Features:
       - Fabrics: features/fabrics.md
       - Access Policies: features/access_policies.md
-      - Tenants: features/tenants.md
+      - Tenants:
+          - features/tenants/index.md
+          - Application Profile: features/tenants/application-profiles.md
+          - Endpoint Groups: features/tenants/endpoint-groups.md
+          - Endpoint Security Groups: features/tenants/endpoint-security-groups.md
+          - Networking: features/tenants/networking.md
+          - L3Outs: features/tenants/l3outs.md
+          - Contracts: features/tenants/contracts.md
+          - Contract Filters: features/tenants/contract-filters.md
   - Development:
       - Contributing: development/contributing.md
       - Releasing: development/releasing.md
