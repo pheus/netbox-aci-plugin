@@ -108,6 +108,11 @@ class ACIContractFilterEntryAPIViewTestCase(APIViewTestCases.APIViewTestCase):
 
     model = ACIContractFilterEntry
     view_namespace: str = f"plugins-api:{app_name}"
+    # NetBox's auto-generated GraphQL array-filter test renders enum array
+    # elements as quoted strings (e.g. tcp_rules: {contains: ["rst"]}), which
+    # enum input coercion rejects. The filter works with proper enum literals
+    # ({contains: [RST]}); only the auto-generated case is skipped.
+    graphql_auto_filter_exclude = ("tcp_rules",)
     brief_fields: list[str] = [
         "aci_contract_filter",
         "description",
