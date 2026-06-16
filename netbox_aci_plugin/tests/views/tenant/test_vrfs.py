@@ -4,8 +4,13 @@
 
 """View tests for the tenant ACI VRF model."""
 
-from utilities.testing import ViewTestCases, create_tags
+from django.contrib.contenttypes.models import ContentType
 
+from utilities.testing import ViewTestCases, create_tags
+from utilities.views import get_action_url
+
+from ....models.tenant.bridge_domains import ACIBridgeDomain
+from ....models.tenant.contracts import ACIContractRelation
 from ....models.tenant.vrfs import ACIVRF
 from ..base import ACIModelViewTestCase
 
@@ -66,3 +71,45 @@ class ACIVRFViewTestCase(ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTe
 
     def _get_queryset(self):
         return self.model.objects.exclude(pk__in=self.fixture_pks)
+
+    def test_acivrf_bridgedomains_tab_add_button(self) -> None:
+        """VRF Bridge Domains tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acivrf",
+            "netbox_aci_plugin.view_acibridgedomain",
+            "netbox_aci_plugin.add_acibridgedomain",
+        )
+        url = get_action_url(
+            self.aci_vrf, action="bridgedomains", kwargs={"pk": self.aci_vrf.pk}
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIBridgeDomain, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_vrf.aci_tenant.pk}&amp;'
+            f"aci_vrf={self.aci_vrf.pk}",
+        )
+
+    def test_acivrf_contractrelations_tab_add_button(self) -> None:
+        """VRF Contract Relations tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acivrf",
+            "netbox_aci_plugin.view_acicontractrelation",
+            "netbox_aci_plugin.add_acicontractrelation",
+        )
+        url = get_action_url(
+            self.aci_vrf,
+            action="contractrelations",
+            kwargs={"pk": self.aci_vrf.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractRelation, action="add")
+        content_type = ContentType.objects.get_for_model(ACIVRF)
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_vrf.aci_tenant.pk}&amp;'
+            f"aci_object={self.aci_vrf.pk}&amp;"
+            f"aci_object_type={content_type.pk}",
+        )

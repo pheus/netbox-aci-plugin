@@ -32,6 +32,7 @@ from ...models.tenant.endpoint_groups import (
     ACIUSegEndpointGroup,
     ACIUSegNetworkAttribute,
 )
+from ...object_actions import add_child_action
 from ...tables.tenant.endpoint_groups import (
     ACIEndpointGroupTable,
     ACIUSegEndpointGroupTable,
@@ -202,23 +203,25 @@ class ACIEndpointGroupContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI Endpoint Group."""
 
     queryset = ACIEndpointGroup.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciendpointgroup/contractrelations.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractRelation",
+            _("Assign a Contract"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
+                "aci_object": lambda ctx: ctx["object"].pk,
+                "aci_object_type": lambda ctx: (
+                    ContentType.objects.get_for_model(ctx["object"]).pk
+                ),
+            },
+        ),
+    ) + ACIContractRelationChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
         return (
             super().get_children(request, parent).filter(aci_endpoint_group=parent.pk)
         )
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return ContentType as extra context."""
-        aci_endpoint_group_content_type = ContentType.objects.get_for_model(
-            ACIEndpointGroup
-        )
-
-        return {
-            "content_type_id": aci_endpoint_group_content_type.id,
-        }
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACI object colum hidden."""
@@ -334,7 +337,19 @@ class ACIUSegEndpointGroupContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI uSeg Endpoint Group."""
 
     queryset = ACIUSegEndpointGroup.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciusegendpointgroup/contractrelations.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractRelation",
+            _("Assign a Contract"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
+                "aci_object": lambda ctx: ctx["object"].pk,
+                "aci_object_type": lambda ctx: (
+                    ContentType.objects.get_for_model(ctx["object"]).pk
+                ),
+            },
+        ),
+    ) + ACIContractRelationChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -343,16 +358,6 @@ class ACIUSegEndpointGroupContractRelationView(ACIContractRelationChildrenView):
             .get_children(request, parent)
             .filter(aci_useg_endpoint_group=parent.pk)
         )
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return ContentType as extra context."""
-        aci_useg_endpoint_group_content_type = ContentType.objects.get_for_model(
-            ACIUSegEndpointGroup
-        )
-
-        return {
-            "content_type_id": aci_useg_endpoint_group_content_type.id,
-        }
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACI object colum hidden."""
@@ -375,7 +380,17 @@ class ACIUSegEndpointGroupUSegNetworkAttributeView(ACIUSegNetworkAttributeChildr
     """Children view of ACI uSeg Network Attribute of uSeg Endpoint Group."""
 
     queryset = ACIUSegEndpointGroup.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciusegendpointgroup/networkattributes.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIUSegNetworkAttribute",
+            _("Add a Network Attribute"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
+                "aci_app_profile": lambda ctx: ctx["object"].aci_app_profile_id,
+                "aci_useg_endpoint_group": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIUSegNetworkAttributeChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

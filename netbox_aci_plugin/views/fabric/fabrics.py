@@ -20,6 +20,7 @@ from ...forms.fabric.fabrics import (
 )
 from ...models.fabric.fabrics import ACIFabric
 from ...models.fabric.nodes import ACINode
+from ...object_actions import add_child_action
 from ...tables.fabric.fabrics import ACIFabricTable
 from ..fabric.nodes import ACINodeChildrenView
 from ..fabric.pods import ACIPodChildrenView
@@ -98,7 +99,16 @@ class ACIFabricPodView(ACIPodChildrenView):
     """Children view of ACI Pod of ACI Fabric."""
 
     queryset = ACIFabric.objects.all()
-    template_name = "netbox_aci_plugin/inc/acifabric/pods.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIPod",
+            _("Add a Pod"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIPodChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all ACIPod objects for the current ACIFabric."""
@@ -127,7 +137,16 @@ class ACIFabricNodeView(ACINodeChildrenView):
         permission="netbox_aci_plugin.view_acinode",
         weight=1000,
     )
-    template_name = "netbox_aci_plugin/inc/acifabric/nodes.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACINode",
+            _("Add a Node"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACINodeChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -150,7 +169,16 @@ class ACIFabricTenantView(ACITenantChildrenView):
     """Children view of ACI Tenant of ACI Fabric."""
 
     queryset = ACIFabric.objects.all()
-    template_name = "netbox_aci_plugin/inc/acifabric/tenants.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACITenant",
+            _("Add a Tenant"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACITenantChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all ACITenant objects for the current ACIFabric."""

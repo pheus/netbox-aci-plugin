@@ -25,6 +25,7 @@ from ...models.tenant.contract_filters import (
     ACIContractFilter,
     ACIContractFilterEntry,
 )
+from ...object_actions import add_child_action
 from ...tables.tenant.contract_filters import (
     ACIContractFilterEntryReducedTable,
     ACIContractFilterEntryTable,
@@ -138,7 +139,16 @@ class ACIContractFilterContractFilterEntryView(ACIContractFilterEntryChildrenVie
     """Children view of ACI Contract Filter Entry of ACI Contract Filter."""
 
     queryset = ACIContractFilter.objects.all()
-    template_name = "netbox_aci_plugin/inc/acicontractfilter/entries.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractFilterEntry",
+            _("Add an Entry"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_contract_filter": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIContractFilterEntryChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

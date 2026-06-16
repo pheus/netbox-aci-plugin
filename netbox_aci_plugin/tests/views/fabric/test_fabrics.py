@@ -5,8 +5,13 @@
 """View tests for the fabric ACI Fabric model."""
 
 from utilities.testing import ViewTestCases, create_tags
+from utilities.views import get_action_url
 
+from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.fabric.fabrics import ACIFabric
+from ....models.fabric.nodes import ACINode
+from ....models.fabric.pods import ACIPod
+from ....models.tenant.tenants import ACITenant
 from ..base import ACIModelViewTestCase
 
 
@@ -71,3 +76,71 @@ class ACIFabricViewTestCase(
 
     def _get_queryset(self):
         return self.model.objects.exclude(pk__in=self.fixture_pks)
+
+    def test_acifabric_pods_tab_add_button(self) -> None:
+        """Fabric Pods tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_acipod",
+            "netbox_aci_plugin.add_acipod",
+        )
+        url = get_action_url(
+            self.aci_fabric, action="pods", kwargs={"pk": self.aci_fabric.pk}
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIPod, action="add")
+        self.assertContains(
+            response, f'href="{add_url}?aci_fabric={self.aci_fabric.pk}'
+        )
+
+    def test_acifabric_nodes_tab_add_button(self) -> None:
+        """Fabric Nodes tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_acinode",
+            "netbox_aci_plugin.add_acinode",
+        )
+        url = get_action_url(
+            self.aci_fabric, action="nodes", kwargs={"pk": self.aci_fabric.pk}
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACINode, action="add")
+        self.assertContains(
+            response, f'href="{add_url}?aci_fabric={self.aci_fabric.pk}'
+        )
+
+    def test_acifabric_tenants_tab_add_button(self) -> None:
+        """Fabric Tenants tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_acitenant",
+            "netbox_aci_plugin.add_acitenant",
+        )
+        url = get_action_url(
+            self.aci_fabric, action="tenants", kwargs={"pk": self.aci_fabric.pk}
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACITenant, action="add")
+        self.assertContains(
+            response, f'href="{add_url}?aci_fabric={self.aci_fabric.pk}'
+        )
+
+    def test_acifabric_routed_domains_tab_add_button(self) -> None:
+        """Fabric Routed Domains tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_acirouteddomain",
+            "netbox_aci_plugin.add_acirouteddomain",
+        )
+        url = get_action_url(
+            self.aci_fabric, action="routed_domains", kwargs={"pk": self.aci_fabric.pk}
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIRoutedDomain, action="add")
+        self.assertContains(
+            response, f'href="{add_url}?aci_fabric={self.aci_fabric.pk}'
+        )

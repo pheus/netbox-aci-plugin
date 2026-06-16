@@ -5,8 +5,11 @@
 """View tests for the tenant ACI Application Profile model."""
 
 from utilities.testing import ViewTestCases, create_tags
+from utilities.views import get_action_url
 
 from ....models.tenant.app_profiles import ACIAppProfile
+from ....models.tenant.endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
+from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ..base import ACIModelViewTestCase
 
 
@@ -62,3 +65,66 @@ class ACIAppProfileViewTestCase(
         )
 
         cls.bulk_edit_data = {"description": "Bulk-edited Application Profile"}
+
+    def test_aciappprofile_endpoint_groups_tab(self) -> None:
+        """Endpoint Groups tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciappprofile",
+            "netbox_aci_plugin.view_aciendpointgroup",
+            "netbox_aci_plugin.add_aciendpointgroup",
+        )
+        url = get_action_url(
+            self.aci_app_profile,
+            action="endpointgroups",
+            kwargs={"pk": self.aci_app_profile.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIEndpointGroup, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_app_profile.aci_tenant_id}&amp;'
+            f"aci_app_profile={self.aci_app_profile.pk}",
+        )
+
+    def test_aciappprofile_useg_endpoint_groups_tab(self) -> None:
+        """uSeg Endpoint Groups tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciappprofile",
+            "netbox_aci_plugin.view_aciusegendpointgroup",
+            "netbox_aci_plugin.add_aciusegendpointgroup",
+        )
+        url = get_action_url(
+            self.aci_app_profile,
+            action="usegendpointgroups",
+            kwargs={"pk": self.aci_app_profile.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIUSegEndpointGroup, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_app_profile.aci_tenant_id}&amp;'
+            f"aci_app_profile={self.aci_app_profile.pk}",
+        )
+
+    def test_aciappprofile_endpoint_security_groups_tab(self) -> None:
+        """Endpoint Security Groups tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciappprofile",
+            "netbox_aci_plugin.view_aciendpointsecuritygroup",
+            "netbox_aci_plugin.add_aciendpointsecuritygroup",
+        )
+        url = get_action_url(
+            self.aci_app_profile,
+            action="endpointsecuritygroups",
+            kwargs={"pk": self.aci_app_profile.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIEndpointSecurityGroup, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_app_profile.aci_tenant_id}&amp;'
+            f"aci_app_profile={self.aci_app_profile.pk}",
+        )

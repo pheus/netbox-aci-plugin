@@ -8,7 +8,9 @@ from django.contrib.contenttypes.models import ContentType
 
 from ipam.models import IPAddress
 from utilities.testing import ViewTestCases, create_tags
+from utilities.views import get_action_url
 
+from ....models.tenant.contracts import ACIContractRelation
 from ....models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
@@ -30,7 +32,7 @@ class ACIEndpointGroupViewTestCase(
         super().setUpTestData()
 
         # 3 ACIEndpointGroup instances under the shared base app profile + BD.
-        ACIEndpointGroup.objects.create(
+        cls.aci_epg = ACIEndpointGroup.objects.create(
             name="ACIViewTestEPG1",
             aci_app_profile=cls.aci_app_profile,
             aci_bridge_domain=cls.aci_bd,
@@ -82,6 +84,29 @@ class ACIEndpointGroupViewTestCase(
 
         cls.bulk_edit_data = {"description": "Bulk-edited Endpoint Group"}
 
+    def test_aciendpointgroup_contract_relations_tab(self) -> None:
+        """Contract Relations tab renders the registered Assign button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciendpointgroup",
+            "netbox_aci_plugin.view_acicontractrelation",
+            "netbox_aci_plugin.add_acicontractrelation",
+        )
+        url = get_action_url(
+            self.aci_epg,
+            action="contractrelations",
+            kwargs={"pk": self.aci_epg.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractRelation, action="add")
+        content_type = ContentType.objects.get_for_model(ACIEndpointGroup)
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_epg.aci_tenant.pk}&amp;'
+            f"aci_object={self.aci_epg.pk}&amp;"
+            f"aci_object_type={content_type.pk}",
+        )
+
 
 class ACIUSegEndpointGroupViewTestCase(
     ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTestCase
@@ -96,7 +121,7 @@ class ACIUSegEndpointGroupViewTestCase(
         super().setUpTestData()
 
         # 3 uSeg EPG instances under the shared base app profile + BD.
-        ACIUSegEndpointGroup.objects.create(
+        cls.aci_useg_epg = ACIUSegEndpointGroup.objects.create(
             name="ACIViewTestUSegEPG1",
             aci_app_profile=cls.aci_app_profile,
             aci_bridge_domain=cls.aci_bd,
@@ -147,6 +172,51 @@ class ACIUSegEndpointGroupViewTestCase(
         )
 
         cls.bulk_edit_data = {"description": "Bulk-edited uSeg Endpoint Group"}
+
+    def test_aciusegendpointgroup_contract_relations_tab(self) -> None:
+        """uSeg Contract Relations tab renders the registered Assign button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciusegendpointgroup",
+            "netbox_aci_plugin.view_acicontractrelation",
+            "netbox_aci_plugin.add_acicontractrelation",
+        )
+        url = get_action_url(
+            self.aci_useg_epg,
+            action="contractrelations",
+            kwargs={"pk": self.aci_useg_epg.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractRelation, action="add")
+        content_type = ContentType.objects.get_for_model(ACIUSegEndpointGroup)
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_useg_epg.aci_tenant.pk}&amp;'
+            f"aci_object={self.aci_useg_epg.pk}&amp;"
+            f"aci_object_type={content_type.pk}",
+        )
+
+    def test_aciusegendpointgroup_network_attributes_tab(self) -> None:
+        """Network Attributes tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciusegendpointgroup",
+            "netbox_aci_plugin.view_aciusegnetworkattribute",
+            "netbox_aci_plugin.add_aciusegnetworkattribute",
+        )
+        url = get_action_url(
+            self.aci_useg_epg,
+            action="usegnetworkattributes",
+            kwargs={"pk": self.aci_useg_epg.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIUSegNetworkAttribute, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_useg_epg.aci_tenant.pk}&amp;'
+            f"aci_app_profile={self.aci_useg_epg.aci_app_profile_id}&amp;"
+            f"aci_useg_endpoint_group={self.aci_useg_epg.pk}",
+        )
 
 
 class ACIUSegNetworkAttributeViewTestCase(

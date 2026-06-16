@@ -7,6 +7,7 @@
 from django.contrib.contenttypes.models import ContentType
 
 from utilities.testing import ViewTestCases, create_tags
+from utilities.views import get_action_url
 
 from ....models.tenant.contract_filters import ACIContractFilter
 from ....models.tenant.contracts import (
@@ -32,7 +33,7 @@ class ACIContractViewTestCase(
         super().setUpTestData()
 
         # 3 ACIContract instances under the shared base tenant.
-        ACIContract.objects.create(
+        cls.aci_contract = ACIContract.objects.create(
             name="ACIViewTestContract1",
             aci_tenant=cls.aci_tenant,
             scope="context",
@@ -78,6 +79,48 @@ class ACIContractViewTestCase(
         )
 
         cls.bulk_edit_data = {"description": "Bulk-edited Contract"}
+
+    def test_acicontract_relations_tab(self) -> None:
+        """Relations tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acicontract",
+            "netbox_aci_plugin.view_acicontractrelation",
+            "netbox_aci_plugin.add_acicontractrelation",
+        )
+        url = get_action_url(
+            self.aci_contract,
+            action="contractrelations",
+            kwargs={"pk": self.aci_contract.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractRelation, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_contract.aci_tenant_id}&amp;'
+            f"aci_contract={self.aci_contract.pk}",
+        )
+
+    def test_acicontract_subjects_tab(self) -> None:
+        """Subjects tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acicontract",
+            "netbox_aci_plugin.view_acicontractsubject",
+            "netbox_aci_plugin.add_acicontractsubject",
+        )
+        url = get_action_url(
+            self.aci_contract,
+            action="contractsubjects",
+            kwargs={"pk": self.aci_contract.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractSubject, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_contract.aci_tenant_id}&amp;'
+            f"aci_contract={self.aci_contract.pk}",
+        )
 
 
 class ACIContractRelationViewTestCase(
@@ -322,3 +365,23 @@ class ACIContractSubjectFilterViewTestCase(
         )
 
         cls.bulk_edit_data = {"comments": "Bulk-edited subject filter"}
+
+    def test_acicontractsubject_filters_tab(self) -> None:
+        """Subject Filters tab renders the registered Assign button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acicontractsubject",
+            "netbox_aci_plugin.view_acicontractsubjectfilter",
+            "netbox_aci_plugin.add_acicontractsubjectfilter",
+        )
+        url = get_action_url(
+            self.aci_subject,
+            action="contractsubjectfilters",
+            kwargs={"pk": self.aci_subject.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractSubjectFilter, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_contract_subject={self.aci_subject.pk}',
+        )

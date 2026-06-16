@@ -16,6 +16,7 @@ from ...forms.tenant.vrfs import (
     ACIVRFImportForm,
 )
 from ...models.tenant.vrfs import ACIVRF
+from ...object_actions import add_child_action
 from ...tables.tenant.vrfs import ACIVRFTable
 from .bridge_domains import ACIBridgeDomainChildrenView
 from .contracts import ACIContractRelationChildrenView
@@ -120,7 +121,16 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
     """Children view of ACI Bridge Domain of ACI VRF."""
 
     queryset = ACIVRF.objects.all()
-    template_name = "netbox_aci_plugin/inc/acivrf/bridgedomains.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIBridgeDomain",
+            _("Add a Bridge Domain"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_vrf": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIBridgeDomainChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -143,19 +153,23 @@ class ACIVRFContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI VRF."""
 
     queryset = ACIVRF.objects.all()
-    template_name = "netbox_aci_plugin/inc/acivrf/contractrelations.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractRelation",
+            _("Add a Relation"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_object": lambda ctx: ctx["object"].pk,
+                "aci_object_type": lambda ctx: (
+                    ContentType.objects.get_for_model(ctx["object"]).pk
+                ),
+            },
+        ),
+    ) + ACIContractRelationChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
         return super().get_children(request, parent).filter(aci_vrf=parent.pk)
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return ContentType as extra context."""
-        aci_vrf_content_type = ContentType.objects.get_for_model(ACIVRF)
-
-        return {
-            "content_type_id": aci_vrf_content_type.id,
-        }
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACI object colum hidden."""

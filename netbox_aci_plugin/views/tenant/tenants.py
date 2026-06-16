@@ -21,6 +21,7 @@ from ...forms.tenant.tenants import (
 from ...models.tenant.endpoint_groups import ACIEndpointGroup
 from ...models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ...models.tenant.tenants import ACITenant
+from ...object_actions import add_child_action
 from ...tables.tenant.tenants import ACITenantTable
 from .app_profiles import ACIAppProfileChildrenView
 from .bridge_domains import ACIBridgeDomainChildrenView
@@ -157,7 +158,16 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
     """Children view of ACI Application Profile of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/inc/acitenant/appprofiles.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIAppProfile",
+            _("Add an Application Profile"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIAppProfileChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all ACIAppProfile objects for the current ACITenant."""
@@ -186,7 +196,16 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
         permission="netbox_aci_plugin.view_aciendpointgroup",
         weight=1000,
     )
-    template_name = "netbox_aci_plugin/inc/acitenant/endpointgroups.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEndpointGroup",
+            _("Add an EPG"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIEndpointGroupChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -223,7 +242,16 @@ class ACITenantEndpointSecurityGroupView(ACIEndpointSecurityGroupChildrenView):
         permission="netbox_aci_plugin.view_aciendpointsecuritygroup",
         weight=1000,
     )
-    template_name = "netbox_aci_plugin/inc/acitenant/endpointsecuritygroups.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEndpointSecurityGroup",
+            _("Add an ESG"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIEndpointSecurityGroupChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -248,7 +276,16 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
     """Children view of ACI Bridge Domain of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/inc/acitenant/bridgedomains.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIBridgeDomain",
+            _("Add a Bridge Domain"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIBridgeDomainChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -269,7 +306,16 @@ class ACITenantVRFView(ACIVRFChildrenView):
     """Children view of ACI VRF of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/inc/acitenant/vrfs.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIVRF",
+            _("Add a VRF"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIVRFChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all ACIVRF objects for current ACITenant."""
@@ -290,7 +336,16 @@ class ACITenantContractView(ACIContractChildrenView):
     """Children view of ACI Application Profile of ACI Tenant."""
 
     queryset = ACITenant.objects.all()
-    template_name = "netbox_aci_plugin/inc/acitenant/contracts.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContract",
+            _("Add a Contract"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIContractChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all ACIContract objects for the current ACITenant."""

@@ -15,6 +15,7 @@ from ...forms.tenant.app_profiles import (
     ACIAppProfileImportForm,
 )
 from ...models.tenant.app_profiles import ACIAppProfile
+from ...object_actions import add_child_action
 from ...tables.tenant.app_profiles import ACIAppProfileTable
 from .endpoint_groups import (
     ACIEndpointGroupChildrenView,
@@ -122,7 +123,17 @@ class ACIAppProfileEndpointGroupView(ACIEndpointGroupChildrenView):
     """Children view of ACI Endpoint Group of ACI Application Profile."""
 
     queryset = ACIAppProfile.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciappprofile/endpointgroups.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEndpointGroup",
+            _("Add an EPG"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_app_profile": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIEndpointGroupChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -143,7 +154,17 @@ class ACIAppProfileUSegEndpointGroupView(ACIUSegEndpointGroupChildrenView):
     """Children view of ACI uSeg Endpoint Group of ACI Application Profile."""
 
     queryset = ACIAppProfile.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciappprofile/usegendpointgroups.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIUSegEndpointGroup",
+            _("Add a uSeg EPG"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_app_profile": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIUSegEndpointGroupChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -166,7 +187,17 @@ class ACIAppProfileEndpointSecurityGroupView(ACIEndpointSecurityGroupChildrenVie
     """Children view of ACI Endpoint Security Group of ACI App Profile."""
 
     queryset = ACIAppProfile.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciappprofile/endpointsecuritygroups.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEndpointSecurityGroup",
+            _("Add an ESG"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_app_profile": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIEndpointSecurityGroupChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

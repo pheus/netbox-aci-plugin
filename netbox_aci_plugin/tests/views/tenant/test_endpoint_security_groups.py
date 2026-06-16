@@ -8,7 +8,9 @@ from django.contrib.contenttypes.models import ContentType
 
 from ipam.models import IPAddress
 from utilities.testing import ViewTestCases, create_tags
+from utilities.views import get_action_url
 
+from ....models.tenant.contracts import ACIContractRelation
 from ....models.tenant.endpoint_groups import ACIEndpointGroup
 from ....models.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroup,
@@ -31,7 +33,7 @@ class ACIEndpointSecurityGroupViewTestCase(
         super().setUpTestData()
 
         # 3 ESG instances under the shared base app profile + VRF.
-        ACIEndpointSecurityGroup.objects.create(
+        cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
             name="ACIViewTestESG1",
             aci_app_profile=cls.aci_app_profile,
             aci_vrf=cls.aci_vrf,
@@ -79,6 +81,73 @@ class ACIEndpointSecurityGroupViewTestCase(
         )
 
         cls.bulk_edit_data = {"description": "Bulk-edited Endpoint Security Group"}
+
+    def test_aciendpointsecuritygroup_contract_relations_tab(self) -> None:
+        """Contract Relations tab renders the registered Assign button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciendpointsecuritygroup",
+            "netbox_aci_plugin.view_acicontractrelation",
+            "netbox_aci_plugin.add_acicontractrelation",
+        )
+        url = get_action_url(
+            self.aci_esg,
+            action="contractrelations",
+            kwargs={"pk": self.aci_esg.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractRelation, action="add")
+        content_type = ContentType.objects.get_for_model(ACIEndpointSecurityGroup)
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_esg.aci_tenant.pk}&amp;'
+            f"aci_object={self.aci_esg.pk}&amp;"
+            f"aci_object_type={content_type.pk}",
+        )
+
+    def test_aciendpointsecuritygroup_epg_selectors_tab(self) -> None:
+        """EPG Selectors tab renders the registered Assign button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciendpointsecuritygroup",
+            "netbox_aci_plugin.view_aciesgendpointgroupselector",
+            "netbox_aci_plugin.add_aciesgendpointgroupselector",
+        )
+        url = get_action_url(
+            self.aci_esg,
+            action="epgselectors",
+            kwargs={"pk": self.aci_esg.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIEsgEndpointGroupSelector, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_esg.aci_tenant.pk}&amp;'
+            f"aci_app_profile={self.aci_esg.aci_app_profile_id}&amp;"
+            f"aci_endpoint_security_group={self.aci_esg.pk}",
+        )
+
+    def test_aciendpointsecuritygroup_ep_selectors_tab(self) -> None:
+        """Endpoint Selectors tab renders the registered Assign button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_aciendpointsecuritygroup",
+            "netbox_aci_plugin.view_aciesgendpointselector",
+            "netbox_aci_plugin.add_aciesgendpointselector",
+        )
+        url = get_action_url(
+            self.aci_esg,
+            action="epselectors",
+            kwargs={"pk": self.aci_esg.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIEsgEndpointSelector, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_esg.aci_tenant.pk}&amp;'
+            f"aci_app_profile={self.aci_esg.aci_app_profile_id}&amp;"
+            f"aci_endpoint_security_group={self.aci_esg.pk}",
+        )
 
 
 class ACIEsgEndpointGroupSelectorViewTestCase(

@@ -35,6 +35,7 @@ from ...models.tenant.l3outs import (
     ACIExternalSubnet,
     ACIL3Out,
 )
+from ...object_actions import add_child_action
 from ...tables.tenant.l3outs import (
     ACIExternalEndpointGroupReducedTable,
     ACIExternalEndpointGroupTable,
@@ -210,7 +211,16 @@ class ACIL3OutExternalEndpointGroupsView(ACIExternalEndpointGroupChildrenView):
     """Children view of ACI External EPGs of ACI L3Out."""
 
     queryset = ACIL3Out.objects.all()
-    template_name = "netbox_aci_plugin/inc/acil3out/externalendpointgroups.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIExternalEndpointGroup",
+            _("Add an External EPG"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_l3out": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIExternalEndpointGroupChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects of the current parent object."""
@@ -228,7 +238,18 @@ class ACIL3OutBridgeDomainBindingsView(ACIBridgeDomainL3OutBindingChildrenView):
     """Children view of BD L3Out bindings of ACI L3Out."""
 
     queryset = ACIL3Out.objects.all()
-    template_name = "netbox_aci_plugin/inc/acil3out/bridgedomains.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIBridgeDomainL3OutBinding",
+            _("Attach a Bridge Domain"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_tenant.aci_fabric_id,
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_vrf": lambda ctx: ctx["object"].aci_vrf_id,
+                "aci_l3out": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIBridgeDomainL3OutBindingChildrenView.actions
     tab = ViewTab(
         label=_("Bridge Domains"),
         badge=lambda obj: obj.aci_bridge_domain_bindings.count(),
@@ -279,7 +300,16 @@ class ACIRoutedDomainL3OutsView(ACIL3OutChildrenView):
     """Children view of ACI L3Outs of ACI Routed Domain."""
 
     queryset = ACIRoutedDomain.objects.all()
-    template_name = "netbox_aci_plugin/inc/acirouteddomain/l3outs.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIL3Out",
+            _("Add an L3Out"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
+                "aci_routed_domain": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIL3OutChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects of the current parent object."""
@@ -351,7 +381,17 @@ class ACIExternalEndpointGroupExternalSubnetView(ACIExternalSubnetChildrenView):
     """Children view of ACI External Subnets of ACI External EPG."""
 
     queryset = ACIExternalEndpointGroup.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciexternalendpointgroup/subnets.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIExternalSubnet",
+            _("Add an External Subnet"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
+                "aci_l3out": lambda ctx: ctx["object"].aci_l3out_id,
+                "aci_external_endpoint_group": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIExternalSubnetChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects of the current parent object."""
@@ -375,9 +415,19 @@ class ACIExternalEndpointGroupContractRelationView(ACIContractRelationChildrenVi
     """Children view of ACI Contract Relation of ACI External EPG."""
 
     queryset = ACIExternalEndpointGroup.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciexternalendpointgroup/contractrelations.html"
-    )
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractRelation",
+            _("Assign a Contract"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
+                "aci_object": lambda ctx: ctx["object"].pk,
+                "aci_object_type": lambda ctx: (
+                    ContentType.objects.get_for_model(ctx["object"]).pk
+                ),
+            },
+        ),
+    ) + ACIContractRelationChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects of the current parent object."""
@@ -386,11 +436,6 @@ class ACIExternalEndpointGroupContractRelationView(ACIContractRelationChildrenVi
             .get_children(request, parent)
             .filter(_aci_external_endpoint_group=parent.pk)
         )
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return ContentType as extra context."""
-        content_type = ContentType.objects.get_for_model(ACIExternalEndpointGroup)
-        return {"content_type_id": content_type.id}
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACI object columns hidden."""

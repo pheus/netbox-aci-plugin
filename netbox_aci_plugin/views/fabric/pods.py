@@ -17,6 +17,7 @@ from ...forms.fabric.pods import (
     ACIPodImportForm,
 )
 from ...models.fabric.pods import ACIPod
+from ...object_actions import add_child_action
 from ...tables.fabric.pods import ACIPodTable
 from ..fabric.nodes import ACINodeChildrenView
 
@@ -109,7 +110,17 @@ class ACIPodNodeView(ACINodeChildrenView):
     """Children view of ACI Pod of ACI Pod."""
 
     queryset = ACIPod.objects.all()
-    template_name = "netbox_aci_plugin/inc/acipod/nodes.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACINode",
+            _("Add a Node"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
+                "aci_pod": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACINodeChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all ACINode objects for the current ACIPod."""

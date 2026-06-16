@@ -32,6 +32,7 @@ from ...models.tenant.endpoint_security_groups import (
     ACIEsgEndpointGroupSelector,
     ACIEsgEndpointSelector,
 )
+from ...object_actions import add_child_action
 from ...tables.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupTable,
     ACIEsgEndpointGroupSelectorTable,
@@ -206,9 +207,19 @@ class ACIEndpointSecurityGroupContractRelationView(ACIContractRelationChildrenVi
     """Children view of ACI Contract Relation of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
-    template_name = (
-        "netbox_aci_plugin/inc/aciendpointsecuritygroup/contractrelations.html"
-    )
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractRelation",
+            _("Assign a Contract"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
+                "aci_object": lambda ctx: ctx["object"].pk,
+                "aci_object_type": lambda ctx: (
+                    ContentType.objects.get_for_model(ctx["object"]).pk
+                ),
+            },
+        ),
+    ) + ACIContractRelationChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -217,16 +228,6 @@ class ACIEndpointSecurityGroupContractRelationView(ACIContractRelationChildrenVi
             .get_children(request, parent)
             .filter(aci_endpoint_security_group=parent.pk)
         )
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return ContentType as extra context."""
-        aci_endpoint_security_group_content_type = ContentType.objects.get_for_model(
-            ACIEndpointSecurityGroup
-        )
-
-        return {
-            "content_type_id": aci_endpoint_security_group_content_type.id,
-        }
 
     def get_table(self, *args, **kwargs):
         """Return the table with ACI object colum hidden."""
@@ -249,7 +250,17 @@ class ACIEndpointSecurityGroupEsgEndpointGroupSelectorView(
     """Children view of ACI ESG Endpoint Group Selector of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciendpointsecuritygroup/epgselectors.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEsgEndpointGroupSelector",
+            _("Assign an EPG"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
+                "aci_app_profile": lambda ctx: ctx["object"].aci_app_profile_id,
+                "aci_endpoint_security_group": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIEsgEndpointGroupSelectorChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -280,7 +291,17 @@ class ACIEndpointSecurityGroupEsgEndpointSelectorView(
     """Children view of ACI ESG Endpoint Selector of ACI ESG."""
 
     queryset = ACIEndpointSecurityGroup.objects.all()
-    template_name = "netbox_aci_plugin/inc/aciendpointsecuritygroup/epselectors.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEsgEndpointSelector",
+            _("Assign an Endpoint"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
+                "aci_app_profile": lambda ctx: ctx["object"].aci_app_profile_id,
+                "aci_endpoint_security_group": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIEsgEndpointSelectorChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

@@ -1,0 +1,5 @@
+{% if url %}
+  <a href="{{ url }}{% if url_params %}?{{ url_params.urlencode }}{% endif %}" class="btn btn-primary" role="button">
+    <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {{ label }}
+  </a>
+{% endif %}

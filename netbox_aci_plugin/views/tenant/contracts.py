@@ -37,6 +37,7 @@ from ...models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
+from ...object_actions import add_child_action
 from ...tables.tenant.contracts import (
     ACIContractRelationTable,
     ACIContractSubjectFilterReducedTable,
@@ -240,7 +241,16 @@ class ACIContractContractRelationView(ACIContractRelationChildrenView):
     """Children view of ACI Contract Relation of ACI Contract."""
 
     queryset = ACIContract.objects.all()
-    template_name = "netbox_aci_plugin/inc/acicontract/relations.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractRelation",
+            _("Add a Relation"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_contract": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIContractRelationChildrenView.actions
     tab = ViewTab(
         label=_("Relations"),
         badge=lambda obj: obj.aci_contract_relations.count(),
@@ -269,7 +279,17 @@ class ACIContractContractSubjectView(ACIContractSubjectChildrenView):
     """Children view of ACI Contract Subject of ACI Contract."""
 
     queryset = ACIContract.objects.all()
-    template_name = "netbox_aci_plugin/inc/acicontract/subjects.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractSubject",
+            _("Add a Subject"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_contract": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIContractSubjectChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -481,7 +501,15 @@ class ACIContractContractSubjectFilterView(ACIContractSubjectFilterChildrenView)
     """Children view of ACI Contract Subject Filter of ACI Contract Subject."""
 
     queryset = ACIContractSubject.objects.all()
-    template_name = "netbox_aci_plugin/inc/acicontractsubject/subjectfilters.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIContractSubjectFilter",
+            _("Assign a Filter"),
+            url_params={
+                "aci_contract_subject": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIContractSubjectFilterChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""

@@ -4,10 +4,13 @@
 
 """View tests for tenant L3Out models."""
 
+from django.contrib.contenttypes.models import ContentType
+
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
 from ....models.access_policies.domains import ACIRoutedDomain
+from ....models.tenant.contracts import ACIContractRelation
 from ....models.tenant.l3outs import (
     ACIExternalEndpointGroup,
     ACIExternalSubnet,
@@ -107,18 +110,47 @@ class ACIL3OutViewTestCase(
         cls.bulk_edit_data = {"description": "Bulk-edited L3Out"}
 
     def test_acil3out_external_endpoint_groups_tab(self) -> None:
-        """ExternalEndpointGroups tab on the L3Out detail page returns 200."""
+        """External EPGs tab renders the registered Add button."""
         instance = ACIL3Out.objects.first()
         self.add_permissions(
             "netbox_aci_plugin.view_acil3out",
             "netbox_aci_plugin.view_aciexternalendpointgroup",
+            "netbox_aci_plugin.add_aciexternalendpointgroup",
         )
         url = get_action_url(
             instance,
             action="externalendpointgroups",
             kwargs={"pk": instance.pk},
         )
-        self.assertHttpStatus(self.client.get(url), 200)
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIExternalEndpointGroup, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={instance.aci_tenant_id}&amp;'
+            f"aci_l3out={instance.pk}",
+        )
+
+    def test_acirouteddomain_l3outs_tab(self) -> None:
+        """Routed Domain L3Outs tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acirouteddomain",
+            "netbox_aci_plugin.view_acil3out",
+            "netbox_aci_plugin.add_acil3out",
+        )
+        url = get_action_url(
+            self.aci_routed_domain,
+            action="l3outs",
+            kwargs={"pk": self.aci_routed_domain.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIL3Out, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_fabric={self.aci_routed_domain.aci_fabric_id}&amp;'
+            f"aci_routed_domain={self.aci_routed_domain.pk}",
+        )
 
 
 class ACIExternalEndpointGroupViewTestCase(
@@ -207,28 +239,49 @@ class ACIExternalEndpointGroupViewTestCase(
         cls.bulk_edit_data = {"description": "Bulk-edited External EPG"}
 
     def test_aciexternalendpointgroup_subnets_tab(self) -> None:
-        """External Subnets tab on the External EPG detail page returns 200."""
+        """External Subnets tab renders the registered Add button."""
         instance = ACIExternalEndpointGroup.objects.first()
         self.add_permissions(
             "netbox_aci_plugin.view_aciexternalendpointgroup",
             "netbox_aci_plugin.view_aciexternalsubnet",
+            "netbox_aci_plugin.add_aciexternalsubnet",
         )
         url = get_action_url(instance, action="subnets", kwargs={"pk": instance.pk})
-        self.assertHttpStatus(self.client.get(url), 200)
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIExternalSubnet, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={instance.aci_tenant.pk}&amp;'
+            f"aci_l3out={instance.aci_l3out_id}&amp;"
+            f"aci_external_endpoint_group={instance.pk}",
+        )
 
     def test_aciexternalendpointgroup_contract_relations_tab(self) -> None:
-        """ContractRelations tab on External EPG detail returns 200."""
+        """Contract Relations Add button uses aci_object (not _id) + tenant."""
         instance = ACIExternalEndpointGroup.objects.first()
         self.add_permissions(
             "netbox_aci_plugin.view_aciexternalendpointgroup",
             "netbox_aci_plugin.view_acicontractrelation",
+            "netbox_aci_plugin.add_acicontractrelation",
         )
         url = get_action_url(
             instance,
             action="contractrelations",
             kwargs={"pk": instance.pk},
         )
-        self.assertHttpStatus(self.client.get(url), 200)
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractRelation, action="add")
+        content_type = ContentType.objects.get_for_model(ACIExternalEndpointGroup)
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={instance.aci_tenant.pk}&amp;'
+            f"aci_object={instance.pk}&amp;"
+            f"aci_object_type={content_type.pk}",
+        )
+        # The old partial used the wrong field name aci_object_id.
+        self.assertNotContains(response, "aci_object_id=")
 
 
 class ACIExternalSubnetViewTestCase(

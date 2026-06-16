@@ -5,6 +5,7 @@
 """View tests for tenant Contract Filter models."""
 
 from utilities.testing import ViewTestCases, create_tags
+from utilities.views import get_action_url
 
 from ....models.tenant.contract_filters import (
     ACIContractFilter,
@@ -33,7 +34,7 @@ class ACIContractFilterViewTestCase(
         cls.fixture_pks = list(ACIContractFilter.objects.values_list("pk", flat=True))
 
         # 3 ACIContractFilter instances under the shared base tenant.
-        ACIContractFilter.objects.create(
+        cls.aci_filter = ACIContractFilter.objects.create(
             name="ACIViewTestContractFilter1", aci_tenant=cls.aci_tenant
         )
         ACIContractFilter.objects.create(
@@ -77,6 +78,27 @@ class ACIContractFilterViewTestCase(
 
     def _get_queryset(self):
         return self.model.objects.exclude(pk__in=self.fixture_pks)
+
+    def test_acicontractfilter_entries_tab(self) -> None:
+        """Filter Entries tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acicontractfilter",
+            "netbox_aci_plugin.view_acicontractfilterentry",
+            "netbox_aci_plugin.add_acicontractfilterentry",
+        )
+        url = get_action_url(
+            self.aci_filter,
+            action="contractfilterentries",
+            kwargs={"pk": self.aci_filter.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIContractFilterEntry, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_filter.aci_tenant_id}&amp;'
+            f"aci_contract_filter={self.aci_filter.pk}",
+        )
 
 
 class ACIContractFilterEntryViewTestCase(

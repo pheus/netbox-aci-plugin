@@ -31,6 +31,7 @@ from ...models.tenant.bridge_domains import (
     ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
+from ...object_actions import add_child_action
 from ...tables.tenant.bridge_domains import (
     ACIBridgeDomainL3OutBindingTable,
     ACIBridgeDomainSubnetReducedTable,
@@ -206,7 +207,19 @@ class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
     """Children view of ACI Bridge Domain Subnet of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.all()
-    template_name = "netbox_aci_plugin/inc/acibridgedomain/subnets.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIBridgeDomainSubnet",
+            _("Add a BD Subnet"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_vrf": lambda ctx: ctx["object"].aci_vrf_id,
+                "aci_bridge_domain": lambda ctx: ctx["object"].pk,
+                "nb_vrf": lambda ctx: ctx["object"].aci_vrf.nb_vrf_id,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIBridgeDomainSubnetChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -227,7 +240,17 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
     """Children view of ACI Endpoint Group of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.all()
-    template_name = "netbox_aci_plugin/inc/acibridgedomain/endpointgroups.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEndpointGroup",
+            _("Add an EPG"),
+            url_params={
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_bridge_domain": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIEndpointGroupChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects to the current parent object."""
@@ -445,7 +468,18 @@ class ACIBridgeDomainL3OutBindingsView(ACIBridgeDomainL3OutBindingChildrenView):
     """Children view of ACI BD L3Out bindings of ACI Bridge Domain."""
 
     queryset = ACIBridgeDomain.objects.all()
-    template_name = "netbox_aci_plugin/inc/acibridgedomain/l3outs.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIBridgeDomainL3OutBinding",
+            _("Attach an L3Out"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric.pk,
+                "aci_tenant": lambda ctx: ctx["object"].aci_tenant_id,
+                "aci_vrf": lambda ctx: ctx["object"].aci_vrf_id,
+                "aci_bridge_domain": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIBridgeDomainL3OutBindingChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all children objects of the current parent object."""

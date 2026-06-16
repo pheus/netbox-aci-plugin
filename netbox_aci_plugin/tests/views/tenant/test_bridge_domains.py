@@ -14,6 +14,7 @@ from ....models.tenant.bridge_domains import (
     ACIBridgeDomainL3OutBinding,
     ACIBridgeDomainSubnet,
 )
+from ....models.tenant.endpoint_groups import ACIEndpointGroup
 from ....models.tenant.l3outs import ACIL3Out
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
@@ -151,30 +152,51 @@ class ACIBridgeDomainL3OutBindingViewTestCase(
         cls.bulk_edit_data = {"comments": "Bulk-edited comment"}
 
     def test_acibridgedomain_l3outbindings_tab(self) -> None:
-        """L3Out-bindings tab on the BD detail page returns 200."""
+        """L3Out-bindings tab renders the registered Attach button."""
         self.add_permissions(
             "netbox_aci_plugin.view_acibridgedomain",
             "netbox_aci_plugin.view_acibridgedomainl3outbinding",
+            "netbox_aci_plugin.add_acibridgedomainl3outbinding",
         )
         url = get_action_url(
             self.aci_bd,
             action="l3outbindings",
             kwargs={"pk": self.aci_bd.pk},
         )
-        self.assertHttpStatus(self.client.get(url), 200)
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIBridgeDomainL3OutBinding, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_fabric={self.aci_bd.aci_fabric.pk}&amp;'
+            f"aci_tenant={self.aci_bd.aci_tenant_id}&amp;"
+            f"aci_vrf={self.aci_bd.aci_vrf_id}&amp;"
+            f"aci_bridge_domain={self.aci_bd.pk}",
+        )
 
     def test_acil3out_bridgedomainbindings_tab(self) -> None:
-        """BD-bindings tab on the L3Out detail page returns 200."""
+        """BD-bindings tab on the L3Out detail renders the Attach button."""
+        l3out = self.l3outs[0]
         self.add_permissions(
             "netbox_aci_plugin.view_acil3out",
             "netbox_aci_plugin.view_acibridgedomainl3outbinding",
+            "netbox_aci_plugin.add_acibridgedomainl3outbinding",
         )
         url = get_action_url(
-            self.l3outs[0],
+            l3out,
             action="bridgedomainbindings",
-            kwargs={"pk": self.l3outs[0].pk},
+            kwargs={"pk": l3out.pk},
         )
-        self.assertHttpStatus(self.client.get(url), 200)
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIBridgeDomainL3OutBinding, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_fabric={l3out.aci_tenant.aci_fabric_id}&amp;'
+            f"aci_tenant={l3out.aci_tenant_id}&amp;"
+            f"aci_vrf={l3out.aci_vrf_id}&amp;"
+            f"aci_l3out={l3out.pk}",
+        )
 
 
 class ACIBridgeDomainViewTestCase(
@@ -251,6 +273,51 @@ class ACIBridgeDomainViewTestCase(
         )
 
         cls.bulk_edit_data = {"description": "Bulk-edited Bridge Domain"}
+
+    def test_acibridgedomain_subnets_tab(self) -> None:
+        """Subnets tab renders the Add button with nb_vrf no longer bugged."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acibridgedomain",
+            "netbox_aci_plugin.view_acibridgedomainsubnet",
+            "netbox_aci_plugin.add_acibridgedomainsubnet",
+        )
+        url = get_action_url(
+            self.aci_bd,
+            action="bridgedomainsubnets",
+            kwargs={"pk": self.aci_bd.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIBridgeDomainSubnet, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_bd.aci_tenant_id}&amp;'
+            f"aci_vrf={self.aci_bd.aci_vrf_id}&amp;"
+            f"aci_bridge_domain={self.aci_bd.pk}",
+        )
+        # The old partial set nb_vrf to the ACI VRF's pk; it must not reappear.
+        self.assertNotContains(response, f"nb_vrf={self.aci_vrf.pk}")
+
+    def test_acibridgedomain_endpoint_groups_tab(self) -> None:
+        """Endpoint Groups tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acibridgedomain",
+            "netbox_aci_plugin.view_aciendpointgroup",
+            "netbox_aci_plugin.add_aciendpointgroup",
+        )
+        url = get_action_url(
+            self.aci_bd,
+            action="endpointgroups",
+            kwargs={"pk": self.aci_bd.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIEndpointGroup, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_tenant={self.aci_bd.aci_tenant_id}&amp;'
+            f"aci_bridge_domain={self.aci_bd.pk}",
+        )
 
 
 class ACIBridgeDomainSubnetViewTestCase(

@@ -5,7 +5,9 @@
 """View tests for the fabric ACI Pod model."""
 
 from utilities.testing import ViewTestCases, create_tags
+from utilities.views import get_action_url
 
+from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
 from ..base import ACIModelViewTestCase
 
@@ -21,7 +23,7 @@ class ACIPodViewTestCase(ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTe
         super().setUpTestData()
 
         # 3 ACIPod instances under the shared base fabric.
-        ACIPod.objects.create(
+        cls.aci_pod = ACIPod.objects.create(
             name="ACIViewTestPod1", aci_fabric=cls.aci_fabric, pod_id=1
         )
         ACIPod.objects.create(
@@ -59,3 +61,22 @@ class ACIPodViewTestCase(ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTe
         )
 
         cls.bulk_edit_data = {"description": "Bulk-edited Pod"}
+
+    def test_acipod_nodes_tab_add_button(self) -> None:
+        """Pod Nodes tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acipod",
+            "netbox_aci_plugin.view_acinode",
+            "netbox_aci_plugin.add_acinode",
+        )
+        url = get_action_url(
+            self.aci_pod, action="nodes", kwargs={"pk": self.aci_pod.pk}
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACINode, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_fabric={self.aci_fabric.pk}&amp;'
+            f"aci_pod={self.aci_pod.pk}",
+        )

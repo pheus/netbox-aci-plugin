@@ -18,6 +18,7 @@ from ...forms.access_policies.domains import (
 )
 from ...models.access_policies.domains import ACIRoutedDomain
 from ...models.fabric.fabrics import ACIFabric
+from ...object_actions import add_child_action
 from ...tables.access_policies.domains import ACIRoutedDomainTable
 
 #
@@ -110,7 +111,16 @@ class ACIFabricRoutedDomainView(ACIRoutedDomainChildrenView):
     """Children view of ACI Routed Domains of an ACI Fabric."""
 
     queryset = ACIFabric.objects.all()
-    template_name = "netbox_aci_plugin/inc/acifabric/routed_domains.html"
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIRoutedDomain",
+            _("Add a Domain"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].pk,
+                "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+            },
+        ),
+    ) + ACIRoutedDomainChildrenView.actions
 
     def get_children(self, request, parent):
         """Return all ACIRoutedDomain objects for the current ACIFabric."""
