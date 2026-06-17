@@ -54,15 +54,15 @@ Draft PRs are welcome **after** an issue is accepted and assigned.
 
 ## Types of Contributions
 
-- **Report Bugs** → see [Reporting Bugs](#Reporting-Bugs).
-- **Implement Features** → see [Requesting Features](#Requesting-Features).
+- **Report Bugs** → see [Reporting Bugs](#reporting-bugs).
+- **Implement Features** → see [Requesting Features](#requesting-features).
   _Note:_ For issues tagged `help wanted`, **comment to volunteer**;
   a maintainer must **assign the issue** before work begins.
 - **Fix Bugs** → look for issues tagged `bug` and `help wanted`
   (same assignment note as above).
 - **Write Documentation** → improve the docs' site, README,
   in‑code docstrings, or tutorials.
-- **Submit Feedback** → see [Requesting Features](#Requesting-Features)
+- **Submit Feedback** → see [Requesting Features](#requesting-features)
   for structure.
 
 ---

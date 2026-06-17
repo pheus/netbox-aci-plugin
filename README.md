@@ -15,19 +15,19 @@ Bridge Domains (BD), and VRFs (Contexts).
 **Documentation:** https://pheus.github.io/netbox-aci-plugin/
 
 ## Table of Contents
-- [Features](#Features)
-- [Compatibility](#Compatibility)
-- [Installation](#Installation)
-    - [Via PyPI](#Via-PyPI)
-    - [Docker](#Docker)
-- [Quickstart](#Quickstart)
-- [Configuration](#Configuration)
-- [Status](#Status)
-- [Release notes](#Release-notes)
-- [Licensing](#Licensing)
-- [Credits](#Credits)
-- [Contributing](#Contributing)
-- [Security](#Security)
+- [Features](#features)
+- [Compatibility](#compatibility)
+- [Installation](#installation)
+    - [Via PyPI](#via-pypi)
+    - [Docker](#docker)
+- [Quickstart](#quickstart)
+- [Configuration](#configuration)
+- [Status](#status)
+- [Release notes](#release-notes)
+- [Licensing](#licensing)
+- [Credits](#credits)
+- [Contributing](#contributing)
+- [Security](#security)
 
 ## Features
 
@@ -96,7 +96,7 @@ discovered. For more on Docker usage, see the
 
 ## Quickstart
 
-1. Install the plugin (see [Installation](#Installation)).
+1. Install the plugin (see [Installation](#installation)).
 2. Start NetBox and verify **Plugins → NetBox ACI** appears in the UI.
 3. Create a **Fabric** to host Tenant policies.
 4. Add a **Tenant**, then an **Application Profile** and **EPGs**.
