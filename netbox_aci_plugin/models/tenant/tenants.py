@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Model for ACI Tenants."""
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -11,7 +13,13 @@ from ..base import ACITenantBaseModel
 
 
 class ACITenant(ACITenantBaseModel):
-    """NetBox model for ACI Tenant."""
+    """Logical policy container within an ACI Fabric.
+
+    Groups the VRFs, bridge domains, application profiles, contracts
+    and other policy objects of one tenant. Parented by an
+    ACIFabric. The reserved tenants 'common', 'infra' and 'mgmt'
+    have fabric-wide meaning.
+    """
 
     aci_fabric = models.ForeignKey(
         to="netbox_aci_plugin.ACIFabric",

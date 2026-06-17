@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Model for ACI pods within a fabric."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -21,7 +23,16 @@ if TYPE_CHECKING:
 
 
 class ACIPod(CachedScopeMixin, ACIFabricBaseModel):
-    """NetBox model for ACI Pod."""
+    """Pod (a leaf-spine cluster) within an ACI Fabric.
+
+    Parented by an ACIFabric and may be scoped to a NetBox site or
+    location. Holds the TEP pool from which member nodes draw their
+    tunnel endpoint addresses.
+
+    Notes:
+        The TEP pool must be an IPv4 unicast prefix no more specific
+        than /21.
+    """
 
     aci_fabric = models.ForeignKey(
         to="netbox_aci_plugin.ACIFabric",

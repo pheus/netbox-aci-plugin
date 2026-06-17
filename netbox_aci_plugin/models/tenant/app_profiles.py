@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Model for ACI Application Profiles."""
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -9,7 +11,11 @@ from ..base import ACITenantBaseModel
 
 
 class ACIAppProfile(ACITenantBaseModel):
-    """NetBox model for ACI Application Profile."""
+    """Application profile grouping related endpoint groups.
+
+    Parented by an ACITenant and acts as the container for the
+    tenant's endpoint groups and endpoint security groups.
+    """
 
     aci_tenant = models.ForeignKey(
         to="netbox_aci_plugin.ACITenant",

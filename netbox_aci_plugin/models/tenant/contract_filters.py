@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Models for ACI Contract Filters and their entries."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -40,7 +42,11 @@ def default_contract_filter_entry_tcp_rules() -> list[str]:
 
 
 class ACIContractFilter(ACITenantBaseModel):
-    """NetBox model for ACI Contract Filter."""
+    """Named filter grouping a set of traffic-matching entries.
+
+    Parented by an ACITenant and referenced by contract subjects to
+    permit or deny matched traffic.
+    """
 
     aci_tenant = models.ForeignKey(
         to="netbox_aci_plugin.ACITenant",
@@ -76,7 +82,17 @@ class ACIContractFilter(ACITenantBaseModel):
 
 
 class ACIContractFilterEntry(ACITenantBaseModel):
-    """NetBox model for ACI Contract Filter Entry."""
+    """Single traffic-matching rule within a contract filter.
+
+    Matches on Ethernet type and, for IP traffic, on protocol,
+    ports, ICMP type, DSCP, and TCP flags. Parented by an
+    ACIContractFilter.
+
+    Notes:
+        Protocol, port, ICMP, DSCP, and TCP fields must stay
+        'unspecified' unless the Ethernet type and IP protocol that
+        enable them are selected.
+    """
 
     aci_contract_filter = models.ForeignKey(
         to="netbox_aci_plugin.ACIContractFilter",

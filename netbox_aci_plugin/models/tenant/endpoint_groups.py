@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Models for ACI Endpoint Groups, uSeg EPGs, and uSeg attributes."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -39,7 +41,15 @@ if TYPE_CHECKING:
 
 
 class ACIEndpointGroupBaseModel(ACITenantBaseModel):
-    """NetBox abstract model for ACI Endpoint Group (EPG)."""
+    """Abstract base shared by standard and uSeg endpoint groups.
+
+    Binds an endpoint group to an application profile and a bridge
+    domain and carries the settings common to both EPG variants.
+
+    Notes:
+        The bridge domain must share the application profile's
+        fabric and belong to the same tenant or to 'common'.
+    """
 
     aci_app_profile = models.ForeignKey(
         to="netbox_aci_plugin.ACIAppProfile",
@@ -218,7 +228,11 @@ class ACIEndpointGroupBaseModel(ACITenantBaseModel):
 
 
 class ACIEndpointGroup(ACIEndpointGroupBaseModel):
-    """NetBox model for ACI Endpoint Group (EPG)."""
+    """Standard endpoint group (EPG) of endpoints sharing policy.
+
+    Parented by an ACIAppProfile. Participates in contracts and can
+    be selected into an endpoint security group.
+    """
 
     proxy_arp_enabled = models.BooleanField(
         verbose_name=_("proxy ARP enabled"),
@@ -262,7 +276,11 @@ class ACIEndpointGroup(ACIEndpointGroupBaseModel):
 
 
 class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
-    """NetBox model for ACI uSeg Endpoint Groups (uSegEPG)."""
+    """Microsegmented endpoint group classified by attributes.
+
+    Parented by an ACIAppProfile. Membership is derived from its
+    uSeg attributes combined with the configured match operator.
+    """
 
     match_operator = models.CharField(
         verbose_name=_("match uSeg attributes"),
@@ -310,7 +328,11 @@ class ACIUSegEndpointGroup(ACIEndpointGroupBaseModel):
 
 
 class ACIUSegAttributeBaseModel(ACITenantBaseModel):
-    """Base model for ACI uSeg Attribute."""
+    """Abstract base for uSeg endpoint group attributes.
+
+    Parented by an ACIUSegEndpointGroup and tagged with the
+    attribute type that classifies matching endpoints.
+    """
 
     aci_useg_endpoint_group = models.ForeignKey(
         to="netbox_aci_plugin.ACIUSegEndpointGroup",
@@ -367,7 +389,16 @@ class ACIUSegAttributeBaseModel(ACITenantBaseModel):
 
 
 class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKeyMixin):
-    """NetBox model for ACI uSeg Network Attribute."""
+    """Network-based uSeg attribute matching IP, MAC, or prefix.
+
+    Points at a NetBox IP address, MAC address, or prefix through a
+    generic foreign key, or reuses the EPG subnet. The matching
+    object is mirrored into a cached foreign key.
+
+    Notes:
+        When the EPG subnet is used, no attribute object may be set.
+        The attribute type is derived from the selected object.
+    """
 
     attr_object_type = models.ForeignKey(
         to="contenttypes.ContentType",

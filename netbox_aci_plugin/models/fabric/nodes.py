@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Model for ACI fabric nodes (leaf, spine, and APIC)."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -29,7 +31,18 @@ if TYPE_CHECKING:
 
 
 class ACINode(ACIFabricBaseModel):
-    """NetBox model for ACI Node."""
+    """Fabric switch or controller (leaf, spine, or APIC).
+
+    Parented by an ACIPod and optionally linked to a NetBox device
+    or virtual machine through a generic foreign key. May carry a
+    TEP IP address drawn from the pod's TEP pool.
+
+    Notes:
+        APIC node IDs are below 100; leaf and spine node IDs start
+        at 101. A TEP IP must sit within the pod's TEP pool prefix
+        and share its VRF and mask length. A given device or virtual
+        machine can back only one node.
+    """
 
     aci_pod = models.ForeignKey(
         to="netbox_aci_plugin.ACIPod",

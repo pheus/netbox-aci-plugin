@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Models for ACI Bridge Domains and their subnets and bindings."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -32,7 +34,16 @@ if TYPE_CHECKING:
 
 
 class ACIBridgeDomain(ACITenantBaseModel):
-    """NetBox model for ACI Bridge Domain."""
+    """Layer 2 forwarding domain within an ACI Tenant.
+
+    Groups subnets under a single VRF and controls flooding,
+    unicast routing, and endpoint learning. Parented by an
+    ACITenant.
+
+    Notes:
+        The assigned VRF must share the bridge domain's fabric and
+        belong to the same tenant or to 'common'.
+    """
 
     aci_tenant = models.ForeignKey(
         to="netbox_aci_plugin.ACITenant",
@@ -341,7 +352,16 @@ class ACIBridgeDomain(ACITenantBaseModel):
 
 
 class ACIBridgeDomainSubnet(ACITenantBaseModel):
-    """NetBox model for ACI Bridge Domain Subnet."""
+    """Anycast gateway subnet of a bridge domain.
+
+    Parented by an ACIBridgeDomain and backed by a NetBox IP address
+    that serves as the gateway. Controls advertisement, shared
+    routing, and neighbor discovery for the subnet.
+
+    Notes:
+        Only one subnet per bridge domain may be the preferred
+        (primary) gateway.
+    """
 
     aci_bridge_domain = models.ForeignKey(
         to="netbox_aci_plugin.ACIBridgeDomain",
@@ -485,7 +505,16 @@ class ACIBridgeDomainSubnet(ACITenantBaseModel):
 
 
 class ACIBridgeDomainL3OutBinding(NetBoxModel):
-    """NetBox model for ACI Bridge Domain to L3Out relation."""
+    """Association between a bridge domain and an L3Out.
+
+    Links one ACIBridgeDomain to one ACIL3Out so the bridge domain
+    can advertise its subnets externally.
+
+    Notes:
+        Both sides must share the same fabric and VRF, and the
+        L3Out's tenant must match the bridge domain's tenant or be
+        'common'.
+    """
 
     aci_bridge_domain = models.ForeignKey(
         to="netbox_aci_plugin.ACIBridgeDomain",

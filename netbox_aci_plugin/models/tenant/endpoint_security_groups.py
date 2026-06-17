@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Models for ACI Endpoint Security Groups and their selectors."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -34,7 +36,16 @@ if TYPE_CHECKING:
 
 
 class ACIEndpointSecurityGroup(ACITenantBaseModel):
-    """NetBox model for ACI Endpoint Security Group (ESG)."""
+    """VRF-scoped security group (ESG) spanning endpoint groups.
+
+    Parented by an ACIAppProfile and bound to a VRF. Collects
+    endpoints from its selectors into one policy group regardless of
+    their bridge domain.
+
+    Notes:
+        The VRF must share the application profile's fabric and
+        belong to the same tenant or to 'common'.
+    """
 
     aci_app_profile = models.ForeignKey(
         to="netbox_aci_plugin.ACIAppProfile",
@@ -190,7 +201,11 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
 
 
 class ACIEsgSelectorBaseModel(ACITenantBaseModel):
-    """Base model for ACI Endpoint Security Group (ESG) Selector."""
+    """Abstract base for endpoint security group selectors.
+
+    Parented by an ACIEndpointSecurityGroup and shared by the EPG
+    and endpoint selector variants.
+    """
 
     aci_endpoint_security_group = models.ForeignKey(
         to="netbox_aci_plugin.ACIEndpointSecurityGroup",
@@ -239,7 +254,14 @@ class ACIEsgSelectorBaseModel(ACITenantBaseModel):
 class ACIEsgEndpointGroupSelector(
     ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMixin
 ):
-    """NetBox model for ACI Endpoint Security Group (ESG) EPG Selector."""
+    """Selector adding an endpoint group's members to an ESG.
+
+    References an endpoint group or uSeg endpoint group through a
+    generic foreign key, mirrored into a cached foreign key.
+
+    Notes:
+        The referenced group must share the ESG's tenant and VRF.
+    """
 
     aci_epg_object_type = models.ForeignKey(
         to="contenttypes.ContentType",
@@ -417,7 +439,11 @@ class ACIEsgEndpointGroupSelector(
 
 
 class ACIEsgEndpointSelector(ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMixin):
-    """NetBox model for ACI Endpoint Security Group (ESG) Endpoint Selector."""
+    """Selector adding individual endpoints to an ESG.
+
+    Matches a NetBox IP address or prefix through a generic foreign
+    key, mirrored into a cached foreign key.
+    """
 
     ep_object_type = models.ForeignKey(
         to="contenttypes.ContentType",

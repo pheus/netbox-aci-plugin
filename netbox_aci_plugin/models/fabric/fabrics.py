@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Model for the top-level ACI Fabric object."""
+
 from __future__ import annotations
 
 from django.core.exceptions import ValidationError
@@ -25,7 +27,18 @@ from ...validators import ACIPolicyDescriptionValidator, ACIPolicyNameRequiredVa
 
 
 class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
-    """NetBox model for ACI Fabric."""
+    """Top-level ACI fabric that all other ACI objects belong to.
+
+    Represents one APIC-managed fabric, identified by a fabric ID
+    that is local to the deployment rather than globally unique.
+    Owns the infrastructure VLAN and GIPo multicast pool, and may be
+    scoped to a NetBox site or region.
+
+    Notes:
+        A referenced NetBox VLAN must carry the same VID as the
+        infrastructure VLAN ID, and the GIPo pool must be an IPv4
+        multicast prefix.
+    """
 
     name = models.CharField(
         verbose_name=_("name"),

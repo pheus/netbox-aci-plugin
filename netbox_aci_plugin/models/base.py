@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Abstract base models shared by all ACI policy objects."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -25,7 +27,12 @@ if TYPE_CHECKING:
 
 
 class ACIBaseModel(OwnerMixin, NetBoxModel):
-    """Base model for ACI policies."""
+    """Abstract base for every primary ACI policy object.
+
+    Provides the common identity and ownership fields (name,
+    name alias, description, NetBox tenant, comments) and the
+    ``parent_object`` contract used throughout the plugin.
+    """
 
     name = models.CharField(
         verbose_name=_("name"),
@@ -79,7 +86,11 @@ class ACIBaseModel(OwnerMixin, NetBoxModel):
 
 
 class ACIFabricBaseModel(ACIBaseModel):
-    """Base model for ACI Fabric-level policies."""
+    """Abstract base for fabric-scoped ACI policy objects.
+
+    Subclasses resolve to an owning ACIFabric through the
+    ``aci_fabric`` property.
+    """
 
     class Meta:
         abstract = True
@@ -97,7 +108,11 @@ class ACIFabricBaseModel(ACIBaseModel):
 
 
 class ACITenantBaseModel(ACIBaseModel):
-    """Base model for ACI Tenant-level policies."""
+    """Abstract base for tenant-scoped ACI policy objects.
+
+    Subclasses expose an ``aci_tenant`` and reach the owning
+    ACIFabric through that tenant.
+    """
 
     class Meta:
         abstract = True

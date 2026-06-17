@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Models for ACI L3Outs, external EPGs, and external subnets."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -26,7 +28,18 @@ if TYPE_CHECKING:
 
 
 class ACIL3Out(ACITenantBaseModel):
-    """NetBox model for ACI L3Out."""
+    """External Layer 3 connection out of an ACI Fabric.
+
+    Parented by an ACITenant and bound to a VRF and a routed domain.
+    Enables routing protocols (BGP, OSPF, EIGRP) and route control
+    toward external peers.
+
+    Notes:
+        EIGRP cannot be combined with BGP or OSPF. Multi-Pod is
+        allowed only in the 'infra' tenant. Export route control is
+        always enforced by APIC. The VRF and routed domain must
+        share the L3Out's fabric.
+    """
 
     aci_tenant = models.ForeignKey(
         to="netbox_aci_plugin.ACITenant",
@@ -402,7 +415,11 @@ class ACIL3Out(ACITenantBaseModel):
 
 
 class ACIExternalEndpointGroup(ACITenantBaseModel):
-    """NetBox model for ACI External Endpoint Group."""
+    """External endpoint group classifying outside traffic.
+
+    Parented by an ACIL3Out. Groups the external subnets that map
+    outside prefixes to a policy group for contracts.
+    """
 
     aci_l3out = models.ForeignKey(
         to="netbox_aci_plugin.ACIL3Out",
@@ -503,7 +520,20 @@ class ACIExternalEndpointGroup(ACITenantBaseModel):
 
 
 class ACIExternalSubnet(ACITenantBaseModel):
-    """NetBox model for ACI External Subnet."""
+    """External prefix classified under an external endpoint group.
+
+    Parented by an ACIExternalEndpointGroup. The matched prefix is
+    taken from a linked NetBox prefix when set, or entered directly.
+    Route-control and security flags decide how the prefix is
+    imported, exported, and shared.
+
+    Notes:
+        Aggregate flags require their base route-control flag and a
+        default route. Shared security requires import security and
+        covering shared route control. At most one route
+        summarization type may be enabled, and each requires its
+        protocol on the parent L3Out.
+    """
 
     aci_external_endpoint_group = models.ForeignKey(
         to="netbox_aci_plugin.ACIExternalEndpointGroup",

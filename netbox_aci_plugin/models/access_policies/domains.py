@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Models for ACI access-policy domains."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -20,7 +22,11 @@ if TYPE_CHECKING:
 
 
 class ACIDomainBaseModel(ACIFabricBaseModel):
-    """Base model for ACI Access Policy Domains."""
+    """Abstract base for ACI access-policy domains.
+
+    Binds a domain to an ACIFabric and carries the optional list of
+    ACI security domain names.
+    """
 
     aci_fabric = models.ForeignKey(
         to="netbox_aci_plugin.ACIFabric",
@@ -54,7 +60,14 @@ class ACIDomainBaseModel(ACIFabricBaseModel):
 
 
 class ACIRoutedDomain(ACIDomainBaseModel):
-    """NetBox model for ACI Routed Domains."""
+    """Routed (L3) domain tying L3Outs to fabric access policy.
+
+    Parented by an ACIFabric and referenced by L3Outs to provide
+    their routed connectivity profile.
+
+    Notes:
+        Security domain names must be unique within the domain.
+    """
 
     aci_fabric = models.ForeignKey(
         to="netbox_aci_plugin.ACIFabric",

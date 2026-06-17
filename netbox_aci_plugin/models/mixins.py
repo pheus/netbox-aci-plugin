@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Reusable model mixins for ACI policy objects."""
+
 from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.utils.translation import gettext as _
 

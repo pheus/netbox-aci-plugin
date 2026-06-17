@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Models for ACI Contracts and their subjects, relations, and filters."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -39,7 +41,12 @@ if TYPE_CHECKING:
 
 
 class ACIContract(ACITenantBaseModel):
-    """NetBox model for ACI Contract."""
+    """Policy contract governing traffic between ACI objects.
+
+    Defines the scope and quality of service for the communication
+    that its subjects and filters permit or deny. Parented by an
+    ACITenant.
+    """
 
     aci_tenant = models.ForeignKey(
         to="netbox_aci_plugin.ACITenant",
@@ -119,7 +126,20 @@ class ACIContract(ACITenantBaseModel):
 
 
 class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
-    """NetBox model for ACI Contract Relation to ACI objects."""
+    """Provider or consumer attachment of a contract to an object.
+
+    Links an ACIContract to an endpoint group, uSeg endpoint group,
+    endpoint security group, external endpoint group, or VRF through
+    a generic foreign key, in either the provider or consumer role.
+    The matching object is mirrored into a cached foreign key for
+    efficient querying.
+
+    Notes:
+        Endpoint security groups cannot share a contract with
+        endpoint groups or uSeg endpoint groups. The related object
+        must belong to the contract's tenant unless the contract is
+        in 'common'.
+    """
 
     aci_contract = models.ForeignKey(
         to="netbox_aci_plugin.ACIContract",
@@ -405,7 +425,11 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
 
 class ACIContractSubject(ACITenantBaseModel):
-    """NetBox model for ACI Contract Subject."""
+    """Subject grouping the filters applied within a contract.
+
+    Parented by an ACIContract and carries the quality-of-service
+    and filter-direction settings for the traffic it matches.
+    """
 
     aci_contract = models.ForeignKey(
         to="netbox_aci_plugin.ACIContract",
@@ -582,7 +606,15 @@ class ACIContractSubject(ACITenantBaseModel):
 
 
 class ACIContractSubjectFilter(NetBoxModel):
-    """NetBox model for ACI Contract Subject Filter Attachment."""
+    """Attachment of a contract filter to a contract subject.
+
+    Applies one ACIContractFilter to one ACIContractSubject with an
+    action, direction, and priority.
+
+    Notes:
+        The filter must belong to the subject's tenant or to
+        'common'.
+    """
 
     aci_contract_filter = models.ForeignKey(
         to="netbox_aci_plugin.ACIContractFilter",

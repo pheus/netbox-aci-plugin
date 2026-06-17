@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Model for ACI VRFs."""
+
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -17,7 +19,13 @@ from ..base import ACITenantBaseModel
 
 
 class ACIVRF(ACITenantBaseModel):
-    """NetBox model for ACI VRF."""
+    """Private Layer 3 context (VRF) within an ACI Tenant.
+
+    Defines an isolated routing and forwarding domain for bridge
+    domains and L3Outs. Parented by an ACITenant and optionally
+    mapped to a NetBox VRF. Can act as a contract party through a
+    generic relation.
+    """
 
     aci_tenant = models.ForeignKey(
         to="netbox_aci_plugin.ACITenant",
