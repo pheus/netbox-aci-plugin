@@ -426,6 +426,11 @@ menu = PluginMenu(
                 acivrf_item,
                 acibridgedomain_item,
                 acibridgedomainsubnet_item,
+            ),
+        ),
+        (
+            "Tenant External",
+            (
                 acil3out_item,
                 aciexternalendpointgroup_item,
                 aciexternalsubnet_item,
