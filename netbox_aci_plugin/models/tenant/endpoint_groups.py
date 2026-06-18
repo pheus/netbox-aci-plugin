@@ -534,12 +534,10 @@ class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKey
         if self.attr_object_type_id and not (self.attr_object or self.attr_object_id):
             attr_model_class = self.attr_object_type.model_class()
             raise ValidationError(
-                {
-                    "attr_object": _(
-                        "The {attr_object} field is required, if an Attribute "
-                        "Object Type is selected."
-                    ).format(attr_object=attr_model_class._meta.verbose_name)
-                }
+                _(
+                    "The {attr_object} field is required, if an Attribute "
+                    "Object Type is selected."
+                ).format(attr_object=attr_model_class._meta.verbose_name)
             )
 
         super().clean()

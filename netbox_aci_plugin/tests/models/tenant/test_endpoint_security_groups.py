@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django.db import IntegrityError, transaction
 
 from ipam.models import IPAddress, Prefix
@@ -493,7 +493,7 @@ class ACIEsgEndpointGroupSelectorTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError) as cm:
             selector.full_clean()
-        self.assertIn("aci_epg_object", cm.exception.error_dict)
+        self.assertIn(NON_FIELD_ERRORS, cm.exception.error_dict)
 
     def test_invalid_aci_esg_endpoint_group_selector_name(self) -> None:
         """Test validation of ACI ESG Endpoint Group Selector naming."""
@@ -829,7 +829,7 @@ class ACIEsgEndpointSelectorTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError) as cm:
             selector.full_clean()
-        self.assertIn("ep_object", cm.exception.error_dict)
+        self.assertIn(NON_FIELD_ERRORS, cm.exception.error_dict)
 
     def test_invalid_aci_esg_endpoint_selector_name(self) -> None:
         """Test validation of ACI ESG Endpoint Selector naming."""
