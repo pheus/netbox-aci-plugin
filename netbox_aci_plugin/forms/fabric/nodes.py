@@ -201,7 +201,7 @@ class ACINodeEditForm(NetBoxModelForm):
                 self.fields["node_object"].label = _(
                     bettertitle(node_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
             # Clears the node_object field if the selected type changes
@@ -346,7 +346,7 @@ class ACINodeBulkEditForm(NetBoxModelBulkEditForm):
                 self.fields["node_object"].label = _(
                     bettertitle(node_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
 

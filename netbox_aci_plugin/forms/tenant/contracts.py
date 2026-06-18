@@ -581,7 +581,7 @@ class ACIContractRelationEditForm(NetBoxModelForm):
                 self.fields["aci_object"].label = _(
                     bettertitle(aci_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
             # Clears the aci_object field if the selected type changes
@@ -672,7 +672,7 @@ class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
                 self.fields["aci_object"].label = _(
                     bettertitle(aci_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
 

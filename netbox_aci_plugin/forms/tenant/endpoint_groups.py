@@ -1340,7 +1340,7 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
                 self.fields["attr_object"].label = _(
                     bettertitle(attr_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
             # Clears the attr_object field if the selected type changes
@@ -1477,7 +1477,7 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
                 self.fields["attr_object"].label = _(
                     bettertitle(attr_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
 

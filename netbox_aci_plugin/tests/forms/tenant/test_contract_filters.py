@@ -5,8 +5,67 @@
 from ....forms.tenant.contract_filters import (
     ACIContractFilterEditForm,
     ACIContractFilterEntryEditForm,
+    ACIContractFilterEntryImportForm,
+)
+from ....models.tenant.contract_filters import (
+    ACIContractFilter,
+    ACIContractFilterEntry,
 )
 from ..base import ACIBaseFormTestCase
+
+
+class ACIContractFilterEntryFormCoverageTestCase(ACIBaseFormTestCase):
+    """Coverage tests for ACI Contract Filter Entry forms."""
+
+    def test_edit_form_init_with_custom_protocol_and_ports(self) -> None:
+        """Test the edit form pre-fills custom protocol and port fields."""
+        contract_filter = ACIContractFilter.objects.create(
+            name="ACIFormTestCFEntryFilter", aci_tenant=self.aci_tenant
+        )
+        entry = ACIContractFilterEntry.objects.create(
+            name="ACIFormTestCustomEntry",
+            aci_contract_filter=contract_filter,
+            ip_protocol="200",
+            destination_from_port="5000",
+            destination_to_port="5001",
+            source_from_port="6000",
+            source_to_port="6001",
+        )
+        form = ACIContractFilterEntryEditForm(instance=entry)
+        self.assertEqual(form.initial["ip_protocol_custom"], "200")
+        self.assertEqual(form.initial["destination_from_port_custom"], "5000")
+
+    def test_edit_form_clean_with_custom_protocol_and_ports(self) -> None:
+        """Test the edit form clean resolves custom protocol and ports."""
+        contract_filter = ACIContractFilter.objects.create(
+            name="ACIFormTestCFEntryFilter2", aci_tenant=self.aci_tenant
+        )
+        form = ACIContractFilterEntryEditForm(
+            data={
+                "name": "ACIFormTestCleanEntry",
+                "aci_contract_filter": contract_filter.pk,
+                "ether_type": "ip",
+                "ip_protocol_custom": "200",
+                "destination_from_port_custom": "5000",
+                "destination_to_port_custom": "5001",
+                "source_from_port_custom": "6000",
+                "source_to_port_custom": "6001",
+            }
+        )
+        form.is_valid()
+        self.assertEqual(str(form.cleaned_data.get("ip_protocol")), "200")
+
+    def test_import_form_clean_field_returns_provided_value(self) -> None:
+        """Test the import form clean_* returns a provided field value."""
+        form = ACIContractFilterEntryImportForm(data={"ether_type": "ip"})
+        form.is_valid()
+        self.assertEqual(form.cleaned_data.get("ether_type"), "ip")
+
+    def test_clean_tcp_rules_returns_selected_values(self) -> None:
+        """Test clean_tcp_rules returns the selected non-empty values."""
+        form = ACIContractFilterEntryImportForm(data={})
+        form.cleaned_data = {"tcp_rules": ["ack", "syn"]}
+        self.assertEqual(form.clean_tcp_rules(), ["ack", "syn"])
 
 
 class ACIContractFilterFormTestCase(ACIBaseFormTestCase):

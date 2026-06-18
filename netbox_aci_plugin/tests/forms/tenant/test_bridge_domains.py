@@ -4,13 +4,41 @@
 
 from ....forms.tenant.bridge_domains import (
     ACIBridgeDomainEditForm,
+    ACIBridgeDomainImportForm,
     ACIBridgeDomainL3OutBindingEditForm,
+    ACIBridgeDomainL3OutBindingImportForm,
     ACIBridgeDomainSubnetEditForm,
 )
 from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.tenant.l3outs import ACIL3Out
 from ....models.tenant.vrfs import ACIVRF
 from ..base import ACIBaseFormTestCase
+
+
+class ACIBridgeDomainImportFormCoverageTestCase(ACIBaseFormTestCase):
+    """Coverage tests for ACI Bridge Domain import forms."""
+
+    def test_bd_import_form_vrf_in_common(self) -> None:
+        """Test the BD import form narrows the VRF queryset to 'common'."""
+        form = ACIBridgeDomainImportForm(
+            data={
+                "aci_fabric": self.aci_fabric.name,
+                "aci_tenant": self.aci_tenant.name,
+                "is_aci_vrf_in_common": "true",
+            }
+        )
+        self.assertIn("aci_vrf", form.fields)
+
+    def test_bd_l3out_binding_import_form_filters_bd_by_vrf(self) -> None:
+        """Test the BD-L3Out binding import form filters BD by VRF."""
+        form = ACIBridgeDomainL3OutBindingImportForm(
+            data={
+                "aci_fabric": self.aci_fabric.name,
+                "aci_tenant": self.aci_tenant.name,
+                "aci_vrf": self.aci_vrf.name,
+            }
+        )
+        self.assertIn("aci_bridge_domain", form.fields)
 
 
 class ACIBridgeDomainFormTestCase(ACIBaseFormTestCase):

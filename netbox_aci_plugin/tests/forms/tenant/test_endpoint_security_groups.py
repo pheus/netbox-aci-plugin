@@ -8,12 +8,70 @@ from ipam.models import IPAddress
 
 from ....forms.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupEditForm,
+    ACIEndpointSecurityGroupImportForm,
+    ACIEsgEndpointGroupSelectorBulkEditForm,
     ACIEsgEndpointGroupSelectorEditForm,
+    ACIEsgEndpointSelectorBulkEditForm,
     ACIEsgEndpointSelectorEditForm,
 )
 from ....models.tenant.endpoint_groups import ACIEndpointGroup
 from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ..base import ACIBaseFormTestCase
+
+
+class ACIEndpointSecurityGroupFormCoverageTestCase(ACIBaseFormTestCase):
+    """Coverage tests for ACI ESG import and selector forms."""
+
+    def test_esg_import_form_vrf_in_common(self) -> None:
+        """Test the ESG import form narrows the VRF queryset to 'common'."""
+        form = ACIEndpointSecurityGroupImportForm(
+            data={
+                "aci_fabric": self.aci_fabric.name,
+                "aci_tenant": self.aci_tenant.name,
+                "is_aci_vrf_in_common": "true",
+            }
+        )
+        self.assertIn("aci_vrf", form.fields)
+
+    def test_esg_epg_selector_edit_form_object_type_unknown(self) -> None:
+        """Test the ESG EPG selector edit form tolerates an unknown type."""
+        form = ACIEsgEndpointGroupSelectorEditForm(
+            data={"aci_epg_object_type": 99999999}
+        )
+        self.assertIn("aci_epg_object", form.fields)
+
+    def test_esg_epg_selector_bulk_edit_form_configures_field(self) -> None:
+        """Test the ESG EPG selector bulk edit form configures the field."""
+        aci_epg_object_type = ContentType.objects.get_for_model(ACIEndpointGroup)
+        form = ACIEsgEndpointGroupSelectorBulkEditForm(
+            data={"aci_epg_object_type": aci_epg_object_type.pk}
+        )
+        self.assertEqual(form.fields["aci_epg_object"].queryset.model, ACIEndpointGroup)
+
+    def test_esg_epg_selector_bulk_edit_form_object_type_unknown(self) -> None:
+        """Test the ESG EPG selector bulk edit form tolerates unknown type."""
+        form = ACIEsgEndpointGroupSelectorBulkEditForm(
+            data={"aci_epg_object_type": 99999999}
+        )
+        self.assertIn("aci_epg_object", form.fields)
+
+    def test_esg_endpoint_selector_edit_form_object_type_unknown(self) -> None:
+        """Test the ESG endpoint selector edit form tolerates unknown type."""
+        form = ACIEsgEndpointSelectorEditForm(data={"ep_object_type": 99999999})
+        self.assertIn("ep_object", form.fields)
+
+    def test_esg_endpoint_selector_bulk_edit_form_configures_field(self) -> None:
+        """Test the ESG endpoint selector bulk edit form configures field."""
+        ep_object_type = ContentType.objects.get_for_model(IPAddress)
+        form = ACIEsgEndpointSelectorBulkEditForm(
+            data={"ep_object_type": ep_object_type.pk}
+        )
+        self.assertEqual(form.fields["ep_object"].queryset.model, IPAddress)
+
+    def test_esg_endpoint_selector_bulk_edit_form_object_type_unknown(self) -> None:
+        """Test the ESG endpoint selector bulk edit tolerates unknown type."""
+        form = ACIEsgEndpointSelectorBulkEditForm(data={"ep_object_type": 99999999})
+        self.assertIn("ep_object", form.fields)
 
 
 class ACIEndpointSecurityGroupFormTestCase(ACIBaseFormTestCase):

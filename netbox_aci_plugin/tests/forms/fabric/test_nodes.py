@@ -8,7 +8,7 @@ from dcim.models import Device
 from ipam.models import IPAddress
 
 from ....choices import NodeRoleChoices, NodeTypeChoices
-from ....forms.fabric.nodes import ACINodeEditForm
+from ....forms.fabric.nodes import ACINodeBulkEditForm, ACINodeEditForm
 from ..base import ACIBaseFormTestCase
 
 
@@ -93,3 +93,19 @@ class ACINodeFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(aci_node_form.errors.get("role"), None)
         self.assertEqual(aci_node_form.errors.get("node_type"), None)
         self.assertEqual(aci_node_form.errors.get("tep_ip_address"), None)
+
+    def test_edit_form_node_object_type_unknown(self) -> None:
+        """Test the edit form tolerates an unknown node object type."""
+        form = ACINodeEditForm(data={"node_object_type": 99999999})
+        self.assertIn("node_object", form.fields)
+
+    def test_bulk_edit_form_node_object_type_configures_field(self) -> None:
+        """Test the bulk edit form configures node_object for a valid type."""
+        node_object_type = ContentType.objects.get_for_model(Device)
+        form = ACINodeBulkEditForm(data={"node_object_type": node_object_type.pk})
+        self.assertEqual(form.fields["node_object"].queryset.model, Device)
+
+    def test_bulk_edit_form_node_object_type_unknown(self) -> None:
+        """Test the bulk edit form tolerates an unknown node object type."""
+        form = ACINodeBulkEditForm(data={"node_object_type": 99999999})
+        self.assertIn("node_object", form.fields)

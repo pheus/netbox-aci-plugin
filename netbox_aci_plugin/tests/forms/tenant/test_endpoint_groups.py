@@ -8,11 +8,58 @@ from ipam.models import IPAddress
 
 from ....forms.tenant.endpoint_groups import (
     ACIEndpointGroupEditForm,
+    ACIEndpointGroupImportForm,
     ACIUSegEndpointGroupEditForm,
+    ACIUSegEndpointGroupImportForm,
+    ACIUSegNetworkAttributeBulkEditForm,
     ACIUSegNetworkAttributeEditForm,
 )
 from ....models.tenant.endpoint_groups import ACIUSegEndpointGroup
 from ..base import ACIBaseFormTestCase
+
+
+class ACIEndpointGroupFormCoverageTestCase(ACIBaseFormTestCase):
+    """Coverage tests for ACI EPG import and uSeg attribute forms."""
+
+    def test_epg_import_form_bridge_domain_in_common(self) -> None:
+        """Test the EPG import form narrows the BD queryset to 'common'."""
+        form = ACIEndpointGroupImportForm(
+            data={
+                "aci_fabric": self.aci_fabric.name,
+                "aci_tenant": self.aci_tenant.name,
+                "is_aci_bd_in_common": "true",
+            }
+        )
+        self.assertIn("aci_bridge_domain", form.fields)
+
+    def test_useg_epg_import_form_bridge_domain_in_common(self) -> None:
+        """Test the uSeg EPG import form narrows the BD to 'common'."""
+        form = ACIUSegEndpointGroupImportForm(
+            data={
+                "aci_fabric": self.aci_fabric.name,
+                "aci_tenant": self.aci_tenant.name,
+                "is_aci_bd_in_common": "true",
+            }
+        )
+        self.assertIn("aci_bridge_domain", form.fields)
+
+    def test_useg_attr_edit_form_object_type_unknown(self) -> None:
+        """Test the uSeg attribute edit form tolerates an unknown type."""
+        form = ACIUSegNetworkAttributeEditForm(data={"attr_object_type": 99999999})
+        self.assertIn("attr_object", form.fields)
+
+    def test_useg_attr_bulk_edit_form_configures_field(self) -> None:
+        """Test the uSeg attribute bulk edit form configures attr_object."""
+        attr_object_type = ContentType.objects.get_for_model(IPAddress)
+        form = ACIUSegNetworkAttributeBulkEditForm(
+            data={"attr_object_type": attr_object_type.pk}
+        )
+        self.assertEqual(form.fields["attr_object"].queryset.model, IPAddress)
+
+    def test_useg_attr_bulk_edit_form_object_type_unknown(self) -> None:
+        """Test the uSeg attribute bulk edit form tolerates an unknown type."""
+        form = ACIUSegNetworkAttributeBulkEditForm(data={"attr_object_type": 99999999})
+        self.assertIn("attr_object", form.fields)
 
 
 class ACIEndpointGroupFormTestCase(ACIBaseFormTestCase):

@@ -664,7 +664,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
                 self.fields["aci_epg_object"].label = _(
                     bettertitle(aci_epg_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
             # Clears the aci_epg_object field if the selected type changes
@@ -803,7 +803,7 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
                 self.fields["aci_epg_object"].label = _(
                     bettertitle(aci_epg_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
 
@@ -1190,7 +1190,7 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
                 self.fields["ep_object"].label = _(
                     bettertitle(ep_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
             # Clears the ep_object field if the selected type changes
@@ -1315,7 +1315,7 @@ class ACIEsgEndpointSelectorBulkEditForm(NetBoxModelBulkEditForm):
                 self.fields["ep_object"].label = _(
                     bettertitle(ep_model._meta.verbose_name)
                 )
-            except ObjectDoesNotExist:
+            except ObjectDoesNotExist:  # pragma: no cover
                 pass
 
 

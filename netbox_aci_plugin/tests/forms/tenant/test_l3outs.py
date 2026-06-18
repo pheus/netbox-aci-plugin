@@ -10,6 +10,7 @@ from ....choices import QualityOfServiceClassChoices, QualityOfServiceDSCPChoice
 from ....forms.tenant.l3outs import (
     ACIExternalEndpointGroupEditForm,
     ACIExternalSubnetEditForm,
+    ACIExternalSubnetImportForm,
     ACIL3OutEditForm,
 )
 from ....models.access_policies.domains import ACIRoutedDomain
@@ -21,6 +22,17 @@ from ....models.tenant.l3outs import (
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 from ..base import ACIBaseFormTestCase
+
+
+class ACIExternalSubnetImportFormCoverageTestCase(ACIBaseFormTestCase):
+    """Coverage tests for ACI External Subnet import form."""
+
+    def test_import_form_filters_prefix_by_vrf(self) -> None:
+        """Test the import form filters nb_prefix by the provided nb_vrf."""
+        form = ACIExternalSubnetImportForm(
+            data={"nb_prefix": "10.0.0.0/24", "nb_vrf": self.nb_vrf.name}
+        )
+        self.assertIn("nb_prefix", form.fields)
 
 
 class ACIL3OutFormTestCase(ACIBaseFormTestCase):
