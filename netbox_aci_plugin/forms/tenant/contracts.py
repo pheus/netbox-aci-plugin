@@ -230,7 +230,6 @@ class ACIContractBulkEditForm(NetBoxModelBulkEditForm):
             "name_alias",
             "aci_tenant",
             "description",
-            "tags",
             name=_("ACI Contract"),
         ),
         FieldSet(
@@ -642,7 +641,6 @@ class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
             "aci_contract",
             "aci_object_type",
             "aci_object",
-            "tags",
             name=_("ACI Contract Relation"),
         ),
         FieldSet(
@@ -1167,7 +1165,6 @@ class ACIContractSubjectBulkEditForm(NetBoxModelBulkEditForm):
             "aci_tenant",
             "aci_contract",
             "description",
-            "tags",
             name=_("ACI Contract Subject"),
         ),
         FieldSet(
@@ -1742,7 +1739,6 @@ class ACIContractSubjectFilterBulkEditForm(NetBoxModelBulkEditForm):
             "aci_contract_subject",
             "aci_contract_filter",
             "action",
-            "tags",
             name=_("ACI Contract Subject Filter"),
         ),
         FieldSet(

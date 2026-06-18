@@ -249,7 +249,6 @@ class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
             "aci_app_profile",
             "aci_vrf",
             "description",
-            "tags",
             "admin_shutdown",
             name=_("ACI Endpoint Security Group"),
         ),
@@ -761,7 +760,6 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
             "aci_app_profile",
             "aci_endpoint_security_group",
             "description",
-            "tags",
             name=_("ACI ESG Endpoint Group (EPG) Selector"),
         ),
         FieldSet(
@@ -1274,7 +1272,6 @@ class ACIEsgEndpointSelectorBulkEditForm(NetBoxModelBulkEditForm):
             "aci_app_profile",
             "aci_endpoint_security_group",
             "description",
-            "tags",
             name=_("ACI ESG Endpoint Selector"),
         ),
         FieldSet(

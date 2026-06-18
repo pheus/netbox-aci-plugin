@@ -164,7 +164,6 @@ class ACIContractFilterBulkEditForm(NetBoxModelBulkEditForm):
             "name_alias",
             "aci_tenant",
             "description",
-            "tags",
             name=_("ACI Contract Filter"),
         ),
         FieldSet(
@@ -865,7 +864,6 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
             "aci_tenant",
             "aci_contract_filter",
             "description",
-            "tags",
             name=_("ACI Contract Filter Entry"),
         ),
         FieldSet(

@@ -291,7 +291,6 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
             "name_alias",
             "aci_tenant",
             "description",
-            "tags",
             name=_("ACI VRF"),
         ),
         FieldSet(

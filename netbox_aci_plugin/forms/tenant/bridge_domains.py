@@ -440,7 +440,6 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
             "aci_tenant",
             "aci_vrf",
             "description",
-            "tags",
             name=_("ACI Bridge Domain"),
         ),
         FieldSet(
@@ -1134,7 +1133,6 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
             "aci_bridge_domain",
             "gateway_ip_address",
             "description",
-            "tags",
             "preferred_ip_address_enabled",
             "virtual_ip_enabled",
             name=_("ACI Bridge Domain Subnet"),

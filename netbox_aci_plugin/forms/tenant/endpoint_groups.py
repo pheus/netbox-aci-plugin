@@ -320,7 +320,6 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
             "aci_app_profile",
             "aci_bridge_domain",
             "description",
-            "tags",
             "admin_shutdown",
             name=_("ACI Endpoint Group"),
         ),
@@ -878,7 +877,6 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
             "aci_app_profile",
             "aci_bridge_domain",
             "description",
-            "tags",
             "admin_shutdown",
             name=_("ACI uSeg Endpoint Group"),
         ),
@@ -1432,7 +1430,6 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
             "aci_app_profile",
             "aci_useg_endpoint_group",
             "description",
-            "tags",
             name=_("ACI uSeg Network Attribute"),
         ),
         FieldSet(

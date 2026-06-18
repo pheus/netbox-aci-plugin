@@ -177,7 +177,6 @@ class ACIPodBulkEditForm(ScopedBulkEditForm, NetBoxModelBulkEditForm):
             "name_alias",
             "aci_fabric",
             "description",
-            "tags",
             name=_("ACI Pod"),
         ),
         FieldSet(

@@ -298,7 +298,6 @@ class ACINodeBulkEditForm(NetBoxModelBulkEditForm):
             "aci_fabric",
             "aci_pod",
             "description",
-            "tags",
             name=_("ACI Node"),
         ),
         FieldSet(

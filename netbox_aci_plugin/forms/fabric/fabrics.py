@@ -188,7 +188,6 @@ class ACIFabricBulkEditForm(ScopedBulkEditForm, NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "description",
-            "tags",
             name=_("ACI Fabric"),
         ),
         FieldSet(
