@@ -627,6 +627,11 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
             self.aci_contract_epg,
         )
 
+    def test_aci_contract_relation_clone_fields_excludes_object_id(self) -> None:
+        """Test clone fields omit the unique generic object id."""
+        self.assertNotIn("aci_object_id", ACIContractRelation.clone_fields)
+        self.assertIn("aci_object_type", ACIContractRelation.clone_fields)
+
     def test_invalid_aci_contract_relation_object_type_without_object(
         self,
     ) -> None:

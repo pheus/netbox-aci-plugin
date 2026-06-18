@@ -226,7 +226,6 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
     clone_fields: tuple = (
         "aci_contract",
         "aci_object_type",
-        "aci_object_id",
         "role",
     )
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIContract",)

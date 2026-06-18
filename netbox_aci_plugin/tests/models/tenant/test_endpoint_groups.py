@@ -1076,6 +1076,11 @@ class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
             self.aci_useg_epg,
         )
 
+    def test_aci_useg_network_attr_clone_fields_excludes_object_id(self) -> None:
+        """Test clone fields omit the unique generic attr object id."""
+        self.assertNotIn("attr_object_id", ACIUSegNetworkAttribute.clone_fields)
+        self.assertIn("attr_object_type", ACIUSegNetworkAttribute.clone_fields)
+
     def test_invalid_aci_useg_network_attr_object_type_without_object(
         self,
     ) -> None:

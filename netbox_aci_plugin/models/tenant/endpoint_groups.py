@@ -473,7 +473,6 @@ class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKey
 
     clone_fields: tuple = ACIUSegAttributeBaseModel.clone_fields + (
         "attr_object_type",
-        "attr_object_id",
         "use_epg_subnet",
     )
 
