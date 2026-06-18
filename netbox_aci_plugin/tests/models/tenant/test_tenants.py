@@ -63,6 +63,10 @@ class ACITenantTestCase(ACIBaseTestCase):
         self.assertTrue(isinstance(self.aci_tenant.nb_tenant, Tenant))
         self.assertEqual(self.aci_tenant.nb_tenant.name, self.nb_tenant_name)
 
+    def test_aci_tenant_parent_object(self) -> None:
+        """Test parent object of ACI Tenant is the ACI Fabric."""
+        self.assertEqual(self.aci_tenant.parent_object, self.aci_fabric)
+
     def test_invalid_aci_tenant_name(self) -> None:
         """Test validation of ACI Tenant naming."""
         tenant = ACITenant(name="ACI Test Tenant 1")

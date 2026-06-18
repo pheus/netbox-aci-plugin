@@ -83,6 +83,10 @@ class ACIPodTestCase(ACIBaseTestCase):
             str(self.aci_pod.tep_pool.prefix), self.aci_pod_tep_pool_prefix
         )
 
+    def test_aci_pod_parent_object(self) -> None:
+        """Test parent object of ACI Pod is the ACI Fabric."""
+        self.assertEqual(self.aci_pod.parent_object, self.aci_fabric)
+
     def test_invalid_aci_pod_name(self) -> None:
         """Test validation of ACI Pod naming."""
         pod = ACIPod(

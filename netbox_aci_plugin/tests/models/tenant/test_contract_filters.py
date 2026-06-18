@@ -85,6 +85,10 @@ class ACIContractFilterTestCase(ACIBaseTestCase):
         self.assertTrue(isinstance(self.aci_contract_filter.nb_tenant, Tenant))
         self.assertEqual(self.aci_contract_filter.nb_tenant.name, self.nb_tenant_name)
 
+    def test_aci_contract_filter_parent_object(self) -> None:
+        """Test parent object of ACI Contract Filter is the ACI Tenant."""
+        self.assertEqual(self.aci_contract_filter.parent_object, self.aci_tenant)
+
     def test_invalid_aci_contract_filter_name(self) -> None:
         """Test validation of ACI Contract Filter naming."""
         contract_filter = ACIContractFilter(name="ACI Contract Filter Test 1")
@@ -352,6 +356,13 @@ class ACIContractFilterEntryTestCase(ACIBaseTestCase):
         self.assertEqual(
             self.aci_contract_filter_entry.tcp_rules,
             self.aci_contract_filter_entry_tcp_rules,
+        )
+
+    def test_aci_contract_filter_entry_parent_object(self) -> None:
+        """Test parent object of Filter Entry is the ACI Contract Filter."""
+        self.assertEqual(
+            self.aci_contract_filter_entry.parent_object,
+            self.aci_contract_filter,
         )
 
     def test_invalid_aci_contract_filter_entry_name(self) -> None:

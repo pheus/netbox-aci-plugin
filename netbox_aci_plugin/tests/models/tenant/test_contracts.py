@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
@@ -120,6 +121,20 @@ class ACIContractTestCase(ACIBaseTestCase):
     def test_aci_contract_target_dscp(self) -> None:
         """Test 'target_dscp' choice of ACI Contract."""
         self.assertEqual(self.aci_contract.target_dscp, self.aci_contract_target_dscp)
+
+    def test_aci_contract_str_common_tenant(self) -> None:
+        """Test string representation appends the (common) suffix."""
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common", aci_fabric=self.aci_fabric
+        )[0]
+        contract = ACIContract.objects.create(
+            name="ACITestCommonContract", aci_tenant=tenant_common
+        )
+        self.assertEqual(str(contract), f"{contract.name} (common)")
+
+    def test_aci_contract_parent_object(self) -> None:
+        """Test parent object of ACI Contract is the ACI Tenant."""
+        self.assertEqual(self.aci_contract.parent_object, self.aci_tenant)
 
     def test_invalid_aci_contract_name(self) -> None:
         """Test validation of ACI Contract naming."""
@@ -605,6 +620,36 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
             ),
         )
 
+    def test_aci_contract_relation_parent_object(self) -> None:
+        """Test parent object of ACI Contract Relation is the ACI Contract."""
+        self.assertEqual(
+            self.aci_contract_relation_epg_cons.parent_object,
+            self.aci_contract_epg,
+        )
+
+    def test_invalid_aci_contract_relation_object_type_without_object(
+        self,
+    ) -> None:
+        """Test clean requires an ACI object when an object type is set."""
+        relation = ACIContractRelation(
+            aci_contract=self.aci_contract_epg,
+            aci_object_type=ContentType.objects.get_for_model(ACIEndpointGroup),
+            role=self.aci_contract_relation_role_cons,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            relation.full_clean()
+        self.assertIn("aci_object", cm.exception.error_dict)
+
+    def test_invalid_aci_contract_relation_esg_with_epg_contract(self) -> None:
+        """Test ESGs cannot be associated with a Contract holding EPGs."""
+        relation = ACIContractRelation(
+            aci_contract=self.aci_contract_epg,
+            aci_object=self.aci_esg1,
+            role=self.aci_contract_relation_role_cons,
+        )
+        with self.assertRaises(ValidationError):
+            relation.full_clean()
+
     def test_invalid_aci_contract_relation_aci_tenant(self) -> None:
         """Test validation of a Relation using another non-common tenant."""
         other_tenant = ACITenant.objects.create(
@@ -961,6 +1006,23 @@ class ACIContractSubjectTestCase(ACIBaseTestCase):
             self.aci_contract_subject_target_dscp_prov_to_cons,
         )
 
+    def test_aci_contract_subject_str_common_tenant(self) -> None:
+        """Test string representation appends the (common) suffix."""
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common", aci_fabric=self.aci_fabric
+        )[0]
+        contract_common = ACIContract.objects.create(
+            name="ACITestCommonContractSubject", aci_tenant=tenant_common
+        )
+        subject = ACIContractSubject.objects.create(
+            name="ACITestCommonSubject", aci_contract=contract_common
+        )
+        self.assertEqual(str(subject), f"{subject.name} (common)")
+
+    def test_aci_contract_subject_parent_object(self) -> None:
+        """Test parent object of ACI Contract Subject is the ACI Contract."""
+        self.assertEqual(self.aci_contract_subject.parent_object, self.aci_contract)
+
     def test_invalid_aci_contract_subject_name(self) -> None:
         """Test validation of ACI Contract Subject naming."""
         contract_subject = ACIContractSubject(name="ACI Contract Filter Entry Test 1")
@@ -1220,6 +1282,13 @@ class ACIContractSubjectFilterTestCase(ACIBaseTestCase):
             ContractSubjectFilterPriorityChoices.colors.get(
                 self.aci_contract_subject_filter_priority
             ),
+        )
+
+    def test_aci_contract_subject_filter_parent_object(self) -> None:
+        """Test parent object of Subject Filter is the ACI Contract Subject."""
+        self.assertEqual(
+            self.aci_contract_subject_filter.parent_object,
+            self.aci_contract_subject,
         )
 
     def test_valid_aci_contract_subject_filter_same_tenant(self) -> None:

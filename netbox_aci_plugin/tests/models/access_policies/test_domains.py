@@ -135,6 +135,17 @@ class ACIRoutedDomainTestCase(ACIBaseTestCase):
             domain.full_clean()
         self.assertIn("security_domains", cm.exception.error_dict)
 
+    def test_invalid_aci_routed_domain_duplicate_security_domains(self) -> None:
+        """Test validation rejects duplicate security domain names."""
+        domain = ACIRoutedDomain(
+            name="ACIRoutedDomainTest1",
+            aci_fabric=self.aci_fabric,
+            security_domains=["netops", "netops"],
+        )
+        with self.assertRaises(ValidationError) as cm:
+            domain.full_clean()
+        self.assertIn("security_domains", cm.exception.error_dict)
+
     def test_constraint_unique_aci_routed_domain_name(self) -> None:
         """Test unique constraint of ACI Routed Domain name."""
         duplicate_domain = ACIRoutedDomain(

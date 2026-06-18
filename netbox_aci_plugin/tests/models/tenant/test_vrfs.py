@@ -161,6 +161,16 @@ class ACIVRFTestCase(ACIBaseTestCase):
             ),
         )
 
+    def test_aci_vrf_str_common_tenant(self) -> None:
+        """Test string representation appends the (common) suffix."""
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common", aci_fabric=self.aci_fabric
+        )[0]
+        vrf_common = ACIVRF.objects.create(
+            name="ACITestCommonVRF", aci_tenant=tenant_common
+        )
+        self.assertEqual(str(vrf_common), f"{vrf_common.name} (common)")
+
     def test_invalid_aci_vrf_name(self) -> None:
         """Test validation of ACI VRF naming."""
         vrf = ACIVRF(name="ACI VRF Test 1")

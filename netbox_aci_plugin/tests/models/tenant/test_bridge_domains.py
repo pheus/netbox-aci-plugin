@@ -388,6 +388,79 @@ class ACIBridgeDomainTestCase(ACIBaseTestCase):
             bd.full_clean()
             bd.save()
 
+    def test_aci_bridge_domain_str_common_tenant(self) -> None:
+        """Test string representation appends the (common) suffix."""
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common", aci_fabric=self.aci_fabric
+        )[0]
+        vrf_common = ACIVRF.objects.create(
+            name="ACITestCommonStrVRF", aci_tenant=tenant_common
+        )
+        bd_common = ACIBridgeDomain.objects.create(
+            name="ACITestCommonStrBD",
+            aci_tenant=tenant_common,
+            aci_vrf=vrf_common,
+        )
+        self.assertEqual(str(bd_common), f"{bd_common.name} (common)")
+
+    def test_aci_bridge_domain_parent_object(self) -> None:
+        """Test parent object of ACI Bridge Domain is the ACI Tenant."""
+        self.assertEqual(self.aci_bd.parent_object, self.aci_tenant)
+
+    def test_invalid_aci_bd_clean_aci_vrf_from_other_fabric(self) -> None:
+        """Test clean rejects an ACI VRF from another ACI Fabric."""
+        fabric_other = ACIFabric.objects.create(
+            name="OtherFabricBDClean", fabric_id=120, infra_vlan_vid=3951
+        )
+        tenant_other = ACITenant.objects.create(
+            name="other_fabric_clean_tenant", aci_fabric=fabric_other
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="other_fabric_clean_vrf", aci_tenant=tenant_other
+        )
+        bd = ACIBridgeDomain(
+            name="ACITestOtherFabricBD",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_other,
+        )
+        with self.assertRaises(ValidationError):
+            bd.full_clean()
+
+    def test_invalid_aci_bd_save_aci_vrf_from_other_fabric(self) -> None:
+        """Test save rejects an ACI VRF from another ACI Fabric."""
+        fabric_other = ACIFabric.objects.create(
+            name="OtherFabricBDSave", fabric_id=121, infra_vlan_vid=3952
+        )
+        tenant_other = ACITenant.objects.create(
+            name="other_fabric_save_tenant", aci_fabric=fabric_other
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="other_fabric_save_vrf", aci_tenant=tenant_other
+        )
+        bd = ACIBridgeDomain(
+            name="ACITestOtherFabricSaveBD",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_other,
+        )
+        with self.assertRaises(ValidationError):
+            bd.save()
+
+    def test_invalid_aci_bd_save_aci_vrf_from_other_tenant(self) -> None:
+        """Test save rejects an ACI VRF from another non-common ACI Tenant."""
+        tenant_other = ACITenant.objects.get_or_create(
+            name="other", aci_fabric=self.aci_fabric
+        )[0]
+        vrf_other = ACIVRF.objects.create(
+            name="other_tenant_save_vrf", aci_tenant=tenant_other
+        )
+        bd = ACIBridgeDomain(
+            name="ACITestOtherTenantSaveBD",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_other,
+        )
+        with self.assertRaises(ValidationError):
+            bd.save()
+
     def test_constraint_unique_aci_bridge_domain_name_per_aci_tenant(
         self,
     ) -> None:
@@ -614,6 +687,10 @@ class ACIBridgeDomainSubnetTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError):
             subnet.full_clean()
+
+    def test_aci_bd_subnet_parent_object(self) -> None:
+        """Test parent object of ACI BD Subnet is the ACI Bridge Domain."""
+        self.assertEqual(self.aci_bd_subnet.parent_object, self.aci_bd)
 
     def test_constraint_unique_aci_bd_subnet_name_per_aci_bridge_domain(
         self,

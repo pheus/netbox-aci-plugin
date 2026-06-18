@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
 from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
 
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.app_profiles import ACIAppProfile
 from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.endpoint_groups import (
@@ -117,6 +119,64 @@ class ACIEndpointSecurityGroupTestCase(ACIBaseTestCase):
             self.aci_esg.preferred_group_member_enabled,
             self.aci_esg_preferred_group_member_enabled,
         )
+
+    def test_aci_endpoint_security_group_parent_object(self) -> None:
+        """Test parent object of ACI ESG is the ACI App Profile."""
+        self.assertEqual(self.aci_esg.parent_object, self.aci_app_profile)
+
+    def test_invalid_aci_esg_clean_aci_vrf_from_other_fabric(self) -> None:
+        """Test clean rejects an ACI VRF from another ACI Fabric."""
+        fabric_other = ACIFabric.objects.create(
+            name="OtherFabricESGClean", fabric_id=125, infra_vlan_vid=3956
+        )
+        tenant_other = ACITenant.objects.create(
+            name="other_fabric_esg_clean_tenant", aci_fabric=fabric_other
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="other_fabric_esg_clean_vrf", aci_tenant=tenant_other
+        )
+        esg = ACIEndpointSecurityGroup(
+            name="ACIESGOtherFabric",
+            aci_app_profile=self.aci_app_profile,
+            aci_vrf=vrf_other,
+        )
+        with self.assertRaises(ValidationError):
+            esg.full_clean()
+
+    def test_invalid_aci_esg_save_aci_vrf_from_other_fabric(self) -> None:
+        """Test save rejects an ACI VRF from another ACI Fabric."""
+        fabric_other = ACIFabric.objects.create(
+            name="OtherFabricESGSave", fabric_id=126, infra_vlan_vid=3957
+        )
+        tenant_other = ACITenant.objects.create(
+            name="other_fabric_esg_save_tenant", aci_fabric=fabric_other
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="other_fabric_esg_save_vrf", aci_tenant=tenant_other
+        )
+        esg = ACIEndpointSecurityGroup(
+            name="ACIESGOtherFabricSave",
+            aci_app_profile=self.aci_app_profile,
+            aci_vrf=vrf_other,
+        )
+        with self.assertRaises(ValidationError):
+            esg.save()
+
+    def test_invalid_aci_esg_save_aci_vrf_from_other_tenant(self) -> None:
+        """Test save rejects an ACI VRF from another non-common ACI Tenant."""
+        tenant_other = ACITenant.objects.get_or_create(
+            name="other", aci_fabric=self.aci_fabric
+        )[0]
+        vrf_other = ACIVRF.objects.create(
+            name="other_tenant_esg_vrf", aci_tenant=tenant_other
+        )
+        esg = ACIEndpointSecurityGroup(
+            name="ACIESGOtherTenantSave",
+            aci_app_profile=self.aci_app_profile,
+            aci_vrf=vrf_other,
+        )
+        with self.assertRaises(ValidationError):
+            esg.save()
 
     def test_invalid_aci_endpoint_security_group_name(self) -> None:
         """Test validation of ACI Endpoint Security Group naming."""
@@ -417,6 +477,23 @@ class ACIEsgEndpointGroupSelectorTestCase(ACIBaseTestCase):
         self.assertEqual(self.aci_esg_epg_sel1.nb_tenant.name, self.nb_tenant_name)
         self.assertEqual(self.aci_esg_epg_sel2.nb_tenant.name, self.nb_tenant_name)
         self.assertEqual(self.aci_esg_epg_sel3.nb_tenant.name, self.nb_tenant_name)
+
+    def test_aci_esg_epg_selector_parent_object(self) -> None:
+        """Test parent object of ESG EPG Selector is the ACI ESG."""
+        self.assertEqual(self.aci_esg_epg_sel1.parent_object, self.aci_esg)
+
+    def test_invalid_aci_esg_epg_selector_object_type_without_object(
+        self,
+    ) -> None:
+        """Test clean requires an EPG object when an object type is set."""
+        selector = ACIEsgEndpointGroupSelector(
+            name="ACIESGEPGSelectorTypeOnly",
+            aci_endpoint_security_group=self.aci_esg,
+            aci_epg_object_type=ContentType.objects.get_for_model(ACIEndpointGroup),
+        )
+        with self.assertRaises(ValidationError) as cm:
+            selector.full_clean()
+        self.assertIn("aci_epg_object", cm.exception.error_dict)
 
     def test_invalid_aci_esg_endpoint_group_selector_name(self) -> None:
         """Test validation of ACI ESG Endpoint Group Selector naming."""
@@ -736,6 +813,23 @@ class ACIEsgEndpointSelectorTestCase(ACIBaseTestCase):
         self.assertEqual(self.aci_esg_ep_sel1.nb_tenant.name, self.nb_tenant_name)
         self.assertEqual(self.aci_esg_ep_sel2.nb_tenant.name, self.nb_tenant_name)
         self.assertEqual(self.aci_esg_ep_sel3.nb_tenant.name, self.nb_tenant_name)
+
+    def test_aci_esg_endpoint_selector_parent_object(self) -> None:
+        """Test parent object of ESG Endpoint Selector is the ACI ESG."""
+        self.assertEqual(self.aci_esg_ep_sel1.parent_object, self.aci_esg)
+
+    def test_invalid_aci_esg_endpoint_selector_object_type_without_object(
+        self,
+    ) -> None:
+        """Test clean requires an endpoint object when a type is set."""
+        selector = ACIEsgEndpointSelector(
+            name="ACIESGEndpointSelectorTypeOnly",
+            aci_endpoint_security_group=self.aci_esg,
+            ep_object_type=ContentType.objects.get_for_model(IPAddress),
+        )
+        with self.assertRaises(ValidationError) as cm:
+            selector.full_clean()
+        self.assertIn("ep_object", cm.exception.error_dict)
 
     def test_invalid_aci_esg_endpoint_selector_name(self) -> None:
         """Test validation of ACI ESG Endpoint Selector naming."""

@@ -67,6 +67,10 @@ class ACIAppProfileTestCase(ACIBaseTestCase):
         self.assertTrue(isinstance(self.aci_app_profile.nb_tenant, Tenant))
         self.assertEqual(self.aci_app_profile.nb_tenant.name, self.nb_tenant_name)
 
+    def test_aci_app_profile_parent_object(self) -> None:
+        """Test parent object of ACI Application Profile is the ACI Tenant."""
+        self.assertEqual(self.aci_app_profile.parent_object, self.aci_tenant)
+
     def test_invalid_aci_app_profile_name(self) -> None:
         """Test validation of ACI Application Profile naming."""
         app_profile = ACIAppProfile(name="ACI App Profile Test 1")

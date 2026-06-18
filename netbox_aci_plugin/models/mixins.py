@@ -81,7 +81,7 @@ class UniqueGenericForeignKeyMixin:
                 try:
                     model_field = self._meta.get_field(field_name)
                     verbose_name = str(model_field.verbose_name)
-                except FieldDoesNotExist:
+                except FieldDoesNotExist:  # pragma: no cover
                     # Fallback to the raw field name if it's not a recognized
                     # model field
                     verbose_name = field_name

@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
@@ -14,6 +15,7 @@ from ....choices import (
     USegAttributeMatchOperatorChoices,
     USegAttributeTypeChoices,
 )
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.app_profiles import ACIAppProfile
 from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.endpoint_groups import (
@@ -261,6 +263,77 @@ class ACIEndpointGroupTestCase(ACIBaseTestCase):
             epg.full_clean()
             epg.save()
 
+    def test_aci_endpoint_group_parent_object(self) -> None:
+        """Test parent object of ACI Endpoint Group is the ACI App Profile."""
+        self.assertEqual(self.aci_epg.parent_object, self.aci_app_profile)
+
+    def test_invalid_aci_epg_clean_aci_bd_from_other_fabric(self) -> None:
+        """Test clean rejects an ACI Bridge Domain from another fabric."""
+        fabric_other = ACIFabric.objects.create(
+            name="OtherFabricEPGClean", fabric_id=123, infra_vlan_vid=3954
+        )
+        tenant_other = ACITenant.objects.create(
+            name="other_fabric_epg_clean_tenant", aci_fabric=fabric_other
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="other_fabric_epg_clean_vrf", aci_tenant=tenant_other
+        )
+        bd_other = ACIBridgeDomain.objects.create(
+            name="other_fabric_epg_clean_bd",
+            aci_tenant=tenant_other,
+            aci_vrf=vrf_other,
+        )
+        epg = ACIEndpointGroup(
+            name="ACIEPGOtherFabric",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=bd_other,
+        )
+        with self.assertRaises(ValidationError):
+            epg.full_clean()
+
+    def test_invalid_aci_epg_save_aci_bd_from_other_fabric(self) -> None:
+        """Test save rejects an ACI Bridge Domain from another fabric."""
+        fabric_other = ACIFabric.objects.create(
+            name="OtherFabricEPGSave", fabric_id=124, infra_vlan_vid=3955
+        )
+        tenant_other = ACITenant.objects.create(
+            name="other_fabric_epg_save_tenant", aci_fabric=fabric_other
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="other_fabric_epg_save_vrf", aci_tenant=tenant_other
+        )
+        bd_other = ACIBridgeDomain.objects.create(
+            name="other_fabric_epg_save_bd",
+            aci_tenant=tenant_other,
+            aci_vrf=vrf_other,
+        )
+        epg = ACIEndpointGroup(
+            name="ACIEPGOtherFabricSave",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=bd_other,
+        )
+        with self.assertRaises(ValidationError):
+            epg.save()
+
+    def test_invalid_aci_epg_save_aci_bd_from_other_tenant(self) -> None:
+        """Test save rejects an ACI BD from another non-common ACI Tenant."""
+        tenant_other = ACITenant.objects.get_or_create(
+            name="other", aci_fabric=self.aci_fabric
+        )[0]
+        vrf_other = ACIVRF.objects.create(
+            name="other_tenant_epg_vrf", aci_tenant=tenant_other
+        )
+        bd_other = ACIBridgeDomain.objects.create(
+            name="other_tenant_epg_bd", aci_tenant=tenant_other, aci_vrf=vrf_other
+        )
+        epg = ACIEndpointGroup(
+            name="ACIEPGOtherTenantSave",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=bd_other,
+        )
+        with self.assertRaises(ValidationError):
+            epg.save()
+
     def test_constraint_unique_aci_endpoint_group_name_per_aci_app_profile(
         self,
     ) -> None:
@@ -417,6 +490,15 @@ class ACIUSegEndpointGroupTestCase(ACIBaseTestCase):
             self.aci_useg_epg.get_qos_class_color(),
             QualityOfServiceClassChoices.colors.get(
                 QualityOfServiceClassChoices.CLASS_LEVEL_3
+            ),
+        )
+
+    def test_aci_useg_endpoint_group_get_match_operator_color(self) -> None:
+        """Test the 'get_match_operator_color' method of ACI uSeg EPG."""
+        self.assertEqual(
+            self.aci_useg_epg.get_match_operator_color(),
+            USegAttributeMatchOperatorChoices.colors.get(
+                self.aci_useg_epg_match_operator
             ),
         )
 
@@ -893,6 +975,40 @@ class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError):
             useg_network_attr.full_clean()
+
+    def test_aci_useg_network_attr_parent_object(self) -> None:
+        """Test parent object of uSeg Attribute is the uSeg Endpoint Group."""
+        self.assertEqual(
+            self.aci_useg_network_attr_ip_address.parent_object,
+            self.aci_useg_epg,
+        )
+
+    def test_invalid_aci_useg_network_attr_object_type_without_object(
+        self,
+    ) -> None:
+        """Test clean requires an attr object when an object type is set."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="ACIUSegNetworkAttrTypeOnly",
+            aci_useg_endpoint_group=self.aci_useg_epg,
+            attr_object_type=ContentType.objects.get_for_model(IPAddress),
+        )
+        with self.assertRaises(ValidationError) as cm:
+            useg_network_attr.full_clean()
+        self.assertIn("attr_object", cm.exception.error_dict)
+
+    def test_invalid_aci_useg_network_attr_use_epg_subnet_with_object(
+        self,
+    ) -> None:
+        """Test use_epg_subnet conflicts with an assigned attr object."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="ACIUSegNetworkAttrSubnetConflict",
+            aci_useg_endpoint_group=self.aci_useg_epg,
+            use_epg_subnet=True,
+            attr_object=self.ip_address2,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            useg_network_attr.full_clean()
+        self.assertIn("attr_object_type", cm.exception.error_dict)
 
     def test_constraint_unique_aci_useg_network_attr_name_per_aci_useg_epg(
         self,

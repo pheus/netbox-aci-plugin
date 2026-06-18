@@ -143,6 +143,23 @@ class ACIL3OutTestCase(ACIBaseTestCase):
         """Test parent object of ACI L3Out."""
         self.assertEqual(self.aci_l3out.parent_object, self.aci_tenant)
 
+    def test_invalid_aci_l3out_save_routed_domain_from_other_fabric(self) -> None:
+        """Test save rejects an ACI Routed Domain from another fabric."""
+        fabric_other = ACIFabric.objects.create(
+            name="OtherFabricL3Out", fabric_id=122, infra_vlan_vid=3953
+        )
+        routed_domain_other = ACIRoutedDomain.objects.create(
+            name="OtherFabricRoutedDomain", aci_fabric=fabric_other
+        )
+        l3out = ACIL3Out(
+            name="ACITestOtherFabricL3Out",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
+            aci_routed_domain=routed_domain_other,
+        )
+        with self.assertRaises(ValidationError):
+            l3out.save()
+
     def test_aci_l3out_bfd_policy_name(self) -> None:
         """Test ACI L3Out BFD policy name."""
         self.assertEqual(

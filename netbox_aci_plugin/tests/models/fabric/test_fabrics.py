@@ -85,6 +85,14 @@ class ACIFabricTestCase(ACIBaseTestCase):
         self.assertTrue(isinstance(self.aci_fabric.nb_tenant, Tenant))
         self.assertEqual(self.aci_fabric.nb_tenant.name, self.nb_tenant_name)
 
+    def test_aci_fabric_aci_fabric_property(self) -> None:
+        """Test the aci_fabric property returns the instance itself."""
+        self.assertEqual(self.aci_fabric.aci_fabric, self.aci_fabric)
+
+    def test_aci_fabric_parent_object(self) -> None:
+        """Test parent object of ACI Fabric is None."""
+        self.assertIsNone(self.aci_fabric.parent_object)
+
     def test_invalid_aci_fabric_name(self) -> None:
         """Test validation of ACI Fabric naming."""
         fabric = ACIFabric(
