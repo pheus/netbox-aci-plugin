@@ -142,8 +142,8 @@ class ACIEndpointGroupBaseModel(ACITenantBaseModel):
         if (
             self.aci_bridge_domain_id
             and self.aci_app_profile_id
-            and self.aci_bridge_domain.aci_tenant.aci_fabric
-            != self.aci_app_profile.aci_tenant.aci_fabric
+            and self.aci_bridge_domain.aci_tenant.aci_fabric_id
+            != self.aci_app_profile.aci_tenant.aci_fabric_id
         ):
             errors.setdefault("aci_bridge_domain", []).append(
                 _(
@@ -157,7 +157,8 @@ class ACIEndpointGroupBaseModel(ACITenantBaseModel):
         if (
             self.aci_bridge_domain_id
             and self.aci_app_profile_id
-            and self.aci_bridge_domain.aci_tenant != self.aci_app_profile.aci_tenant
+            and self.aci_bridge_domain.aci_tenant_id
+            != self.aci_app_profile.aci_tenant_id
             and self.aci_bridge_domain.aci_tenant.name != "common"
         ):
             errors.setdefault("aci_bridge_domain", []).append(
@@ -195,8 +196,8 @@ class ACIEndpointGroupBaseModel(ACITenantBaseModel):
         # Validate the assigned ACIBridgeDomain belongs to the same
         # ACIFabric as the ACIAppProfile
         if (
-            self.aci_bridge_domain.aci_tenant.aci_fabric
-            != self.aci_app_profile.aci_tenant.aci_fabric
+            self.aci_bridge_domain.aci_tenant.aci_fabric_id
+            != self.aci_app_profile.aci_tenant.aci_fabric_id
         ):
             raise ValidationError(
                 _(
@@ -208,7 +209,7 @@ class ACIEndpointGroupBaseModel(ACITenantBaseModel):
         # Ensure the assigned ACIBridgeDomain belongs to either the same
         # ACITenant as the ACIAppProfile or to the special ACITenant 'common'
         if (
-            self.aci_bridge_domain.aci_tenant != self.aci_app_profile.aci_tenant
+            self.aci_bridge_domain.aci_tenant_id != self.aci_app_profile.aci_tenant_id
             and self.aci_bridge_domain.aci_tenant.name != "common"
         ):
             raise ValidationError(

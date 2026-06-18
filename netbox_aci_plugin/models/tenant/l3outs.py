@@ -237,7 +237,7 @@ class ACIL3Out(ACITenantBaseModel):
         if self.aci_vrf_id and self.aci_tenant_id:
             # Ensure that the assigned ACI VRF is part of the same
             # ACI Fabric as the ACI L3Out.
-            if self.aci_vrf.aci_tenant.aci_fabric != self.aci_tenant.aci_fabric:
+            if self.aci_vrf.aci_tenant.aci_fabric_id != self.aci_tenant.aci_fabric_id:
                 errors.setdefault("aci_vrf", []).append(
                     _(
                         "The assigned ACI VRF must belong to the same "
@@ -248,7 +248,7 @@ class ACIL3Out(ACITenantBaseModel):
             # Ensure that the assigned ACI VRF is part of the same
             # ACI Tenant as the ACI L3Out, or the ACI Tenant 'common'.
             if (
-                self.aci_vrf.aci_tenant != self.aci_tenant
+                self.aci_vrf.aci_tenant_id != self.aci_tenant_id
                 and self.aci_vrf.aci_tenant.name != "common"
             ):
                 errors.setdefault("aci_vrf", []).append(
@@ -264,7 +264,7 @@ class ACIL3Out(ACITenantBaseModel):
         if (
             self.aci_routed_domain_id
             and self.aci_tenant_id
-            and self.aci_routed_domain.aci_fabric != self.aci_tenant.aci_fabric
+            and self.aci_routed_domain.aci_fabric_id != self.aci_tenant.aci_fabric_id
         ):
             errors.setdefault("aci_routed_domain", []).append(
                 _(
@@ -361,7 +361,7 @@ class ACIL3Out(ACITenantBaseModel):
     def save(self, *args, **kwargs) -> None:
         """Save the current instance to the database."""
         if self.aci_vrf_id and self.aci_tenant_id:
-            if self.aci_vrf.aci_tenant.aci_fabric != self.aci_tenant.aci_fabric:
+            if self.aci_vrf.aci_tenant.aci_fabric_id != self.aci_tenant.aci_fabric_id:
                 raise ValidationError(
                     _(
                         "The assigned ACI VRF must belong to the same "
@@ -369,7 +369,7 @@ class ACIL3Out(ACITenantBaseModel):
                     )
                 )
             if (
-                self.aci_vrf.aci_tenant != self.aci_tenant
+                self.aci_vrf.aci_tenant_id != self.aci_tenant_id
                 and self.aci_vrf.aci_tenant.name != "common"
             ):
                 raise ValidationError(
@@ -382,7 +382,7 @@ class ACIL3Out(ACITenantBaseModel):
         if (
             self.aci_routed_domain_id
             and self.aci_tenant_id
-            and self.aci_routed_domain.aci_fabric != self.aci_tenant.aci_fabric
+            and self.aci_routed_domain.aci_fabric_id != self.aci_tenant.aci_fabric_id
         ):
             raise ValidationError(
                 _(

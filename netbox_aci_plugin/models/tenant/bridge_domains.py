@@ -272,7 +272,7 @@ class ACIBridgeDomain(ACITenantBaseModel):
         # the ACIBridgeDomain
         if (
             self.aci_vrf_id
-            and self.aci_vrf.aci_tenant.aci_fabric != self.aci_tenant.aci_fabric
+            and self.aci_vrf.aci_tenant.aci_fabric_id != self.aci_tenant.aci_fabric_id
         ):
             errors.setdefault("aci_vrf", []).append(
                 _(
@@ -285,7 +285,7 @@ class ACIBridgeDomain(ACITenantBaseModel):
         # the ACIBridgeDomain or to the special ACITenant 'common'
         if (
             self.aci_vrf_id
-            and self.aci_vrf.aci_tenant != self.aci_tenant
+            and self.aci_vrf.aci_tenant_id != self.aci_tenant_id
             and self.aci_vrf.aci_tenant.name != "common"
         ):
             errors.setdefault("aci_vrf", []).append(
@@ -303,7 +303,7 @@ class ACIBridgeDomain(ACITenantBaseModel):
         """Save the current instance to the database."""
         # Ensure the assigned ACIVRF belongs to the same ACIFabric as
         # the ACIBridgeDomain.
-        if self.aci_vrf.aci_tenant.aci_fabric != self.aci_tenant.aci_fabric:
+        if self.aci_vrf.aci_tenant.aci_fabric_id != self.aci_tenant.aci_fabric_id:
             raise ValidationError(
                 _(
                     "The assigned ACI VRF must belong to the "
@@ -314,7 +314,7 @@ class ACIBridgeDomain(ACITenantBaseModel):
         # Ensure the assigned ACIVRF belongs to either the same ACITenant as
         # the ACIBridgeDomain or to the special ACITenant 'common'
         if (
-            self.aci_vrf.aci_tenant != self.aci_tenant
+            self.aci_vrf.aci_tenant_id != self.aci_tenant_id
             and self.aci_vrf.aci_tenant.name != "common"
         ):
             raise ValidationError(
@@ -570,7 +570,7 @@ class ACIBridgeDomainL3OutBinding(NetBoxModel):
                         "ACI Fabric as the ACI Bridge Domain."
                     )
                 )
-            if self.aci_bridge_domain.aci_vrf != self.aci_l3out.aci_vrf:
+            if self.aci_bridge_domain.aci_vrf_id != self.aci_l3out.aci_vrf_id:
                 errors.setdefault("aci_l3out", []).append(
                     _(
                         "The assigned ACI L3Out must use the same ACI VRF "
@@ -578,7 +578,7 @@ class ACIBridgeDomainL3OutBinding(NetBoxModel):
                     )
                 )
             if (
-                self.aci_l3out.aci_tenant != self.aci_bridge_domain.aci_tenant
+                self.aci_l3out.aci_tenant_id != self.aci_bridge_domain.aci_tenant_id
                 and self.aci_l3out.aci_tenant.name != "common"
             ):
                 errors.setdefault("aci_l3out", []).append(

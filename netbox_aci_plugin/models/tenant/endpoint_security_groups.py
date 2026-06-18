@@ -124,8 +124,8 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
         if (
             self.aci_vrf_id
             and self.aci_app_profile_id
-            and self.aci_vrf.aci_tenant.aci_fabric
-            != self.aci_app_profile.aci_tenant.aci_fabric
+            and self.aci_vrf.aci_tenant.aci_fabric_id
+            != self.aci_app_profile.aci_tenant.aci_fabric_id
         ):
             errors.setdefault("aci_vrf", []).append(
                 _(
@@ -139,7 +139,7 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
         if (
             self.aci_vrf_id
             and self.aci_app_profile_id
-            and self.aci_vrf.aci_tenant != self.aci_app_profile.aci_tenant
+            and self.aci_vrf.aci_tenant_id != self.aci_app_profile.aci_tenant_id
             and self.aci_vrf.aci_tenant.name != "common"
         ):
             errors.setdefault("aci_vrf", []).append(
@@ -158,8 +158,8 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
         # Validate the assigned ACIVRF belongs to the same
         # ACIFabric as the ACIAppProfile
         if (
-            self.aci_vrf.aci_tenant.aci_fabric
-            != self.aci_app_profile.aci_tenant.aci_fabric
+            self.aci_vrf.aci_tenant.aci_fabric_id
+            != self.aci_app_profile.aci_tenant.aci_fabric_id
         ):
             raise ValidationError(
                 _(
@@ -171,7 +171,7 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
         # Ensure the assigned ACIVRF belongs to either the same ACITenant as
         # the ACIAppProfile or to the special ACITenant 'common'
         if (
-            self.aci_vrf.aci_tenant != self.aci_app_profile.aci_tenant
+            self.aci_vrf.aci_tenant_id != self.aci_app_profile.aci_tenant_id
             and self.aci_vrf.aci_tenant.name != "common"
         ):
             raise ValidationError(
