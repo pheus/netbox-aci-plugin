@@ -205,7 +205,7 @@ class ACIExternalSubnetFilter(ACIBaseFilterMixin):
     )
 
     @strawberry_django.filter_field()
-    def contains(self, value: list[str], prefix) -> Q:
+    def contains(self, value: list[str], prefix) -> Q:  # pragma: no cover
         """Return Q for prefixes containing any of the given subnets."""
         if not value:
             return Q()

@@ -11,7 +11,7 @@ from strawberry_django import BaseFilterLookup, FilterLookup
 
 try:
     from strawberry_django import StrFilterLookup
-except ImportError:
+except ImportError:  # pragma: no cover
     from strawberry_django import FilterLookup as StrFilterLookup
 
 from .... import models

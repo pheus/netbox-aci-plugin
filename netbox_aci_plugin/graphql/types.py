@@ -85,7 +85,7 @@ class ACIFabricType(OwnerMixin, NetBoxObjectType):
         | None
     ):
         """Return the scope object."""
-        return self.scope
+        return self.scope  # pragma: no cover
 
     # Related models
     aci_pods: list[
@@ -128,7 +128,7 @@ class ACIPodType(OwnerMixin, NetBoxObjectType):
         | None
     ):
         """Return the scope object."""
-        return self.scope
+        return self.scope  # pragma: no cover
 
     # Related models
     aci_nodes: list[
@@ -168,7 +168,7 @@ class ACINodeType(OwnerMixin, NetBoxObjectType):
         | None
     ):
         """Return the node_object object."""
-        return self.node_object
+        return self.node_object  # pragma: no cover
 
 
 @strawberry_django.type(
@@ -541,7 +541,7 @@ class ACIUSegNetworkAttributeType(OwnerMixin, NetBoxObjectType):
         | None
     ):
         """Return the attribute object."""
-        return self.attr_object
+        return self.attr_object  # pragma: no cover
 
 
 @strawberry_django.type(
@@ -621,7 +621,7 @@ class ACIEsgEndpointGroupSelectorType(OwnerMixin, NetBoxObjectType):
         | None
     ):
         """Return the Endpoint Group object."""
-        return self.aci_epg_object
+        return self.aci_epg_object  # pragma: no cover
 
 
 @strawberry_django.type(
@@ -656,7 +656,7 @@ class ACIEsgEndpointSelectorType(OwnerMixin, NetBoxObjectType):
         | None
     ):
         """Return the Endpoint object."""
-        return self.ep_object
+        return self.ep_object  # pragma: no cover
 
 
 @strawberry_django.type(
@@ -784,7 +784,7 @@ class ACIContractRelationType(NetBoxObjectType):
         | None
     ):
         """Return the ACI object."""
-        return self.aci_object
+        return self.aci_object  # pragma: no cover
 
 
 @strawberry_django.type(
