@@ -41,3 +41,19 @@ class ACIVRFFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
         fs = self.filterset(queryset=qs)
         result = fs.search(qs, "q", "   ")
         self.assertEqual(result.count(), qs.count())
+
+    def test_filter_present_in_aci_tenant_or_common(self) -> None:
+        """Test the tenant-or-common filter includes the tenant's VRFs."""
+        fs = self.filterset(queryset=self.queryset)
+        result = fs.filter_present_in_aci_tenant_or_common_id(
+            self.queryset, "name", self.aci_tenant
+        )
+        self.assertIn(self.aci_vrf_2, result)
+
+    def test_filter_present_in_aci_tenant_or_common_none(self) -> None:
+        """Test the tenant-or-common filter returns none for no tenant."""
+        fs = self.filterset(queryset=self.queryset)
+        result = fs.filter_present_in_aci_tenant_or_common_id(
+            self.queryset, "name", None
+        )
+        self.assertEqual(result.count(), 0)

@@ -17,6 +17,7 @@ from ....models.tenant.endpoint_groups import (
     ACIUSegEndpointGroup,
     ACIUSegNetworkAttribute,
 )
+from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ...models.base import ACIBaseTestCase
 
 
@@ -59,6 +60,23 @@ class ACIEndpointGroupFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTe
         fs = self.filterset(queryset=qs)
         result = fs.search(qs, "q", "   ")
         self.assertEqual(result.count(), qs.count())
+
+    def test_filter_shares_aci_vrf_with_aci_esg(self) -> None:
+        """Test filtering EPGs sharing an ACI VRF with a given ESG."""
+        esg = ACIEndpointSecurityGroup.objects.create(
+            name="ACIFSTestSharedESG",
+            aci_app_profile=self.aci_app_profile,
+            aci_vrf=self.aci_vrf,
+        )
+        fs = self.filterset(queryset=self.queryset)
+        result = fs.filter_shares_aci_vrf_with_aci_esg_id(self.queryset, "name", esg)
+        self.assertIn(self.aci_epg, result)
+
+    def test_filter_shares_aci_vrf_with_aci_esg_none(self) -> None:
+        """Test the shared-VRF filter returns none for a missing ESG."""
+        fs = self.filterset(queryset=self.queryset)
+        result = fs.filter_shares_aci_vrf_with_aci_esg_id(self.queryset, "name", None)
+        self.assertEqual(result.count(), 0)
 
 
 class ACIUSegEndpointGroupFilterSetTestCase(
@@ -103,6 +121,23 @@ class ACIUSegEndpointGroupFilterSetTestCase(
         fs = self.filterset(queryset=qs)
         result = fs.search(qs, "q", "   ")
         self.assertEqual(result.count(), qs.count())
+
+    def test_filter_shares_aci_vrf_with_aci_esg(self) -> None:
+        """Test filtering uSeg EPGs sharing an ACI VRF with a given ESG."""
+        esg = ACIEndpointSecurityGroup.objects.create(
+            name="ACIFSTestSharedESGUSeg",
+            aci_app_profile=self.aci_app_profile,
+            aci_vrf=self.aci_vrf,
+        )
+        fs = self.filterset(queryset=self.queryset)
+        result = fs.filter_shares_aci_vrf_with_aci_esg_id(self.queryset, "name", esg)
+        self.assertIn(self.aci_useg_epg, result)
+
+    def test_filter_shares_aci_vrf_with_aci_esg_none(self) -> None:
+        """Test the shared-VRF filter returns none for a missing ESG."""
+        fs = self.filterset(queryset=self.queryset)
+        result = fs.filter_shares_aci_vrf_with_aci_esg_id(self.queryset, "name", None)
+        self.assertEqual(result.count(), 0)
 
 
 class ACIUSegNetworkAttributeFilterSetTestCase(
