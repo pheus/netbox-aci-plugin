@@ -6,10 +6,13 @@ from django.contrib.contenttypes.models import ContentType
 
 from ipam.models import IPAddress
 
+from ....choices import QualityOfServiceClassChoices
 from ....forms.tenant.endpoint_groups import (
     ACIEndpointGroupEditForm,
+    ACIEndpointGroupFilterForm,
     ACIEndpointGroupImportForm,
     ACIUSegEndpointGroupEditForm,
+    ACIUSegEndpointGroupFilterForm,
     ACIUSegEndpointGroupImportForm,
     ACIUSegNetworkAttributeBulkEditForm,
     ACIUSegNetworkAttributeEditForm,
@@ -60,6 +63,44 @@ class ACIEndpointGroupFormCoverageTestCase(ACIBaseFormTestCase):
         """Test the uSeg attribute bulk edit form tolerates an unknown type."""
         form = ACIUSegNetworkAttributeBulkEditForm(data={"attr_object_type": 99999999})
         self.assertIn("attr_object", form.fields)
+
+    def test_epg_filter_form_qos_class_accepts_multiple(self) -> None:
+        """Test the EPG filter form accepts multiple QoS class values."""
+        form = ACIEndpointGroupFilterForm(
+            data={
+                "qos_class": [
+                    QualityOfServiceClassChoices.CLASS_LEVEL_1,
+                    QualityOfServiceClassChoices.CLASS_LEVEL_2,
+                ]
+            }
+        )
+        self.assertTrue(form.is_valid())
+        self.assertEqual(
+            form.cleaned_data["qos_class"],
+            [
+                QualityOfServiceClassChoices.CLASS_LEVEL_1,
+                QualityOfServiceClassChoices.CLASS_LEVEL_2,
+            ],
+        )
+
+    def test_useg_epg_filter_form_qos_class_accepts_multiple(self) -> None:
+        """Test the uSeg EPG filter form accepts multiple QoS values."""
+        form = ACIUSegEndpointGroupFilterForm(
+            data={
+                "qos_class": [
+                    QualityOfServiceClassChoices.CLASS_LEVEL_1,
+                    QualityOfServiceClassChoices.CLASS_LEVEL_2,
+                ]
+            }
+        )
+        self.assertTrue(form.is_valid())
+        self.assertEqual(
+            form.cleaned_data["qos_class"],
+            [
+                QualityOfServiceClassChoices.CLASS_LEVEL_1,
+                QualityOfServiceClassChoices.CLASS_LEVEL_2,
+            ],
+        )
 
 
 class ACIEndpointGroupFormTestCase(ACIBaseFormTestCase):

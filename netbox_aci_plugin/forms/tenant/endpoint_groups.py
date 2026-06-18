@@ -459,7 +459,7 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Intra-EPG isolation enabled"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = forms.MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
@@ -1014,7 +1014,7 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Intra-EPG isolation enabled"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = forms.MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
