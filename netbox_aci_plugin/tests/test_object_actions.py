@@ -82,3 +82,14 @@ class AddChildActionTestCase(TestCase):
             action = add_child_action(bad, "Add Something")
             with self.assertRaises(ImproperlyConfigured):
                 action.get_child_model()
+
+    def test_get_child_model_rejects_unknown_model(self) -> None:
+        # A well-formed label whose model does not exist raises at lookup.
+        action = add_child_action("netbox_aci_plugin.NonexistentModel", "Add X")
+        with self.assertRaises(ImproperlyConfigured):
+            action.get_child_model()
+
+    def test_get_url_returns_none_without_add_url(self) -> None:
+        # A model with no registered "add" view yields a None URL.
+        action = add_child_action("contenttypes.ContentType", "Add CT")
+        self.assertIsNone(action.get_url(self.vrf))
