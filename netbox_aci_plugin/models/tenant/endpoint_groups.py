@@ -168,6 +168,25 @@ class ACIEndpointGroupBaseModel(ACITenantBaseModel):
                 )
             )
 
+        # Re-validate the same-VRF requirement of any ACI Endpoint Security
+        # Group that already selects this EPG when its Bridge Domain (and
+        # therefore its ACI VRF) changes. The reverse lookup is kept out of
+        # save() to avoid a query on every persist; the form and API paths
+        # both run full_clean().
+        if self.pk and self.aci_bridge_domain_id:
+            new_aci_vrf_id = self.aci_bridge_domain.aci_vrf_id
+            if self.aci_esg_endpoint_group_selectors.exclude(
+                aci_endpoint_security_group__aci_vrf_id=new_aci_vrf_id
+            ).exists():
+                errors.setdefault("aci_bridge_domain", []).append(
+                    _(
+                        "The assigned ACI Bridge Domain belongs to a different "
+                        "ACI VRF than an ACI Endpoint Security Group that "
+                        "selects this Endpoint Group. Update or remove the "
+                        "affected selector first."
+                    )
+                )
+
         if errors:
             raise ValidationError(errors)
 

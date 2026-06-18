@@ -23,6 +23,10 @@ from ....models.tenant.endpoint_groups import (
     ACIUSegEndpointGroup,
     ACIUSegNetworkAttribute,
 )
+from ....models.tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroup,
+    ACIEsgEndpointGroupSelector,
+)
 from ....models.tenant.tenants import ACITenant
 from ....models.tenant.vrfs import ACIVRF
 from ..base import ACIBaseTestCase
@@ -334,6 +338,63 @@ class ACIEndpointGroupTestCase(ACIBaseTestCase):
         with self.assertRaises(ValidationError):
             epg.save()
 
+    def test_invalid_aci_epg_bd_change_to_other_vrf_with_esg_selector(
+        self,
+    ) -> None:
+        """Test clean rejects moving a selected EPG to another VRF's BD."""
+        epg = ACIEndpointGroup.objects.create(
+            name="ACIEPGVrfGuard",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        esg = ACIEndpointSecurityGroup.objects.create(
+            name="ACIESGForEPGVrfGuard",
+            aci_app_profile=self.aci_app_profile,
+            aci_vrf=self.aci_vrf,
+        )
+        ACIEsgEndpointGroupSelector.objects.create(
+            name="ACIESGSelForEPGVrfGuard",
+            aci_endpoint_security_group=esg,
+            aci_epg_object=epg,
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="epg_vrf_guard_other_vrf", aci_tenant=self.aci_tenant
+        )
+        bd_other = ACIBridgeDomain.objects.create(
+            name="epg_vrf_guard_other_bd",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_other,
+        )
+        epg.aci_bridge_domain = bd_other
+        with self.assertRaises(ValidationError) as cm:
+            epg.full_clean()
+        self.assertIn("aci_bridge_domain", cm.exception.error_dict)
+
+    def test_valid_aci_epg_bd_change_same_vrf_with_esg_selector(self) -> None:
+        """Test clean allows moving a selected EPG within the same VRF."""
+        epg = ACIEndpointGroup.objects.create(
+            name="ACIEPGVrfGuardSame",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        esg = ACIEndpointSecurityGroup.objects.create(
+            name="ACIESGForEPGVrfGuardSame",
+            aci_app_profile=self.aci_app_profile,
+            aci_vrf=self.aci_vrf,
+        )
+        ACIEsgEndpointGroupSelector.objects.create(
+            name="ACIESGSelForEPGVrfGuardSame",
+            aci_endpoint_security_group=esg,
+            aci_epg_object=epg,
+        )
+        bd_same_vrf = ACIBridgeDomain.objects.create(
+            name="epg_vrf_guard_same_bd",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=self.aci_vrf,
+        )
+        epg.aci_bridge_domain = bd_same_vrf
+        epg.full_clean()
+
     def test_constraint_unique_aci_endpoint_group_name_per_aci_app_profile(
         self,
     ) -> None:
@@ -605,6 +666,38 @@ class ACIUSegEndpointGroupTestCase(ACIBaseTestCase):
         with self.assertRaises(ValidationError):
             epg.full_clean()
             epg.save()
+
+    def test_invalid_aci_useg_epg_bd_change_to_other_vrf_with_esg_selector(
+        self,
+    ) -> None:
+        """Test clean rejects moving a selected uSeg EPG to another VRF."""
+        useg_epg = ACIUSegEndpointGroup.objects.create(
+            name="ACIUSegEPGVrfGuard",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        esg = ACIEndpointSecurityGroup.objects.create(
+            name="ACIESGForUSegEPGVrfGuard",
+            aci_app_profile=self.aci_app_profile,
+            aci_vrf=self.aci_vrf,
+        )
+        ACIEsgEndpointGroupSelector.objects.create(
+            name="ACIESGSelForUSegEPGVrfGuard",
+            aci_endpoint_security_group=esg,
+            aci_epg_object=useg_epg,
+        )
+        vrf_other = ACIVRF.objects.create(
+            name="useg_epg_vrf_guard_other_vrf", aci_tenant=self.aci_tenant
+        )
+        bd_other = ACIBridgeDomain.objects.create(
+            name="useg_epg_vrf_guard_other_bd",
+            aci_tenant=self.aci_tenant,
+            aci_vrf=vrf_other,
+        )
+        useg_epg.aci_bridge_domain = bd_other
+        with self.assertRaises(ValidationError) as cm:
+            useg_epg.full_clean()
+        self.assertIn("aci_bridge_domain", cm.exception.error_dict)
 
     def test_constraint_unique_aci_useg_epg_name_per_aci_app_profile(
         self,
