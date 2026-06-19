@@ -15,7 +15,10 @@ from ....models.tenant.l3outs import (
     ACIExternalSubnet,
     ACIL3Out,
 )
-from ....search import ACIExternalSubnetIndex
+from ....search import (
+    ACIExternalEndpointGroupIndex,
+    ACIExternalSubnetIndex,
+)
 from ...models.base import ACIBaseTestCase
 
 
@@ -73,3 +76,33 @@ class ACIExternalSubnetSearchIndexTestCase(ACIBaseTestCase):
         found = [result.object for result in results]
         self.assertIn(self.subnet, found)
         self.assertNotIn(self.subnet_b, found)
+
+
+class ACIExternalEndpointGroupSearchIndexTestCase(ACIBaseTestCase):
+    """Search index tests for ACIExternalEndpointGroup display attrs."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Create an external EPG under a known tenant and VRF."""
+        super().setUpTestData()
+        cls.aci_routed_domain = ACIRoutedDomain.objects.create(
+            name="ACIEPGSearchRoutedDomain",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_l3out = ACIL3Out.objects.create(
+            name="ACIEPGSearchL3Out",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+            aci_routed_domain=cls.aci_routed_domain,
+        )
+        cls.aci_epg = ACIExternalEndpointGroup.objects.create(
+            name="ACIEPGSearchExternalEPG",
+            aci_l3out=cls.aci_l3out,
+        )
+
+    def test_display_attrs_resolve_tenant_and_vrf(self) -> None:
+        """Test ExtEPG search exposes the parent tenant and VRF."""
+        self.assertIn("aci_tenant", ACIExternalEndpointGroupIndex.display_attrs)
+        self.assertIn("aci_vrf", ACIExternalEndpointGroupIndex.display_attrs)
+        self.assertEqual(self.aci_epg.aci_tenant, self.aci_tenant)
+        self.assertEqual(self.aci_epg.aci_vrf, self.aci_vrf)

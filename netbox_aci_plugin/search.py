@@ -271,6 +271,8 @@ class ACIExternalEndpointGroupIndex(SearchIndex):
         "name_alias",
         "description",
         "aci_l3out",
+        "aci_tenant",
+        "aci_vrf",
         "nb_tenant",
     )
 
