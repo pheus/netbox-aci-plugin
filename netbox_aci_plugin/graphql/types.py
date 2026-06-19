@@ -62,6 +62,7 @@ if TYPE_CHECKING:
     models.ACIFabric,
     exclude=["scope_type", "scope_id", "_location", "_region", "_site", "_site_group"],
     filters=ACIFabricFilter,
+    pagination=True,
 )
 class ACIFabricType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIFabric model."""
@@ -102,6 +103,7 @@ class ACIFabricType(OwnerMixin, NetBoxObjectType):
     models.ACIPod,
     exclude=["scope_type", "scope_id", "_location", "_region", "_site", "_site_group"],
     filters=ACIPodFilter,
+    pagination=True,
 )
 class ACIPodType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIPod model."""
@@ -140,6 +142,7 @@ class ACIPodType(OwnerMixin, NetBoxObjectType):
     models.ACINode,
     exclude=["node_object_type", "node_object_id", "_device", "_virtual_machine"],
     filters=ACINodeFilter,
+    pagination=True,
 )
 class ACINodeType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACINode model."""
@@ -175,6 +178,7 @@ class ACINodeType(OwnerMixin, NetBoxObjectType):
     models.ACIRoutedDomain,
     fields="__all__",
     filters=ACIRoutedDomainFilter,
+    pagination=True,
 )
 class ACIRoutedDomainType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIRoutedDomain model."""
@@ -187,7 +191,9 @@ class ACIRoutedDomainType(OwnerMixin, NetBoxObjectType):
     security_domains: list[str] | None
 
 
-@strawberry_django.type(models.ACITenant, fields="__all__", filters=ACITenantFilter)
+@strawberry_django.type(
+    models.ACITenant, fields="__all__", filters=ACITenantFilter, pagination=True
+)
 class ACITenantType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACITenant model."""
 
@@ -232,7 +238,7 @@ class ACITenantType(OwnerMixin, NetBoxObjectType):
 
 
 @strawberry_django.type(
-    models.ACIAppProfile, fields="__all__", filters=ACIAppProfileFilter
+    models.ACIAppProfile, fields="__all__", filters=ACIAppProfileFilter, pagination=True
 )
 class ACIAppProfileType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIAppProfile model."""
@@ -264,7 +270,9 @@ class ACIAppProfileType(OwnerMixin, NetBoxObjectType):
     ]
 
 
-@strawberry_django.type(models.ACIVRF, fields="__all__", filters=ACIVRFFilter)
+@strawberry_django.type(
+    models.ACIVRF, fields="__all__", filters=ACIVRFFilter, pagination=True
+)
 class ACIVRFType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIVRF model."""
 
@@ -298,7 +306,10 @@ class ACIVRFType(OwnerMixin, NetBoxObjectType):
 
 
 @strawberry_django.type(
-    models.ACIBridgeDomain, fields="__all__", filters=ACIBridgeDomainFilter
+    models.ACIBridgeDomain,
+    fields="__all__",
+    filters=ACIBridgeDomainFilter,
+    pagination=True,
 )
 class ACIBridgeDomainType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIBridgeDomain model."""
@@ -338,6 +349,7 @@ class ACIBridgeDomainType(OwnerMixin, NetBoxObjectType):
     models.ACIBridgeDomainSubnet,
     fields="__all__",
     filters=ACIBridgeDomainSubnetFilter,
+    pagination=True,
 )
 class ACIBridgeDomainSubnetType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIBridgeDomainSubnet model."""
@@ -353,7 +365,9 @@ class ACIBridgeDomainSubnetType(OwnerMixin, NetBoxObjectType):
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
 
-@strawberry_django.type(models.ACIL3Out, fields="__all__", filters=ACIL3OutFilter)
+@strawberry_django.type(
+    models.ACIL3Out, fields="__all__", filters=ACIL3OutFilter, pagination=True
+)
 class ACIL3OutType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIL3Out model."""
 
@@ -386,6 +400,7 @@ class ACIL3OutType(OwnerMixin, NetBoxObjectType):
     models.ACIExternalEndpointGroup,
     fields="__all__",
     filters=ACIExternalEndpointGroupFilter,
+    pagination=True,
 )
 class ACIExternalEndpointGroupType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIExternalEndpointGroup model."""
@@ -415,6 +430,7 @@ class ACIExternalEndpointGroupType(OwnerMixin, NetBoxObjectType):
     models.ACIExternalSubnet,
     fields="__all__",
     filters=ACIExternalSubnetFilter,
+    pagination=True,
 )
 class ACIExternalSubnetType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIExternalSubnet model."""
@@ -433,6 +449,7 @@ class ACIExternalSubnetType(OwnerMixin, NetBoxObjectType):
     models.ACIBridgeDomainL3OutBinding,
     fields="__all__",
     filters=ACIBridgeDomainL3OutBindingFilter,
+    pagination=True,
 )
 class ACIBridgeDomainL3OutBindingType(NetBoxObjectType):
     """GraphQL type definition for the ACIBridgeDomainL3OutBinding model."""
@@ -451,6 +468,7 @@ class ACIBridgeDomainL3OutBindingType(NetBoxObjectType):
     models.ACIEndpointGroup,
     fields="__all__",
     filters=ACIEndpointGroupFilter,
+    pagination=True,
 )
 class ACIEndpointGroupType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIEndpointGroup model."""
@@ -478,6 +496,7 @@ class ACIEndpointGroupType(OwnerMixin, NetBoxObjectType):
     models.ACIUSegEndpointGroup,
     fields="__all__",
     filters=ACIUSegEndpointGroupFilter,
+    pagination=True,
 )
 class ACIUSegEndpointGroupType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIUSegEndpointGroup model."""
@@ -517,6 +536,7 @@ class ACIUSegEndpointGroupType(OwnerMixin, NetBoxObjectType):
         "_prefix",
     ],
     filters=ACIUSegNetworkAttributeFilter,
+    pagination=True,
 )
 class ACIUSegNetworkAttributeType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIUSegNetworkAttribute model."""
@@ -548,6 +568,7 @@ class ACIUSegNetworkAttributeType(OwnerMixin, NetBoxObjectType):
     models.ACIEndpointSecurityGroup,
     fields="__all__",
     filters=ACIEndpointSecurityGroupFilter,
+    pagination=True,
 )
 class ACIEndpointSecurityGroupType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIEndpointSecurityGroup model."""
@@ -592,6 +613,7 @@ class ACIEndpointSecurityGroupType(OwnerMixin, NetBoxObjectType):
         "_aci_useg_endpoint_group",
     ],
     filters=ACIEsgEndpointGroupSelectorFilter,
+    pagination=True,
 )
 class ACIEsgEndpointGroupSelectorType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIEsgEndpointGroupSelector model."""
@@ -633,6 +655,7 @@ class ACIEsgEndpointGroupSelectorType(OwnerMixin, NetBoxObjectType):
         "_prefix",
     ],
     filters=ACIEsgEndpointSelectorFilter,
+    pagination=True,
 )
 class ACIEsgEndpointSelectorType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIEsgEndpointSelector model."""
@@ -663,6 +686,7 @@ class ACIEsgEndpointSelectorType(OwnerMixin, NetBoxObjectType):
     models.ACIContractFilter,
     fields="__all__",
     filters=ACIContractFilterFilter,
+    pagination=True,
 )
 class ACIContractFilterType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIContractFilter model."""
@@ -692,6 +716,7 @@ class ACIContractFilterType(OwnerMixin, NetBoxObjectType):
     models.ACIContractFilterEntry,
     fields="__all__",
     filters=ACIContractFilterEntryFilter,
+    pagination=True,
 )
 class ACIContractFilterEntryType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIContractFilterEntry model."""
@@ -708,6 +733,7 @@ class ACIContractFilterEntryType(OwnerMixin, NetBoxObjectType):
     models.ACIContract,
     fields="__all__",
     filters=ACIContractFilter,
+    pagination=True,
 )
 class ACIContractType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIContract model."""
@@ -745,6 +771,7 @@ class ACIContractType(OwnerMixin, NetBoxObjectType):
         "_aci_vrf",
     ],
     filters=ACIContractRelationFilter,
+    pagination=True,
 )
 class ACIContractRelationType(NetBoxObjectType):
     """GraphQL type definition for the ACIContractRelation model."""
@@ -791,6 +818,7 @@ class ACIContractRelationType(NetBoxObjectType):
     models.ACIContractSubject,
     fields="__all__",
     filters=ACIContractSubjectFilter,
+    pagination=True,
 )
 class ACIContractSubjectType(OwnerMixin, NetBoxObjectType):
     """GraphQL type definition for the ACIContractSubject model."""
@@ -814,6 +842,7 @@ class ACIContractSubjectType(OwnerMixin, NetBoxObjectType):
     models.ACIContractSubjectFilter,
     fields="__all__",
     filters=ACIContractSubjectFilterFilter,
+    pagination=True,
 )
 class ACIContractSubjectFilterType(NetBoxObjectType):
     """GraphQL type definition for the ACIContractSubjectFilter model."""
