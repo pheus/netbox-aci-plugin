@@ -548,7 +548,7 @@ class ACIUSegNetworkAttributeType(OwnerMixin, NetBoxObjectType):
     ]
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
-    @strawberry.field(description="Attribute Object")
+    @strawberry_django.field(description="Attribute Object")
     def attr_object(
         self,
     ) -> (
@@ -625,7 +625,7 @@ class ACIEsgEndpointGroupSelectorType(OwnerMixin, NetBoxObjectType):
     ]
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
-    @strawberry.field(description="Endpoint Group Object")
+    @strawberry_django.field(description="Endpoint Group Object")
     def aci_epg_object(
         self,
     ) -> (
@@ -667,7 +667,7 @@ class ACIEsgEndpointSelectorType(OwnerMixin, NetBoxObjectType):
     ]
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
-    @strawberry.field(description="Endpoint Object")
+    @strawberry_django.field(description="Endpoint Object")
     def ep_object(
         self,
     ) -> (
@@ -781,7 +781,7 @@ class ACIContractRelationType(NetBoxObjectType):
         "ACIContractType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
 
-    @strawberry.field(description="ACI Object")
+    @strawberry_django.field(description="ACI Object")
     def aci_object(
         self,
     ) -> (
