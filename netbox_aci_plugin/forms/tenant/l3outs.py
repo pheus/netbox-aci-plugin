@@ -130,7 +130,7 @@ class ACIL3OutEditForm(NetBoxModelForm):
         label=_("Multi-Pod enabled"),
         help_text=_(
             "Designates this infra Tenant L3Out as used for ACI Multi-Pod. "
-            "Default is disabled."
+            "NetBox-side marker only; not pushed to APIC. Default is disabled."
         ),
     )
     custom_qos_policy_name = forms.CharField(

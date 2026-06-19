@@ -149,7 +149,7 @@ class ACIL3Out(ACITenantBaseModel):
         default=False,
         help_text=_(
             "Designates this infra Tenant L3Out as used for ACI Multi-Pod. "
-            "Default is disabled."
+            "NetBox-side marker only; not pushed to APIC. Default is disabled."
         ),
     )
     ospf_enabled = models.BooleanField(
