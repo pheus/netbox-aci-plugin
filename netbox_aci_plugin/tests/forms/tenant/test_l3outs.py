@@ -4,14 +4,18 @@
 
 """Form tests for tenant L3Out models."""
 
+from django import forms
+
 from ipam.models import Prefix
 
 from ....choices import QualityOfServiceClassChoices, QualityOfServiceDSCPChoices
 from ....forms.tenant.l3outs import (
     ACIExternalEndpointGroupEditForm,
+    ACIExternalEndpointGroupFilterForm,
     ACIExternalSubnetEditForm,
     ACIExternalSubnetImportForm,
     ACIL3OutEditForm,
+    ACIL3OutFilterForm,
 )
 from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.tenant.l3outs import (
@@ -136,6 +140,16 @@ class ACIL3OutFormTestCase(ACIBaseFormTestCase):
         self.assertTrue(field.disabled)
         self.assertTrue(field.initial)
 
+    def test_filter_form_target_dscp_accepts_multiple(self) -> None:
+        """Test the L3Out filter accepts multiple target DSCP values."""
+        unbound = ACIL3OutFilterForm()
+        field = unbound.fields["target_dscp"]
+        self.assertIsInstance(field, forms.MultipleChoiceField)
+        values = [choice[0] for choice in field.choices if choice[0]][:2]
+        form = ACIL3OutFilterForm(data={"target_dscp": values})
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["target_dscp"], values)
+
 
 class ACIExternalEndpointGroupFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIExternalEndpointGroup form."""
@@ -187,6 +201,20 @@ class ACIExternalEndpointGroupFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(form.errors.get("name"), None)
         self.assertEqual(form.errors.get("name_alias"), None)
         self.assertEqual(form.errors.get("description"), None)
+
+    def test_filter_form_choice_fields_accept_multiple(self) -> None:
+        """Test the External EPG filter accepts multiple choice values."""
+        multi_fields = ("target_dscp", "qos_class")
+        unbound = ACIExternalEndpointGroupFilterForm()
+        data = {}
+        for name in multi_fields:
+            field = unbound.fields[name]
+            self.assertIsInstance(field, forms.MultipleChoiceField)
+            data[name] = [choice[0] for choice in field.choices if choice[0]][:2]
+        form = ACIExternalEndpointGroupFilterForm(data=data)
+        self.assertTrue(form.is_valid(), form.errors)
+        for name in multi_fields:
+            self.assertEqual(form.cleaned_data[name], data[name])
 
 
 class ACIExternalSubnetFormTestCase(ACIBaseFormTestCase):

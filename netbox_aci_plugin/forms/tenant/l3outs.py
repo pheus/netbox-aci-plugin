@@ -472,7 +472,7 @@ class ACIL3OutFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Routed Domain"),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = forms.MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
@@ -883,12 +883,12 @@ class ACIExternalEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         widget=forms.Select(choices=BOOLEAN_WITH_BLANK_CHOICES),
         label=_("Preferred group member enabled"),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = forms.MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = forms.MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class"),
