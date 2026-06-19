@@ -2,9 +2,12 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django import forms
+
 from ....forms.tenant.contract_filters import (
     ACIContractFilterEditForm,
     ACIContractFilterEntryEditForm,
+    ACIContractFilterEntryFilterForm,
     ACIContractFilterEntryImportForm,
 )
 from ....models.tenant.contract_filters import (
@@ -105,6 +108,31 @@ class ACIContractFilterFormTestCase(ACIBaseFormTestCase):
 
 class ACIContractFilterEntryFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIContractFilterEntry form."""
+
+    def test_filter_form_choice_fields_accept_multiple(self) -> None:
+        """Test the filter entry form accepts multiple choice values."""
+        multi_fields = (
+            "arp_opc",
+            "destination_from_port",
+            "destination_to_port",
+            "ether_type",
+            "icmp_v4_type",
+            "icmp_v6_type",
+            "ip_protocol",
+            "match_dscp",
+            "source_from_port",
+            "source_to_port",
+        )
+        unbound = ACIContractFilterEntryFilterForm()
+        data = {}
+        for name in multi_fields:
+            field = unbound.fields[name]
+            self.assertIsInstance(field, forms.MultipleChoiceField)
+            data[name] = [choice[0] for choice in field.choices if choice[0]][:2]
+        form = ACIContractFilterEntryFilterForm(data=data)
+        self.assertTrue(form.is_valid(), form.errors)
+        for name in multi_fields:
+            self.assertEqual(form.cleaned_data[name], data[name])
 
     def test_invalid_aci_contract_filter_entry_field_values(self) -> None:
         """Test validation of invalid Contract Filter Entry field values."""

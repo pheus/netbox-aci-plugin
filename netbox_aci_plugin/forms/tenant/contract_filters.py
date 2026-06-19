@@ -1003,12 +1003,12 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Contract Filter"),
     )
-    arp_opc = forms.ChoiceField(
+    arp_opc = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterARPOpenPeripheralCodesChoices),
         required=False,
         label=_("ARP open peripheral codes"),
     )
-    destination_from_port = forms.ChoiceField(
+    destination_from_port = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterPortChoices),
         required=False,
         label=_("Destination from-port"),
@@ -1017,7 +1017,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Destination from-port (custom)"),
     )
-    destination_to_port = forms.ChoiceField(
+    destination_to_port = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterPortChoices),
         required=False,
         label=_("Destination to-port"),
@@ -1026,22 +1026,22 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Destination to-port (custom)"),
     )
-    ether_type = forms.ChoiceField(
+    ether_type = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterEtherTypeChoices),
         required=False,
         label=_("Ether type"),
     )
-    icmp_v4_type = forms.ChoiceField(
+    icmp_v4_type = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterICMPv4TypesChoices),
         required=False,
         label=_("ICMPv4 type"),
     )
-    icmp_v6_type = forms.ChoiceField(
+    icmp_v6_type = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterICMPv6TypesChoices),
         required=False,
         label=_("ICMPv6 type"),
     )
-    ip_protocol = forms.ChoiceField(
+    ip_protocol = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterIPProtocolChoices),
         required=False,
         label=_("IP protocol"),
@@ -1050,7 +1050,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("IP protocol (custom)"),
     )
-    match_dscp = forms.ChoiceField(
+    match_dscp = forms.MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Match DSCP"),
@@ -1062,7 +1062,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Match only fragments enabled"),
     )
-    source_from_port = forms.ChoiceField(
+    source_from_port = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterPortChoices),
         required=False,
         label=_("Source from-port"),
@@ -1071,7 +1071,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Source from-port (custom)"),
     )
-    source_to_port = forms.ChoiceField(
+    source_to_port = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractFilterPortChoices),
         required=False,
         label=_("Source to-port"),
