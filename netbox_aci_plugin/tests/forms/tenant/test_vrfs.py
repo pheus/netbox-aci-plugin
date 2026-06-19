@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from ....forms.tenant.vrfs import ACIVRFEditForm
+from django import forms
+
+from ....forms.tenant.vrfs import ACIVRFEditForm, ACIVRFFilterForm
 from ..base import ACIBaseFormTestCase
 
 
@@ -37,3 +39,17 @@ class ACIVRFFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(aci_vrf_form.errors.get("name"), None)
         self.assertEqual(aci_vrf_form.errors.get("name_alias"), None)
         self.assertEqual(aci_vrf_form.errors.get("description"), None)
+
+    def test_filter_form_choice_fields_accept_multiple(self) -> None:
+        """Test the VRF filter form accepts multiple choice values."""
+        multi_fields = ("pc_enforcement_direction", "pc_enforcement_preference")
+        unbound = ACIVRFFilterForm()
+        data = {}
+        for name in multi_fields:
+            field = unbound.fields[name]
+            self.assertIsInstance(field, forms.MultipleChoiceField)
+            data[name] = [choice[0] for choice in field.choices if choice[0]][:2]
+        form = ACIVRFFilterForm(data=data)
+        self.assertTrue(form.is_valid(), form.errors)
+        for name in multi_fields:
+            self.assertEqual(form.cleaned_data[name], data[name])
