@@ -2,8 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django import forms
+
 from ....forms.tenant.bridge_domains import (
     ACIBridgeDomainEditForm,
+    ACIBridgeDomainFilterForm,
     ACIBridgeDomainImportForm,
     ACIBridgeDomainL3OutBindingEditForm,
     ACIBridgeDomainL3OutBindingImportForm,
@@ -43,6 +46,25 @@ class ACIBridgeDomainImportFormCoverageTestCase(ACIBaseFormTestCase):
 
 class ACIBridgeDomainFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIBridgeDomain form."""
+
+    def test_filter_form_choice_fields_accept_multiple(self) -> None:
+        """Test the BD filter form accepts multiple choice values."""
+        multi_fields = (
+            "multi_destination_flooding",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "unknown_unicast",
+        )
+        unbound = ACIBridgeDomainFilterForm()
+        data = {}
+        for name in multi_fields:
+            field = unbound.fields[name]
+            self.assertIsInstance(field, forms.MultipleChoiceField)
+            data[name] = [choice[0] for choice in field.choices if choice[0]][:2]
+        form = ACIBridgeDomainFilterForm(data=data)
+        self.assertTrue(form.is_valid(), form.errors)
+        for name in multi_fields:
+            self.assertEqual(form.cleaned_data[name], data[name])
 
     def test_invalid_aci_bridge_domain_field_values(self) -> None:
         """Test validation of invalid ACI Bridge Domain field values."""

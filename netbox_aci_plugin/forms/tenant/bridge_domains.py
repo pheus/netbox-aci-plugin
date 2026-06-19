@@ -627,7 +627,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Limit IP learning to subnet enabled"),
     )
-    multi_destination_flooding = forms.ChoiceField(
+    multi_destination_flooding = forms.MultipleChoiceField(
         choices=add_blank_choice(BDMultiDestinationFloodingChoices),
         required=False,
         label=_("Multi destination flooding"),
@@ -653,17 +653,17 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Unicast routing enabled"),
     )
-    unknown_ipv4_multicast = forms.ChoiceField(
+    unknown_ipv4_multicast = forms.MultipleChoiceField(
         choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv4 multicast"),
     )
-    unknown_ipv6_multicast = forms.ChoiceField(
+    unknown_ipv6_multicast = forms.MultipleChoiceField(
         choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv6 multicast"),
     )
-    unknown_unicast = forms.ChoiceField(
+    unknown_unicast = forms.MultipleChoiceField(
         choices=add_blank_choice(BDUnknownUnicastChoices),
         required=False,
         label=_("Unknown unicast"),
