@@ -737,7 +737,7 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI VRF"),
     )
-    role = forms.ChoiceField(
+    role = forms.MultipleChoiceField(
         choices=add_blank_choice(ContractRelationRoleChoices),
         required=False,
         label=_("Role"),

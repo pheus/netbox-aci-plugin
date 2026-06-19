@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from django import forms
 from django.contrib.contenttypes.models import ContentType
 
 from ....choices import (
@@ -14,6 +15,7 @@ from ....forms.tenant.contracts import (
     ACIContractImportForm,
     ACIContractRelationBulkEditForm,
     ACIContractRelationEditForm,
+    ACIContractRelationFilterForm,
     ACIContractRelationImportForm,
     ACIContractSubjectEditForm,
     ACIContractSubjectFilterImportForm,
@@ -95,6 +97,16 @@ class ACIContractSubjectFormTestCase(ACIBaseFormTestCase):
 
 class ACIContractRelationFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIContractRelation forms."""
+
+    def test_filter_form_role_accepts_multiple(self) -> None:
+        """Test the contract relation filter accepts multiple roles."""
+        unbound = ACIContractRelationFilterForm()
+        field = unbound.fields["role"]
+        self.assertIsInstance(field, forms.MultipleChoiceField)
+        values = [choice[0] for choice in field.choices if choice[0]][:2]
+        form = ACIContractRelationFilterForm(data={"role": values})
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["role"], values)
 
     def test_edit_form_aci_object_type_unknown(self) -> None:
         """Test the edit form tolerates an unknown ACI object type."""
