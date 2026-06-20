@@ -69,13 +69,13 @@ class ACIEndpointGroupFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTe
             aci_vrf=self.aci_vrf,
         )
         fs = self.filterset(queryset=self.queryset)
-        result = fs.filter_shares_aci_vrf_with_aci_esg_id(self.queryset, "name", esg)
+        result = fs.filter_shares_aci_vrf_with_aci_esg(self.queryset, "name", esg)
         self.assertIn(self.aci_epg, result)
 
     def test_filter_shares_aci_vrf_with_aci_esg_none(self) -> None:
         """Test the shared-VRF filter returns none for a missing ESG."""
         fs = self.filterset(queryset=self.queryset)
-        result = fs.filter_shares_aci_vrf_with_aci_esg_id(self.queryset, "name", None)
+        result = fs.filter_shares_aci_vrf_with_aci_esg(self.queryset, "name", None)
         self.assertEqual(result.count(), 0)
 
 
@@ -130,13 +130,13 @@ class ACIUSegEndpointGroupFilterSetTestCase(
             aci_vrf=self.aci_vrf,
         )
         fs = self.filterset(queryset=self.queryset)
-        result = fs.filter_shares_aci_vrf_with_aci_esg_id(self.queryset, "name", esg)
+        result = fs.filter_shares_aci_vrf_with_aci_esg(self.queryset, "name", esg)
         self.assertIn(self.aci_useg_epg, result)
 
     def test_filter_shares_aci_vrf_with_aci_esg_none(self) -> None:
         """Test the shared-VRF filter returns none for a missing ESG."""
         fs = self.filterset(queryset=self.queryset)
-        result = fs.filter_shares_aci_vrf_with_aci_esg_id(self.queryset, "name", None)
+        result = fs.filter_shares_aci_vrf_with_aci_esg(self.queryset, "name", None)
         self.assertEqual(result.count(), 0)
 
 

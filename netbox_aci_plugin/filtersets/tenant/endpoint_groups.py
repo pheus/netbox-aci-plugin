@@ -102,7 +102,7 @@ class ACIEndpointGroupFilterSet(
     # Filters extended with a custom filter method
     shares_aci_vrf_with_aci_esg_id = django_filters.ModelChoiceFilter(
         queryset=ACIEndpointSecurityGroup.objects.all(),
-        method="filter_shares_aci_vrf_with_aci_esg_id",
+        method="filter_shares_aci_vrf_with_aci_esg",
         label=_("ACI VRF shared with ACI ESG (ID)"),
     )
 
@@ -137,7 +137,7 @@ class ACIEndpointGroupFilterSet(
         return queryset.filter(queryset_filter)
 
     @extend_schema_field(OpenApiTypes.INT)
-    def filter_shares_aci_vrf_with_aci_esg_id(
+    def filter_shares_aci_vrf_with_aci_esg(
         self, queryset, name, aci_endpoint_security_group
     ):
         """Return a QuerySet filtered by a shared ACI VRF for a given ESG."""
@@ -220,7 +220,7 @@ class ACIUSegEndpointGroupFilterSet(
     # Filters extended with a custom filter method
     shares_aci_vrf_with_aci_esg_id = django_filters.ModelChoiceFilter(
         queryset=ACIEndpointSecurityGroup.objects.all(),
-        method="filter_shares_aci_vrf_with_aci_esg_id",
+        method="filter_shares_aci_vrf_with_aci_esg",
         label=_("ACI VRF shared with ACI ESG (ID)"),
     )
 
@@ -254,7 +254,7 @@ class ACIUSegEndpointGroupFilterSet(
         return queryset.filter(queryset_filter)
 
     @extend_schema_field(OpenApiTypes.INT)
-    def filter_shares_aci_vrf_with_aci_esg_id(
+    def filter_shares_aci_vrf_with_aci_esg(
         self, queryset, name, aci_endpoint_security_group
     ):
         """Return a QuerySet filtered by a shared ACI VRF for a given ESG."""
