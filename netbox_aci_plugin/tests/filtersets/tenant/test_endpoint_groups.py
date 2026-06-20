@@ -4,7 +4,8 @@
 
 """Filterset tests for tenant Endpoint Group models."""
 
-from ipam.models import IPAddress
+from dcim.models import MACAddress
+from ipam.models import IPAddress, Prefix
 from utilities.testing import ChangeLoggedFilterSetTests
 
 from ....filtersets.tenant.endpoint_groups import (
@@ -175,6 +176,18 @@ class ACIUSegNetworkAttributeFilterSetTestCase(
             aci_useg_endpoint_group=cls.aci_useg_epg,
             attr_object=cls.attr_ip_3,
         )
+        cls.attr_prefix = Prefix.objects.create(prefix="10.10.1.0/24")
+        cls.attr_mac = MACAddress.objects.create(mac_address="00:11:22:33:44:55")
+        cls.attr_4 = ACIUSegNetworkAttribute.objects.create(
+            name="ACIFSTestAttr4",
+            aci_useg_endpoint_group=cls.aci_useg_epg,
+            attr_object=cls.attr_prefix,
+        )
+        cls.attr_5 = ACIUSegNetworkAttribute.objects.create(
+            name="ACIFSTestAttr5",
+            aci_useg_endpoint_group=cls.aci_useg_epg,
+            attr_object=cls.attr_mac,
+        )
 
     def test_q(self) -> None:
         """Test search() with a name substring matches one object."""
@@ -189,3 +202,28 @@ class ACIUSegNetworkAttributeFilterSetTestCase(
         fs = self.filterset(queryset=qs)
         result = fs.search(qs, "q", "   ")
         self.assertEqual(result.count(), qs.count())
+
+    def test_ip_address(self) -> None:
+        """Test filtering by the cached IP address string."""
+        params = {"ip_address": ["10.10.0.1/24", "10.10.0.2/24"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_prefix(self) -> None:
+        """Test filtering by the cached prefix string."""
+        params = {"prefix": ["10.10.1.0/24"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_mac_address(self) -> None:
+        """Test filtering by the cached MAC address string."""
+        params = {"mac_address": ["00:11:22:33:44:55"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_ip_address_invalid_returns_empty(self) -> None:
+        """Test an unparseable IP address yields no results."""
+        params = {"ip_address": ["not-an-ip"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
+
+    def test_prefix_invalid_returns_empty(self) -> None:
+        """Test an unparseable prefix yields no results."""
+        params = {"prefix": ["not-a-prefix"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)

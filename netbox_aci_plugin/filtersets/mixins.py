@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.utils.translation import gettext as _
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
+from netaddr import AddrFormatError, IPNetwork
 
 from tenancy.models import Tenant, TenantGroup
 from utilities.filters import TreeNodeMultipleChoiceFilter
@@ -109,3 +110,34 @@ class NBTenantFilterSetMixin(django_filters.FilterSet):
         queryset=Tenant.objects.all(),
         label=_("NetBox tenant (ID)"),
     )
+
+
+class ACICachedNetworkObjectFilterMixin:
+    """Provide filter methods for cached IP address and prefix objects."""
+
+    @staticmethod
+    def _parse_inet_networks(value):
+        """Return the values parsed as netaddr networks (skips invalid)."""
+        networks = []
+        for entry in value:
+            try:
+                networks.append(IPNetwork(entry))
+            except (AddrFormatError, ValueError):
+                continue
+        return networks
+
+    def filter_ip_address(self, queryset, name, value):
+        """Filter by the address of the cached IP address object."""
+        networks = self._parse_inet_networks(value)
+        if not networks:
+            return queryset.none()
+        return queryset.filter(
+            _ip_address__address__in=[str(network) for network in networks]
+        )
+
+    def filter_prefix(self, queryset, name, value):
+        """Filter by the prefix of the cached prefix object."""
+        networks = self._parse_inet_networks(value)
+        if not networks:
+            return queryset.none()
+        return queryset.filter(_prefix__prefix__in=networks)

@@ -4,7 +4,7 @@
 
 """Filterset tests for tenant Endpoint Security Group models."""
 
-from ipam.models import IPAddress
+from ipam.models import IPAddress, Prefix
 from utilities.testing import ChangeLoggedFilterSetTests
 
 from ....filtersets.tenant.endpoint_security_groups import (
@@ -162,6 +162,12 @@ class ACIEsgEndpointSelectorFilterSetTestCase(
             aci_endpoint_security_group=cls.aci_esg,
             ep_object=cls.ep_ip_3,
         )
+        cls.ep_prefix = Prefix.objects.create(prefix="10.20.1.0/24")
+        cls.ep_sel_4 = ACIEsgEndpointSelector.objects.create(
+            name="ACIFSTestEpSel4",
+            aci_endpoint_security_group=cls.aci_esg,
+            ep_object=cls.ep_prefix,
+        )
 
     def test_q(self) -> None:
         """Test search() with a name substring matches one object."""
@@ -176,3 +182,23 @@ class ACIEsgEndpointSelectorFilterSetTestCase(
         fs = self.filterset(queryset=qs)
         result = fs.search(qs, "q", "   ")
         self.assertEqual(result.count(), qs.count())
+
+    def test_ip_address(self) -> None:
+        """Test filtering by the cached IP address string."""
+        params = {"ip_address": ["10.20.0.1/24", "10.20.0.2/24"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_prefix(self) -> None:
+        """Test filtering by the cached prefix string."""
+        params = {"prefix": ["10.20.1.0/24"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+
+    def test_ip_address_invalid_returns_empty(self) -> None:
+        """Test an unparseable IP address yields no results."""
+        params = {"ip_address": ["not-an-ip"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)
+
+    def test_prefix_invalid_returns_empty(self) -> None:
+        """Test an unparseable prefix yields no results."""
+        params = {"prefix": ["not-a-prefix"]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 0)

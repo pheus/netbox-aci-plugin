@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from ipam.models import VRF, IPAddress, Prefix
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
-from utilities.filters import ContentTypeFilter
+from utilities.filters import ContentTypeFilter, MultiValueCharFilter
 from utilities.filtersets import register_filterset
 
 from ...models.fabric.fabrics import ACIFabric
@@ -25,7 +25,7 @@ from ...models.tenant.endpoint_security_groups import (
 )
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
-from ..mixins import NBTenantFilterSetMixin
+from ..mixins import ACICachedNetworkObjectFilterMixin, NBTenantFilterSetMixin
 
 
 @register_filterset
@@ -248,7 +248,10 @@ class ACIEsgEndpointGroupSelectorFilterSet(
 
 @register_filterset
 class ACIEsgEndpointSelectorFilterSet(
-    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+    ACICachedNetworkObjectFilterMixin,
+    NBTenantFilterSetMixin,
+    OwnerFilterMixin,
+    NetBoxModelFilterSet,
 ):
     """Filter set for the ACI ESG Endpoint Selector model."""
 
@@ -320,10 +323,8 @@ class ACIEsgEndpointSelectorFilterSet(
         to_field_name="id",
         label=_("VRF of IP Address (ID)"),
     )
-    ip_address = django_filters.ModelMultipleChoiceFilter(
-        field_name="_ip_address__address",
-        queryset=IPAddress.objects.all(),
-        to_field_name="address",
+    ip_address = MultiValueCharFilter(
+        method="filter_ip_address",
         label=_("IP Address (address)"),
     )
     ip_address_id = django_filters.ModelMultipleChoiceFilter(
@@ -344,10 +345,8 @@ class ACIEsgEndpointSelectorFilterSet(
         to_field_name="id",
         label=_("VRF of Prefix (ID)"),
     )
-    prefix = django_filters.ModelMultipleChoiceFilter(
-        field_name="_prefix__prefix",
-        queryset=Prefix.objects.all(),
-        to_field_name="prefix",
+    prefix = MultiValueCharFilter(
+        method="filter_prefix",
         label=_("Prefix (Prefix)"),
     )
     prefix_id = django_filters.ModelMultipleChoiceFilter(
