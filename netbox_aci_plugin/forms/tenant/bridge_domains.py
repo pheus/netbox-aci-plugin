@@ -1251,14 +1251,12 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
     aci_vrf_id = DynamicModelMultipleChoiceField(
         queryset=ACIVRF.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant_id"},
-        null_option="None",
         required=False,
         label=_("ACI VRF"),
     )
     aci_bridge_domain_id = DynamicModelMultipleChoiceField(
         queryset=ACIBridgeDomain.objects.all(),
         query_params={"aci_vrf_id": "$aci_vrf_id"},
-        null_option="None",
         required=False,
         label=_("ACI Bridge Domain"),
     )

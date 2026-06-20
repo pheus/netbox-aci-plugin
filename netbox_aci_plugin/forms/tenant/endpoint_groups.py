@@ -1539,21 +1539,18 @@ class ACIUSegNetworkAttributeFilterForm(NetBoxModelFilterSetForm):
     )
     aci_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),
-        null_option="None",
         required=False,
         label=_("ACI Tenant"),
     )
     aci_app_profile_id = DynamicModelMultipleChoiceField(
         queryset=ACIAppProfile.objects.all(),
         query_params={"aci_tenant_id": "$aci_tenant_id"},
-        null_option="None",
         required=False,
         label=_("ACI Application Profile"),
     )
     aci_useg_endpoint_group_id = DynamicModelMultipleChoiceField(
         queryset=ACIUSegEndpointGroup.objects.all(),
         query_params={"aci_app_profile_id": "$aci_app_profile_id"},
-        null_option="None",
         required=False,
         label=_("ACI uSeg Endpoint Group"),
     )
