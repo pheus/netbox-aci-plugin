@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
+## [0.3.1] – 2026-06-21
+
+> **Compatibility:** NetBox v4.5, NetBox v4.6
+
+### Added
+
+- Allow multi-select choice filters across Endpoint Group, VRF, Bridge Domain,
+  Contract Filter Entry, Contract Relation, L3Out, and External Endpoint Group
+  views, including QoS, protocol, port, role, policy-control, and Bridge Domain
+  forwarding-mode fields.
+- Filter ACI uSeg Network Attributes and ESG endpoint selectors by IP address,
+  prefix, and MAC address.
+- Enable pagination for GraphQL list queries.
+- Document filtering GraphQL list queries by object ID lists, as provided by
+  NetBox core.
+- Include the ACI Tenant and VRF in External Endpoint Group search results.
+- Add BGP-enabled and OSPF-enabled columns to the ACI L3Out table.
+- Add a Tenant External navigation group for L3Out objects.
+- Validate VRF consistency when an Endpoint Group's Bridge Domain is changed.
+
+### Changed
+
+- Compare foreign keys by ID in model validation to avoid extra database
+  queries.
+- Rename the L3Out Bridge Domain bindings tab URL from
+  `bridge-domain-bindings` to `bridge-domains`.
+- Clarify the `multipod_enabled` help text to state that it is a NetBox-side
+  marker and is not pushed to APIC.
+- Split Tenant documentation into feature-specific pages and add a GraphQL API
+  filtering guide.
+- Expand tests to maintain full coverage.
+
+### Fixed
+
+- Correct the search field on the ACI Bridge Domain Subnet filter.
+- Disable ordering on foreign-key columns in object tables.
+- Raise object-type validation errors at the form level for ACI Contract
+  Relations, ESG selectors, and uSeg Network Attributes.
+- Stop copying target object IDs when cloning ACI Contract Relations and uSeg
+  Network Attributes.
+- Require an attribute object on ACI uSeg Network Attributes unless the EPG
+  subnet is used.
+
+---
+
 ## [0.3.0] – 2026-05-31
 
 > **Compatibility:** NetBox v4.5, NetBox v4.6
@@ -130,7 +175,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
-[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.0...v0.2.1

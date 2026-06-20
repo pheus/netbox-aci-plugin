@@ -56,8 +56,8 @@ The following table details the tested plugin versions for each NetBox version:
 
 | NetBox Version | Plugin Version |
 |:--------------:|:--------------:|
-|      4.6       |     0.3.0      |
-|      4.5       |     0.3.0      |
+|      4.6       |     0.3.1      |
+|      4.5       |     0.3.1      |
 |      4.4       |     0.1.0      |
 |      4.3       |     0.1.0      |
 
