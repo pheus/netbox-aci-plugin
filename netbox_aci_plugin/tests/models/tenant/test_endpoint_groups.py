@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
 from dcim.models import MACAddress
@@ -1092,7 +1092,7 @@ class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError) as cm:
             useg_network_attr.full_clean()
-        self.assertIn(NON_FIELD_ERRORS, cm.exception.error_dict)
+        self.assertIn("attr_object", cm.exception.error_dict)
 
     def test_invalid_aci_useg_network_attr_use_epg_subnet_with_object(
         self,

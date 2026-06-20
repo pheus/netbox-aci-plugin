@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
 from tenancy.models import Tenant
@@ -643,7 +643,7 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError) as cm:
             relation.full_clean()
-        self.assertIn(NON_FIELD_ERRORS, cm.exception.error_dict)
+        self.assertIn("aci_object", cm.exception.error_dict)
 
     def test_invalid_aci_contract_relation_esg_with_epg_contract(self) -> None:
         """Test ESGs cannot be associated with a Contract holding EPGs."""

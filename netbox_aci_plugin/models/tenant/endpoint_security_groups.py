@@ -352,10 +352,12 @@ class ACIEsgEndpointGroupSelector(
         ):
             aci_epg_model_class = self.aci_epg_object_type.model_class()
             raise ValidationError(
-                _(
-                    "The {aci_epg_object} field is required, if an Endpoint "
-                    "Object Type is selected."
-                ).format(aci_epg_object=aci_epg_model_class._meta.verbose_name)
+                {
+                    "aci_epg_object": _(
+                        "The {aci_epg_object} field is required, if an Endpoint "
+                        "Object Type is selected."
+                    ).format(aci_epg_object=aci_epg_model_class._meta.verbose_name)
+                }
             )
 
         super().clean()
@@ -526,10 +528,12 @@ class ACIEsgEndpointSelector(ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMix
         if self.ep_object_type_id and not (self.ep_object or self.ep_object_id):
             ep_model_class = self.ep_object_type.model_class()
             raise ValidationError(
-                _(
-                    "The {ep_object} field is required, if an Endpoint "
-                    "Object Type is selected."
-                ).format(ep_object=ep_model_class._meta.verbose_name)
+                {
+                    "ep_object": _(
+                        "The {ep_object} field is required, if an Endpoint "
+                        "Object Type is selected."
+                    ).format(ep_object=ep_model_class._meta.verbose_name)
+                }
             )
 
         super().clean()
