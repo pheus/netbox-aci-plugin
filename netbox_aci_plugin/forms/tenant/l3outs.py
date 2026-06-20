@@ -1427,7 +1427,7 @@ class ACIExternalSubnetFilterForm(NetBoxModelFilterSetForm):
         required=False,
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Prefix",
+                "placeholder": _("Prefix"),
             }
         ),
         label=_("Matched Prefix within"),
