@@ -266,7 +266,7 @@ class ACIContractFilterEntry(ACITenantBaseModel):
         """Override the model's clean method for custom field validation."""
         super().clean()
 
-        validation_errors = {}
+        errors = {}
 
         # Allowable IP ether types
         ip_ether_types = [
@@ -281,9 +281,11 @@ class ACIContractFilterEntry(ACITenantBaseModel):
             and self.arp_opc
             != ContractFilterARPOpenPeripheralCodesChoices.OPC_UNSPECIFIED
         ):
-            validation_errors["arp_opc"] = _(
-                "ARP open peripheral codes must be 'unspecified' when "
-                "Ethernet Type is not 'ARP'."
+            errors.setdefault("arp_opc", []).append(
+                _(
+                    "ARP open peripheral codes must be 'unspecified' when "
+                    "Ethernet Type is not 'ARP'."
+                )
             )
 
         # Validate ip_protocol for ether_type 'ip', 'ipv4' or 'ipv6'
@@ -291,9 +293,11 @@ class ACIContractFilterEntry(ACITenantBaseModel):
             self.ether_type not in ip_ether_types
             and self.ip_protocol != ContractFilterIPProtocolChoices.PROT_UNSPECIFIED
         ):
-            validation_errors["ip_protocol"] = _(
-                "IP protocol must be 'unspecified' when Ethernet Type is not "
-                "'IP', 'IPv4', or 'IPv6'."
+            errors.setdefault("ip_protocol", []).append(
+                _(
+                    "IP protocol must be 'unspecified' when Ethernet Type is not "
+                    "'IP', 'IPv4', or 'IPv6'."
+                )
             )
 
         # Validate ports for ether_type 'ip', 'ipv4' or 'ipv6'
@@ -303,28 +307,36 @@ class ACIContractFilterEntry(ACITenantBaseModel):
             ContractFilterIPProtocolChoices.PROT_UDP,
         ]:
             if self.destination_from_port != ContractFilterPortChoices.PORT_UNSPECIFIED:
-                validation_errors["destination_from_port"] = _(
-                    "Destination from-port must be set to 'unspecified' when "
-                    "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
-                    "IP Protocol is not 'TCP' or 'UDP'."
+                errors.setdefault("destination_from_port", []).append(
+                    _(
+                        "Destination from-port must be set to 'unspecified' when "
+                        "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
+                        "IP Protocol is not 'TCP' or 'UDP'."
+                    )
                 )
             if self.destination_to_port != ContractFilterPortChoices.PORT_UNSPECIFIED:
-                validation_errors["destination_to_port"] = _(
-                    "Destination to-port must be set to 'unspecified' when "
-                    "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
-                    "IP Protocol is not 'TCP' or 'UDP'."
+                errors.setdefault("destination_to_port", []).append(
+                    _(
+                        "Destination to-port must be set to 'unspecified' when "
+                        "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
+                        "IP Protocol is not 'TCP' or 'UDP'."
+                    )
                 )
             if self.source_from_port != ContractFilterPortChoices.PORT_UNSPECIFIED:
-                validation_errors["source_from_port"] = _(
-                    "Source from-port must be set to 'unspecified' when "
-                    "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
-                    "IP Protocol is not 'TCP' or 'UDP'."
+                errors.setdefault("source_from_port", []).append(
+                    _(
+                        "Source from-port must be set to 'unspecified' when "
+                        "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
+                        "IP Protocol is not 'TCP' or 'UDP'."
+                    )
                 )
             if self.source_to_port != ContractFilterPortChoices.PORT_UNSPECIFIED:
-                validation_errors["source_to_port"] = _(
-                    "Source to-port must be set to 'unspecified' when "
-                    "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
-                    "IP Protocol is not 'TCP' or 'UDP'."
+                errors.setdefault("source_to_port", []).append(
+                    _(
+                        "Source to-port must be set to 'unspecified' when "
+                        "Ethernet Type is not 'IP', 'IPv4', or 'IPv6' or "
+                        "IP Protocol is not 'TCP' or 'UDP'."
+                    )
                 )
 
         # Validate icmp_v4_type for ether_type 'ip', 'ipv4' or 'ipv6'
@@ -335,9 +347,11 @@ class ACIContractFilterEntry(ACITenantBaseModel):
         ) and (
             self.icmp_v4_type != ContractFilterICMPv4TypesChoices.ICMP_V4_UNSPECIFIED
         ):
-            validation_errors["icmp_v4_type"] = _(
-                "ICMPv4 Type must be 'unspecified' when Ethernet Type is "
-                "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not 'ICMP'."
+            errors.setdefault("icmp_v4_type", []).append(
+                _(
+                    "ICMPv4 Type must be 'unspecified' when Ethernet Type is "
+                    "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not 'ICMP'."
+                )
             )
 
         # Validate icmp_v6_type for ether_type 'ip', 'ipv4' or 'ipv6'
@@ -348,10 +362,12 @@ class ACIContractFilterEntry(ACITenantBaseModel):
         ) and (
             self.icmp_v6_type != ContractFilterICMPv6TypesChoices.ICMP_V6_UNSPECIFIED
         ):
-            validation_errors["icmp_v6_type"] = _(
-                "ICMPv6 Type must be 'unspecified' when Ethernet Type is "
-                "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not "
-                "'ICMPv6'."
+            errors.setdefault("icmp_v6_type", []).append(
+                _(
+                    "ICMPv6 Type must be 'unspecified' when Ethernet Type is "
+                    "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not "
+                    "'ICMPv6'."
+                )
             )
 
         # Validate match_dscp for ether_type 'ip', 'ipv4' or 'ipv6'
@@ -359,17 +375,21 @@ class ACIContractFilterEntry(ACITenantBaseModel):
             self.ether_type not in ip_ether_types
             and self.match_dscp != QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED
         ):
-            validation_errors["match_dscp"] = _(
-                "Match DSCP must be 'unspecified' when Ethernet Type is not "
-                "'IP', 'IPv4', or 'IPv6'."
+            errors.setdefault("match_dscp", []).append(
+                _(
+                    "Match DSCP must be 'unspecified' when Ethernet Type is not "
+                    "'IP', 'IPv4', or 'IPv6'."
+                )
             )
 
         # Validate match_only_fragments_enabled for ether_type 'ip', 'ipv4'
         # or 'ipv6'
         if self.ether_type not in ip_ether_types and self.match_only_fragments_enabled:
-            validation_errors["match_only_fragments_enabled"] = _(
-                "Match only fragments enabled must be false when "
-                "Ethernet Type is not 'IP', 'IPv4', or 'IPv6'."
+            errors.setdefault("match_only_fragments_enabled", []).append(
+                _(
+                    "Match only fragments enabled must be false when "
+                    "Ethernet Type is not 'IP', 'IPv4', or 'IPv6'."
+                )
             )
 
         # Validate stateful_enabled and tcp_rules for ether_type 'ip', 'ipv4'
@@ -379,18 +399,22 @@ class ACIContractFilterEntry(ACITenantBaseModel):
             or self.ip_protocol != ContractFilterIPProtocolChoices.PROT_TCP
         ):
             if self.stateful_enabled:
-                validation_errors["stateful_enabled"] = _(
-                    "Stateful enabled must be false when Ethernet Type is "
-                    "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not 'TCP'."
+                errors.setdefault("stateful_enabled", []).append(
+                    _(
+                        "Stateful enabled must be false when Ethernet Type is "
+                        "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not 'TCP'."
+                    )
                 )
             if self.tcp_rules != default_contract_filter_entry_tcp_rules():
-                validation_errors["tcp_rules"] = _(
-                    "TCP rules must be 'unspecified' when Ethernet Type is "
-                    "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not 'TCP'."
+                errors.setdefault("tcp_rules", []).append(
+                    _(
+                        "TCP rules must be 'unspecified' when Ethernet Type is "
+                        "not 'IP', 'IPv4', or 'IPv6' or IP Protocol is not 'TCP'."
+                    )
                 )
 
-        if validation_errors:
-            raise ValidationError(validation_errors)
+        if errors:
+            raise ValidationError(errors)
 
     def to_objectchange(self, action):
         """Return an ObjectChange for the change made to an instance."""
