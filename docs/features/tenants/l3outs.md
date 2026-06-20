@@ -40,48 +40,48 @@ The *ACIL3Out* model has the following fields:
 - **NetBox Tenant**: a reference to the NetBox tenant model.
 - **BFD policy name**: the name of the BFD policy associated with the L3Out.
 - **BGP enabled**: a boolean field, whether BGP is enabled for the L3Out.
-  - Default: `false`
+    - Default: `false`
 - **Custom QoS policy name**: the name of the custom QoS policy associated with
   the L3Out.
 - **Egress data plane policing policy name**: the name of the egress data plane
   policing policy associated with the L3Out.
 - **EIGRP enabled**: a boolean field, whether EIGRP is enabled for the L3Out.
-  - Default: `false`
+    - Default: `false`
 - **EIGRP interface policy name**: the name of the EIGRP interface policy
   associated with the L3Out.
 - **Export route control enforcement enabled**: a read-only boolean field; export
   route control enforcement is always enabled for APIC L3Outs and cannot be
   disabled.
-  - Default: `true`
+    - Default: `true`
 - **IGMP interface policy name**: the name of the IGMP interface policy
   associated with the L3Out.
 - **Import route control enforcement enabled**: a boolean field, whether import
   route control enforcement is enabled for the L3Out.
-  - Default: `false`
+    - Default: `false`
 - **Ingress data plane policing policy name**: the name of the ingress data
   plane policing policy associated with the L3Out.
 - **Interleak route map name**: the name of the route map used for inter-VRF
   route leaking.
 - **L3 multicast IPv4 enabled**: a boolean field, whether IPv4 Layer 3 multicast
   is enabled for the L3Out.
-  - Default: `false`
+    - Default: `false`
 - **L3 multicast IPv6 enabled**: a boolean field, whether IPv6 Layer 3 multicast
   is enabled for the L3Out.
-  - Default: `false`
+    - Default: `false`
 - **Multi-Pod enabled**: a boolean field documenting that the L3Out is used for
   ACI Multi-Pod. This option is only valid for L3Outs in the `infra` ACI Tenant.
-  - Default: `false`
+    - Default: `false`
 - **OSPF enabled**: a boolean field, whether OSPF is enabled for the L3Out.
-  - Default: `false`
+    - Default: `false`
 - **OSPF external policy name**: the name of the OSPF external policy associated
   with the L3Out.
 - **PIM policy name**: the name of the PIM policy associated with the L3Out.
 - **Target DSCP**: rewrites the DSCP (Differentiated Services Code Point) value
   of the incoming traffic to the specified value.
-  - Values: `unspecified`, `AF11`, `AF12`, `AF13`, `AF21`, `AF22`, `AF23`,
-    `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
-    `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
-  - Default: `unspecified`
+    - Values: `unspecified`, `AF11`, `AF12`, `AF13`, `AF21`, `AF22`, `AF23`,
+      `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
+      `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
+    - Default: `unspecified`
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
 
@@ -106,19 +106,19 @@ The *ACIExternalEndpointGroup* model has the following fields:
 - **Preferred group member enabled**: a boolean field, if the External Endpoint
   Group is a member of the preferred group and allows communication without
   contracts.
-  - Default: `false`
+    - Default: `false`
 - **QoS class**: represents the assignment of the ACI Quality of Service (QoS)
   level for traffic sourced by the External Endpoint Group.
-  - Values: `unspecified` (unspecified), `level1` (level 1), `level2` (level 2),
-    `level3` (level 3), `level4` (level 4), `level5` (level 5),
-    `level6` (level 6)
-  - Default: `unspecified`
+    - Values: `unspecified` (unspecified), `level1` (level 1), `level2` (level 2),
+      `level3` (level 3), `level4` (level 4), `level5` (level 5),
+      `level6` (level 6)
+    - Default: `unspecified`
 - **Target DSCP**: rewrites the DSCP (Differentiated Services Code Point) value
   of the incoming traffic to the specified value.
-  - Values: `unspecified`, `AF11`, `AF12`, `AF13`, `AF21`, `AF22`, `AF23`,
-    `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
-    `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
-  - Default: `unspecified`
+    - Values: `unspecified`, `AF11`, `AF12`, `AF13`, `AF21`, `AF22`, `AF23`,
+      `AF31`, `AF32`, `AF33`, `AF41`, `AF42`, `AF43`, `CS0`, `CS1`, `CS2`,
+      `CS3`, `CS4`, `CS5`, `CS6`, `CS7`, `EF`, `VA`
+    - Default: `unspecified`
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
 
@@ -147,41 +147,41 @@ The *ACIExternalSubnet* model has the following fields:
   Subnet.
 - **Import route control enabled**: a boolean field, whether the External Subnet
   is classified for import route control.
-  - Default: `false`
+    - Default: `false`
 - **Export route control enabled**: a boolean field, whether the External Subnet
   is classified for export route control.
-  - Default: `false`
+    - Default: `false`
 - **Shared route control enabled**: a boolean field, whether the External Subnet
   is classified for shared route control.
-  - Default: `false`
+    - Default: `false`
 - **Import security enabled**: a boolean field, whether the External Subnet is
   classified for security import.
-  - Default: `true`
+    - Default: `true`
 - **Shared security enabled**: a boolean field, whether the External Subnet is
   classified for shared security import.
-  - Default: `false`
+    - Default: `false`
 - **Aggregate import route control enabled**: a boolean field, whether import
   route control prefixes are aggregated for the External Subnet.
-  - Default: `false`
+    - Default: `false`
 - **Aggregate export route control enabled**: a boolean field, whether export
   route control prefixes are aggregated for the External Subnet.
-  - Default: `false`
+    - Default: `false`
 - **Aggregate shared route control enabled**: a boolean field, whether shared
   route control prefixes are aggregated for the External Subnet.
-  - Default: `false`
+    - Default: `false`
 - **BGP route summarization enabled**: a boolean field, whether BGP route
   summarization is enabled for the External Subnet.
-  - Default: `false`
+    - Default: `false`
 - **BGP route summarization policy name**: the name of the BGP route
   summarization policy associated with the External Subnet.
 - **OSPF route summarization enabled**: a boolean field, whether OSPF route
   summarization is enabled for the External Subnet.
-  - Default: `false`
+    - Default: `false`
 - **OSPF route summarization policy name**: the name of the OSPF route
   summarization policy associated with the External Subnet.
 - **EIGRP route summarization enabled**: a boolean field, whether EIGRP route
   summarization is enabled for the External Subnet.
-  - Default: `false`
+    - Default: `false`
 - **NetBox Tenant**: a reference to the NetBox tenant model.
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
