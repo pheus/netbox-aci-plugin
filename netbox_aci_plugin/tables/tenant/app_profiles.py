@@ -39,7 +39,6 @@ class ACIAppProfileTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()

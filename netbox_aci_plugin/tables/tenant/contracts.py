@@ -54,7 +54,6 @@ class ACIContractTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
@@ -221,7 +220,6 @@ class ACIContractSubjectTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()

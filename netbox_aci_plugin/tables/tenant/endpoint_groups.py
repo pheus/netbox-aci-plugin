@@ -54,7 +54,6 @@ class ACIEndpointGroupTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
@@ -133,7 +132,6 @@ class ACIUSegEndpointGroupTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
@@ -222,7 +220,6 @@ class ACIUSegNetworkAttributeTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()

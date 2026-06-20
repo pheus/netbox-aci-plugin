@@ -54,7 +54,6 @@ class ACIL3OutTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
@@ -132,7 +131,6 @@ class ACIExternalEndpointGroupTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
@@ -246,7 +244,6 @@ class ACIExternalSubnetTable(NetBoxTable):
     )
     owner = tables.Column(
         linkify=True,
-        verbose_name=_("Owner"),
     )
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
