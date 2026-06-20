@@ -1108,6 +1108,18 @@ class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
             useg_network_attr.full_clean()
         self.assertIn("attr_object_type", cm.exception.error_dict)
 
+    def test_invalid_aci_useg_network_attr_without_object_or_epg_subnet(
+        self,
+    ) -> None:
+        """Test clean requires an attr object or 'use_epg_subnet'."""
+        useg_network_attr = ACIUSegNetworkAttribute(
+            name="ACIUSegNetworkAttrEmpty",
+            aci_useg_endpoint_group=self.aci_useg_epg,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            useg_network_attr.full_clean()
+        self.assertIn("attr_object", cm.exception.error_dict)
+
     def test_constraint_unique_aci_useg_network_attr_name_per_aci_useg_epg(
         self,
     ) -> None:

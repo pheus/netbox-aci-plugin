@@ -546,8 +546,8 @@ class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKey
 
         errors = {}
 
-        # Ensure that when 'use_epg_subnet' is True, neither 'attr_object_type'
-        # nor 'attr_object_id' is set
+        # When 'use_epg_subnet' is True, no attribute object may be set;
+        # otherwise an attribute object is required
         if self.use_epg_subnet:
             if self.attr_object_type:
                 errors.setdefault("attr_object_type", []).append(
@@ -557,6 +557,13 @@ class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKey
                 errors.setdefault("attr_object_id", []).append(
                     _("Cannot set attr_object_id with 'use_epg_subnet = True'.")
                 )
+        elif not (self.attr_object_type_id or self.attr_object_id):
+            errors.setdefault("attr_object", []).append(
+                _(
+                    "Either an attribute object must be set or 'use EPG subnet' "
+                    "must be enabled."
+                )
+            )
 
         if errors:
             raise ValidationError(errors)
