@@ -37,7 +37,7 @@ class ACIEndpointGroupTestCase(ACIBaseTestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        """Set up test data for ACIBridgeDomainSubnet model."""
+        """Set up test data for ACIEndpointGroup model."""
         super().setUpTestData()
 
         cls.aci_epg_name = "ACITestEPG"

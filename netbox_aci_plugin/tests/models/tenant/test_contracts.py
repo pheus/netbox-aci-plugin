@@ -197,7 +197,7 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        """Set up test data for ACIContract model."""
+        """Set up test data for ACIContractRelation model."""
         super().setUpTestData()
 
         cls.aci_contract_epg_name = "ACITestContractEPG"
