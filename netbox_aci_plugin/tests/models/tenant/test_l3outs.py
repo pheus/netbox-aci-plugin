@@ -277,13 +277,6 @@ class ACIL3OutTestCase(ACIBaseTestCase):
         """Test ACI L3Out target DSCP option."""
         self.assertEqual(self.aci_l3out.target_dscp, self.aci_l3out_target_dscp)
 
-    def test_aci_l3out_get_target_dscp_color(self) -> None:
-        """Test the 'get_target_dscp_color' method of ACI L3Out."""
-        self.assertEqual(
-            self.aci_l3out.get_target_dscp_color(),
-            QualityOfServiceDSCPChoices.colors.get(self.aci_l3out_target_dscp),
-        )
-
     def test_invalid_aci_l3out_name(self) -> None:
         """Test validation of ACI L3Out naming."""
         l3out = ACIL3Out(
@@ -893,13 +886,6 @@ class ACIExternalEndpointGroupTestCase(ACIBaseTestCase):
         self.assertEqual(
             self.aci_external_endpoint_group.get_qos_class_color(),
             QualityOfServiceClassChoices.colors.get(self.aci_ext_epg_qos_class),
-        )
-
-    def test_aci_external_endpoint_group_get_target_dscp_color(self) -> None:
-        """Test the 'get_target_dscp_color' method of ACI External EPG."""
-        self.assertEqual(
-            self.aci_external_endpoint_group.get_target_dscp_color(),
-            QualityOfServiceDSCPChoices.colors.get(self.aci_ext_epg_target_dscp),
         )
 
     def test_aci_external_endpoint_group_contract_relation(self) -> None:

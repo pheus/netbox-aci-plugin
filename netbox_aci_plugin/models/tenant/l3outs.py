@@ -409,10 +409,6 @@ class ACIL3Out(ACITenantBaseModel):
         """Return the parent object of the instance."""
         return self.aci_tenant
 
-    def get_target_dscp_color(self) -> str:
-        """Return the associated color of choice from the ChoiceSet."""
-        return QualityOfServiceDSCPChoices.colors.get(self.target_dscp)
-
 
 class ACIExternalEndpointGroup(ACITenantBaseModel):
     """External endpoint group classifying outside traffic.
@@ -513,10 +509,6 @@ class ACIExternalEndpointGroup(ACITenantBaseModel):
     def get_qos_class_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return QualityOfServiceClassChoices.colors.get(self.qos_class)
-
-    def get_target_dscp_color(self) -> str:
-        """Return the associated color of choice from the ChoiceSet."""
-        return QualityOfServiceDSCPChoices.colors.get(self.target_dscp)
 
 
 class ACIExternalSubnet(ACITenantBaseModel):
