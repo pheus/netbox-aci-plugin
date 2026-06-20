@@ -6,7 +6,7 @@ from django.urls import include, path
 
 from utilities.urls import get_model_urls
 
-from . import views  # noqa F401
+from . import views  # noqa: F401
 
 urlpatterns: tuple = (
     # ACI Fabric
