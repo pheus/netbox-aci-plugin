@@ -8,7 +8,13 @@ from dcim.models import Device, DeviceRole, DeviceType, MACAddress, Manufacturer
 from ipam.models import VRF, IPAddress, Prefix
 from tenancy.models import Tenant
 
-from ...choices import NodeRoleChoices
+from ...choices import (
+    NodeRoleChoices,
+    VLANAllocationModeChoices,
+    VLANPoolRangeAllocationModeChoices,
+    VLANPoolRangeRoleChoices,
+)
+from ...models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ...models.fabric.fabrics import ACIFabric
 from ...models.fabric.nodes import ACINode
 from ...models.fabric.pods import ACIPod
@@ -145,4 +151,34 @@ class ACIBaseTestCase(TestCase):
             name=cls.aci_bd_name,
             aci_tenant=cls.aci_tenant,
             aci_vrf=cls.aci_vrf,
+        )
+
+        # Create ACIVLANPool objects
+        cls.aci_vlan_pool1 = ACIVLANPool.objects.create(
+            name="VLANPool1",
+            aci_fabric=cls.aci_fabric,
+            allocation_mode=VLANAllocationModeChoices.MODE_STATIC,
+        )
+        cls.aci_vlan_pool2 = ACIVLANPool.objects.create(
+            name="VLANPool2",
+            aci_fabric=cls.aci_fabric,
+            allocation_mode=VLANAllocationModeChoices.MODE_DYNAMIC,
+        )
+        cls.aci_vlan_pool_range1 = ACIVLANPoolRange.objects.create(
+            aci_vlan_pool=cls.aci_vlan_pool1,
+            vlan_id_from=100,
+            vlan_id_to=199,
+            role=VLANPoolRangeRoleChoices.ROLE_EXTERNAL,
+        )
+        cls.aci_vlan_pool_range2 = ACIVLANPoolRange.objects.create(
+            aci_vlan_pool=cls.aci_vlan_pool1,
+            vlan_id_from=200,
+            vlan_id_to=299,
+            allocation_mode=VLANPoolRangeAllocationModeChoices.MODE_DYNAMIC,
+            role=VLANPoolRangeRoleChoices.ROLE_INTERNAL,
+        )
+        cls.aci_vlan_pool_range3 = ACIVLANPoolRange.objects.create(
+            aci_vlan_pool=cls.aci_vlan_pool2,
+            vlan_id_from=300,
+            vlan_id_to=399,
         )
