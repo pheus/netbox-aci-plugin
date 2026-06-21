@@ -1,4 +1,8 @@
 from .access_policies.domains import ACIRoutedDomainFilterSet
+from .access_policies.vlan_pools import (
+    ACIVLANPoolFilterSet,
+    ACIVLANPoolRangeFilterSet,
+)
 from .fabric.fabrics import ACIFabricFilterSet
 from .fabric.nodes import ACINodeFilterSet
 from .fabric.pods import ACIPodFilterSet
@@ -61,5 +65,7 @@ __all__ = (
     "ACITenantFilterSet",
     "ACIUSegEndpointGroupFilterSet",
     "ACIUSegNetworkAttributeFilterSet",
+    "ACIVLANPoolFilterSet",
+    "ACIVLANPoolRangeFilterSet",
     "ACIVRFFilterSet",
 )
