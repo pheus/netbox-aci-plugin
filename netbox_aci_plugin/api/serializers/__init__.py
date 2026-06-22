@@ -1,4 +1,8 @@
 from .access_policies.domains import ACIRoutedDomainSerializer
+from .access_policies.vlan_pools import (
+    ACIVLANPoolRangeSerializer,
+    ACIVLANPoolSerializer,
+)
 from .fabric.fabrics import ACIFabricSerializer
 from .fabric.nodes import ACINodeSerializer
 from .fabric.pods import ACIPodSerializer
@@ -61,5 +65,7 @@ __all__ = (
     "ACITenantSerializer",
     "ACIUSegEndpointGroupSerializer",
     "ACIUSegNetworkAttributeSerializer",
+    "ACIVLANPoolRangeSerializer",
+    "ACIVLANPoolSerializer",
     "ACIVRFSerializer",
 )
