@@ -5,6 +5,7 @@
 from netbox.search import SearchIndex, register_search
 
 from .models.access_policies.domains import ACIRoutedDomain
+from .models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .models.fabric.fabrics import ACIFabric
 from .models.fabric.nodes import ACINode
 from .models.fabric.pods import ACIPod
@@ -124,6 +125,43 @@ class ACIRoutedDomainIndex(SearchIndex):
         "description",
         "aci_fabric",
         "nb_tenant",
+    )
+
+
+@register_search
+class ACIVLANPoolIndex(SearchIndex):
+    """NetBox search definition for the ACI VLAN Pool model."""
+
+    model = ACIVLANPool
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIVLANPoolRangeIndex(SearchIndex):
+    """NetBox search definition for the ACI VLAN Pool Range model."""
+
+    model = ACIVLANPoolRange
+    fields: tuple = (
+        ("aci_vlan_pool", 100),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "aci_vlan_pool",
+        "vlan_id_from",
+        "vlan_id_to",
+        "role",
     )
 
 
