@@ -16,6 +16,8 @@ router.register("pods", views.ACIPodListViewSet)
 
 # ACI Access Policies
 router.register("routed-domains", views.ACIRoutedDomainListViewSet)
+router.register("vlan-pools", views.ACIVLANPoolListViewSet)
+router.register("vlan-pool-ranges", views.ACIVLANPoolRangeListViewSet)
 
 # ACI Tenant
 router.register("tenants", views.ACITenantListViewSet)

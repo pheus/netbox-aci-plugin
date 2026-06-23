@@ -36,6 +36,8 @@ from .filters import (
     ACITenantFilter,
     ACIUSegEndpointGroupFilter,
     ACIUSegNetworkAttributeFilter,
+    ACIVLANPoolFilter,
+    ACIVLANPoolRangeFilter,
     ACIVRFFilter,
 )
 
@@ -51,6 +53,7 @@ if TYPE_CHECKING:
     from ipam.graphql.types import (
         IPAddressType,
         PrefixType,
+        VLANGroupType,
         VLANType,
         VRFType,
     )
@@ -96,6 +99,9 @@ class ACIFabricType(OwnerMixin, NetBoxObjectType):
         Annotated[
             "ACIRoutedDomainType", strawberry.lazy("netbox_aci_plugin.graphql.types")
         ]
+    ]
+    aci_vlan_pools: list[
+        Annotated["ACIVLANPoolType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
     ]
 
 
@@ -189,6 +195,48 @@ class ACIRoutedDomainType(OwnerMixin, NetBoxObjectType):
     ]
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
     security_domains: list[str] | None
+
+
+@strawberry_django.type(
+    models.ACIVLANPool,
+    fields="__all__",
+    filters=ACIVLANPoolFilter,
+    pagination=True,
+)
+class ACIVLANPoolType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIVLANPool model."""
+
+    # Model fields
+    aci_fabric: Annotated[
+        "ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+    nb_vlan_group: (
+        Annotated["VLANGroupType", strawberry.lazy("ipam.graphql.types")] | None
+    )
+
+    # Related models
+    aci_vlan_pool_ranges: list[
+        Annotated[
+            "ACIVLANPoolRangeType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACIVLANPoolRange,
+    fields="__all__",
+    filters=ACIVLANPoolRangeFilter,
+    pagination=True,
+)
+class ACIVLANPoolRangeType(NetBoxObjectType):
+    """GraphQL type definition for the ACIVLANPoolRange model."""
+
+    # Model fields
+    aci_vlan_pool: Annotated[
+        "ACIVLANPoolType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
 
 
 @strawberry_django.type(

@@ -382,6 +382,27 @@ acinode_item = PluginMenuItem(
     ),
 )
 
+# ACI VLAN Pool
+acivlanpool_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acivlanpool_list",
+    link_text="VLAN Pools",
+    permissions=["netbox_aci_plugin.view_acivlanpool"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acivlanpool_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acivlanpool"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acivlanpool_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acivlanpool"],
+        ),
+    ),
+)
+
 # ACI Routed Domain
 acirouteddomain_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acirouteddomain_list",
@@ -455,7 +476,7 @@ menu = PluginMenu(
         ),
         (
             "Fabric Access Policies",
-            (acirouteddomain_item,),
+            (acivlanpool_item, acirouteddomain_item),
         ),
     ),
     icon_class="mdi mdi-router",

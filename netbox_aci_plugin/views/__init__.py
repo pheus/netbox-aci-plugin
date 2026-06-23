@@ -6,6 +6,20 @@ from .access_policies.domains import (
     ACIRoutedDomainListView,
     ACIRoutedDomainView,
 )
+from .access_policies.vlan_pools import (
+    ACIVLANPoolBulkDeleteView,
+    ACIVLANPoolBulkEditView,
+    ACIVLANPoolBulkImportView,
+    ACIVLANPoolEditView,
+    ACIVLANPoolListView,
+    ACIVLANPoolRangeBulkDeleteView,
+    ACIVLANPoolRangeBulkEditView,
+    ACIVLANPoolRangeBulkImportView,
+    ACIVLANPoolRangeEditView,
+    ACIVLANPoolRangeListView,
+    ACIVLANPoolRangeView,
+    ACIVLANPoolView,
+)
 from .fabric.fabrics import (
     ACIFabricBulkDeleteView,
     ACIFabricBulkEditView,
@@ -297,6 +311,20 @@ __all__ = (
     "ACIUSegNetworkAttributeBulkImportView",
     "ACIUSegNetworkAttributeEditView",
     "ACIUSegNetworkAttributeListView",
+    # ACIVLANPool
+    "ACIVLANPoolBulkDeleteView",
+    "ACIVLANPoolBulkEditView",
+    "ACIVLANPoolBulkImportView",
+    "ACIVLANPoolEditView",
+    "ACIVLANPoolListView",
+    "ACIVLANPoolView",
+    # ACIVLANPoolRange
+    "ACIVLANPoolRangeBulkDeleteView",
+    "ACIVLANPoolRangeBulkEditView",
+    "ACIVLANPoolRangeBulkImportView",
+    "ACIVLANPoolRangeEditView",
+    "ACIVLANPoolRangeListView",
+    "ACIVLANPoolRangeView",
     # ACIVRF
     "ACIVRFBulkDeleteView",
     "ACIVRFBulkEditView",

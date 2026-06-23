@@ -332,6 +332,7 @@ class ContractSubjectFilterPriorityChoices(ChoiceSet):
 class NodeRoleChoices(ChoiceSet):
     """Choice set of Node roles."""
 
+    # default "leaf"
     ROLE_LEAF = "leaf"
     ROLE_SPINE = "spine"
     ROLE_APIC = "apic"
@@ -509,4 +510,50 @@ class VRFPCEnforcementPreferenceChoices(ChoiceSet):
     CHOICES = (
         (PREF_ENFORCED, _("enforced"), "green"),
         (PREF_UNENFORCED, _("unenforced"), "red"),
+    )
+
+
+#
+# VLAN Pool
+#
+
+
+class VLANAllocationModeChoices(ChoiceSet):
+    """Choice set of VLAN pool allocation modes."""
+
+    # default "static"
+    MODE_STATIC = "static"
+    MODE_DYNAMIC = "dynamic"
+
+    CHOICES = (
+        (MODE_STATIC, _("static"), "blue"),
+        (MODE_DYNAMIC, _("dynamic"), "green"),
+    )
+
+
+class VLANPoolRangeAllocationModeChoices(ChoiceSet):
+    """Choice set of VLAN pool range allocation modes."""
+
+    # default "inherit"
+    MODE_INHERIT = "inherit"
+    MODE_STATIC = "static"
+    MODE_DYNAMIC = "dynamic"
+
+    CHOICES = (
+        (MODE_INHERIT, _("inherit"), "gray"),
+        (MODE_STATIC, _("static"), "blue"),
+        (MODE_DYNAMIC, _("dynamic"), "green"),
+    )
+
+
+class VLANPoolRangeRoleChoices(ChoiceSet):
+    """Choice set of VLAN pool range roles."""
+
+    # default "external"
+    ROLE_EXTERNAL = "external"
+    ROLE_INTERNAL = "internal"
+
+    CHOICES = (
+        (ROLE_EXTERNAL, _("external"), "blue"),
+        (ROLE_INTERNAL, _("internal"), "purple"),
     )

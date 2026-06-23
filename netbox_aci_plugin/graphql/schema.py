@@ -30,6 +30,8 @@ from .types import (
     ACITenantType,
     ACIUSegEndpointGroupType,
     ACIUSegNetworkAttributeType,
+    ACIVLANPoolRangeType,
+    ACIVLANPoolType,
     ACIVRFType,
 )
 
@@ -144,3 +146,9 @@ class NetBoxACIQuery:
     aci_contract_subject_filter_list: list[ACIContractSubjectFilterType] = (
         strawberry_django.field()
     )
+
+    aci_vlan_pool: ACIVLANPoolType = strawberry_django.field()
+    aci_vlan_pool_list: list[ACIVLANPoolType] = strawberry_django.field()
+
+    aci_vlan_pool_range: ACIVLANPoolRangeType = strawberry_django.field()
+    aci_vlan_pool_range_list: list[ACIVLANPoolRangeType] = strawberry_django.field()

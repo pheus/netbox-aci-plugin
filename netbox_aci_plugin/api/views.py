@@ -5,6 +5,10 @@
 from netbox.api.viewsets import NetBoxModelViewSet
 
 from ..filtersets.access_policies.domains import ACIRoutedDomainFilterSet
+from ..filtersets.access_policies.vlan_pools import (
+    ACIVLANPoolFilterSet,
+    ACIVLANPoolRangeFilterSet,
+)
 from ..filtersets.fabric.fabrics import ACIFabricFilterSet
 from ..filtersets.fabric.nodes import ACINodeFilterSet
 from ..filtersets.fabric.pods import ACIPodFilterSet
@@ -42,6 +46,7 @@ from ..filtersets.tenant.l3outs import (
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
 from ..models.access_policies.domains import ACIRoutedDomain
+from ..models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ..models.fabric.fabrics import ACIFabric
 from ..models.fabric.nodes import ACINode
 from ..models.fabric.pods import ACIPod
@@ -103,6 +108,8 @@ from .serializers import (
     ACITenantSerializer,
     ACIUSegEndpointGroupSerializer,
     ACIUSegNetworkAttributeSerializer,
+    ACIVLANPoolRangeSerializer,
+    ACIVLANPoolSerializer,
     ACIVRFSerializer,
 )
 
@@ -166,6 +173,34 @@ class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIRoutedDomainSerializer
     filterset_class = ACIRoutedDomainFilterSet
+
+
+class ACIVLANPoolListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI VLAN Pool instances."""
+
+    queryset = ACIVLANPool.objects.select_related(
+        "aci_fabric",
+        "nb_vlan_group",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIVLANPoolSerializer
+    filterset_class = ACIVLANPoolFilterSet
+
+
+class ACIVLANPoolRangeListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI VLAN Pool Range instances."""
+
+    queryset = ACIVLANPoolRange.objects.select_related(
+        "aci_vlan_pool",
+        "aci_vlan_pool__aci_fabric",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIVLANPoolRangeSerializer
+    filterset_class = ACIVLANPoolRangeFilterSet
 
 
 class ACITenantListViewSet(NetBoxModelViewSet):
