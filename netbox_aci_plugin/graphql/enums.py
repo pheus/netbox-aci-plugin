@@ -26,6 +26,9 @@ from ..choices import (
     QualityOfServiceDSCPChoices,
     USegAttributeMatchOperatorChoices,
     USegAttributeTypeChoices,
+    VLANAllocationModeChoices,
+    VLANPoolRangeAllocationModeChoices,
+    VLANPoolRangeRoleChoices,
     VRFPCEnforcementDirectionChoices,
     VRFPCEnforcementPreferenceChoices,
 )
@@ -52,6 +55,9 @@ __all__ = (
     "QualityOfServiceDSCPEnum",
     "USegAttributeMatchOperatorEnum",
     "USegAttributeTypeEnum",
+    "VLANAllocationModeEnum",
+    "VLANPoolRangeAllocationModeEnum",
+    "VLANPoolRangeRoleEnum",
     "VRFPCEnforcementDirectionEnum",
     "VRFPCEnforcementPreferenceEnum",
 )
@@ -139,6 +145,16 @@ USegAttributeMatchOperatorEnum = strawberry.enum(
 #
 
 USegAttributeTypeEnum = strawberry.enum(USegAttributeTypeChoices.as_enum())
+
+#
+# VLAN Pool
+#
+
+VLANAllocationModeEnum = strawberry.enum(VLANAllocationModeChoices.as_enum())
+VLANPoolRangeAllocationModeEnum = strawberry.enum(
+    VLANPoolRangeAllocationModeChoices.as_enum()
+)
+VLANPoolRangeRoleEnum = strawberry.enum(VLANPoolRangeRoleChoices.as_enum())
 
 #
 # VRF
