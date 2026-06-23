@@ -47,6 +47,10 @@
   "aciusegendpointgroup:list_objects_with_permission": 24,
   "aciusegnetworkattribute:api_list_objects": 28,
   "aciusegnetworkattribute:list_objects_with_permission": 22,
+  "acivlanpool:api_list_objects": 13,
+  "acivlanpool:list_objects_with_permission": 21,
+  "acivlanpoolrange:api_list_objects": 14,
+  "acivlanpoolrange:list_objects_with_permission": 21,
   "acivrf:api_list_objects": 14,
   "acivrf:list_objects_with_permission": 21
 }
