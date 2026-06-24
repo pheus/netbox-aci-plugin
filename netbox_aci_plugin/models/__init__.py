@@ -1,6 +1,6 @@
 """Re-exports the plugin's ACI models as a single import namespace."""
 
-from .access_policies.domains import ACIRoutedDomain
+from .access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from .access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .fabric.fabrics import ACIFabric
 from .fabric.nodes import ACINode
@@ -57,6 +57,7 @@ __all__ = (
     "ACIFabric",
     "ACIL3Out",
     "ACINode",
+    "ACIPhysicalDomain",
     "ACIPod",
     "ACIRoutedDomain",
     "ACITenant",
