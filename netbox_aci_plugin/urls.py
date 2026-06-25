@@ -45,6 +45,15 @@ urlpatterns: tuple = (
         "routed-domains/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acirouteddomain")),
     ),
+    # ACI Physical Domain
+    path(
+        "physical-domains/",
+        include(get_model_urls("netbox_aci_plugin", "aciphysicaldomain", detail=False)),
+    ),
+    path(
+        "physical-domains/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciphysicaldomain")),
+    ),
     # ACI VLAN Pool
     path(
         "vlan-pools/",
