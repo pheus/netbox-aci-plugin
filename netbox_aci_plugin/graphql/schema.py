@@ -25,6 +25,7 @@ from .types import (
     ACIFabricType,
     ACIL3OutType,
     ACINodeType,
+    ACIPhysicalDomainType,
     ACIPodType,
     ACIRoutedDomainType,
     ACITenantType,
@@ -51,6 +52,9 @@ class NetBoxACIQuery:
 
     aci_routed_domain: ACIRoutedDomainType = strawberry_django.field()
     aci_routed_domain_list: list[ACIRoutedDomainType] = strawberry_django.field()
+
+    aci_physical_domain: ACIPhysicalDomainType = strawberry_django.field()
+    aci_physical_domain_list: list[ACIPhysicalDomainType] = strawberry_django.field()
 
     aci_tenant: ACITenantType = strawberry_django.field()
     aci_tenant_list: list[ACITenantType] = strawberry_django.field()
