@@ -1,4 +1,7 @@
-from .access_policies.domains import ACIRoutedDomainSerializer
+from .access_policies.domains import (
+    ACIPhysicalDomainSerializer,
+    ACIRoutedDomainSerializer,
+)
 from .access_policies.vlan_pools import (
     ACIVLANPoolRangeSerializer,
     ACIVLANPoolSerializer,
@@ -60,6 +63,7 @@ __all__ = (
     "ACIFabricSerializer",
     "ACIL3OutSerializer",
     "ACINodeSerializer",
+    "ACIPhysicalDomainSerializer",
     "ACIPodSerializer",
     "ACIRoutedDomainSerializer",
     "ACITenantSerializer",
