@@ -202,7 +202,7 @@ urlpatterns: tuple = (
         "external-endpoint-groups/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciexternalendpointgroup")),
     ),
-    # ACI External Endpoint Group Subnet
+    # ACI External Subnet
     path(
         "external-endpoint-groups/subnets/",
         include(get_model_urls("netbox_aci_plugin", "aciexternalsubnet", detail=False)),
