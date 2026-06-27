@@ -48,9 +48,9 @@ class ACIContractTable(NetBoxTable):
         verbose_name=_("Target DSCP"),
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -214,9 +214,9 @@ class ACIContractSubjectTable(NetBoxTable):
         verbose_name=_("Target DSCP (prov->cons)"),
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,

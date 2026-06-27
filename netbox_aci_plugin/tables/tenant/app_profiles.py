@@ -33,9 +33,9 @@ class ACIAppProfileTable(NetBoxTable):
         linkify=True,
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,

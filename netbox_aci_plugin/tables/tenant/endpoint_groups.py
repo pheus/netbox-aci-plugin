@@ -48,9 +48,9 @@ class ACIEndpointGroupTable(NetBoxTable):
         verbose_name=_("QoS class"),
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -126,9 +126,9 @@ class ACIUSegEndpointGroupTable(NetBoxTable):
         verbose_name=_("QoS class"),
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -214,9 +214,9 @@ class ACIUSegNetworkAttributeTable(NetBoxTable):
         verbose_name=_("Type"),
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,

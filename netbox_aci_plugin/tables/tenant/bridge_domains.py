@@ -88,9 +88,9 @@ class ACIBridgeDomainTable(NetBoxTable):
         template_code=BRIDGEDOMAIN_SUBNETS,
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -204,9 +204,9 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
         verbose_name=_("VIP"),
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -317,8 +317,8 @@ class ACIBridgeDomainL3OutBindingTable(NetBoxTable):
             "aci_vrf",
             "aci_bridge_domain",
             "aci_l3out",
-            "comments",
             "tags",
+            "comments",
         )
         default_columns: tuple = (
             "aci_fabric",
