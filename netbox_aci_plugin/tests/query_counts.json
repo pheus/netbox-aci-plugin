@@ -37,6 +37,8 @@
   "acil3out:list_objects_with_permission": 25,
   "acinode:api_list_objects": 15,
   "acinode:list_objects_with_permission": 22,
+  "aciphysicaldomain:api_list_objects": 13,
+  "aciphysicaldomain:list_objects_with_permission": 21,
   "acipod:api_list_objects": 13,
   "acipod:list_objects_with_permission": 21,
   "acirouteddomain:api_list_objects": 13,
