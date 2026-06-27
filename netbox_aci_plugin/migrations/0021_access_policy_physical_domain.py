@@ -1,3 +1,4 @@
+import django.contrib.postgres.fields
 import django.core.validators
 import django.db.models.deletion
 import taggit.managers
@@ -9,12 +10,23 @@ import utilities.json
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("netbox_aci_plugin", "0019_default_related_name"),
+        ("netbox_aci_plugin", "0020_access_policy_vlan_pool"),
     ]
 
     operations = [
+        migrations.AddField(
+            model_name="acirouteddomain",
+            name="aci_vlan_pool",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="%(class)ss",
+                to="netbox_aci_plugin.acivlanpool",
+            ),
+        ),
         migrations.CreateModel(
-            name="ACIVLANPool",
+            name="ACIPhysicalDomain",
             fields=[
                 (
                     "id",
@@ -74,13 +86,37 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("comments", models.TextField(blank=True)),
-                ("allocation_mode", models.CharField(default="static", max_length=7)),
+                (
+                    "security_domains",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(
+                            max_length=64,
+                            validators=[
+                                django.core.validators.RegexValidator(
+                                    code="invalid",
+                                    message="Only alphanumeric characters, periods, underscores, colons and hyphens are allowed.",
+                                    regex="^[A-Za-z0-9_.:-]+$",
+                                )
+                            ],
+                        ),
+                        blank=True,
+                        default=list,
+                    ),
+                ),
                 (
                     "aci_fabric",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.PROTECT,
-                        related_name="aci_vlan_pools",
+                        related_name="aci_physical_domains",
                         to="netbox_aci_plugin.acifabric",
+                    ),
+                ),
+                (
+                    "aci_vlan_pool",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="aci_physical_domains",
+                        to="netbox_aci_plugin.acivlanpool",
                     ),
                 ),
                 (
@@ -91,16 +127,6 @@ class Migration(migrations.Migration):
                         on_delete=django.db.models.deletion.SET_NULL,
                         related_name="%(class)ss",
                         to="tenancy.tenant",
-                    ),
-                ),
-                (
-                    "nb_vlan_group",
-                    models.OneToOneField(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="aci_vlan_pool",
-                        to="ipam.vlangroup",
                     ),
                 ),
                 (
@@ -120,86 +146,17 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "verbose_name": "ACI VLAN Pool",
+                "verbose_name": "ACI Physical Domain",
                 "ordering": ("aci_fabric", "name"),
-                "default_related_name": "aci_vlan_pools",
-            },
-            bases=(netbox.models.deletion.DeleteMixin, models.Model),
-        ),
-        migrations.CreateModel(
-            name="ACIVLANPoolRange",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True, primary_key=True, serialize=False
-                    ),
-                ),
-                ("created", models.DateTimeField(auto_now_add=True, null=True)),
-                ("last_updated", models.DateTimeField(auto_now=True, null=True)),
-                (
-                    "custom_field_data",
-                    models.JSONField(
-                        blank=True,
-                        default=dict,
-                        encoder=utilities.json.CustomFieldJSONEncoder,
-                    ),
-                ),
-                (
-                    "vlan_id_from",
-                    models.PositiveSmallIntegerField(
-                        validators=[
-                            django.core.validators.MinValueValidator(1),
-                            django.core.validators.MaxValueValidator(4094),
-                        ]
-                    ),
-                ),
-                (
-                    "vlan_id_to",
-                    models.PositiveSmallIntegerField(
-                        validators=[
-                            django.core.validators.MinValueValidator(1),
-                            django.core.validators.MaxValueValidator(4094),
-                        ]
-                    ),
-                ),
-                ("allocation_mode", models.CharField(default="inherit", max_length=7)),
-                ("role", models.CharField(default="external", max_length=8)),
-                ("comments", models.TextField(blank=True)),
-                (
-                    "aci_vlan_pool",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="aci_vlan_pool_ranges",
-                        to="netbox_aci_plugin.acivlanpool",
-                    ),
-                ),
-                (
-                    "tags",
-                    taggit.managers.TaggableManager(
-                        through="extras.TaggedItem", to="extras.Tag"
-                    ),
-                ),
-            ],
-            options={
-                "verbose_name": "ACI VLAN Pool Range",
-                "ordering": ("aci_vlan_pool", "vlan_id_from"),
-                "default_related_name": "aci_vlan_pool_ranges",
+                "default_related_name": "aci_physical_domains",
             },
             bases=(netbox.models.deletion.DeleteMixin, models.Model),
         ),
         migrations.AddConstraint(
-            model_name="acivlanpool",
+            model_name="aciphysicaldomain",
             constraint=models.UniqueConstraint(
                 fields=("aci_fabric", "name"),
-                name="netbox_aci_plugin_acivlanpool_unique_name_per_aci_fabric",
-            ),
-        ),
-        migrations.AddConstraint(
-            model_name="acivlanpoolrange",
-            constraint=models.UniqueConstraint(
-                fields=("aci_vlan_pool", "vlan_id_from", "vlan_id_to"),
-                name="netbox_aci_plugin_acivlanpoolrange_unique_range_per_pool",
+                name="netbox_aci_plugin_aciphysicaldomain_unique_name_per_aci_fabric",
             ),
         ),
     ]

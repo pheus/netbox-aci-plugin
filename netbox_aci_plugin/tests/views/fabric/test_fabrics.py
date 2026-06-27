@@ -7,7 +7,7 @@
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
-from ....models.access_policies.domains import ACIRoutedDomain
+from ....models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from ....models.fabric.fabrics import ACIFabric
 from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
@@ -141,6 +141,25 @@ class ACIFabricViewTestCase(
         response = self.client.get(url)
         self.assertHttpStatus(response, 200)
         add_url = get_action_url(ACIRoutedDomain, action="add")
+        self.assertContains(
+            response, f'href="{add_url}?aci_fabric={self.aci_fabric.pk}'
+        )
+
+    def test_acifabric_physical_domains_tab_add_button(self) -> None:
+        """Fabric Physical Domains tab renders the registered Add button."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_aciphysicaldomain",
+            "netbox_aci_plugin.add_aciphysicaldomain",
+        )
+        url = get_action_url(
+            self.aci_fabric,
+            action="physical_domains",
+            kwargs={"pk": self.aci_fabric.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACIPhysicalDomain, action="add")
         self.assertContains(
             response, f'href="{add_url}?aci_fabric={self.aci_fabric.pk}'
         )

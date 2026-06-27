@@ -1,4 +1,10 @@
 from .access_policies.domains import (
+    ACIPhysicalDomainBulkDeleteView,
+    ACIPhysicalDomainBulkEditView,
+    ACIPhysicalDomainBulkImportView,
+    ACIPhysicalDomainEditView,
+    ACIPhysicalDomainListView,
+    ACIPhysicalDomainView,
     ACIRoutedDomainBulkDeleteView,
     ACIRoutedDomainBulkEditView,
     ACIRoutedDomainBulkImportView,
@@ -286,6 +292,13 @@ __all__ = (
     "ACIPodBulkImportView",
     "ACIPodEditView",
     "ACIPodListView",
+    # ACIPhysicalDomain
+    "ACIPhysicalDomainBulkDeleteView",
+    "ACIPhysicalDomainBulkEditView",
+    "ACIPhysicalDomainBulkImportView",
+    "ACIPhysicalDomainEditView",
+    "ACIPhysicalDomainListView",
+    "ACIPhysicalDomainView",
     # ACIRoutedDomain
     "ACIRoutedDomainBulkDeleteView",
     "ACIRoutedDomainBulkEditView",

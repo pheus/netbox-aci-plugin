@@ -4,7 +4,10 @@
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
-from ..filtersets.access_policies.domains import ACIRoutedDomainFilterSet
+from ..filtersets.access_policies.domains import (
+    ACIPhysicalDomainFilterSet,
+    ACIRoutedDomainFilterSet,
+)
 from ..filtersets.access_policies.vlan_pools import (
     ACIVLANPoolFilterSet,
     ACIVLANPoolRangeFilterSet,
@@ -45,7 +48,7 @@ from ..filtersets.tenant.l3outs import (
 )
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
-from ..models.access_policies.domains import ACIRoutedDomain
+from ..models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from ..models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ..models.fabric.fabrics import ACIFabric
 from ..models.fabric.nodes import ACINode
@@ -103,6 +106,7 @@ from .serializers import (
     ACIFabricSerializer,
     ACIL3OutSerializer,
     ACINodeSerializer,
+    ACIPhysicalDomainSerializer,
     ACIPodSerializer,
     ACIRoutedDomainSerializer,
     ACITenantSerializer,
@@ -168,11 +172,27 @@ class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
         "aci_fabric",
         "nb_tenant",
         "owner",
+        "aci_vlan_pool",
     ).prefetch_related(
         "tags",
     )
     serializer_class = ACIRoutedDomainSerializer
     filterset_class = ACIRoutedDomainFilterSet
+
+
+class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Physical Domain instances."""
+
+    queryset = ACIPhysicalDomain.objects.select_related(
+        "aci_fabric",
+        "nb_tenant",
+        "owner",
+        "aci_vlan_pool",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIPhysicalDomainSerializer
+    filterset_class = ACIPhysicalDomainFilterSet
 
 
 class ACIVLANPoolListViewSet(NetBoxModelViewSet):

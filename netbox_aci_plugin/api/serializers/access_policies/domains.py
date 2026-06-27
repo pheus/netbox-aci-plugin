@@ -9,8 +9,9 @@ from tenancy.api.serializers import TenantSerializer
 from users.api.serializers_.mixins import OwnerMixin
 
 from ....constants import ACI_NAME_MAX_LEN
-from ....models.access_policies.domains import ACIRoutedDomain
+from ....models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from ..fabric.fabrics import ACIFabricSerializer
+from .vlan_pools import ACIVLANPoolSerializer
 
 
 class ACIRoutedDomainSerializer(OwnerMixin, NetBoxModelSerializer):
@@ -20,6 +21,7 @@ class ACIRoutedDomainSerializer(OwnerMixin, NetBoxModelSerializer):
         view_name="plugins-api:netbox_aci_plugin-api:acirouteddomain-detail"
     )
     aci_fabric = ACIFabricSerializer(nested=True, required=True)
+    aci_vlan_pool = ACIVLANPoolSerializer(nested=True, required=False, allow_null=True)
     nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
     security_domains = serializers.ListField(
         child=serializers.CharField(max_length=ACI_NAME_MAX_LEN),
@@ -37,8 +39,56 @@ class ACIRoutedDomainSerializer(OwnerMixin, NetBoxModelSerializer):
             "name_alias",
             "description",
             "aci_fabric",
-            "nb_tenant",
+            "aci_vlan_pool",
             "security_domains",
+            "nb_tenant",
+            "owner",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric",
+            "nb_tenant",
+        )
+
+
+class ACIPhysicalDomainSerializer(OwnerMixin, NetBoxModelSerializer):
+    """Serializer for the ACI Physical Domain model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:aciphysicaldomain-detail"
+    )
+    aci_fabric = ACIFabricSerializer(nested=True, required=True)
+    aci_vlan_pool = ACIVLANPoolSerializer(nested=True, required=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+    security_domains = serializers.ListField(
+        child=serializers.CharField(max_length=ACI_NAME_MAX_LEN),
+        required=False,
+        allow_empty=True,
+    )
+
+    class Meta:
+        model = ACIPhysicalDomain
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric",
+            "aci_vlan_pool",
+            "security_domains",
+            "nb_tenant",
             "owner",
             "comments",
             "tags",

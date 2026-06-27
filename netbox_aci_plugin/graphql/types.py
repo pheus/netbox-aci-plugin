@@ -31,6 +31,7 @@ from .filters import (
     ACIFabricFilter,
     ACIL3OutFilter,
     ACINodeFilter,
+    ACIPhysicalDomainFilter,
     ACIPodFilter,
     ACIRoutedDomainFilter,
     ACITenantFilter,
@@ -92,6 +93,12 @@ class ACIFabricType(OwnerMixin, NetBoxObjectType):
         return self.scope  # pragma: no cover
 
     # Related models
+    aci_physical_domains: list[
+        Annotated[
+            "ACIPhysicalDomainType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
     aci_pods: list[
         Annotated["ACIPodType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
     ]
@@ -194,6 +201,31 @@ class ACIRoutedDomainType(OwnerMixin, NetBoxObjectType):
         "ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+    aci_vlan_pool: (
+        Annotated["ACIVLANPoolType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+        | None
+    )
+    security_domains: list[str] | None
+
+
+@strawberry_django.type(
+    models.ACIPhysicalDomain,
+    fields="__all__",
+    filters=ACIPhysicalDomainFilter,
+    pagination=True,
+)
+class ACIPhysicalDomainType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIPhysicalDomain model."""
+
+    # Model fields
+    aci_fabric: Annotated[
+        "ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+    aci_vlan_pool: (
+        Annotated["ACIVLANPoolType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+        | None
+    )
     security_domains: list[str] | None
 
 

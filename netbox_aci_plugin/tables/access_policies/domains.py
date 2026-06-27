@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable, columns
 
-from ...models.access_policies.domains import ACIRoutedDomain
+from ...models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 
 
 class ACIRoutedDomainTable(NetBoxTable):
@@ -23,6 +23,10 @@ class ACIRoutedDomainTable(NetBoxTable):
     )
     aci_fabric = tables.Column(
         verbose_name=_("Fabric"),
+        linkify=True,
+    )
+    aci_vlan_pool = tables.Column(
+        verbose_name=_("VLAN Pool"),
         linkify=True,
     )
     security_domains = columns.ArrayColumn(
@@ -52,6 +56,7 @@ class ACIRoutedDomainTable(NetBoxTable):
             "name_alias",
             "description",
             "aci_fabric",
+            "aci_vlan_pool",
             "security_domains",
             "nb_tenant",
             "owner",
@@ -63,6 +68,72 @@ class ACIRoutedDomainTable(NetBoxTable):
             "name_alias",
             "description",
             "aci_fabric",
+            "aci_vlan_pool",
+            "security_domains",
+            "nb_tenant",
+            "tags",
+        )
+
+
+class ACIPhysicalDomainTable(NetBoxTable):
+    """NetBox table for the ACI Physical Domain model."""
+
+    name = tables.Column(
+        verbose_name=_("ACI Physical Domain"),
+        linkify=True,
+    )
+    name_alias = tables.Column(
+        verbose_name=_("Alias"),
+        linkify=True,
+    )
+    aci_fabric = tables.Column(
+        verbose_name=_("Fabric"),
+        linkify=True,
+    )
+    aci_vlan_pool = tables.Column(
+        verbose_name=_("VLAN Pool"),
+        linkify=True,
+    )
+    security_domains = columns.ArrayColumn(
+        orderable=False,
+        verbose_name=_("Security Domains"),
+    )
+    nb_tenant = tables.Column(
+        linkify=True,
+    )
+    owner_group = tables.Column(
+        accessor="owner__group",
+        linkify=True,
+        verbose_name=_("Owner Group"),
+    )
+    owner = tables.Column(
+        linkify=True,
+    )
+    tags = columns.TagColumn()
+    comments = columns.MarkdownColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIPhysicalDomain
+        fields: tuple = (
+            "pk",
+            "id",
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric",
+            "aci_vlan_pool",
+            "security_domains",
+            "nb_tenant",
+            "owner",
+            "tags",
+            "comments",
+        )
+        default_columns: tuple = (
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric",
+            "aci_vlan_pool",
             "security_domains",
             "nb_tenant",
             "tags",

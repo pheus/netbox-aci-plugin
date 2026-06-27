@@ -403,6 +403,27 @@ acivlanpool_item = PluginMenuItem(
     ),
 )
 
+# ACI Physical Domain
+aciphysicaldomain_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:aciphysicaldomain_list",
+    link_text="Physical Domains",
+    permissions=["netbox_aci_plugin.view_aciphysicaldomain"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciphysicaldomain_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_aciphysicaldomain"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciphysicaldomain_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_aciphysicaldomain"],
+        ),
+    ),
+)
+
 # ACI Routed Domain
 acirouteddomain_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acirouteddomain_list",
@@ -476,7 +497,11 @@ menu = PluginMenu(
         ),
         (
             "Fabric Access Policies",
-            (acivlanpool_item, acirouteddomain_item),
+            (
+                acivlanpool_item,
+                aciphysicaldomain_item,
+                acirouteddomain_item,
+            ),
         ),
     ),
     icon_class="mdi mdi-router",

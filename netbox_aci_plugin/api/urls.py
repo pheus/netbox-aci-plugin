@@ -15,6 +15,7 @@ router.register("nodes", views.ACINodeListViewSet)
 router.register("pods", views.ACIPodListViewSet)
 
 # ACI Access Policies
+router.register("physical-domains", views.ACIPhysicalDomainListViewSet)
 router.register("routed-domains", views.ACIRoutedDomainListViewSet)
 router.register("vlan-pools", views.ACIVLANPoolListViewSet)
 router.register("vlan-pool-ranges", views.ACIVLANPoolRangeListViewSet)
