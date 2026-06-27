@@ -43,6 +43,7 @@ class ACIBridgeDomainL3OutBindingViewTestCase(
 
     @classmethod
     def setUpTestData(cls) -> None:
+        """Set up test data for ACIBridgeDomainL3OutBinding view tests."""
         super().setUpTestData()
 
         # ACIRoutedDomain is required for every ACIL3Out

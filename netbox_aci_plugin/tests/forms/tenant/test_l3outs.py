@@ -43,7 +43,7 @@ class ACIL3OutFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIL3Out form."""
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         """Set up required objects for ACIL3Out form tests."""
         super().setUpTestData()
         cls.aci_routed_domain = ACIRoutedDomain.objects.create(
@@ -155,7 +155,7 @@ class ACIExternalEndpointGroupFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIExternalEndpointGroup form."""
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         """Set up required objects for ACIExternalEndpointGroup form tests."""
         super().setUpTestData()
         cls.aci_routed_domain = ACIRoutedDomain.objects.create(
@@ -221,7 +221,7 @@ class ACIExternalSubnetFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIExternalSubnet form."""
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         """Set up required objects for ACIExternalSubnet form tests."""
         super().setUpTestData()
         cls.aci_routed_domain = ACIRoutedDomain.objects.create(
@@ -283,7 +283,7 @@ class ACIExternalSubnetEditFormInitTestCase(ACIBaseFormTestCase):
     """Test case for ACIExternalSubnetEditForm matched_prefix clearing."""
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         """Set up objects for ACIExternalSubnetEditForm __init__ tests."""
         super().setUpTestData()
         cls.aci_routed_domain = ACIRoutedDomain.objects.create(
