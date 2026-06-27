@@ -77,6 +77,7 @@ class ACIL3OutSerializer(OwnerMixin, NetBoxModelSerializer):
             "url",
             "display",
             "name",
+            "name_alias",
             "description",
             "aci_tenant",
             "aci_vrf",
@@ -119,6 +120,7 @@ class ACIExternalEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
             "url",
             "display",
             "name",
+            "name_alias",
             "description",
             "aci_l3out",
         )
@@ -175,6 +177,7 @@ class ACIExternalSubnetSerializer(OwnerMixin, NetBoxModelSerializer):
             "url",
             "display",
             "name",
+            "name_alias",
             "description",
             "aci_external_endpoint_group",
             "matched_prefix",

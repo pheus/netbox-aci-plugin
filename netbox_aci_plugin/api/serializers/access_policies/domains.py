@@ -22,12 +22,12 @@ class ACIRoutedDomainSerializer(OwnerMixin, NetBoxModelSerializer):
     )
     aci_fabric = ACIFabricSerializer(nested=True, required=True)
     aci_vlan_pool = ACIVLANPoolSerializer(nested=True, required=False, allow_null=True)
-    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
     security_domains = serializers.ListField(
         child=serializers.CharField(max_length=ACI_NAME_MAX_LEN),
         required=False,
         allow_empty=True,
     )
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
         model = ACIRoutedDomain
@@ -69,12 +69,12 @@ class ACIPhysicalDomainSerializer(OwnerMixin, NetBoxModelSerializer):
     )
     aci_fabric = ACIFabricSerializer(nested=True, required=True)
     aci_vlan_pool = ACIVLANPoolSerializer(nested=True, required=True)
-    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
     security_domains = serializers.ListField(
         child=serializers.CharField(max_length=ACI_NAME_MAX_LEN),
         required=False,
         allow_empty=True,
     )
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
 
     class Meta:
         model = ACIPhysicalDomain

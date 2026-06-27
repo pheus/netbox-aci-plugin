@@ -38,6 +38,7 @@ class ACIL3OutAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "display",
         "id",
         "name",
+        "name_alias",
         "url",
     ]
     user_permissions = (
@@ -221,6 +222,7 @@ class ACIExternalEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "display",
         "id",
         "name",
+        "name_alias",
         "url",
     ]
     user_permissions = (
@@ -346,6 +348,7 @@ class ACIExternalSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "id",
         "matched_prefix",
         "name",
+        "name_alias",
         "url",
     ]
     user_permissions = (
