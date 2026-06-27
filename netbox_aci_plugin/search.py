@@ -300,6 +300,7 @@ class ACIL3OutIndex(SearchIndex):
     """NetBox search definition for the ACI L3Out model."""
 
     model = ACIL3Out
+
     fields: tuple = (
         ("name", 100),
         ("name_alias", 300),
@@ -322,6 +323,7 @@ class ACIExternalEndpointGroupIndex(SearchIndex):
     """NetBox search definition for the ACI External EPG model."""
 
     model = ACIExternalEndpointGroup
+
     fields: tuple = (
         ("name", 100),
         ("name_alias", 300),
@@ -333,8 +335,6 @@ class ACIExternalEndpointGroupIndex(SearchIndex):
         "name_alias",
         "description",
         "aci_l3out",
-        "aci_tenant",
-        "aci_vrf",
         "nb_tenant",
     )
 
@@ -344,6 +344,7 @@ class ACIExternalSubnetIndex(SearchIndex):
     """NetBox search definition for the ACI External Subnet model."""
 
     model = ACIExternalSubnet
+
     fields: tuple = (
         ("name", 100),
         ("name_alias", 300),
@@ -363,7 +364,7 @@ class ACIExternalSubnetIndex(SearchIndex):
 
 @register_search
 class ACIBridgeDomainL3OutBindingIndex(SearchIndex):
-    """NetBox search definition for the ACI BD L3Out Relation model."""
+    """NetBox search definition for the ACI BD L3Out Binding model."""
 
     model = ACIBridgeDomainL3OutBinding
     fields: tuple = (("aci_bridge_domain", 100), ("aci_l3out", 300))

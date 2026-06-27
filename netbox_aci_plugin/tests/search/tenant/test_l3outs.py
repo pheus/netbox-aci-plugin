@@ -100,9 +100,10 @@ class ACIExternalEndpointGroupSearchIndexTestCase(ACIBaseTestCase):
             aci_l3out=cls.aci_l3out,
         )
 
-    def test_display_attrs_resolve_tenant_and_vrf(self) -> None:
-        """Test ExtEPG search exposes the parent tenant and VRF."""
-        self.assertIn("aci_tenant", ACIExternalEndpointGroupIndex.display_attrs)
-        self.assertIn("aci_vrf", ACIExternalEndpointGroupIndex.display_attrs)
+    def test_display_attrs_expose_parent_l3out(self) -> None:
+        """Test ExtEPG search exposes parent L3Out; resolves tenant and VRF."""
+        self.assertIn("aci_l3out", ACIExternalEndpointGroupIndex.display_attrs)
+        self.assertNotIn("aci_tenant", ACIExternalEndpointGroupIndex.display_attrs)
+        self.assertNotIn("aci_vrf", ACIExternalEndpointGroupIndex.display_attrs)
         self.assertEqual(self.aci_epg.aci_tenant, self.aci_tenant)
         self.assertEqual(self.aci_epg.aci_vrf, self.aci_vrf)
