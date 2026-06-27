@@ -14,6 +14,8 @@ try:
 except ImportError:  # pragma: no cover
     from strawberry_django import FilterLookup as StrFilterLookup
 
+from netbox.graphql.filters import NetBoxModelFilter
+
 from .... import models
 from ..mixins import ACIBaseFilterMixin
 
@@ -169,7 +171,7 @@ class ACIBridgeDomainSubnetFilter(ACIBaseFilterMixin):
 
 
 @strawberry_django.filter_type(models.ACIBridgeDomainL3OutBinding, lookups=True)
-class ACIBridgeDomainL3OutBindingFilter(ACIBaseFilterMixin):
+class ACIBridgeDomainL3OutBindingFilter(NetBoxModelFilter):
     """GraphQL filter definition for the ACIBridgeDomainL3OutBinding model."""
 
     aci_bridge_domain: (

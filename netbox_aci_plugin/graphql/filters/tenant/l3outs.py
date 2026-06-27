@@ -62,6 +62,45 @@ class ACIL3OutFilter(ACIBaseFilterMixin):
         | None
     ) = strawberry_django.filter_field()
     aci_routed_domain_id: ID | None = strawberry_django.filter_field()
+    bfd_policy_name: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    bgp_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
+    custom_qos_policy_name: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
+    egress_data_plane_policing_policy_name: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
+    eigrp_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
+    eigrp_interface_policy_name: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
+    export_route_control_enforcement_enabled: FilterLookup[bool] | None = (
+        strawberry_django.filter_field()
+    )
+    igmp_interface_policy_name: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
+    import_route_control_enforcement_enabled: FilterLookup[bool] | None = (
+        strawberry_django.filter_field()
+    )
+    ingress_data_plane_policing_policy_name: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
+    interleak_route_map_name: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
+    l3_multicast_ipv4_enabled: FilterLookup[bool] | None = (
+        strawberry_django.filter_field()
+    )
+    l3_multicast_ipv6_enabled: FilterLookup[bool] | None = (
+        strawberry_django.filter_field()
+    )
+    multipod_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
+    ospf_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
+    ospf_external_policy_name: StrFilterLookup[str] | None = (
+        strawberry_django.filter_field()
+    )
+    pim_policy_name: StrFilterLookup[str] | None = strawberry_django.filter_field()
     target_dscp: (
         BaseFilterLookup[
             Annotated[
@@ -71,45 +110,6 @@ class ACIL3OutFilter(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
-    import_route_control_enforcement_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
-    export_route_control_enforcement_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
-    bgp_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    ospf_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    eigrp_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    l3_multicast_ipv4_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
-    l3_multicast_ipv6_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
-    multipod_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
-    bfd_policy_name: StrFilterLookup[str] | None = strawberry_django.filter_field()
-    custom_qos_policy_name: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    egress_data_plane_policing_policy_name: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    eigrp_interface_policy_name: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    igmp_interface_policy_name: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    ingress_data_plane_policing_policy_name: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    interleak_route_map_name: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    ospf_external_policy_name: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    pim_policy_name: StrFilterLookup[str] | None = strawberry_django.filter_field()
 
 
 @strawberry_django.filter_type(models.ACIExternalEndpointGroup, lookups=True)
