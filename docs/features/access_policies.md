@@ -7,6 +7,7 @@ ACI Fabric and can be referenced by tenant policy objects such as L3Outs.
 ```mermaid
 flowchart TD
     FAB[Fabric]
+    PD(Physical Domain)
     RD(Routed Domain)
     L3O(L3Out)
     VP(VLAN Pool)
@@ -14,13 +15,47 @@ flowchart TD
     NBVG[NetBox VLAN Group]
 
     subgraph graphAP [Access Policies]
+        FAB -->|1:n| PD
         FAB -->|1:n| RD
         FAB -->|1:n| VP
         VP -->|1:n| VPR
+        PD -.->|n:1| VP
+        RD -.->|n:1| VP
     end
     L3O -.->|n:1| RD
     VP -.->|1:1| NBVG
 ```
+
+## Physical Domain
+
+A *Physical Domain* represents an ACI physical domain (`physDomP`) used for
+bare-metal and hypervisor connectivity. Physical Domains are defined under
+the ACI Fabric access policies and can be referenced by EPG domain bindings.
+
+The *ACIPhysicalDomain* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the Physical Domain name in the ACI.
+- **ACI Fabric**: a reference to the `ACIFabric` model.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Physical Domain.
+- **Description**: a description of the Physical Domain.
+- **Security domains**: a comma-separated list of ACI security domains.
+- **ACI VLAN Pool**: an optional reference to an `ACIVLANPool` that defines
+  the VLANs available to this domain. The pool must belong to the same
+  ACI Fabric as the Physical Domain.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- Each domain name in **Security domains** must be unique within the list
+  (duplicates are rejected).
+- The `(aci_fabric, name)` combination must be unique per fabric.
 
 ## Routed Domain
 
@@ -40,9 +75,18 @@ The *ACIRoutedDomain* model has the following fields:
 - **Name alias**: a name alias in the ACI for the Routed Domain.
 - **Description**: a description of the Routed Domain.
 - **Security domains**: a comma-separated list of ACI security domains.
+- **ACI VLAN Pool**: an optional reference to an `ACIVLANPool` that defines
+  the VLANs available to this domain. The pool must belong to the same
+  ACI Fabric as the Routed Domain.
 - **NetBox Tenant**: a reference to the NetBox tenant model.
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- Each domain name in **Security domains** must be unique within the list
+  (duplicates are rejected).
+- The `(aci_fabric, name)` combination must be unique per fabric.
 
 ## VLAN Pool
 
