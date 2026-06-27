@@ -4,7 +4,7 @@
 
 from netbox.search import SearchIndex, register_search
 
-from .models.access_policies.domains import ACIRoutedDomain
+from .models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from .models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .models.fabric.fabrics import ACIFabric
 from .models.fabric.nodes import ACINode
@@ -113,6 +113,7 @@ class ACIRoutedDomainIndex(SearchIndex):
     """NetBox search definition for the ACI Routed Domain model."""
 
     model = ACIRoutedDomain
+
     fields: tuple = (
         ("name", 100),
         ("name_alias", 300),
@@ -124,6 +125,29 @@ class ACIRoutedDomainIndex(SearchIndex):
         "name_alias",
         "description",
         "aci_fabric",
+        "aci_vlan_pool",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIPhysicalDomainIndex(SearchIndex):
+    """NetBox search definition for the ACI Physical Domain model."""
+
+    model = ACIPhysicalDomain
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "aci_vlan_pool",
         "nb_tenant",
     )
 
