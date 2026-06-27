@@ -221,9 +221,9 @@ class ACIL3OutEditForm(NetBoxModelForm):
     )
     owner_group = DynamicModelChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
         label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
@@ -586,9 +586,9 @@ class ACIL3OutImportForm(NetBoxModelImportForm):
     )
     owner = CSVModelChoiceField(
         queryset=Owner.objects.all(),
-        to_field_name="name",
         required=False,
-        label=_("Owner"),
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
     )
 
     class Meta:
@@ -715,9 +715,9 @@ class ACIExternalEndpointGroupEditForm(NetBoxModelForm):
     )
     owner_group = DynamicModelChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
         label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
@@ -966,9 +966,9 @@ class ACIExternalEndpointGroupImportForm(NetBoxModelImportForm):
     )
     owner = CSVModelChoiceField(
         queryset=Owner.objects.all(),
-        to_field_name="name",
         required=False,
-        label=_("Owner"),
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
     )
 
     class Meta:
@@ -1184,9 +1184,9 @@ class ACIExternalSubnetEditForm(NetBoxModelForm):
     )
     owner_group = DynamicModelChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
         label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
@@ -1552,9 +1552,9 @@ class ACIExternalSubnetImportForm(NetBoxModelImportForm):
     )
     owner = CSVModelChoiceField(
         queryset=Owner.objects.all(),
-        to_field_name="name",
         required=False,
-        label=_("Owner"),
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
     )
 
     class Meta:

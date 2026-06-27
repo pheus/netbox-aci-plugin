@@ -120,11 +120,11 @@ class ACIContractEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
@@ -950,11 +950,11 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
