@@ -115,7 +115,7 @@ class ACIFabricPodView(ACIPodChildrenView):
         return super().get_children(request, parent).filter(aci_fabric_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIFabric colum hidden."""
+        """Return the table with ACIFabric column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIFabric column
@@ -155,7 +155,7 @@ class ACIFabricNodeView(ACINodeChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIFabric colum hidden."""
+        """Return the table with ACIFabric column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIFabric column
@@ -185,7 +185,7 @@ class ACIFabricTenantView(ACITenantChildrenView):
         return super().get_children(request, parent).filter(aci_fabric_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIFabric colum hidden."""
+        """Return the table with ACIFabric column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIFabric column

@@ -230,7 +230,7 @@ class ACIEndpointSecurityGroupContractRelationView(ACIContractRelationChildrenVi
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACI object colum hidden."""
+        """Return the table with ACI object column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIContract
@@ -271,7 +271,7 @@ class ACIEndpointSecurityGroupEsgEndpointGroupSelectorView(
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACI EndpointSecurityGroup colum hidden."""
+        """Return the table with ACI EndpointSecurityGroup column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIEndpointSecurityGroup
@@ -312,7 +312,7 @@ class ACIEndpointSecurityGroupEsgEndpointSelectorView(
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACI EndpointSecurityGroup colum hidden."""
+        """Return the table with ACI EndpointSecurityGroup column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIEndpointSecurityGroup

@@ -127,7 +127,7 @@ class ACIPodNodeView(ACINodeChildrenView):
         return super().get_children(request, parent).filter(aci_pod_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIPod colum hidden."""
+        """Return the table with ACIPod column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIPod column

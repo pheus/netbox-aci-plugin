@@ -263,7 +263,7 @@ class ACIContractContractRelationView(ACIContractRelationChildrenView):
         return super().get_children(request, parent).filter(aci_contract=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIContract colum hidden."""
+        """Return the table with ACIContract column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIContract
@@ -296,7 +296,7 @@ class ACIContractContractSubjectView(ACIContractSubjectChildrenView):
         return super().get_children(request, parent).filter(aci_contract=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIContract colum hidden."""
+        """Return the table with ACIContract column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIContractSubject
@@ -518,7 +518,7 @@ class ACIContractContractSubjectFilterView(ACIContractSubjectFilterChildrenView)
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIContractSubject colum hidden."""
+        """Return the table with ACIContractSubject column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIContractSubject

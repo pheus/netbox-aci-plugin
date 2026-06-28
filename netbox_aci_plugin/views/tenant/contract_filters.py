@@ -157,7 +157,7 @@ class ACIContractFilterContractFilterEntryView(ACIContractFilterEntryChildrenVie
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIContractFilter colum hidden."""
+        """Return the table with ACIContractFilter column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIContractFilter column

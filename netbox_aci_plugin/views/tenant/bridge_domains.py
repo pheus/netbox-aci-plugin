@@ -226,7 +226,7 @@ class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
         return super().get_children(request, parent).filter(aci_bridge_domain=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACIBridgeDomain colum hidden."""
+        """Return table with ACIBridgeDomain column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIBridgeDomain column
@@ -257,7 +257,7 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
         return super().get_children(request, parent).filter(aci_bridge_domain=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACIBridgeDomain colum hidden."""
+        """Return table with ACIBridgeDomain column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIBridgeDomain column

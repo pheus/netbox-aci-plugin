@@ -224,7 +224,7 @@ class ACIEndpointGroupContractRelationView(ACIContractRelationChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACI object colum hidden."""
+        """Return the table with ACI object column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIContract
@@ -360,7 +360,7 @@ class ACIUSegEndpointGroupContractRelationView(ACIContractRelationChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACI object colum hidden."""
+        """Return the table with ACI object column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIContract
@@ -401,7 +401,7 @@ class ACIUSegEndpointGroupUSegNetworkAttributeView(ACIUSegNetworkAttributeChildr
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACIUSegEndpointGroup colum hidden."""
+        """Return the table with ACIUSegEndpointGroup column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIContract
