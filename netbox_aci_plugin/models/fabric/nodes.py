@@ -25,12 +25,13 @@ from virtualization.models import VirtualMachine
 from ...choices import NodeRoleChoices, NodeTypeChoices
 from ...constants import NODE_ID_MAX, NODE_ID_MIN, NODE_OBJECT_TYPES
 from ..base import ACIFabricBaseModel
+from ..mixins import UniqueGenericForeignKeyMixin
 
 if TYPE_CHECKING:
     from ..fabric.fabrics import ACIFabric
 
 
-class ACINode(ACIFabricBaseModel):
+class ACINode(UniqueGenericForeignKeyMixin, ACIFabricBaseModel):
     """Fabric switch or controller (leaf, spine, or APIC).
 
     Parented by an ACIPod and optionally linked to a NetBox device
@@ -128,6 +129,9 @@ class ACINode(ACIFabricBaseModel):
         "node_type",
     )
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIPod",)
+
+    # Unique GenericForeignKey validation
+    generic_fk_field = "node_object"
 
     class Meta:
         constraints: tuple[models.UniqueConstraint] = [
@@ -269,21 +273,15 @@ class ACINode(ACIFabricBaseModel):
                         )
                     )
 
-        # Validate Node Object uniqueness
-        if self.node_object_type_id and self.node_object_id:
-            qs = type(self).objects.filter(
-                node_object_type=self.node_object_type,
-                node_object_id=self.node_object_id,
-            )
-            if self.pk:
-                qs = qs.exclude(pk=self.pk)
-            if qs.exists():
-                errors.setdefault("node_object", []).append(
-                    _("The selected object is already assigned to another ACI Node.")
-                )
-
         if errors:
             raise ValidationError(errors)
+
+        # Perform the mixin's unique constraint validation only when
+        # the GFK is fully populated. The DB-level UniqueConstraint
+        # exempts the null/null case via its condition, so clean()
+        # must skip the check too (multiple unassigned nodes are allowed).
+        if self.node_object_type_id and self.node_object_id:
+            self._validate_generic_uniqueness()
 
     def save(self, *args, **kwargs) -> None:
         """Save the current instance to the database."""
