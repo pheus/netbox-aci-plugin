@@ -173,7 +173,6 @@ class ACIVLANPoolBulkEditForm(NetBoxModelBulkEditForm):
         "name_alias",
         "nb_tenant",
         "nb_vlan_group",
-        "owner",
     )
 
 

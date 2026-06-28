@@ -188,7 +188,6 @@ class ACIRoutedDomainBulkEditForm(NetBoxModelBulkEditForm):
         "description",
         "name_alias",
         "nb_tenant",
-        "owner",
         "security_domains",
     )
 
@@ -491,7 +490,6 @@ class ACIPhysicalDomainBulkEditForm(NetBoxModelBulkEditForm):
         "description",
         "name_alias",
         "nb_tenant",
-        "owner",
         "security_domains",
     )
 

@@ -405,7 +405,6 @@ class ACIL3OutBulkEditForm(NetBoxModelBulkEditForm):
         "name_alias",
         "description",
         "nb_tenant",
-        "owner",
         "comments",
     )
 
@@ -822,7 +821,6 @@ class ACIExternalEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         "name_alias",
         "description",
         "nb_tenant",
-        "owner",
         "comments",
     )
 
@@ -1353,7 +1351,6 @@ class ACIExternalSubnetBulkEditForm(NetBoxModelBulkEditForm):
         "name_alias",
         "description",
         "nb_tenant",
-        "owner",
         "comments",
     )
 
