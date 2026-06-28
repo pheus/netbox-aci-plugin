@@ -22,6 +22,20 @@ nav:
   - GraphQL API: graphql.md
   - Development:
       - Contributing: development/contributing.md
+      - Models: development/models.md
+      - Validators & Constants: development/validators.md
+      - Templates: development/templates.md
+      - Views: development/views.md
+      - Tables: development/tables.md
+      - Forms: development/forms.md
+      - FilterSets: development/filtersets.md
+      - Search: development/search.md
+      - Navigation: development/navigation.md
+      - REST API: development/rest-api.md
+      - GraphQL API: development/graphql-api.md
+      - Tests: development/tests.md
+      - Migrations: development/migrations.md
+      - Consistency Review: development/consistency-review.md
       - Releasing: development/releasing.md
       - Code of Conduct: development/code_of_conduct.md
   - Changelog: changelog.md
