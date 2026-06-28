@@ -268,6 +268,7 @@ class ACIBridgeDomainIndex(SearchIndex):
         "name",
         "name_alias",
         "description",
+        "aci_tenant",
         "aci_vrf",
         "nb_tenant",
     )
@@ -551,6 +552,7 @@ class ACIContractFilterEntryIndex(SearchIndex):
         "name_alias",
         "description",
         "aci_contract_filter",
+        "nb_tenant",
     )
 
 
@@ -571,6 +573,7 @@ class ACIContractIndex(SearchIndex):
         "name_alias",
         "description",
         "aci_tenant",
+        "nb_tenant",
     )
 
 
@@ -612,6 +615,7 @@ class ACIContractSubjectIndex(SearchIndex):
         "name_alias",
         "description",
         "aci_contract",
+        "nb_tenant",
     )
 
 
