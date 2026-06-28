@@ -470,7 +470,7 @@ class ACIBridgeDomainSubnet(ACITenantBaseModel):
             ),
             models.UniqueConstraint(
                 fields=("aci_bridge_domain",),
-                name="unique_aci_bd_subnet_preferred_ip_per_bridge_domain",
+                name="%(app_label)s_%(class)s_unique_preferred_ip_per_bridge_domain",
                 condition=models.Q(preferred_ip_address_enabled=True),
                 violation_error_message=_(
                     "ACI Bridge Domain with a preferred (primary) gateway IP "
