@@ -405,9 +405,9 @@ class ACIBridgeDomainL3OutBindingListView(generic.ObjectListView):
     queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
         "aci_bridge_domain", "aci_l3out"
     ).prefetch_related("tags")
-    table = ACIBridgeDomainL3OutBindingTable
     filterset = ACIBridgeDomainL3OutBindingFilterSet
     filterset_form = ACIBridgeDomainL3OutBindingFilterForm
+    table = ACIBridgeDomainL3OutBindingTable
 
 
 @register_model_view(ACIBridgeDomainL3OutBinding, "add", detail=False)

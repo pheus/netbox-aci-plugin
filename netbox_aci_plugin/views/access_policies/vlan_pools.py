@@ -107,9 +107,9 @@ class ACIVLANPoolListView(generic.ObjectListView):
         "nb_vlan_group",
         "owner",
     ).prefetch_related("tags")
-    table = ACIVLANPoolTable
     filterset = ACIVLANPoolFilterSet
     filterset_form = ACIVLANPoolFilterForm
+    table = ACIVLANPoolTable
 
 
 @register_model_view(ACIVLANPool, "add", detail=False)
@@ -215,9 +215,9 @@ class ACIVLANPoolRangeListView(generic.ObjectListView):
         "aci_vlan_pool",
         "aci_vlan_pool__aci_fabric",
     ).prefetch_related("tags")
-    table = ACIVLANPoolRangeTable
     filterset = ACIVLANPoolRangeFilterSet
     filterset_form = ACIVLANPoolRangeFilterForm
+    table = ACIVLANPoolRangeTable
 
 
 @register_model_view(ACIVLANPoolRange, "add", detail=False)

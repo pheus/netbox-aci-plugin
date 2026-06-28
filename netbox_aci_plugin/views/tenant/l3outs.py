@@ -171,9 +171,9 @@ class ACIL3OutListView(generic.ObjectListView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
-    table = ACIL3OutTable
     filterset = ACIL3OutFilterSet
     filterset_form = ACIL3OutFilterForm
+    table = ACIL3OutTable
 
 
 @register_model_view(ACIL3Out, "add", detail=False)
@@ -351,9 +351,9 @@ class ACIExternalEndpointGroupListView(generic.ObjectListView):
     queryset = ACIExternalEndpointGroup.objects.select_related(
         "aci_l3out", "aci_l3out__aci_tenant", "aci_l3out__aci_vrf", "nb_tenant", "owner"
     ).prefetch_related("tags")
-    table = ACIExternalEndpointGroupTable
     filterset = ACIExternalEndpointGroupFilterSet
     filterset_form = ACIExternalEndpointGroupFilterForm
+    table = ACIExternalEndpointGroupTable
 
 
 @register_model_view(ACIExternalEndpointGroup, "add", detail=False)
@@ -504,9 +504,9 @@ class ACIExternalSubnetListView(generic.ObjectListView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
-    table = ACIExternalSubnetTable
     filterset = ACIExternalSubnetFilterSet
     filterset_form = ACIExternalSubnetFilterForm
+    table = ACIExternalSubnetTable
 
 
 @register_model_view(ACIExternalSubnet, "add", detail=False)
