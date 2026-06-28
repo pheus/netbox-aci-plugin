@@ -19,7 +19,7 @@ def create_default_aci_fabric(apps, schema_editor) -> None:
         get_plugin_config(ACIConfig.name, "create_default_aci_fabric", True)
         or get_plugin_config(ACIConfig.name, "create_default_aci_tenants", True)
         or ACITenant.objects.using(db_alias).exists()
-    ):
+    ) and not ACIFabric.objects.using(db_alias).filter(name="Fabric1").exists():
         ACIFabric.objects.using(db_alias).create(
             name="Fabric1", fabric_id=1, infra_vlan_vid=3900
         )

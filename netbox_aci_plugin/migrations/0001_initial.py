@@ -132,5 +132,5 @@ class Migration(migrations.Migration):
                 fields=("name",), name="unique_aci_tenant_name"
             ),
         ),
-        migrations.RunPython(create_default_aci_tenants),
+        migrations.RunPython(create_default_aci_tenants, migrations.RunPython.noop),
     ]
