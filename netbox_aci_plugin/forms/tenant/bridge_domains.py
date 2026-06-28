@@ -853,7 +853,7 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
         queryset=ACIVRF.objects.all(),
         query_params={
             "aci_fabric_id": "$aci_fabric",
-            "aci_tenant_id": "$aci_tenant",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
         },
         initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
         required=False,
