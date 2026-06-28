@@ -111,7 +111,7 @@ class ACIContractRelationFilter(NetBoxModelFilter):
 
 
 @strawberry_django.filter_type(models.ACIContractSubject, lookups=True)
-class ACIContractSubjectFilter(NetBoxModelFilter):
+class ACIContractSubjectFilter(ACIBaseFilterMixin):
     """GraphQL filter definition for the ACIContractSubject model."""
 
     aci_contract: (
