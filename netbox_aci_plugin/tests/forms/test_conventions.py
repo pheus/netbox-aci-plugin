@@ -5,7 +5,7 @@
 from django.test import SimpleTestCase
 
 import netbox_aci_plugin.forms  # noqa: F401  ensure every form module is imported
-from netbox.forms import NetBoxModelBulkEditForm
+from netbox.forms import NetBoxModelBulkEditForm, NetBoxModelForm
 from utilities.forms.rendering import InlineFields, TabbedGroups
 
 # Fields NetBox auto-renders on bulk-edit forms (Ownership / Tags /
@@ -27,6 +27,23 @@ def _iter_aci_bulk_edit_forms():
             if sub.__module__.startswith(
                 "netbox_aci_plugin."
             ) and sub.__name__.startswith("ACI"):
+                yield sub
+
+
+def _iter_aci_fieldset_forms():
+    """Yield every ACI Edit and BulkEdit form class."""
+    seen, stack = set(), [NetBoxModelForm, NetBoxModelBulkEditForm]
+    while stack:
+        for sub in stack.pop().__subclasses__():
+            if sub in seen:
+                continue
+            seen.add(sub)
+            stack.append(sub)
+            if (
+                sub.__module__.startswith("netbox_aci_plugin.")
+                and sub.__name__.startswith("ACI")
+                and sub.__name__.endswith("EditForm")
+            ):
                 yield sub
 
 
@@ -71,4 +88,28 @@ class ACIBulkEditFieldsetConventionTests(SimpleTestCase):
         ]
         self.assertEqual(
             empty, [], f"Bulk-edit forms need a non-empty fieldsets: {empty}"
+        )
+
+
+class ACIFieldsetDescriptionOrderTests(SimpleTestCase):
+    """Guard that `description` follows the FK cascade in form fieldsets."""
+
+    def test_description_follows_aci_fields(self):
+        """`description` must follow every `aci_*` field in its FieldSet."""
+        offenders = {}
+        for form_cls in _iter_aci_fieldset_forms():
+            for fieldset in getattr(form_cls, "fieldsets", None) or ():
+                names = list(_fieldset_field_names(fieldset))
+                if "description" not in names:
+                    continue
+                desc_idx = names.index("description")
+                misplaced = [
+                    name for name in names[desc_idx + 1 :] if name.startswith("aci_")
+                ]
+                if misplaced:
+                    offenders[form_cls.__name__] = misplaced
+        self.assertEqual(
+            offenders,
+            {},
+            f"`description` must follow aci_* fields in fieldsets: {offenders}",
         )

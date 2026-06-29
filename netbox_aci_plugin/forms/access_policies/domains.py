@@ -87,10 +87,10 @@ class ACIRoutedDomainEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
-            "description",
             "aci_fabric",
             "aci_vlan_pool",
             "security_domains",
+            "description",
             "tags",
             name=_("ACI Routed Domain"),
         ),
@@ -174,10 +174,10 @@ class ACIRoutedDomainBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
-            "description",
             "aci_fabric",
             "aci_vlan_pool",
             "security_domains",
+            "description",
             name=_("ACI Routed Domain"),
         ),
         FieldSet("nb_tenant", name=_("NetBox Tenancy")),
@@ -390,10 +390,10 @@ class ACIPhysicalDomainEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
-            "description",
             "aci_fabric",
             "aci_vlan_pool",
             "security_domains",
+            "description",
             "tags",
             name=_("ACI Physical Domain"),
         ),
@@ -477,10 +477,10 @@ class ACIPhysicalDomainBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
-            "description",
             "aci_fabric",
             "aci_vlan_pool",
             "security_domains",
+            "description",
             name=_("ACI Physical Domain"),
         ),
         FieldSet("nb_tenant", name=_("NetBox Tenancy")),

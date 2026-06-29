@@ -82,10 +82,10 @@ class ACIVLANPoolEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
-            "description",
             "aci_fabric",
             "allocation_mode",
             "nb_vlan_group",
+            "description",
             "tags",
             name=_("ACI VLAN Pool"),
         ),
@@ -159,10 +159,10 @@ class ACIVLANPoolBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
-            "description",
             "aci_fabric",
             "allocation_mode",
             "nb_vlan_group",
+            "description",
             name=_("ACI VLAN Pool"),
         ),
         FieldSet("nb_tenant", name=_("NetBox Tenancy")),

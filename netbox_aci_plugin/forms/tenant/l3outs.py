@@ -1333,8 +1333,8 @@ class ACIExternalSubnetBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
-            "description",
             "aci_external_endpoint_group",
+            "description",
             name=_("ACI External Subnet"),
         ),
         FieldSet(
