@@ -1147,7 +1147,7 @@ class ACIContractFilterEntryImportForm(NetBoxModelImportForm):
         queryset=ACIContractFilter.objects.all(),
         to_field_name="name",
         required=True,
-        label=_("ACI Tenant"),
+        label=_("ACI Contract Filter"),
         help_text=_("Assigned ACI Contract Filter"),
     )
     arp_opc = CSVChoiceField(

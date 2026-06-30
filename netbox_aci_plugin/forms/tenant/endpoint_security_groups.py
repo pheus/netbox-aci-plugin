@@ -254,7 +254,7 @@ class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
         ),
         FieldSet(
             "preferred_group_member_enabled",
-            "intra_epg_isolation_enabled",
+            "intra_esg_isolation_enabled",
             name=_("Policy Enforcement Settings"),
         ),
         FieldSet(

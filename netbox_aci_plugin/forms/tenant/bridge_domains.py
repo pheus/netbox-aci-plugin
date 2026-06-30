@@ -108,7 +108,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "Default is enabled."
         ),
     )
-    limit_ip_learn_to_subnet = forms.BooleanField(
+    limit_ip_learn_enabled = forms.BooleanField(
         required=False,
         label=_("Limit IP learning to subnet"),
         help_text=_(

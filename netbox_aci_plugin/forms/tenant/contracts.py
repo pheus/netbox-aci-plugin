@@ -1088,7 +1088,7 @@ class ACIContractSubjectBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI Contract"),
     )
-    apply_both_direction_enabled = forms.NullBooleanField(
+    apply_both_directions_enabled = forms.NullBooleanField(
         required=False,
         widget=forms.Select(
             choices=BOOLEAN_WITH_BLANK_CHOICES,
@@ -1567,7 +1567,7 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
             "aci_fabric_id": "$aci_fabric",
             "aci_tenant_id": "$aci_tenant",
         },
-        initial_params={"aci_contract_subjects": "aci_contract_subject"},
+        initial_params={"aci_contract_subjects": "$aci_contract_subject"},
         required=False,
         label=_("ACI Contract"),
     )
