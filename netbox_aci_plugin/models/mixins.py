@@ -49,9 +49,18 @@ class UniqueGenericForeignKeyMixin:
             id_field: getattr(self, id_field),
         }
 
-        # Add additional unique fields to the filter.
+        # Add additional unique fields to the filter, resolving each via its
+        # attribute name so relational fields use the stored "_id" value
+        # rather than the descriptor (which raises RelatedObjectDoesNotExist
+        # for an unset non-nullable parent foreign key).
         for field in self.generic_unique_fields:
-            filter_kwargs[field] = getattr(self, field)
+            model_field = self._meta.get_field(field)
+            value = getattr(self, model_field.attname)
+            # An incomplete instance whose required parent relation is unset
+            # cannot violate uniqueness; defer to required-field validation.
+            if model_field.is_relation and value is None:
+                return
+            filter_kwargs[model_field.attname] = value
 
         # Filter out the current instance (if editing an existing record).
         qs = self.__class__.objects.filter(**filter_kwargs)

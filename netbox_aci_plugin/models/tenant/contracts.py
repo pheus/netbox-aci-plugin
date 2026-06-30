@@ -323,6 +323,11 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
     def _validate_aci_object_conflict(self) -> None:
         """Validate that this does not conflict with an existing ACI Object."""
+        # An unset parent ACI Contract cannot conflict with an existing
+        # relation; defer to required-field validation.
+        if not self.aci_contract_id:
+            return
+
         endpoint_group_ct = ContentType.objects.get_for_model(ACIEndpointGroup)
         useg_endpoint_group_ct = ContentType.objects.get_for_model(ACIUSegEndpointGroup)
         endpoint_security_group_ct = ContentType.objects.get_for_model(

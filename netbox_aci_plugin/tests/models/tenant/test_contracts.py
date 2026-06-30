@@ -632,6 +632,18 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
         self.assertNotIn("aci_object_id", ACIContractRelation.clone_fields)
         self.assertIn("aci_object_type", ACIContractRelation.clone_fields)
 
+    def test_invalid_aci_contract_relation_missing_contract(
+        self,
+    ) -> None:
+        """Test unset aci_contract raises ValidationError, not a crash."""
+        relation = ACIContractRelation(
+            aci_object=self.aci_epg1,
+            role=self.aci_contract_relation_role_cons,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            relation.full_clean()
+        self.assertIn("aci_contract", cm.exception.error_dict)
+
     def test_invalid_aci_contract_relation_object_type_without_object(
         self,
     ) -> None:
