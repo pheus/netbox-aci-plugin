@@ -482,6 +482,16 @@ class ACIEsgEndpointGroupSelectorTestCase(ACIBaseTestCase):
         """Test parent object of ESG EPG Selector is the ACI ESG."""
         self.assertEqual(self.aci_esg_epg_sel1.parent_object, self.aci_esg)
 
+    def test_invalid_aci_esg_epg_selector_missing_esg(self) -> None:
+        """Test unset ACI ESG raises ValidationError, not a crash."""
+        selector = ACIEsgEndpointGroupSelector(
+            name="ACIESGEPGSelectorMissingESG",
+            aci_epg_object=self.aci_epg1,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            selector.full_clean()
+        self.assertIn("aci_endpoint_security_group", cm.exception.error_dict)
+
     def test_invalid_aci_esg_epg_selector_object_type_without_object(
         self,
     ) -> None:

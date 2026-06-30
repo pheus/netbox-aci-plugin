@@ -272,6 +272,7 @@ class ACIBridgeDomain(ACITenantBaseModel):
         # the ACIBridgeDomain
         if (
             self.aci_vrf_id
+            and self.aci_tenant_id
             and self.aci_vrf.aci_tenant.aci_fabric_id != self.aci_tenant.aci_fabric_id
         ):
             errors.setdefault("aci_vrf", []).append(

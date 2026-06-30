@@ -426,6 +426,16 @@ class ACIBridgeDomainTestCase(ACIBaseTestCase):
         with self.assertRaises(ValidationError):
             bd.full_clean()
 
+    def test_invalid_aci_bridge_domain_missing_tenant(self) -> None:
+        """Test unset aci_tenant raises ValidationError, not a crash."""
+        bd = ACIBridgeDomain(
+            name="ACITestMissingTenantBD",
+            aci_vrf=self.aci_vrf,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            bd.full_clean()
+        self.assertIn("aci_tenant", cm.exception.error_dict)
+
     def test_invalid_aci_bd_save_aci_vrf_from_other_fabric(self) -> None:
         """Test save rejects an ACI VRF from another ACI Fabric."""
         fabric_other = ACIFabric.objects.create(

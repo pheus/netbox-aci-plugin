@@ -367,7 +367,8 @@ class ACIEsgEndpointGroupSelector(
         # Validate the assigned ACI EPG Object belongs to the same
         # ACITenant as the ACIEndpointSecurityGroup
         if (
-            hasattr(self.aci_epg_object, "aci_tenant")
+            self.aci_endpoint_security_group_id
+            and hasattr(self.aci_epg_object, "aci_tenant")
             and self.aci_endpoint_security_group.aci_tenant
             != self.aci_epg_object.aci_tenant
         ):
@@ -382,7 +383,8 @@ class ACIEsgEndpointGroupSelector(
         # Validate the assigned ACI EPG Object belongs to the same
         # ACIVRF as the ACIEndpointSecurityGroup
         if (
-            hasattr(self.aci_epg_object, "aci_vrf")
+            self.aci_endpoint_security_group_id
+            and hasattr(self.aci_epg_object, "aci_vrf")
             and self.aci_endpoint_security_group.aci_vrf != self.aci_epg_object.aci_vrf
         ):
             aci_model_class = self.aci_epg_object_type.model_class()
