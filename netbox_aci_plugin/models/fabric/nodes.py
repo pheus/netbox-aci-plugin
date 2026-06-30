@@ -134,7 +134,7 @@ class ACINode(UniqueGenericForeignKeyMixin, ACIFabricBaseModel):
     generic_fk_field = "node_object"
 
     class Meta:
-        constraints: tuple[models.UniqueConstraint] = [
+        constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_pod", "node_id"),
                 name="%(app_label)s_%(class)s_unique_nodeid_per_pod",

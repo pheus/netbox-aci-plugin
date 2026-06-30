@@ -89,7 +89,7 @@ class ACIPod(CachedScopeMixin, ACIFabricBaseModel):
         errors = {}
 
         # Ensure tep_pool is an IPv4 unicast prefix with a prefix
-        # length of /0–/21 (inclusive).
+        # length of /0-/21 (inclusive).
         if self.tep_pool and (
             self.tep_pool.prefix.version != 4
             or self.tep_pool.prefix.prefixlen > 21

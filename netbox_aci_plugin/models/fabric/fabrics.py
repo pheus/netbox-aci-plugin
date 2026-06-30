@@ -54,7 +54,7 @@ class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
     fabric_id = models.PositiveSmallIntegerField(
         verbose_name=_("Fabric ID"),
         help_text=_(
-            "ACI Fabric ID (1–128). Distinct from Site ID; not globally unique."
+            "ACI Fabric ID (1-128). Distinct from Site ID; not globally unique."
         ),
         validators=[
             MinValueValidator(FABRIC_ID_MIN),
@@ -63,7 +63,7 @@ class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
     )
     infra_vlan_vid = models.PositiveSmallIntegerField(
         verbose_name=_("Infrastructure VLAN ID"),
-        help_text=_("Fabric-wide Infrastructure VLAN (1–4094)."),
+        help_text=_("Fabric-wide Infrastructure VLAN (1-4094)."),
         validators=[
             MinValueValidator(VLAN_VID_MIN),
             MaxValueValidator(VLAN_VID_MAX),
