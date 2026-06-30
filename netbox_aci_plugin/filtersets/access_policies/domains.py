@@ -72,7 +72,7 @@ class ACIRoutedDomainFilterSet(
         return queryset.filter(security_domains__contains=[cleaned_value])
 
     def search(self, queryset, name, value):
-        """Return a QuerySet filtered by the model's name or description."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         queryset_filter: Q = (
@@ -139,7 +139,7 @@ class ACIPhysicalDomainFilterSet(
         return queryset.filter(security_domains__contains=[cleaned_value])
 
     def search(self, queryset, name, value):
-        """Return a QuerySet filtered by the model's name or description."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         queryset_filter: Q = (

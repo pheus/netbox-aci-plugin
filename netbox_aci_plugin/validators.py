@@ -28,7 +28,7 @@ ACIPolicyNameRequiredValidator = RegexValidator(
     code="invalid",
 )
 
-# Optional (0+) – use on blank=True fields to align schema and clients
+# Optional (0+): use on blank=True fields to align schema and clients
 ACIPolicyNameOptionalValidator = RegexValidator(
     regex=rf"^{NAME_CHAR_CLASS}*$",
     message=_(

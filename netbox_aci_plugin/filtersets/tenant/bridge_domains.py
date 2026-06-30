@@ -234,7 +234,7 @@ class ACIBridgeDomainSubnetFilterSet(
 
 @register_filterset
 class ACIBridgeDomainL3OutBindingFilterSet(NetBoxModelFilterSet):
-    """Filterset for ACIBridgeDomainL3OutBinding model."""
+    """Filter set for the ACI Bridge Domain L3Out Binding model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_bridge_domain__aci_tenant__aci_fabric__name",
@@ -300,7 +300,7 @@ class ACIBridgeDomainL3OutBindingFilterSet(NetBoxModelFilterSet):
         fields = ("id", "comments")
 
     def search(self, queryset, name, value):
-        """Search ACIBridgeDomainL3OutBinding instances."""
+        """Return a QuerySet filtered by the model's related object names."""
         if not value.strip():
             return queryset
         return queryset.filter(

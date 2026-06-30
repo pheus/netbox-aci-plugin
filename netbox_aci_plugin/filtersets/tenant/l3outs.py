@@ -46,7 +46,7 @@ class ACIL3OutFilterSet(
     OwnerFilterMixin,
     NetBoxModelFilterSet,
 ):
-    """Filterset for ACIL3Out model."""
+    """Filter set for the ACI L3Out model."""
 
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_vrf__name",
@@ -97,7 +97,7 @@ class ACIL3OutFilterSet(
         )
 
     def search(self, queryset, name, value):
-        """Search ACIL3Out instances."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         return queryset.filter(
@@ -116,7 +116,7 @@ class ACIExternalEndpointGroupFilterSet(
     OwnerFilterMixin,
     NetBoxModelFilterSet,
 ):
-    """Filterset for ACIExternalEndpointGroup model."""
+    """Filter set for the ACI External Endpoint Group model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_l3out__aci_tenant__aci_fabric__name",
@@ -187,7 +187,7 @@ class ACIExternalEndpointGroupFilterSet(
         )
 
     def search(self, queryset, name, value):
-        """Search ACIExternalEndpointGroup instances."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         return queryset.filter(
@@ -206,7 +206,7 @@ class ACIExternalSubnetFilterSet(
     OwnerFilterMixin,
     NetBoxModelFilterSet,
 ):
-    """Filterset for ACIExternalSubnet model."""
+    """Filter set for the ACI External Subnet model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_external_endpoint_group__aci_l3out__aci_tenant__aci_fabric__name",
@@ -309,7 +309,7 @@ class ACIExternalSubnetFilterSet(
         )
 
     def search(self, queryset, name, value):
-        """Search ACIExternalSubnet instances."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         return queryset.filter(
