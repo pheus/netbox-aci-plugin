@@ -132,14 +132,14 @@ class ACIBridgeDomainSubnetSerializer(OwnerMixin, NetBoxModelSerializer):
             "name",
             "name_alias",
             "description",
-            "gateway_ip_address",
             "aci_bridge_domain",
+            "gateway_ip_address",
             "nb_tenant",
         )
 
 
 class ACIBridgeDomainL3OutBindingSerializer(NetBoxModelSerializer):
-    """Serializer for ACIBridgeDomainL3OutBinding model."""
+    """Serializer for the ACI Bridge Domain L3Out Binding model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name=(

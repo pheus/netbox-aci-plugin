@@ -344,7 +344,7 @@ class ACIExternalSubnetListViewSet(NetBoxModelViewSet):
 
 
 class ACIBridgeDomainL3OutBindingListViewSet(NetBoxModelViewSet):
-    """API view for listing ACI Bridge Domain L3Out Relation instances."""
+    """API view for listing ACI Bridge Domain L3Out Binding instances."""
 
     queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
         "aci_bridge_domain",

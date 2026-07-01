@@ -24,7 +24,7 @@ from .vrfs import ACIVRFSerializer
 
 
 class ACIL3OutSerializer(OwnerMixin, NetBoxModelSerializer):
-    """Serializer for ACIL3Out model."""
+    """Serializer for the ACI L3Out model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:acil3out-detail",
@@ -86,7 +86,7 @@ class ACIL3OutSerializer(OwnerMixin, NetBoxModelSerializer):
 
 
 class ACIExternalEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
-    """Serializer for ACIExternalEndpointGroup model."""
+    """Serializer for the ACI External Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:aciexternalendpointgroup-detail",
@@ -127,7 +127,7 @@ class ACIExternalEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
 
 
 class ACIExternalSubnetSerializer(OwnerMixin, NetBoxModelSerializer):
-    """Serializer for ACIExternalSubnet model."""
+    """Serializer for the ACI External Subnet model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:aciexternalsubnet-detail",
