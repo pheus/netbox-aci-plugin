@@ -74,6 +74,7 @@ class ACIVRFTable(NetBoxTable):
             "name",
             "name_alias",
             "description",
+            "aci_fabric",
             "aci_tenant",
             "nb_tenant",
             "nb_vrf",

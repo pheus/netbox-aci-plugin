@@ -38,8 +38,8 @@ class ACIPodTable(NetBoxTable):
     )
     scope = tables.Column(
         verbose_name=_("Scope"),
-        linkify=True,
         orderable=False,
+        linkify=True,
     )
     nb_tenant = tables.Column(
         linkify=True,
@@ -75,6 +75,7 @@ class ACIPodTable(NetBoxTable):
         )
         default_columns: tuple = (
             "name",
+            "name_alias",
             "pod_id",
             "description",
             "scope",

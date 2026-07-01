@@ -66,6 +66,7 @@ class ACIContractTable(NetBoxTable):
             "name",
             "name_alias",
             "description",
+            "aci_fabric",
             "aci_tenant",
             "nb_tenant",
             "qos_class",
@@ -127,6 +128,7 @@ class ACIContractRelationTable(NetBoxTable):
         fields: tuple = (
             "pk",
             "id",
+            "aci_fabric",
             "aci_contract",
             "aci_contract_tenant",
             "aci_object_type",
@@ -232,6 +234,7 @@ class ACIContractSubjectTable(NetBoxTable):
             "name",
             "name_alias",
             "description",
+            "aci_fabric",
             "aci_tenant",
             "aci_contract",
             "nb_tenant",
@@ -344,6 +347,7 @@ class ACIContractSubjectFilterTable(NetBoxTable):
         fields: tuple = (
             "pk",
             "id",
+            "aci_fabric",
             "aci_contract_filter_tenant",
             "aci_contract_filter",
             "aci_contract_subject_tenant",
