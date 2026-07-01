@@ -152,7 +152,6 @@ class ACIContractFilterBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -243,15 +242,15 @@ class ACIContractFilterFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)
@@ -851,7 +850,6 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -876,7 +874,6 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
         ),
         FieldSet(
             "ip_protocol",
-            "ip_protocol_custom",
             "match_dscp",
             "match_only_fragments_enabled",
             name=_("IP Protocol"),
@@ -912,7 +909,7 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for the ACI Contract Filter model."""
+    """NetBox filter form for the ACI Contract Filter Entry model."""
 
     model = ACIContractFilterEntry
     fieldsets: tuple = (
@@ -1112,15 +1109,15 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)

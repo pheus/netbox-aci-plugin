@@ -81,7 +81,7 @@ class ACIAppProfileEditForm(NetBoxModelForm):
             "aci_tenant",
             "description",
             "tags",
-            name=_("Application Profile"),
+            name=_("ACI Application Profile"),
         ),
         FieldSet(
             "nb_tenant_group",
@@ -130,7 +130,6 @@ class ACIAppProfileBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -220,15 +219,15 @@ class ACIAppProfileFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)

@@ -1266,7 +1266,8 @@ class ACIExternalSubnetEditForm(NetBoxModelForm):
             "tags",
         )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize the ACIExternalSubnet form."""
         super().__init__(*args, **kwargs)
         # Hide the synced value so users aren't confused into thinking
         # they must manage matched_prefix manually when nb_prefix is set.

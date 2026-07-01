@@ -113,12 +113,12 @@ class ACIPodEditForm(ScopedForm, NetBoxModelForm):
         fields: tuple = (
             "name",
             "name_alias",
-            "aci_fabric",
             "description",
-            "nb_tenant",
+            "aci_fabric",
             "pod_id",
             "tep_pool",
             "scope_type",
+            "nb_tenant",
             "owner",
             "comments",
             "tags",
@@ -166,7 +166,6 @@ class ACIPodBulkEditForm(ScopedBulkEditForm, NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -305,15 +304,15 @@ class ACIPodFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)

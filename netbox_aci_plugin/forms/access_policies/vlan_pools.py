@@ -150,7 +150,6 @@ class ACIVLANPoolBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -246,15 +245,15 @@ class ACIVLANPoolFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)
