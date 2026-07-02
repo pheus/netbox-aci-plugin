@@ -36,9 +36,9 @@ router.register("useg-endpoint-groups", views.ACIUSegEndpointGroupListViewSet)
 router.register("useg-network-attributes", views.ACIUSegNetworkAttributeListViewSet)
 router.register("endpoint-security-groups", views.ACIEndpointSecurityGroupListViewSet)
 router.register(
-    "esg-endpoint-group-selector", views.ACIEsgEndpointGroupSelectorListViewSet
+    "esg-endpoint-group-selectors", views.ACIEsgEndpointGroupSelectorListViewSet
 )
-router.register("esg-endpoint-selector", views.ACIEsgEndpointSelectorListViewSet)
+router.register("esg-endpoint-selectors", views.ACIEsgEndpointSelectorListViewSet)
 router.register("vrfs", views.ACIVRFListViewSet)
 router.register("contract-filters", views.ACIContractFilterListViewSet)
 router.register("contract-filter-entries", views.ACIContractFilterEntryListViewSet)
