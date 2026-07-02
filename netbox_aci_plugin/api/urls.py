@@ -11,8 +11,8 @@ router = NetBoxRouter()
 
 # ACI Fabric
 router.register("fabrics", views.ACIFabricListViewSet)
-router.register("nodes", views.ACINodeListViewSet)
 router.register("pods", views.ACIPodListViewSet)
+router.register("nodes", views.ACINodeListViewSet)
 
 # ACI Access Policies
 router.register("physical-domains", views.ACIPhysicalDomainListViewSet)

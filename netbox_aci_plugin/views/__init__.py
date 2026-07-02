@@ -286,12 +286,6 @@ __all__ = (
     "ACINodeBulkImportView",
     "ACINodeEditView",
     "ACINodeListView",
-    # ACIPod
-    "ACIPodBulkDeleteView",
-    "ACIPodBulkEditView",
-    "ACIPodBulkImportView",
-    "ACIPodEditView",
-    "ACIPodListView",
     # ACIPhysicalDomain
     "ACIPhysicalDomainBulkDeleteView",
     "ACIPhysicalDomainBulkEditView",
@@ -299,6 +293,12 @@ __all__ = (
     "ACIPhysicalDomainEditView",
     "ACIPhysicalDomainListView",
     "ACIPhysicalDomainView",
+    # ACIPod
+    "ACIPodBulkDeleteView",
+    "ACIPodBulkEditView",
+    "ACIPodBulkImportView",
+    "ACIPodEditView",
+    "ACIPodListView",
     # ACIRoutedDomain
     "ACIRoutedDomainBulkDeleteView",
     "ACIRoutedDomainBulkEditView",

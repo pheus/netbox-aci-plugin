@@ -188,13 +188,13 @@ class ACINodeType(OwnerMixin, NetBoxObjectType):
 
 
 @strawberry_django.type(
-    models.ACIRoutedDomain,
+    models.ACIPhysicalDomain,
     fields="__all__",
-    filters=ACIRoutedDomainFilter,
+    filters=ACIPhysicalDomainFilter,
     pagination=True,
 )
-class ACIRoutedDomainType(OwnerMixin, NetBoxObjectType):
-    """GraphQL type definition for the ACIRoutedDomain model."""
+class ACIPhysicalDomainType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIPhysicalDomain model."""
 
     # Model fields
     aci_fabric: Annotated[
@@ -209,13 +209,13 @@ class ACIRoutedDomainType(OwnerMixin, NetBoxObjectType):
 
 
 @strawberry_django.type(
-    models.ACIPhysicalDomain,
+    models.ACIRoutedDomain,
     fields="__all__",
-    filters=ACIPhysicalDomainFilter,
+    filters=ACIRoutedDomainFilter,
     pagination=True,
 )
-class ACIPhysicalDomainType(OwnerMixin, NetBoxObjectType):
-    """GraphQL type definition for the ACIPhysicalDomain model."""
+class ACIRoutedDomainType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIRoutedDomain model."""
 
     # Model fields
     aci_fabric: Annotated[

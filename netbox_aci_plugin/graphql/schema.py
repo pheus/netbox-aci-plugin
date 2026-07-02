@@ -50,11 +50,17 @@ class NetBoxACIQuery:
     aci_node: ACINodeType = strawberry_django.field()
     aci_node_list: list[ACINodeType] = strawberry_django.field()
 
+    aci_physical_domain: ACIPhysicalDomainType = strawberry_django.field()
+    aci_physical_domain_list: list[ACIPhysicalDomainType] = strawberry_django.field()
+
     aci_routed_domain: ACIRoutedDomainType = strawberry_django.field()
     aci_routed_domain_list: list[ACIRoutedDomainType] = strawberry_django.field()
 
-    aci_physical_domain: ACIPhysicalDomainType = strawberry_django.field()
-    aci_physical_domain_list: list[ACIPhysicalDomainType] = strawberry_django.field()
+    aci_vlan_pool: ACIVLANPoolType = strawberry_django.field()
+    aci_vlan_pool_list: list[ACIVLANPoolType] = strawberry_django.field()
+
+    aci_vlan_pool_range: ACIVLANPoolRangeType = strawberry_django.field()
+    aci_vlan_pool_range_list: list[ACIVLANPoolRangeType] = strawberry_django.field()
 
     aci_tenant: ACITenantType = strawberry_django.field()
     aci_tenant_list: list[ACITenantType] = strawberry_django.field()
@@ -150,9 +156,3 @@ class NetBoxACIQuery:
     aci_contract_subject_filter_list: list[ACIContractSubjectFilterType] = (
         strawberry_django.field()
     )
-
-    aci_vlan_pool: ACIVLANPoolType = strawberry_django.field()
-    aci_vlan_pool_list: list[ACIVLANPoolType] = strawberry_django.field()
-
-    aci_vlan_pool_range: ACIVLANPoolRangeType = strawberry_django.field()
-    aci_vlan_pool_range_list: list[ACIVLANPoolRangeType] = strawberry_django.field()

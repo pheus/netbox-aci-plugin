@@ -165,21 +165,6 @@ class ACINodeListViewSet(NetBoxModelViewSet):
     filterset_class = ACINodeFilterSet
 
 
-class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
-    """API view for listing ACI Routed Domain instances."""
-
-    queryset = ACIRoutedDomain.objects.select_related(
-        "aci_fabric",
-        "nb_tenant",
-        "owner",
-        "aci_vlan_pool",
-    ).prefetch_related(
-        "tags",
-    )
-    serializer_class = ACIRoutedDomainSerializer
-    filterset_class = ACIRoutedDomainFilterSet
-
-
 class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Physical Domain instances."""
 
@@ -193,6 +178,21 @@ class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIPhysicalDomainSerializer
     filterset_class = ACIPhysicalDomainFilterSet
+
+
+class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Routed Domain instances."""
+
+    queryset = ACIRoutedDomain.objects.select_related(
+        "aci_fabric",
+        "nb_tenant",
+        "owner",
+        "aci_vlan_pool",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIRoutedDomainSerializer
+    filterset_class = ACIRoutedDomainFilterSet
 
 
 class ACIVLANPoolListViewSet(NetBoxModelViewSet):
