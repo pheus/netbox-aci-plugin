@@ -109,28 +109,6 @@ class ACINodeIndex(SearchIndex):
 
 
 @register_search
-class ACIRoutedDomainIndex(SearchIndex):
-    """NetBox search definition for the ACI Routed Domain model."""
-
-    model = ACIRoutedDomain
-
-    fields: tuple = (
-        ("name", 100),
-        ("name_alias", 300),
-        ("description", 500),
-        ("comments", 5000),
-    )
-    display_attrs: tuple = (
-        "name",
-        "name_alias",
-        "description",
-        "aci_fabric",
-        "aci_vlan_pool",
-        "nb_tenant",
-    )
-
-
-@register_search
 class ACIPhysicalDomainIndex(SearchIndex):
     """NetBox search definition for the ACI Physical Domain model."""
 
@@ -153,10 +131,33 @@ class ACIPhysicalDomainIndex(SearchIndex):
 
 
 @register_search
+class ACIRoutedDomainIndex(SearchIndex):
+    """NetBox search definition for the ACI Routed Domain model."""
+
+    model = ACIRoutedDomain
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "aci_vlan_pool",
+        "nb_tenant",
+    )
+
+
+@register_search
 class ACIVLANPoolIndex(SearchIndex):
     """NetBox search definition for the ACI VLAN Pool model."""
 
     model = ACIVLANPool
+
     fields: tuple = (
         ("name", 100),
         ("name_alias", 300),
@@ -177,6 +178,7 @@ class ACIVLANPoolRangeIndex(SearchIndex):
     """NetBox search definition for the ACI VLAN Pool Range model."""
 
     model = ACIVLANPoolRange
+
     fields: tuple = (
         ("aci_vlan_pool", 100),
         ("comments", 5000),
