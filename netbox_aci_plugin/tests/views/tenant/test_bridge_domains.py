@@ -124,7 +124,7 @@ class ACIBridgeDomainL3OutBindingViewTestCase(
             "tags": [t.pk for t in tags],
         }
 
-        # csv_data: 3 new bindings using BD/L3Out pairs 4–6 + one binding
+        # csv_data: 3 new bindings using BD/L3Out pairs 4-6 + one binding
         # whose L3Out lives in 'common'. Import form looks up FKs by name.
         fabric = cls.aci_fabric.name
         tenant = cls.aci_tenant.name

@@ -341,7 +341,7 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
             isinstance(self.aci_contract_relation_esg_vz_any, ACIContractRelation)
         )
 
-    def test_aci_contract_str(self) -> None:
+    def test_aci_contract_relation_str(self) -> None:
         """Test string values of created ACI Contract Relation instances."""
         self.assertEqual(
             self.aci_contract_relation_epg_cons.__str__(),
