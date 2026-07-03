@@ -87,10 +87,10 @@ class ACIRoutedDomainEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
-            "description",
             "aci_fabric",
             "aci_vlan_pool",
             "security_domains",
+            "description",
             "tags",
             name=_("ACI Routed Domain"),
         ),
@@ -165,7 +165,6 @@ class ACIRoutedDomainBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -174,10 +173,10 @@ class ACIRoutedDomainBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
-            "description",
             "aci_fabric",
             "aci_vlan_pool",
             "security_domains",
+            "description",
             name=_("ACI Routed Domain"),
         ),
         FieldSet("nb_tenant", name=_("NetBox Tenancy")),
@@ -188,7 +187,6 @@ class ACIRoutedDomainBulkEditForm(NetBoxModelBulkEditForm):
         "description",
         "name_alias",
         "nb_tenant",
-        "owner",
         "security_domains",
     )
 
@@ -263,15 +261,15 @@ class ACIRoutedDomainFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)
@@ -391,10 +389,10 @@ class ACIPhysicalDomainEditForm(NetBoxModelForm):
         FieldSet(
             "name",
             "name_alias",
-            "description",
             "aci_fabric",
             "aci_vlan_pool",
             "security_domains",
+            "description",
             "tags",
             name=_("ACI Physical Domain"),
         ),
@@ -469,7 +467,6 @@ class ACIPhysicalDomainBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -478,10 +475,10 @@ class ACIPhysicalDomainBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
-            "description",
             "aci_fabric",
             "aci_vlan_pool",
             "security_domains",
+            "description",
             name=_("ACI Physical Domain"),
         ),
         FieldSet("nb_tenant", name=_("NetBox Tenancy")),
@@ -491,7 +488,6 @@ class ACIPhysicalDomainBulkEditForm(NetBoxModelBulkEditForm):
         "description",
         "name_alias",
         "nb_tenant",
-        "owner",
         "security_domains",
     )
 
@@ -566,15 +562,15 @@ class ACIPhysicalDomainFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)

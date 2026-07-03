@@ -119,7 +119,7 @@ The *ACIUSegEndpointGroup* model has the following fields:
 
 The *ACIUSegNetworkAttribute* model represents a network attribute associated
 with a uSeg Endpoint Group.
-This attribute is used to segment endpoints based on network parameters — such
+This attribute is used to segment endpoints based on network parameters - such
 as IP address, MAC address or network prefix information.
 
 The *ACIUSegNetworkAttribute* model has the following fields:

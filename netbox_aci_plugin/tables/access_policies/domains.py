@@ -30,16 +30,16 @@ class ACIRoutedDomainTable(NetBoxTable):
         linkify=True,
     )
     security_domains = columns.ArrayColumn(
-        orderable=False,
         verbose_name=_("Security Domains"),
+        orderable=False,
     )
     nb_tenant = tables.Column(
         linkify=True,
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -95,16 +95,16 @@ class ACIPhysicalDomainTable(NetBoxTable):
         linkify=True,
     )
     security_domains = columns.ArrayColumn(
-        orderable=False,
         verbose_name=_("Security Domains"),
+        orderable=False,
     )
     nb_tenant = tables.Column(
         linkify=True,
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,

@@ -55,10 +55,10 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
     aci_vrf = models.ForeignKey(
         to="netbox_aci_plugin.ACIVRF",
         on_delete=models.PROTECT,
-        verbose_name=_("ACI VRf"),
+        verbose_name=_("ACI VRF"),
     )
     admin_shutdown = models.BooleanField(
-        verbose_name=_("Admin state shutdown"),
+        verbose_name=_("admin state shutdown"),
         default=False,
         help_text=_(
             "Whether the ESG is in shutdown mode removing all policy "
@@ -66,7 +66,7 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
         ),
     )
     intra_esg_isolation_enabled = models.BooleanField(
-        verbose_name=_("Intra-ESG isolation enabled"),
+        verbose_name=_("intra-ESG isolation enabled"),
         default=False,
         help_text=_(
             "Prevents communication between endpoints in an ESG when "
@@ -74,12 +74,20 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
         ),
     )
     preferred_group_member_enabled = models.BooleanField(
-        verbose_name=_("Preferred Group member enabled"),
+        verbose_name=_("preferred group member enabled"),
         default=False,
         help_text=_(
             "Whether this ESG is a member of the preferred group and allows "
             "communication without contracts. Default is disabled."
         ),
+    )
+
+    # Generic relations
+    aci_contract_relations = GenericRelation(
+        to="netbox_aci_plugin.ACIContractRelation",
+        content_type_field="aci_object_type",
+        object_id_field="aci_object_id",
+        related_query_name="aci_endpoint_security_group",
     )
 
     clone_fields: tuple = ACITenantBaseModel.clone_fields + (
@@ -92,14 +100,6 @@ class ACIEndpointSecurityGroup(ACITenantBaseModel):
     prerequisite_models: tuple = (
         "netbox_aci_plugin.ACIAppProfile",
         "netbox_aci_plugin.ACIVRF",
-    )
-
-    # Generic relations
-    aci_contract_relations = GenericRelation(
-        to="netbox_aci_plugin.ACIContractRelation",
-        content_type_field="aci_object_type",
-        object_id_field="aci_object_id",
-        related_query_name="aci_endpoint_security_group",
     )
 
     class Meta:
@@ -268,12 +268,12 @@ class ACIEsgEndpointGroupSelector(
         on_delete=models.PROTECT,
         related_name="+",
         limit_choices_to=ESG_ENDPOINT_GROUP_SELECTORS_MODELS,
-        verbose_name=_("Endpoint Object Type"),
+        verbose_name=_("endpoint object type"),
         blank=True,
         null=True,
     )
     aci_epg_object_id = models.PositiveBigIntegerField(
-        verbose_name=_("Endpoint Object ID"),
+        verbose_name=_("endpoint object ID"),
         blank=True,
         null=True,
     )
@@ -367,7 +367,8 @@ class ACIEsgEndpointGroupSelector(
         # Validate the assigned ACI EPG Object belongs to the same
         # ACITenant as the ACIEndpointSecurityGroup
         if (
-            hasattr(self.aci_epg_object, "aci_tenant")
+            self.aci_endpoint_security_group_id
+            and hasattr(self.aci_epg_object, "aci_tenant")
             and self.aci_endpoint_security_group.aci_tenant
             != self.aci_epg_object.aci_tenant
         ):
@@ -382,7 +383,8 @@ class ACIEsgEndpointGroupSelector(
         # Validate the assigned ACI EPG Object belongs to the same
         # ACIVRF as the ACIEndpointSecurityGroup
         if (
-            hasattr(self.aci_epg_object, "aci_vrf")
+            self.aci_endpoint_security_group_id
+            and hasattr(self.aci_epg_object, "aci_vrf")
             and self.aci_endpoint_security_group.aci_vrf != self.aci_epg_object.aci_vrf
         ):
             aci_model_class = self.aci_epg_object_type.model_class()
@@ -450,12 +452,12 @@ class ACIEsgEndpointSelector(ACIEsgSelectorBaseModel, UniqueGenericForeignKeyMix
         on_delete=models.PROTECT,
         related_name="+",
         limit_choices_to=ESG_ENDPOINT_SELECTORS_MODELS,
-        verbose_name=_("Endpoint Object Type"),
+        verbose_name=_("endpoint object type"),
         blank=True,
         null=True,
     )
     ep_object_id = models.PositiveBigIntegerField(
-        verbose_name=_("Endpoint Object ID"),
+        verbose_name=_("endpoint object ID"),
         blank=True,
         null=True,
     )

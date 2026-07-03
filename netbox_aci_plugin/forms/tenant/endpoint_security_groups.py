@@ -127,11 +127,11 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
@@ -236,7 +236,6 @@ class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -254,7 +253,7 @@ class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
         ),
         FieldSet(
             "preferred_group_member_enabled",
-            "intra_epg_isolation_enabled",
+            "intra_esg_isolation_enabled",
             name=_("Policy Enforcement Settings"),
         ),
         FieldSet(
@@ -375,15 +374,15 @@ class ACIEndpointSecurityGroupFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)
@@ -580,11 +579,11 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
@@ -674,7 +673,7 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
             ):
                 self.initial["aci_epg_object"] = None
 
-    def clean(self):
+    def clean(self) -> None:
         """Validate fields for the ACI ESG Endpoint Group Selector form."""
         super().clean()
 
@@ -746,7 +745,6 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -818,13 +816,12 @@ class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_tenant_id",
             "aci_app_profile_id",
             "aci_endpoint_security_group_id",
-            "description",
-            "tags",
-            name=_("ACI ESG Endpoint Group (EPG) Selector"),
+            name=_("Attributes"),
         ),
         FieldSet(
             "aci_endpoint_group_app_profile_id",
@@ -914,15 +911,15 @@ class ACIEsgEndpointGroupSelectorFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)
@@ -1106,11 +1103,11 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
@@ -1199,7 +1196,7 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
             ):
                 self.initial["ep_object"] = None
 
-    def clean(self):
+    def clean(self) -> None:
         """Validate form fields for the ACI ESG Endpoint Selector form."""
         super().clean()
 
@@ -1258,7 +1255,6 @@ class ACIEsgEndpointSelectorBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -1329,13 +1325,12 @@ class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "name",
             "name_alias",
+            "description",
             "aci_fabric_id",
             "aci_tenant_id",
             "aci_app_profile_id",
             "aci_endpoint_security_group_id",
-            "description",
-            "tags",
-            name=_("ACI ESG Endpoint Selector"),
+            name=_("Attributes"),
         ),
         FieldSet(
             "ip_address_vrf_id",
@@ -1426,15 +1421,15 @@ class ACIEsgEndpointSelectorFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)

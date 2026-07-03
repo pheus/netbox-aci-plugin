@@ -264,21 +264,6 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         """Return string representation of the instance."""
         return f"{self.aci_contract.name} - {self.role} - {self.aci_object}"
 
-    @property
-    def aci_contract_tenant(self) -> ACITenant:
-        """Return the ACITenant instance of related ACIContract."""
-        return self.aci_contract.aci_tenant
-
-    @property
-    def aci_object_tenant(self) -> ACITenant:
-        """Return the ACITenant instance of the related ACI object."""
-        return self.aci_object.aci_tenant
-
-    @property
-    def parent_object(self) -> ACITenantBaseModel:
-        """Return the parent object of the instance."""
-        return self.aci_contract
-
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
         # Validate ACI object assignment before validation of any other fields
@@ -338,6 +323,11 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 
     def _validate_aci_object_conflict(self) -> None:
         """Validate that this does not conflict with an existing ACI Object."""
+        # An unset parent ACI Contract cannot conflict with an existing
+        # relation; defer to required-field validation.
+        if not self.aci_contract_id:
+            return
+
         endpoint_group_ct = ContentType.objects.get_for_model(ACIEndpointGroup)
         useg_endpoint_group_ct = ContentType.objects.get_for_model(ACIUSegEndpointGroup)
         endpoint_security_group_ct = ContentType.objects.get_for_model(
@@ -417,6 +407,21 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         objectchange = super().to_objectchange(action)
         objectchange.related_object = self.aci_contract
         return objectchange
+
+    @property
+    def aci_contract_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of related ACIContract."""
+        return self.aci_contract.aci_tenant
+
+    @property
+    def aci_object_tenant(self) -> ACITenant:
+        """Return the ACITenant instance of the related ACI object."""
+        return self.aci_object.aci_tenant
+
+    @property
+    def parent_object(self) -> ACITenantBaseModel:
+        """Return the parent object of the instance."""
+        return self.aci_contract
 
     def get_role_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
@@ -746,6 +751,12 @@ class ACIContractSubjectFilter(NetBoxModel):
         if errors:
             raise ValidationError(errors)
 
+    def to_objectchange(self, action):
+        """Return an ObjectChange for the change made to an instance."""
+        objectchange = super().to_objectchange(action)
+        objectchange.related_object = self.aci_contract_subject
+        return objectchange
+
     @property
     def aci_fabric(self) -> ACIFabric:
         """Return the ACIFabric instance of related ACITenant."""
@@ -775,12 +786,6 @@ class ACIContractSubjectFilter(NetBoxModel):
     def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_contract_subject
-
-    def to_objectchange(self, action):
-        """Return an ObjectChange for the change made to an instance."""
-        objectchange = super().to_objectchange(action)
-        objectchange.related_object = self.aci_contract_subject
-        return objectchange
 
     def get_action_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""

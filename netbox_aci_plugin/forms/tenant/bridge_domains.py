@@ -108,7 +108,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "Default is enabled."
         ),
     )
-    limit_ip_learn_to_subnet = forms.BooleanField(
+    limit_ip_learn_enabled = forms.BooleanField(
         required=False,
         label=_("Limit IP learning to subnet"),
         help_text=_(
@@ -183,11 +183,11 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
@@ -427,7 +427,6 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -683,15 +682,15 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)
@@ -853,7 +852,7 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
         queryset=ACIVRF.objects.all(),
         query_params={
             "aci_fabric_id": "$aci_fabric",
-            "aci_tenant_id": "$aci_tenant",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
         },
         initial_params={"aci_bridge_domains": "$aci_bridge_domain"},
         required=False,
@@ -953,11 +952,11 @@ class ACIBridgeDomainSubnetEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
@@ -1120,7 +1119,6 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -1335,15 +1333,15 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)

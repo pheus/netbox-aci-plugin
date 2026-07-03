@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Annotated
 
 import strawberry
 import strawberry_django
-from strawberry import ID
+from strawberry.scalars import ID
 
 from netbox.graphql.filters import NetBoxModelFilter
 

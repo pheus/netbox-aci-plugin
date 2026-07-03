@@ -165,21 +165,6 @@ class ACINodeListViewSet(NetBoxModelViewSet):
     filterset_class = ACINodeFilterSet
 
 
-class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
-    """API view for listing ACI Routed Domain instances."""
-
-    queryset = ACIRoutedDomain.objects.select_related(
-        "aci_fabric",
-        "nb_tenant",
-        "owner",
-        "aci_vlan_pool",
-    ).prefetch_related(
-        "tags",
-    )
-    serializer_class = ACIRoutedDomainSerializer
-    filterset_class = ACIRoutedDomainFilterSet
-
-
 class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Physical Domain instances."""
 
@@ -193,6 +178,21 @@ class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIPhysicalDomainSerializer
     filterset_class = ACIPhysicalDomainFilterSet
+
+
+class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Routed Domain instances."""
+
+    queryset = ACIRoutedDomain.objects.select_related(
+        "aci_fabric",
+        "nb_tenant",
+        "owner",
+        "aci_vlan_pool",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIRoutedDomainSerializer
+    filterset_class = ACIRoutedDomainFilterSet
 
 
 class ACIVLANPoolListViewSet(NetBoxModelViewSet):
@@ -344,7 +344,7 @@ class ACIExternalSubnetListViewSet(NetBoxModelViewSet):
 
 
 class ACIBridgeDomainL3OutBindingListViewSet(NetBoxModelViewSet):
-    """API view for listing ACI Bridge Domain L3Out Relation instances."""
+    """API view for listing ACI Bridge Domain L3Out Binding instances."""
 
     queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
         "aci_bridge_domain",

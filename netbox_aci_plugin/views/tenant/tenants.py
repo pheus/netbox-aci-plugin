@@ -174,7 +174,7 @@ class ACITenantAppProfileView(ACIAppProfileChildrenView):
         return super().get_children(request, parent).filter(aci_tenant_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACITenant colum hidden."""
+        """Return the table with ACITenant column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -216,7 +216,7 @@ class ACITenantEndpointGroupView(ACIEndpointGroupChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACITenant colum hidden."""
+        """Return the table with ACITenant column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -262,7 +262,7 @@ class ACITenantEndpointSecurityGroupView(ACIEndpointSecurityGroupChildrenView):
         )
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACITenant colum hidden."""
+        """Return the table with ACITenant column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -292,7 +292,7 @@ class ACITenantBridgeDomainView(ACIBridgeDomainChildrenView):
         return super().get_children(request, parent).filter(aci_tenant_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACITenant colum hidden."""
+        """Return the table with ACITenant column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -322,7 +322,7 @@ class ACITenantVRFView(ACIVRFChildrenView):
         return super().get_children(request, parent).filter(aci_tenant_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACITenant colum hidden."""
+        """Return the table with ACITenant column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -352,7 +352,7 @@ class ACITenantContractView(ACIContractChildrenView):
         return super().get_children(request, parent).filter(aci_tenant_id=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACITenant colum hidden."""
+        """Return the table with ACITenant column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column

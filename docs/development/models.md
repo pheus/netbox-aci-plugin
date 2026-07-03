@@ -1,0 +1,658 @@
+# Models
+
+Models live under `netbox_aci_plugin/models/<domain>/<model>.py`. The
+plugin layers concrete models on top of intermediate abstract bases,
+almost all rooted at `ACIBaseModel(OwnerMixin, NetBoxModel)` in
+`models/base.py`. The exception is `ACIFabric`, which extends
+`NetBoxModel` directly (bypassing `ACIBaseModel`) and omits the
+`name_alias` field. Shared model behavior, primarily the GFK uniqueness
+helper, lives in `models/mixins.py`.
+
+This is the longest layer doc. Use the table of contents to jump:
+
+- [Class hierarchy](#class-hierarchy)
+- [Member ordering](#member-ordering)
+- [Field ordering](#field-ordering)
+- [`class Meta`](#class-meta)
+- [`UniqueConstraint` naming template](#uniqueconstraint-naming-template)
+- [Conditional `UniqueConstraint`](#conditional-uniqueconstraint)
+- [`clone_fields` and `prerequisite_models`](#clone_fields-and-prerequisite_models)
+- [Hierarchy navigation](#hierarchy-navigation)
+- [Choice color helpers](#choice-color-helpers)
+- [`clean()`](#clean)
+- [`to_objectchange()`](#to_objectchange)
+- [`save()` and `alters_data`](#save-and-alters_data)
+- [Denormalized FK caching](#denormalized-fk-caching)
+- [Generic Foreign Key pattern](#generic-foreign-key-pattern)
+- [`OwnerMixin` coverage](#ownermixin-coverage)
+- [Relation / Binding models](#relation--binding-models)
+- [`CachedScopeMixin`](#cachedscopemixin)
+- [Choices](#choices)
+- [Model field kwarg ordering](#model-field-kwarg-ordering)
+
+## Class hierarchy
+
+```text
+NetBoxModel  (upstream)
+  ├─ ACIFabric  (models/fabric/fabrics.py, no ACIBaseModel)
+  └─ ACIBaseModel(OwnerMixin, NetBoxModel)  (models/base.py)
+      ├─ ACIFabricBaseModel  (models/base.py)
+      │   ├─ ACIPod  (concrete)
+      │   ├─ ACINode  (concrete)
+      │   └─ ACIDomainBaseModel  (models/access_policies/domains.py)
+      │       ├─ ACIRoutedDomain  (concrete)
+      │       └─ ACIPhysicalDomain  (concrete)
+      └─ ACITenantBaseModel  (models/base.py)
+          ├─ ACIEndpointGroupBaseModel  (models/tenant/endpoint_groups.py)
+          │   ├─ ACIEndpointGroup  (concrete)
+          │   └─ ACIUSegEndpointGroup  (concrete)
+          ├─ ACIUSegAttributeBaseModel  (models/tenant/endpoint_groups.py)
+          │   └─ ACIUSegNetworkAttribute  (concrete)
+          └─ <many other concrete tenant-scoped models>
+```
+
+Pick the **closest** abstract ancestor when defining a new model:
+
+- A fabric-scoped policy (Routed Domain, Pod, Node): subclass
+  `ACIFabricBaseModel`.
+- A tenant-scoped policy (VRF, BD, App Profile, Contract): subclass
+  `ACITenantBaseModel`.
+- An EPG-like model: subclass `ACIEndpointGroupBaseModel`.
+- A join or relation model with no `name` of its own: extend
+  `NetBoxModel` directly (see [Relation / Binding
+  models](#relation--binding-models)).
+
+`ACIBaseModel` contributes the universal text fields (`name`,
+`name_alias`, `description`), `nb_tenant`, `comments`, the
+`OwnerMixin` fields, and a base `clone_fields` tuple.
+
+## Member ordering
+
+Inside a model class, order members like this:
+
+```text
+database fields
+custom manager attributes
+class Meta
+__str__()
+clean_fields()
+clean()
+save()
+delete()
+get_absolute_url()
+to_objectchange()
+@property definitions
+custom methods
+```
+
+`clean_fields()` precedes `clean()` because Django calls them in that
+order during full validation (`clean_fields` -> `clean` ->
+`validate_unique`). Only override `clean_fields()` when you need to
+mutate field values before Django's built-in required/type checks run
+(e.g. `ACIExternalSubnet.clean_fields()` syncs `matched_prefix` from
+`nb_prefix` before the required-field check fires).
+
+## Field ordering
+
+Place these fields **last** in every model, in this order, after any
+domain-specific fields:
+
+```text
+nb_tenant
+tags
+comments
+```
+
+`nb_tenant`, `comments`, and the `OwnerMixin` fields are inherited
+from `ACIBaseModel`; don't redeclare them in subclasses unless you
+need to override behavior.
+
+## `class Meta`
+
+Annotate types and wrap user-facing strings with `_()`:
+
+```python
+class Meta:
+    constraints: list[models.UniqueConstraint] = [...]
+    ordering: tuple = ("aci_fabric", "name")
+    verbose_name: str = _("ACI Tenant")
+```
+
+## `UniqueConstraint` naming template
+
+Use the `%(app_label)s_%(class)s_...` template for portability: the
+template renders to a stable name and inherits cleanly into
+subclasses:
+
+```python
+models.UniqueConstraint(
+    fields=("aci_fabric", "name"),
+    name="%(app_label)s_%(class)s_unique_name_per_aci_fabric",
+)
+```
+
+Migrations referencing constraints by name use the rendered form
+(e.g. `netbox_aci_plugin_acitenant_unique_name`).
+
+## Conditional `UniqueConstraint`
+
+When the constraint should only apply under a condition, use
+`condition=models.Q(...)` paired with `violation_error_message=_("...")`
+for user-readable validation feedback at the database level:
+
+```python
+models.UniqueConstraint(
+    fields=(
+        "aci_useg_endpoint_group",
+        "use_epg_subnet",
+    ),
+    name=(
+        "%(app_label)s_%(class)s_unique_use_epg_subnet_"
+        "per_useg_endpoint_group"
+    ),
+    condition=models.Q(use_epg_subnet=True),
+    violation_error_message=_(
+        "ACI uSeg Endpoint Group with a 'use EPG Subnet' "
+        "attribute already exists."
+    ),
+),
+```
+
+Good examples: `ACIBridgeDomainSubnet` (`bridge_domains.py`) and
+`ACINode` (`nodes.py`).
+
+## `clone_fields` and `prerequisite_models`
+
+Every concrete model carries both - declared directly or inherited from
+its abstract base (for example, `ACIEndpointGroupBaseModel` in
+`endpoint_groups.py` declares `prerequisite_models` for all its
+subclasses, and `ACIDomainBaseModel` in `access_policies/domains.py`
+declares `clone_fields`). The one exception is `ACIFabric`: as the
+root of the fabric hierarchy it has no `prerequisite_models`.
+
+```python
+clone_fields: tuple = ACITenantBaseModel.clone_fields + (
+    "aci_tenant",
+    "qos_class",
+)
+prerequisite_models: tuple = ("netbox_aci_plugin.ACITenant",)
+```
+
+Inherit from the parent's `clone_fields` rather than restating its
+entries; drift accumulates fast when bases evolve.
+
+## Hierarchy navigation
+
+Every concrete model exposes a `parent_object` `@property` and any
+useful cross-tier shortcuts:
+
+```python
+@property
+def parent_object(self) -> ACITenant:
+    return self.aci_tenant
+
+@property
+def aci_fabric(self) -> ACIFabric:
+    return self.aci_tenant.aci_fabric
+```
+
+`parent_object` is what `to_objectchange()` and the URL/breadcrumb
+machinery consult for the "what owns this?" relationship.
+`ACITenantBaseModel` already provides `aci_fabric` via
+`self.aci_tenant.aci_fabric`, so tenant-scoped models inherit it for free.
+
+## Choice color helpers
+
+For every `ChoiceSet`-backed field, declare a
+`get_<field>_color()` method that proxies to the ChoiceSet's color
+map:
+
+```python
+def get_qos_class_color(self) -> str:
+    """Return the associated color of choice from the ChoiceSet."""
+    return QualityOfServiceClassChoices.colors.get(self.qos_class)
+```
+
+Tables and templates consume `get_<field>_color()` to render colored
+badges (see [Tables - `ChoiceFieldColumn`](tables.md#column-type-catalog)
+and [Templates - Cell helpers](templates.md#cell-helpers)).
+
+## `clean()`
+
+Default rule: call `super().clean()` first and accumulate **all**
+field-keyed errors into a dict before raising once. Never raise on the
+first error:
+
+```python
+def clean(self) -> None:
+    super().clean()
+    errors = {}
+    if condition1:
+        errors.setdefault("field1", []).append(_("message"))
+    if condition2:
+        errors.setdefault("field2", []).append(_("message"))
+    if errors:
+        raise ValidationError(errors)
+```
+
+This lets the form layer show every error at once, rather than
+surfacing one error, then another only after the user resubmits.
+
+**GFK early-guard exception:** GFK-bearing models may raise a field-keyed
+`ValidationError` before `super().clean()` when a `*_type` FK is set but
+its companion object ID is absent. This prevents Django's built-in
+validation from choking on a partially populated GFK pair. After that
+guard, still call `super().clean()` and accumulate the remaining
+validation errors as above. See `ACIContractRelation.clean()`
+(`contracts.py`), `ACIUSegNetworkAttribute.clean()`
+(`endpoint_groups.py`), `ACINode.clean()` (`nodes.py`), the two
+`ACIEsgEndpoint*Selector.clean()` methods (`endpoint_security_groups.py`),
+and `ACIAAEPDomainBinding.clean()` (`aaep.py`) for examples.
+
+**Parent-FK `_id` guard:** before dereferencing any parent relation inside
+`clean()` (e.g. `self.aci_tenant.aci_fabric_id`), guard on the FK's `_id`
+attname rather than the relation attribute itself (`if self.aci_vrf_id and
+self.aci_tenant_id:`). A partial form submit can leave a required FK
+unset, and dereferencing it directly raises `RelatedObjectDoesNotExist`,
+surfacing as an HTTP 500 during `full_clean()` instead of a validation
+error. See `ACIL3Out.clean()` (`l3outs.py`),
+`ACIEndpointGroupBaseModel.clean()` (`endpoint_groups.py`), and
+`ACIEndpointSecurityGroup.clean()` (`endpoint_security_groups.py`) for
+examples.
+
+## `to_objectchange()`
+
+Set `related_object` so the audit log links the change to the
+parent's history page:
+
+```python
+def to_objectchange(self, action) -> ObjectChange:
+    objectchange = super().to_objectchange(action)
+    objectchange.related_object = self.aci_contract
+    return objectchange
+```
+
+Pick the parent that makes the most sense for an audit reader (often
+the same object as `parent_object`).
+
+## `save()` and `alters_data`
+
+When the save path runs side-effecting helpers (e.g. denormalized FK
+caching), mark each helper with `alters_data` so Django's template
+engine refuses to call them implicitly:
+
+```python
+def save(self, *args, **kwargs) -> None:
+    self.cache_related_objects()
+    super().save(*args, **kwargs)
+
+def cache_related_objects(self) -> None:
+    ...
+
+cache_related_objects.alters_data = True
+```
+
+## Denormalized FK caching
+
+GFK-bearing models (`ACIContractRelation`, `ACIUSegNetworkAttribute`,
+`ACINode`, `ACIEsgEndpointGroupSelector`, `ACIEsgEndpointSelector`,
+`ACIAAEPDomainBinding`) cache each possible concrete target in an
+`_`-prefixed FK field. The cache lets search, filter ordering, and table
+querysets use concrete FK fields instead of traversing the GFK at query
+time:
+
+```python
+# Cached related objects by association name for faster access
+_aci_endpoint_group = models.ForeignKey(
+    to="netbox_aci_plugin.ACIEndpointGroup",
+    on_delete=models.CASCADE,
+    related_name="_aci_contract_relations",
+    verbose_name=_("ACI Endpoint Group"),
+    blank=True,
+    null=True,
+)
+_aci_endpoint_security_group = models.ForeignKey(
+    to="netbox_aci_plugin.ACIEndpointSecurityGroup",
+    # ...
+)
+_aci_useg_endpoint_group = models.ForeignKey(...)
+_aci_external_endpoint_group = models.ForeignKey(...)
+_aci_vrf = models.ForeignKey(...)
+```
+
+Rules:
+
+- One `_`-prefixed FK per possible target type.
+- `on_delete=models.CASCADE`, `blank=True, null=True`.
+- `related_name` uses the same `_<relation_name>` shape on each
+  target (`_aci_contract_relations`).
+- Populated from `save()` via a `cache_related_objects()` helper
+  marked with `alters_data` (see [`save()` and
+  `alters_data`](#save-and-alters_data)).
+- Excluded from GraphQL types via `exclude=[...]` (see [GraphQL -
+  Types](graphql-api.md#types)).
+- Referenced by name in `search.py` weight tuples when the related
+  object should be searchable (see [Search - Denormalized FK
+  fields](search.md#denormalized-fk-fields-in-weight-tuples)).
+
+## Generic Foreign Key pattern
+
+Three parts, in this order:
+
+### 1. Content-type filter in `constants.py`
+
+```python
+CONTRACT_RELATION_OBJECT_TYPES = Q(
+    app_label="netbox_aci_plugin",
+    model__in=(
+        "aciendpointgroup",
+        "aciendpointsecuritygroup",
+        "aciexternalendpointgroup",
+        "aciusegendpointgroup",
+        "acivrf",
+    ),
+)
+```
+
+See [Validators & Constants - Q-object content-type
+filters](validators.md#q-object-content-type-filters) for naming.
+
+### 2. GFK trio on the model
+
+The mandatory suffix is `<name>_type` (Django's content-type FK),
+plus the companion `<name>_id` and the `<name> = GenericForeignKey(...)`.
+NetBox-style (`scope_type`/`scope_id`/`scope`) and ACI-style
+(`aci_object_type`/`aci_object_id`/`aci_object`) are both acceptable;
+the hard requirement is the `_type` suffix:
+
+```python
+aci_object_type = models.ForeignKey(
+    to="contenttypes.ContentType",
+    on_delete=models.PROTECT,
+    related_name="+",
+    limit_choices_to=CONTRACT_RELATION_OBJECT_TYPES,
+)
+aci_object_id = models.PositiveBigIntegerField()
+aci_object = GenericForeignKey(
+    ct_field="aci_object_type",
+    fk_field="aci_object_id",
+)
+```
+
+### 3. `UniqueGenericForeignKeyMixin`
+
+Apply `UniqueGenericForeignKeyMixin` from `models/mixins.py` and
+declare `generic_fk_field` + `generic_unique_fields`. Call
+`self._validate_generic_uniqueness()` from `clean()`:
+
+```python
+class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
+    generic_fk_field: str = "aci_object"
+    generic_unique_fields: tuple[str] = ("aci_contract", "role")
+
+    def clean(self) -> None:
+        super().clean()
+        self._validate_generic_uniqueness()
+        # ...
+```
+
+The mixin raises a `ValidationError` with the verbose names of the
+conflicting target model + the additional unique fields.
+
+## `OwnerMixin` coverage
+
+`OwnerMixin` is the user-attribution mixin from `users.models`. It's
+applied at **three layers** for primary models:
+
+- Model: `class ACIBaseModel(OwnerMixin, NetBoxModel)` (inherited).
+- Serializer: `class <Model>Serializer(OwnerMixin, NetBoxModelSerializer)`
+  (see [REST API - Inheritance](rest-api.md#inheritance)).
+- GraphQL type: `class <Model>Type(OwnerMixin, NetBoxObjectType)`
+  (see [GraphQL - Types](graphql-api.md#types)).
+
+Relation / binding models (`ACIBridgeDomainL3OutBinding`,
+`ACIContractRelation`) **skip** `OwnerMixin` at every layer; they
+extend `NetBoxModel` / `NetBoxModelSerializer` / `NetBoxObjectType`
+directly. Relations have no independent identity worth attributing to
+an owner.
+
+## Relation / Binding models
+
+Models that represent ACI association MOs (the `fvRs*`, `vzRs*`
+families) use a suffix that encodes the model's **shape**, not just
+its ACI MO category:
+
+Use these suffixes:
+
+- **`Binding`** for a fixed two-FK join with two concrete model types,
+  no role, and no polymorphism. Example:
+  `ACIBridgeDomainL3OutBinding` (`fvRsBDToOut`).
+- **`Relation`** for a polymorphic, directional, or role-based model
+  with a `GenericForeignKey`, a role field, or more than one possible
+  target type. Example: `ACIContractRelation`, which represents
+  `vzRsProv` / `vzRsCons` over EPG, ESG, uSeg EPG, VRF, and External
+  EPG targets.
+
+Read the GFK and polymorphism signals above as classifying what the
+association carries, not the FK mechanics: a `GenericForeignKey` that
+resolves to a single target object is still a plain join to one entity and
+takes `Binding`, as with `ACIAAEPDomainBinding`, whose `aci_domain_object`
+GFK names exactly one Physical or Routed Domain per row. `Relation` stays
+reserved for associations that carry attributes beyond the join itself,
+such as the `role` field on `ACIContractRelation`.
+
+### Parent placement
+
+Relation / Binding classes live in the **parent's** model file (the
+side that owns `parent_object`). Example:
+`ACIBridgeDomainL3OutBinding` lives in `bridge_domains.py` because
+`parent_object = aci_bridge_domain`. Rationale:
+
+- Cisco's MIT containment nests `<fvRsBDToOut>` inside `<fvBD>`.
+- Network as Code models `l3outs` as a field of `bridge_domains`.
+- The codebase rule is **policy containment**, not "every model that
+  references X lives in X's file", as proven by
+  `ACIEndpointGroupBaseModel` (FK to BD, lives in `endpoint_groups.py`).
+
+The relation's **table, filterset, form, serializer, and GraphQL
+filter** also live in the parent's layer file.
+
+### `related_name` prefix
+
+Use the `aci_` prefix on `related_name` to reduce overlap with
+NetBox-side reverse relations and to keep the namespace
+self-documenting at the call site:
+
+```python
+aci_bridge_domain = models.ForeignKey(
+    to="netbox_aci_plugin.ACIBridgeDomain",
+    on_delete=models.CASCADE,
+    related_name="aci_l3out_bindings",
+    verbose_name=_("ACI Bridge Domain"),
+)
+```
+
+### Inheritance
+
+Relation/Binding models extend `NetBoxModel` directly, **not**
+`ACIBaseModel`. They have no `name` field and no DN-like identity, so
+the ACI-policy text fields don't apply. See [`OwnerMixin`
+coverage](#ownermixin-coverage) for the matching skip at serializer +
+GraphQL-type layers.
+
+## `CachedScopeMixin`
+
+Fabric-scoped models (`ACIFabric`, `ACIPod`) inherit
+`dcim.models.mixins.CachedScopeMixin`, which adds `scope_type` /
+`scope_id` / `scope` for assignment to a Site / Region / SiteGroup /
+Location. Include the scope fields in `clone_fields`:
+
+```python
+from dcim.models.mixins import CachedScopeMixin
+
+
+class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
+    # ...
+    clone_fields: tuple = (
+        "description",
+        "infra_vlan_vid",
+        "infra_vlan",
+        "gipo_pool",
+        "scope_type",
+        "scope_id",
+        "nb_tenant",
+    )
+```
+
+`CachedScopeMixin` ships its own denormalized cache fields (`_region`,
+`_site_group`, `_site`, `_location`); exclude these from GraphQL
+output via `exclude=[...]` on `@strawberry_django.type`.
+
+## Choices
+
+All `ChoiceSet` subclasses live in `netbox_aci_plugin/choices.py`,
+grouped by domain with section comments:
+
+```python
+# Bridge Domain
+
+class BDMultiDestinationFloodingChoices(ChoiceSet):
+    """Choice set of Bridge Domain multi destination flooding."""
+
+    # default "bd-flood"
+    FLOOD_BD = "bd-flood"
+    FLOOD_ENCAP = "encap-flood"
+    FLOOD_DROP = "drop"
+
+    CHOICES = (
+        (FLOOD_BD, _("bd-flood"), "blue"),
+        (FLOOD_ENCAP, _("encap-flood"), "yellow"),
+        (FLOOD_DROP, _("drop"), "red"),
+    )
+```
+
+Conventions:
+
+- Name pattern: `<Domain><Field>Choices`.
+- Constants are class attributes in UPPER_SNAKE_CASE with a domain prefix
+  (`FLOOD_BD`, `UNKNOWN_MULTI_FLOOD`).
+- Add a `# default "<value>"` comment so contributors see the model's
+  field default at a glance.
+- The third tuple element is the badge color (NetBox table/template
+  helpers consume it via `get_<field>_color()`, see [Choice color
+  helpers](#choice-color-helpers)).
+
+### `add_custom_choice()`
+
+For ChoiceSets that allow a free-text value alongside the enumerated
+choices, append `(None, _("custom"))` via the helper:
+
+```python
+def add_custom_choice(choices) -> tuple:
+    """Add a custom choice to the end of a ChoiceSet."""
+    return tuple(choices) + ((None, _("custom")),)
+```
+
+Use it where a field accepts both a named choice and an arbitrary
+string (e.g. some Contract Filter port fields).
+
+### Cross-cutting choice sets
+
+Choice sets used by multiple domains (e.g. `QualityOfServiceClassChoices`,
+`QualityOfServiceDSCPChoices`) get their own conceptual section in
+`choices.py`. Put them after the domain sections that reference them.
+
+## Model field kwarg ordering
+
+Pass kwargs to model fields in this order. Skip any that aren't
+needed; don't reorder:
+
+### Base (every field)
+
+```text
+verbose_name
+name
+primary_key
+max_length
+unique
+blank
+null
+db_index
+rel
+default
+editable
+serialize
+unique_for_date
+unique_for_month
+unique_for_year
+choices
+help_text
+db_column
+db_tablespace
+auto_created
+validators
+error_messages
+```
+
+### `DateField` / `TimeField` (append after base)
+
+```text
+auto_now
+auto_now_add
+```
+
+### `DecimalField` (append after base)
+
+```text
+max_digits
+decimal_places
+```
+
+### `GenericIPAddressField` (append after base)
+
+```text
+protocol
+unpack_ipv4
+```
+
+### `ForeignKey`
+
+For `ForeignKey` fields, use this standalone order, with `to` first,
+before the base kwargs:
+
+```text
+to
+on_delete
+related_name
+verbose_name
+blank
+null
+related_query_name
+limit_choices_to
+parent_link
+to_field
+db_constraint
+```
+
+**GFK content-type FK exception:** the `<name>_type` FKs that pair with a
+`GenericForeignKey` (e.g. `aci_object_type` in `contracts.py`,
+`aci_domain_object_type` in `aaep.py`) place `limit_choices_to` right
+after `related_name`, ahead of `verbose_name`/`blank`/`null`, so the
+`Q`-object content-type filter sits next to the relation it constrains.
+
+### `ManyToManyField` (append after base)
+
+```text
+symmetrical
+through
+through_fields
+db_table
+swappable
+```
+
+### `FileField` (append after base)
+
+```text
+upload_to
+storage
+```

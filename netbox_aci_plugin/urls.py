@@ -36,15 +36,6 @@ urlpatterns: tuple = (
         "nodes/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acinode")),
     ),
-    # ACI Routed Domain
-    path(
-        "routed-domains/",
-        include(get_model_urls("netbox_aci_plugin", "acirouteddomain", detail=False)),
-    ),
-    path(
-        "routed-domains/<int:pk>/",
-        include(get_model_urls("netbox_aci_plugin", "acirouteddomain")),
-    ),
     # ACI Physical Domain
     path(
         "physical-domains/",
@@ -53,6 +44,15 @@ urlpatterns: tuple = (
     path(
         "physical-domains/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciphysicaldomain")),
+    ),
+    # ACI Routed Domain
+    path(
+        "routed-domains/",
+        include(get_model_urls("netbox_aci_plugin", "acirouteddomain", detail=False)),
+    ),
+    path(
+        "routed-domains/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acirouteddomain")),
     ),
     # ACI VLAN Pool
     path(
@@ -72,7 +72,7 @@ urlpatterns: tuple = (
         "vlan-pools/ranges/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acivlanpoolrange")),
     ),
-    # ACI Tenants
+    # ACI Tenant
     path(
         "tenants/",
         include(get_model_urls("netbox_aci_plugin", "acitenant", detail=False)),
@@ -81,7 +81,7 @@ urlpatterns: tuple = (
         "tenants/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acitenant")),
     ),
-    # ACI Application Profiles
+    # ACI Application Profile
     path(
         "app-profiles/",
         include(get_model_urls("netbox_aci_plugin", "aciappprofile", detail=False)),
@@ -121,7 +121,7 @@ urlpatterns: tuple = (
         "useg-endpoint-groups/network-attributes/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciusegnetworkattribute")),
     ),
-    # ACI Security Endpoint Group
+    # ACI Endpoint Security Group
     path(
         "endpoint-security-groups/",
         include(
@@ -202,7 +202,7 @@ urlpatterns: tuple = (
         "external-endpoint-groups/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciexternalendpointgroup")),
     ),
-    # ACI External Endpoint Group Subnet
+    # ACI External Subnet
     path(
         "external-endpoint-groups/subnets/",
         include(get_model_urls("netbox_aci_plugin", "aciexternalsubnet", detail=False)),

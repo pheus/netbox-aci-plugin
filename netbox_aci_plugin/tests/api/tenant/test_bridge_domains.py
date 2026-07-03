@@ -470,7 +470,7 @@ class ACIBridgeDomainL3OutBindingAPIViewTestCase(APIViewTestCases.APIViewTestCas
             aci_vrf=aci_vrf,
             aci_routed_domain=aci_routed_domain,
         )
-        relations: tuple = (
+        bindings: tuple = (
             ACIBridgeDomainL3OutBinding(
                 aci_bridge_domain=aci_bd1,
                 aci_l3out=aci_l3out1,
@@ -487,7 +487,7 @@ class ACIBridgeDomainL3OutBindingAPIViewTestCase(APIViewTestCases.APIViewTestCas
                 comments="# ACI Test 3",
             ),
         )
-        ACIBridgeDomainL3OutBinding.objects.bulk_create(relations)
+        ACIBridgeDomainL3OutBinding.objects.bulk_create(bindings)
 
         cls.create_data: list[dict] = [
             {

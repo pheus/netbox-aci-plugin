@@ -48,9 +48,9 @@ class ACIL3OutTable(NetBoxTable):
     )
     multipod_enabled = columns.BooleanColumn(verbose_name=_("Multipod"))
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -81,8 +81,8 @@ class ACIL3OutTable(NetBoxTable):
             "multipod_enabled",
             "nb_tenant",
             "owner",
-            "comments",
             "tags",
+            "comments",
         )
         default_columns: tuple = (
             "name",
@@ -125,9 +125,9 @@ class ACIExternalEndpointGroupTable(NetBoxTable):
     qos_class = columns.ChoiceFieldColumn()
     target_dscp = columns.ChoiceFieldColumn()
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -152,8 +152,8 @@ class ACIExternalEndpointGroupTable(NetBoxTable):
             "target_dscp",
             "nb_tenant",
             "owner",
-            "comments",
             "tags",
+            "comments",
         )
         default_columns: tuple = (
             "name",
@@ -238,9 +238,9 @@ class ACIExternalSubnetTable(NetBoxTable):
         verbose_name=_("EIGRP summary"),
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -267,10 +267,16 @@ class ACIExternalSubnetTable(NetBoxTable):
             "shared_route_control_enabled",
             "import_security_enabled",
             "shared_security_enabled",
+            "aggregate_import_route_control_enabled",
+            "aggregate_export_route_control_enabled",
+            "aggregate_shared_route_control_enabled",
+            "bgp_route_summarization_enabled",
+            "ospf_route_summarization_enabled",
+            "eigrp_route_summarization_enabled",
             "nb_tenant",
             "owner",
-            "comments",
             "tags",
+            "comments",
         )
         default_columns: tuple = (
             "name",

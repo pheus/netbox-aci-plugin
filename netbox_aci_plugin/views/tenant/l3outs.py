@@ -171,9 +171,9 @@ class ACIL3OutListView(generic.ObjectListView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
-    table = ACIL3OutTable
     filterset = ACIL3OutFilterSet
     filterset_form = ACIL3OutFilterForm
+    table = ACIL3OutTable
 
 
 @register_model_view(ACIL3Out, "add", detail=False)
@@ -268,33 +268,6 @@ class ACIL3OutBridgeDomainBindingsView(ACIBridgeDomainL3OutBindingChildrenView):
         return table
 
 
-@register_model_view(ACIL3Out, "bulk_import", path="import", detail=False)
-class ACIL3OutBulkImportView(generic.BulkImportView):
-    """Bulk import view for importing multiple objects of ACI L3Out."""
-
-    queryset = ACIL3Out.objects.all()
-    model_form = ACIL3OutImportForm
-
-
-@register_model_view(ACIL3Out, "bulk_edit", path="edit", detail=False)
-class ACIL3OutBulkEditView(generic.BulkEditView):
-    """Bulk edit view for editing multiple objects of ACI L3Out."""
-
-    queryset = ACIL3Out.objects.all()
-    filterset = ACIL3OutFilterSet
-    table = ACIL3OutTable
-    form = ACIL3OutBulkEditForm
-
-
-@register_model_view(ACIL3Out, "bulk_delete", path="delete", detail=False)
-class ACIL3OutBulkDeleteView(generic.BulkDeleteView):
-    """Bulk delete view for deleting multiple objects of ACI L3Out."""
-
-    queryset = ACIL3Out.objects.all()
-    filterset = ACIL3OutFilterSet
-    table = ACIL3OutTable
-
-
 @register_model_view(ACIRoutedDomain, "l3outs")
 class ACIRoutedDomainL3OutsView(ACIL3OutChildrenView):
     """Children view of ACI L3Outs of ACI Routed Domain."""
@@ -320,6 +293,33 @@ class ACIRoutedDomainL3OutsView(ACIL3OutChildrenView):
         table = super().get_table(*args, **kwargs)
         table.columns.hide("aci_routed_domain")
         return table
+
+
+@register_model_view(ACIL3Out, "bulk_import", path="import", detail=False)
+class ACIL3OutBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple objects of ACI L3Out."""
+
+    queryset = ACIL3Out.objects.all()
+    model_form = ACIL3OutImportForm
+
+
+@register_model_view(ACIL3Out, "bulk_edit", path="edit", detail=False)
+class ACIL3OutBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple objects of ACI L3Out."""
+
+    queryset = ACIL3Out.objects.all()
+    filterset = ACIL3OutFilterSet
+    table = ACIL3OutTable
+    form = ACIL3OutBulkEditForm
+
+
+@register_model_view(ACIL3Out, "bulk_delete", path="delete", detail=False)
+class ACIL3OutBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple objects of ACI L3Out."""
+
+    queryset = ACIL3Out.objects.all()
+    filterset = ACIL3OutFilterSet
+    table = ACIL3OutTable
 
 
 #
@@ -351,9 +351,9 @@ class ACIExternalEndpointGroupListView(generic.ObjectListView):
     queryset = ACIExternalEndpointGroup.objects.select_related(
         "aci_l3out", "aci_l3out__aci_tenant", "aci_l3out__aci_vrf", "nb_tenant", "owner"
     ).prefetch_related("tags")
-    table = ACIExternalEndpointGroupTable
     filterset = ACIExternalEndpointGroupFilterSet
     filterset_form = ACIExternalEndpointGroupFilterForm
+    table = ACIExternalEndpointGroupTable
 
 
 @register_model_view(ACIExternalEndpointGroup, "add", detail=False)
@@ -504,9 +504,9 @@ class ACIExternalSubnetListView(generic.ObjectListView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
-    table = ACIExternalSubnetTable
     filterset = ACIExternalSubnetFilterSet
     filterset_form = ACIExternalSubnetFilterForm
+    table = ACIExternalSubnetTable
 
 
 @register_model_view(ACIExternalSubnet, "add", detail=False)

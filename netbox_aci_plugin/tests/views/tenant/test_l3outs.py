@@ -30,6 +30,7 @@ class ACIL3OutViewTestCase(
 
     @classmethod
     def setUpTestData(cls) -> None:
+        """Set up test data for ACIL3Out view tests."""
         super().setUpTestData()
 
         cls.aci_routed_domain = ACIRoutedDomain.objects.create(
@@ -162,6 +163,7 @@ class ACIExternalEndpointGroupViewTestCase(
 
     @classmethod
     def setUpTestData(cls) -> None:
+        """Set up test data for ACIExternalEndpointGroup view tests."""
         super().setUpTestData()
 
         cls.aci_routed_domain = ACIRoutedDomain.objects.create(
@@ -296,6 +298,7 @@ class ACIExternalSubnetViewTestCase(
 
     @classmethod
     def setUpTestData(cls) -> None:
+        """Set up test data for ACIExternalSubnet view tests."""
         super().setUpTestData()
 
         cls.aci_routed_domain = ACIRoutedDomain.objects.create(

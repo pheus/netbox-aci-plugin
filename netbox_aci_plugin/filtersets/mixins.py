@@ -4,7 +4,7 @@
 
 import django_filters
 from django.db.models import Q
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from netaddr import AddrFormatError, IPNetwork

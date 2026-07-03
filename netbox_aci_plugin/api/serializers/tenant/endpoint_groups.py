@@ -71,7 +71,7 @@ class ACIEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
 
 
 class ACIUSegEndpointGroupSerializer(OwnerMixin, NetBoxModelSerializer):
-    """Serializer for the ACI Endpoint Group model."""
+    """Serializer for the ACI uSeg Endpoint Group model."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name="plugins-api:netbox_aci_plugin-api:aciusegendpointgroup-detail"

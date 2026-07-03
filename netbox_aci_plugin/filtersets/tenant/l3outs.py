@@ -46,7 +46,7 @@ class ACIL3OutFilterSet(
     OwnerFilterMixin,
     NetBoxModelFilterSet,
 ):
-    """Filterset for ACIL3Out model."""
+    """Filter set for the ACI L3Out model."""
 
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_vrf__name",
@@ -56,6 +56,7 @@ class ACIL3OutFilterSet(
     )
     aci_vrf_id = django_filters.ModelMultipleChoiceFilter(
         queryset=ACIVRF.objects.all(),
+        to_field_name="id",
         label=_("ACI VRF (ID)"),
     )
     aci_routed_domain = django_filters.ModelMultipleChoiceFilter(
@@ -66,6 +67,7 @@ class ACIL3OutFilterSet(
     )
     aci_routed_domain_id = django_filters.ModelMultipleChoiceFilter(
         queryset=ACIRoutedDomain.objects.all(),
+        to_field_name="id",
         label=_("ACI Routed Domain (ID)"),
     )
     target_dscp = django_filters.MultipleChoiceFilter(
@@ -95,7 +97,7 @@ class ACIL3OutFilterSet(
         )
 
     def search(self, queryset, name, value):
-        """Search ACIL3Out instances."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         return queryset.filter(
@@ -114,7 +116,7 @@ class ACIExternalEndpointGroupFilterSet(
     OwnerFilterMixin,
     NetBoxModelFilterSet,
 ):
-    """Filterset for ACIExternalEndpointGroup model."""
+    """Filter set for the ACI External Endpoint Group model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_l3out__aci_tenant__aci_fabric__name",
@@ -125,6 +127,7 @@ class ACIExternalEndpointGroupFilterSet(
     aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_l3out__aci_tenant__aci_fabric",
         queryset=ACIFabric.objects.all(),
+        to_field_name="id",
         label=_("ACI Fabric (ID)"),
     )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -136,6 +139,7 @@ class ACIExternalEndpointGroupFilterSet(
     aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_l3out__aci_tenant",
         queryset=ACITenant.objects.all(),
+        to_field_name="id",
         label=_("ACI Tenant (ID)"),
     )
     aci_l3out = django_filters.ModelMultipleChoiceFilter(
@@ -146,6 +150,7 @@ class ACIExternalEndpointGroupFilterSet(
     )
     aci_l3out_id = django_filters.ModelMultipleChoiceFilter(
         queryset=ACIL3Out.objects.all(),
+        to_field_name="id",
         label=_("ACI L3Out (ID)"),
     )
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
@@ -157,6 +162,7 @@ class ACIExternalEndpointGroupFilterSet(
     aci_vrf_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_l3out__aci_vrf",
         queryset=ACIVRF.objects.all(),
+        to_field_name="id",
         label=_("ACI VRF (ID)"),
     )
     qos_class = django_filters.MultipleChoiceFilter(
@@ -181,7 +187,7 @@ class ACIExternalEndpointGroupFilterSet(
         )
 
     def search(self, queryset, name, value):
-        """Search ACIExternalEndpointGroup instances."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         return queryset.filter(
@@ -200,7 +206,7 @@ class ACIExternalSubnetFilterSet(
     OwnerFilterMixin,
     NetBoxModelFilterSet,
 ):
-    """Filterset for ACIExternalSubnet model."""
+    """Filter set for the ACI External Subnet model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_external_endpoint_group__aci_l3out__aci_tenant__aci_fabric__name",
@@ -211,6 +217,7 @@ class ACIExternalSubnetFilterSet(
     aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_external_endpoint_group__aci_l3out__aci_tenant__aci_fabric",
         queryset=ACIFabric.objects.all(),
+        to_field_name="id",
         label=_("ACI Fabric (ID)"),
     )
     aci_tenant = django_filters.ModelMultipleChoiceFilter(
@@ -222,6 +229,7 @@ class ACIExternalSubnetFilterSet(
     aci_tenant_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_external_endpoint_group__aci_l3out__aci_tenant",
         queryset=ACITenant.objects.all(),
+        to_field_name="id",
         label=_("ACI Tenant (ID)"),
     )
     aci_l3out = django_filters.ModelMultipleChoiceFilter(
@@ -233,6 +241,7 @@ class ACIExternalSubnetFilterSet(
     aci_l3out_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_external_endpoint_group__aci_l3out",
         queryset=ACIL3Out.objects.all(),
+        to_field_name="id",
         label=_("ACI L3Out (ID)"),
     )
     aci_external_endpoint_group = django_filters.ModelMultipleChoiceFilter(
@@ -243,6 +252,7 @@ class ACIExternalSubnetFilterSet(
     )
     aci_external_endpoint_group_id = django_filters.ModelMultipleChoiceFilter(
         queryset=ACIExternalEndpointGroup.objects.all(),
+        to_field_name="id",
         label=_("ACI External Endpoint Group (ID)"),
     )
     matched_prefix = MultiValueCharFilter(
@@ -261,6 +271,7 @@ class ACIExternalSubnetFilterSet(
     )
     nb_prefix_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Prefix.objects.all(),
+        to_field_name="id",
         label=_("Prefix (ID)"),
     )
     aci_vrf = django_filters.ModelMultipleChoiceFilter(
@@ -272,6 +283,7 @@ class ACIExternalSubnetFilterSet(
     aci_vrf_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_external_endpoint_group__aci_l3out__aci_vrf",
         queryset=ACIVRF.objects.all(),
+        to_field_name="id",
         label=_("ACI VRF (ID)"),
     )
 
@@ -297,7 +309,7 @@ class ACIExternalSubnetFilterSet(
         )
 
     def search(self, queryset, name, value):
-        """Search ACIExternalSubnet instances."""
+        """Return a QuerySet filtered by the model's description."""
         if not value.strip():
             return queryset
         return queryset.filter(

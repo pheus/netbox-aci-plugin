@@ -37,16 +37,16 @@ class ACIFabricTable(NetBoxTable):
     )
     scope = tables.Column(
         verbose_name=_("Scope"),
-        linkify=True,
         orderable=False,
+        linkify=True,
     )
     nb_tenant = tables.Column(
         linkify=True,
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,

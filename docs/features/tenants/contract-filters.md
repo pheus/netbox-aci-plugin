@@ -66,13 +66,13 @@ The *ACIContractFilterEntry* model has the following fields:
   range, in case for *IP Protocol* `tcp` (TCP) or `udp` (UDP).
     - Values: `unspecified` (unspecified), `dns` (DNS), `ftpData` (FTP Data),
       `http` (HTTP), `https` (HTTPS), `pop3` (POP3), `rtsp` (RTSP),
-      `smtp` (SMTP), `ssh` (SSH) or in range of `0`–`65535`
+      `smtp` (SMTP), `ssh` (SSH) or in range of `0`-`65535`
     - Default: `unspecified`
 - **Destination to-port**: sets the end of the filter destination port range,
   in case for *IP Protocol* `tcp` (TCP) or `udp` (UDP).
     - Values: `unspecified` (unspecified), `dns` (DNS), `ftpData` (FTP Data),
       `http` (HTTP), `https` (HTTPS), `pop3` (POP3), `rtsp` (RTSP),
-      `smtp` (SMTP), `ssh` (SSH) or in range of `0`–`65535`
+      `smtp` (SMTP), `ssh` (SSH) or in range of `0`-`65535`
     - Default: `unspecified`
 - **Ethernet type**: declares the matching Ethernet type for the Filter Entry.
     - Values: `unspecified` (unspecified), `arp` (ARP), `fcoe` (FCOE),
@@ -114,13 +114,13 @@ The *ACIContractFilterEntry* model has the following fields:
   for *IP Protocol* `tcp` (TCP) or `udp` (UDP).
     - Values: `unspecified` (unspecified), `dns` (DNS), `ftpData` (FTP Data),
       `http` (HTTP), `https` (HTTPS), `pop3` (POP3), `rtsp` (RTSP),
-      `smtp` (SMTP), `ssh` (SSH) or in range of `0`–`65535`
+      `smtp` (SMTP), `ssh` (SSH) or in range of `0`-`65535`
     - Default: `unspecified`
 - **Source to-port**: sets the end of the filter source port range, in case for
   *IP Protocol* `tcp` (TCP) or `udp` (UDP).
     - Values: `unspecified` (unspecified), `dns` (DNS), `ftpData` (FTP Data),
       `http` (HTTP), `https` (HTTPS), `pop3` (POP3), `rtsp` (RTSP),
-      `smtp` (SMTP), `ssh` (SSH) or in range of `0`–`65535`
+      `smtp` (SMTP), `ssh` (SSH) or in range of `0`-`65535`
     - Default: `unspecified`
 - **Stateful enabled**: allows TCP packets from provider to consumer only if
   the TCP flack ACK is set for *IP Protocol* `tcp` (TCP).

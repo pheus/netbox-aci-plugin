@@ -137,7 +137,7 @@ class ACIVRFBridgeDomainView(ACIBridgeDomainChildrenView):
         return super().get_children(request, parent).filter(aci_vrf=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACITenant and ACIVRF colum hidden."""
+        """Return table with ACITenant and ACIVRF column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column
@@ -172,7 +172,7 @@ class ACIVRFContractRelationView(ACIContractRelationChildrenView):
         return super().get_children(request, parent).filter(aci_vrf=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return the table with ACI object colum hidden."""
+        """Return the table with ACI object column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACITenant column of ACIContract

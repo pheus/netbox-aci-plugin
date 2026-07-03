@@ -117,9 +117,9 @@ class ACIRoutedDomainListView(generic.ObjectListView):
         "owner",
         "aci_vlan_pool",
     ).prefetch_related("tags")
-    table = ACIRoutedDomainTable
     filterset = ACIRoutedDomainFilterSet
     filterset_form = ACIRoutedDomainFilterForm
+    table = ACIRoutedDomainTable
 
 
 @register_model_view(ACIRoutedDomain, "add", detail=False)
@@ -229,9 +229,9 @@ class ACIPhysicalDomainListView(generic.ObjectListView):
         "owner",
         "aci_vlan_pool",
     ).prefetch_related("tags")
-    table = ACIPhysicalDomainTable
     filterset = ACIPhysicalDomainFilterSet
     filterset_form = ACIPhysicalDomainFilterForm
+    table = ACIPhysicalDomainTable
 
 
 @register_model_view(ACIPhysicalDomain, "add", detail=False)

@@ -376,5 +376,7 @@ class Migration(migrations.Migration):
                 name="unique_aci_filter_entry_name_per_aci_contract_filter",
             ),
         ),
-        migrations.RunPython(create_default_aci_contract_filters),
+        migrations.RunPython(
+            create_default_aci_contract_filters, migrations.RunPython.noop
+        ),
     ]

@@ -341,7 +341,7 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
             isinstance(self.aci_contract_relation_esg_vz_any, ACIContractRelation)
         )
 
-    def test_aci_contract_str(self) -> None:
+    def test_aci_contract_relation_str(self) -> None:
         """Test string values of created ACI Contract Relation instances."""
         self.assertEqual(
             self.aci_contract_relation_epg_cons.__str__(),
@@ -631,6 +631,18 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
         """Test clone fields omit the unique generic object id."""
         self.assertNotIn("aci_object_id", ACIContractRelation.clone_fields)
         self.assertIn("aci_object_type", ACIContractRelation.clone_fields)
+
+    def test_invalid_aci_contract_relation_missing_contract(
+        self,
+    ) -> None:
+        """Test unset aci_contract raises ValidationError, not a crash."""
+        relation = ACIContractRelation(
+            aci_object=self.aci_epg1,
+            role=self.aci_contract_relation_role_cons,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            relation.full_clean()
+        self.assertIn("aci_contract", cm.exception.error_dict)
 
     def test_invalid_aci_contract_relation_object_type_without_object(
         self,

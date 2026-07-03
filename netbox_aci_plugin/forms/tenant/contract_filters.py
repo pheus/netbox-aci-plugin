@@ -81,11 +81,11 @@ class ACIContractFilterEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
@@ -152,7 +152,6 @@ class ACIContractFilterBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -243,15 +242,15 @@ class ACIContractFilterFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)
@@ -529,11 +528,11 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
         label=_("NetBox tenant"),
     )
     owner_group = DynamicModelChoiceField(
-        label=_("Owner group"),
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
@@ -851,7 +850,6 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
         required=False,
-        query_params={"group_id": "$owner_group"},
         label=_("Owner"),
     )
     comments = CommentField()
@@ -876,7 +874,6 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
         ),
         FieldSet(
             "ip_protocol",
-            "ip_protocol_custom",
             "match_dscp",
             "match_only_fragments_enabled",
             name=_("IP Protocol"),
@@ -912,7 +909,7 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
 
 
 class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
-    """NetBox filter form for the ACI Contract Filter model."""
+    """NetBox filter form for the ACI Contract Filter Entry model."""
 
     model = ACIContractFilterEntry
     fieldsets: tuple = (
@@ -1112,15 +1109,15 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
     )
     owner_group_id = DynamicModelMultipleChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
         null_option="None",
+        required=False,
         label=_("Owner Group"),
     )
     owner_id = DynamicModelMultipleChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
-        null_option="None",
         query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
         label=_("Owner"),
     )
     tag = TagFilterField(model)
@@ -1147,7 +1144,7 @@ class ACIContractFilterEntryImportForm(NetBoxModelImportForm):
         queryset=ACIContractFilter.objects.all(),
         to_field_name="name",
         required=True,
-        label=_("ACI Tenant"),
+        label=_("ACI Contract Filter"),
         help_text=_("Assigned ACI Contract Filter"),
     )
     arp_opc = CSVChoiceField(

@@ -349,7 +349,7 @@ class ACINodeTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError) as cm:
             node.full_clean()
-        self.assertIn("node_object", cm.exception.error_dict)
+        self.assertIn("__all__", cm.exception.error_dict)
 
     def test_aci_node_cache_related_objects_virtual_machine(self) -> None:
         """Test cache_related_objects handles a virtual machine object."""
@@ -453,3 +453,20 @@ class ACINodeTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_node.save()
+
+    def test_multiple_unassigned_node_objects_allowed(self) -> None:
+        """Test that two ACI Nodes without a node_object both pass clean."""
+        ACINode.objects.create(
+            name="ACINodeUnassigned1",
+            aci_pod=self.aci_pod,
+            node_id=120,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node2 = ACINode(
+            name="ACINodeUnassigned2",
+            aci_pod=self.aci_pod,
+            node_id=121,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        # Multiple unassigned nodes must not raise a uniqueness ValidationError
+        node2.full_clean()

@@ -22,8 +22,8 @@ class ACINodeTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        accessor="aci_pod__aci_fabric",
         verbose_name=_("Fabric"),
+        accessor="aci_pod__aci_fabric",
         linkify=True,
     )
     aci_pod = tables.Column(
@@ -31,8 +31,8 @@ class ACINodeTable(NetBoxTable):
         linkify=True,
     )
     pod_id = tables.Column(
-        accessor="aci_pod__pod_id",
         verbose_name=_("Pod ID"),
+        accessor="aci_pod__pod_id",
         linkify=True,
     )
     node_id = tables.Column(
@@ -61,9 +61,9 @@ class ACINodeTable(NetBoxTable):
         linkify=True,
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -94,6 +94,7 @@ class ACINodeTable(NetBoxTable):
         )
         default_columns: tuple = (
             "name",
+            "name_alias",
             "aci_pod",
             "node_id",
             "node_object",

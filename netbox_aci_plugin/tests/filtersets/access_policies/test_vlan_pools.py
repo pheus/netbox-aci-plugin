@@ -58,7 +58,7 @@ class ACIVLANPoolFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
         self.assertIn(self.aci_vlan_pool3, qs)
         self.assertNotIn(self.aci_vlan_pool1, qs)
 
-    def test_search_whitespace_only_returns_all(self) -> None:
+    def test_search_with_whitespace_only_returns_all(self) -> None:
         """Test search() with whitespace-only returns the full queryset."""
         qs = self.queryset
         fs = self.filterset(queryset=qs)
@@ -112,7 +112,7 @@ class ACIVLANPoolRangeFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTe
         self.assertIn(self.aci_vlan_pool_range2, qs)
         self.assertNotIn(self.aci_vlan_pool_range3, qs)
 
-    def test_search_whitespace_only_returns_all(self) -> None:
+    def test_search_with_whitespace_only_returns_all(self) -> None:
         """Test search() with whitespace-only returns the full queryset."""
         qs = self.queryset
         fs = self.filterset(queryset=qs)

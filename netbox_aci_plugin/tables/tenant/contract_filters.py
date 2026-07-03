@@ -36,9 +36,9 @@ class ACIContractFilterTable(NetBoxTable):
         linkify=True,
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -54,6 +54,7 @@ class ACIContractFilterTable(NetBoxTable):
             "name",
             "name_alias",
             "description",
+            "aci_fabric",
             "aci_tenant",
             "nb_tenant",
             "owner",
@@ -138,9 +139,9 @@ class ACIContractFilterEntryTable(NetBoxTable):
         linkify=True,
     )
     owner_group = tables.Column(
+        verbose_name=_("Owner Group"),
         accessor="owner__group",
         linkify=True,
-        verbose_name=_("Owner Group"),
     )
     owner = tables.Column(
         linkify=True,
@@ -156,6 +157,7 @@ class ACIContractFilterEntryTable(NetBoxTable):
             "name",
             "name_alias",
             "description",
+            "aci_fabric",
             "aci_tenant",
             "aci_contract_filter",
             "arp_opc",

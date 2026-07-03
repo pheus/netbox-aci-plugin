@@ -2,6 +2,10 @@ from .access_policies.domains import (
     ACIPhysicalDomainFilterForm,
     ACIRoutedDomainFilterForm,
 )
+from .access_policies.vlan_pools import (
+    ACIVLANPoolFilterForm,
+    ACIVLANPoolRangeFilterForm,
+)
 from .fabric.fabrics import ACIFabricFilterForm
 from .fabric.nodes import ACINodeFilterForm
 from .fabric.pods import ACIPodFilterForm
@@ -65,5 +69,7 @@ __all__ = (
     "ACITenantFilterForm",
     "ACIUSegEndpointGroupFilterForm",
     "ACIUSegNetworkAttributeFilterForm",
+    "ACIVLANPoolFilterForm",
+    "ACIVLANPoolRangeFilterForm",
     "ACIVRFFilterForm",
 )

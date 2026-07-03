@@ -135,7 +135,7 @@ class ACIContractFilterEntryFilterSet(OwnerFilterMixin, NetBoxModelFilterSet):
     destination_to_port = django_filters.MultipleChoiceFilter(
         choices=add_custom_choice(ContractFilterPortChoices),
         null_value=None,
-        label=_("Destination from-port (choice)"),
+        label=_("Destination to-port (choice)"),
     )
     destination_to_port_custom = django_filters.CharFilter(
         field_name="destination_to_port",
@@ -178,7 +178,7 @@ class ACIContractFilterEntryFilterSet(OwnerFilterMixin, NetBoxModelFilterSet):
     source_to_port = django_filters.MultipleChoiceFilter(
         choices=add_custom_choice(ContractFilterPortChoices),
         null_value=None,
-        label=_("Source from-port (choice)"),
+        label=_("Source to-port (choice)"),
     )
     source_to_port_custom = django_filters.CharFilter(
         field_name="source_to_port",

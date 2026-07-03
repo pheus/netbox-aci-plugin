@@ -221,9 +221,9 @@ class ACIL3OutEditForm(NetBoxModelForm):
     )
     owner_group = DynamicModelChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
         label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
@@ -405,7 +405,6 @@ class ACIL3OutBulkEditForm(NetBoxModelBulkEditForm):
         "name_alias",
         "description",
         "nb_tenant",
-        "owner",
         "comments",
     )
 
@@ -586,9 +585,9 @@ class ACIL3OutImportForm(NetBoxModelImportForm):
     )
     owner = CSVModelChoiceField(
         queryset=Owner.objects.all(),
-        to_field_name="name",
         required=False,
-        label=_("Owner"),
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
     )
 
     class Meta:
@@ -715,9 +714,9 @@ class ACIExternalEndpointGroupEditForm(NetBoxModelForm):
     )
     owner_group = DynamicModelChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
         label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
@@ -822,7 +821,6 @@ class ACIExternalEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         "name_alias",
         "description",
         "nb_tenant",
-        "owner",
         "comments",
     )
 
@@ -966,9 +964,9 @@ class ACIExternalEndpointGroupImportForm(NetBoxModelImportForm):
     )
     owner = CSVModelChoiceField(
         queryset=Owner.objects.all(),
-        to_field_name="name",
         required=False,
-        label=_("Owner"),
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
     )
 
     class Meta:
@@ -1184,9 +1182,9 @@ class ACIExternalSubnetEditForm(NetBoxModelForm):
     )
     owner_group = DynamicModelChoiceField(
         queryset=OwnerGroup.objects.all(),
-        required=False,
-        null_option="None",
         initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
         label=_("Owner group"),
     )
     owner = DynamicModelChoiceField(
@@ -1268,7 +1266,8 @@ class ACIExternalSubnetEditForm(NetBoxModelForm):
             "tags",
         )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
+        """Initialize the ACIExternalSubnet form."""
         super().__init__(*args, **kwargs)
         # Hide the synced value so users aren't confused into thinking
         # they must manage matched_prefix manually when nb_prefix is set.
@@ -1335,8 +1334,8 @@ class ACIExternalSubnetBulkEditForm(NetBoxModelBulkEditForm):
     fieldsets: tuple = (
         FieldSet(
             "name_alias",
-            "description",
             "aci_external_endpoint_group",
+            "description",
             name=_("ACI External Subnet"),
         ),
         FieldSet(
@@ -1353,7 +1352,6 @@ class ACIExternalSubnetBulkEditForm(NetBoxModelBulkEditForm):
         "name_alias",
         "description",
         "nb_tenant",
-        "owner",
         "comments",
     )
 
@@ -1552,9 +1550,9 @@ class ACIExternalSubnetImportForm(NetBoxModelImportForm):
     )
     owner = CSVModelChoiceField(
         queryset=Owner.objects.all(),
-        to_field_name="name",
         required=False,
-        label=_("Owner"),
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
     )
 
     class Meta:

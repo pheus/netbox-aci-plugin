@@ -37,7 +37,7 @@
   "acil3out:list_objects_with_permission": 25,
   "acinode:api_list_objects": 15,
   "acinode:list_objects_with_permission": 22,
-  "aciphysicaldomain:api_list_objects": 13,
+  "aciphysicaldomain:api_list_objects": 14,
   "aciphysicaldomain:list_objects_with_permission": 21,
   "acipod:api_list_objects": 13,
   "acipod:list_objects_with_permission": 21,
@@ -51,7 +51,7 @@
   "aciusegnetworkattribute:list_objects_with_permission": 22,
   "acivlanpool:api_list_objects": 13,
   "acivlanpool:list_objects_with_permission": 21,
-  "acivlanpoolrange:api_list_objects": 14,
+  "acivlanpoolrange:api_list_objects": 13,
   "acivlanpoolrange:list_objects_with_permission": 21,
   "acivrf:api_list_objects": 14,
   "acivrf:list_objects_with_permission": 21

@@ -226,7 +226,7 @@ class ACIBridgeDomainBridgeDomainSubnetView(ACIBridgeDomainSubnetChildrenView):
         return super().get_children(request, parent).filter(aci_bridge_domain=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACIBridgeDomain colum hidden."""
+        """Return table with ACIBridgeDomain column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIBridgeDomain column
@@ -257,7 +257,7 @@ class ACIBridgeDomainEndpointGroupView(ACIEndpointGroupChildrenView):
         return super().get_children(request, parent).filter(aci_bridge_domain=parent.pk)
 
     def get_table(self, *args, **kwargs):
-        """Return table with ACIBridgeDomain colum hidden."""
+        """Return table with ACIBridgeDomain column hidden."""
         table = super().get_table(*args, **kwargs)
 
         # Hide ACIBridgeDomain column
@@ -405,9 +405,9 @@ class ACIBridgeDomainL3OutBindingListView(generic.ObjectListView):
     queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
         "aci_bridge_domain", "aci_l3out"
     ).prefetch_related("tags")
-    table = ACIBridgeDomainL3OutBindingTable
     filterset = ACIBridgeDomainL3OutBindingFilterSet
     filterset_form = ACIBridgeDomainL3OutBindingFilterForm
+    table = ACIBridgeDomainL3OutBindingTable
 
 
 @register_model_view(ACIBridgeDomainL3OutBinding, "add", detail=False)

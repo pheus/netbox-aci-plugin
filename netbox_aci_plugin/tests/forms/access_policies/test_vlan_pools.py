@@ -18,7 +18,7 @@ from ..base import ACIBaseFormTestCase
 class ACIVLANPoolFormTestCase(ACIBaseFormTestCase):
     """Test case for the ACIVLANPool form."""
 
-    def test_invalid_field_values(self) -> None:
+    def test_invalid_aci_vlan_pool_field_values(self) -> None:
         """Test validation of invalid ACI VLAN Pool field values."""
         form = ACIVLANPoolEditForm(
             data={
@@ -33,7 +33,7 @@ class ACIVLANPoolFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(form.errors["name_alias"], [self.name_error_message])
         self.assertEqual(form.errors["description"], [self.description_error_message])
 
-    def test_valid_field_values(self) -> None:
+    def test_valid_aci_vlan_pool_field_values(self) -> None:
         """Test validation of valid ACI VLAN Pool field values."""
         form = ACIVLANPoolEditForm(
             data={
@@ -59,7 +59,7 @@ class ACIVLANPoolRangeFormTestCase(ACIBaseFormTestCase):
             aci_fabric=cls.aci_fabric,
         )
 
-    def test_valid_field_values(self) -> None:
+    def test_valid_aci_vlan_pool_range_field_values(self) -> None:
         """Test validation of valid ACI VLAN Pool Range field values."""
         form = ACIVLANPoolRangeEditForm(
             data={

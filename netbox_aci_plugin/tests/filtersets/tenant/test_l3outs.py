@@ -56,6 +56,7 @@ class ACIL3OutFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
         )
         cls.aci_l3out_2 = ACIL3Out.objects.create(
             name="ACIFSTestL3Out2",
+            name_alias="ACIFSTestL3OutAlias2",
             aci_tenant=cls.aci_tenant,
             aci_vrf=cls.aci_vrf,
             aci_routed_domain=cls.aci_routed_domain,
@@ -73,6 +74,13 @@ class ACIL3OutFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
         qs = self.filterset(params, self.queryset).qs
         self.assertIn(self.aci_l3out, qs)
         self.assertNotIn(self.aci_l3out_2, qs)
+
+    def test_q_name_alias(self) -> None:
+        """Test search() with a name alias substring matches one object."""
+        params = {"q": "ACIFSTestL3OutAlias2"}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_l3out_2, qs)
+        self.assertNotIn(self.aci_l3out, qs)
 
     def test_search_with_whitespace_only_returns_all(self) -> None:
         """Test search() with whitespace-only returns the full queryset."""
@@ -108,7 +116,9 @@ class ACIExternalEndpointGroupFilterSetTestCase(
             name="ACIFSTestExternalEPG1", aci_l3out=cls.aci_l3out
         )
         cls.aci_epg_2 = ACIExternalEndpointGroup.objects.create(
-            name="ACIFSTestExternalEPG2", aci_l3out=cls.aci_l3out
+            name="ACIFSTestExternalEPG2",
+            name_alias="ACIFSTestExternalEPGAlias2",
+            aci_l3out=cls.aci_l3out,
         )
         cls.aci_epg_3 = ACIExternalEndpointGroup.objects.create(
             name="ACIFSTestExternalEPG3", aci_l3out=cls.aci_l3out
@@ -120,6 +130,13 @@ class ACIExternalEndpointGroupFilterSetTestCase(
         qs = self.filterset(params, self.queryset).qs
         self.assertIn(self.aci_epg, qs)
         self.assertNotIn(self.aci_epg_2, qs)
+
+    def test_q_name_alias(self) -> None:
+        """Test search() with a name alias substring matches one object."""
+        params = {"q": "ACIFSTestExternalEPGAlias2"}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_epg_2, qs)
+        self.assertNotIn(self.aci_epg, qs)
 
     def test_search_with_whitespace_only_returns_all(self) -> None:
         """Test search() with whitespace-only returns the full queryset."""
@@ -165,6 +182,7 @@ class ACIExternalSubnetFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetT
         )
         cls.subnet_b = ACIExternalSubnet.objects.create(
             name="ACIFSSNTestSubnetB",
+            name_alias="ACIFSSNTestSubnetBAlias",
             aci_external_endpoint_group=cls.aci_epg,
             matched_prefix="10.201.0.0/24",
         )
@@ -178,6 +196,13 @@ class ACIExternalSubnetFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetT
         """Test search() with a name substring matches the subnet."""
         params = {"q": "ACIFSSNTestSubnet"}
         self.assertIn(self.subnet, self.filterset(params, self.queryset).qs)
+
+    def test_q_name_alias(self) -> None:
+        """Test search() with a name alias substring matches the subnet."""
+        params = {"q": "ACIFSSNTestSubnetBAlias"}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.subnet_b, qs)
+        self.assertNotIn(self.subnet, qs)
 
     def test_search_with_whitespace_only_returns_all(self) -> None:
         """Test search() with whitespace-only returns the full queryset."""
