@@ -238,16 +238,27 @@ def clean(self) -> None:
 This lets the form layer show every error at once, rather than
 surfacing one error, then another only after the user resubmits.
 
-**GFK early-guard exception:** GFK-bearing models may raise a
-field-keyed `ValidationError` before `super().clean()` when a `*_type`
-FK is set but its companion object ID is absent. This prevents Django's
-built-in validation from choking on a partially populated GFK pair.
-After that guard, still call `super().clean()` and accumulate the
-remaining validation errors as above. See `ACIContractRelation.clean()`
+**GFK early-guard exception:** GFK-bearing models may raise a field-keyed
+`ValidationError` before `super().clean()` when a `*_type` FK is set but
+its companion object ID is absent. This prevents Django's built-in
+validation from choking on a partially populated GFK pair. After that
+guard, still call `super().clean()` and accumulate the remaining
+validation errors as above. See `ACIContractRelation.clean()`
 (`contracts.py`), `ACIUSegNetworkAttribute.clean()`
-(`endpoint_groups.py`), `ACINode.clean()` (`nodes.py`), and the two
-`ACIEsgEndpoint*Selector.clean()` methods
-(`endpoint_security_groups.py`) for examples.
+(`endpoint_groups.py`), `ACINode.clean()` (`nodes.py`), the two
+`ACIEsgEndpoint*Selector.clean()` methods (`endpoint_security_groups.py`),
+and `ACIAAEPDomainBinding.clean()` (`aaep.py`) for examples.
+
+**Parent-FK `_id` guard:** before dereferencing any parent relation inside
+`clean()` (e.g. `self.aci_tenant.aci_fabric_id`), guard on the FK's `_id`
+attname rather than the relation attribute itself (`if self.aci_vrf_id and
+self.aci_tenant_id:`). A partial form submit can leave a required FK
+unset, and dereferencing it directly raises `RelatedObjectDoesNotExist`,
+surfacing as an HTTP 500 during `full_clean()` instead of a validation
+error. See `ACIL3Out.clean()` (`l3outs.py`),
+`ACIEndpointGroupBaseModel.clean()` (`endpoint_groups.py`), and
+`ACIEndpointSecurityGroup.clean()` (`endpoint_security_groups.py`) for
+examples.
 
 ## `to_objectchange()`
 
@@ -284,11 +295,11 @@ cache_related_objects.alters_data = True
 ## Denormalized FK caching
 
 GFK-bearing models (`ACIContractRelation`, `ACIUSegNetworkAttribute`,
-`ACINode`, `ACIEsgEndpointGroupSelector`, `ACIEsgEndpointSelector`)
-cache each possible concrete target in an
-`_`-prefixed FK field. The cache lets search, filter ordering, and
-table querysets use concrete FK fields instead of traversing the GFK at
-query time:
+`ACINode`, `ACIEsgEndpointGroupSelector`, `ACIEsgEndpointSelector`,
+`ACIAAEPDomainBinding`) cache each possible concrete target in an
+`_`-prefixed FK field. The cache lets search, filter ordering, and table
+querysets use concrete FK fields instead of traversing the GFK at query
+time:
 
 ```python
 # Cached related objects by association name for faster access
@@ -357,9 +368,9 @@ the hard requirement is the `_type` suffix:
 ```python
 aci_object_type = models.ForeignKey(
     to="contenttypes.ContentType",
-    limit_choices_to=CONTRACT_RELATION_OBJECT_TYPES,
     on_delete=models.PROTECT,
     related_name="+",
+    limit_choices_to=CONTRACT_RELATION_OBJECT_TYPES,
 )
 aci_object_id = models.PositiveBigIntegerField()
 aci_object = GenericForeignKey(
@@ -421,6 +432,14 @@ Use these suffixes:
   target type. Example: `ACIContractRelation`, which represents
   `vzRsProv` / `vzRsCons` over EPG, ESG, uSeg EPG, VRF, and External
   EPG targets.
+
+Read the GFK and polymorphism signals above as classifying what the
+association carries, not the FK mechanics: a `GenericForeignKey` that
+resolves to a single target object is still a plain join to one entity and
+takes `Binding`, as with `ACIAAEPDomainBinding`, whose `aci_domain_object`
+GFK names exactly one Physical or Routed Domain per row. `Relation` stays
+reserved for associations that carry attributes beyond the join itself,
+such as the `role` field on `ACIContractRelation`.
 
 ### Parent placement
 
@@ -614,6 +633,12 @@ parent_link
 to_field
 db_constraint
 ```
+
+**GFK content-type FK exception:** the `<name>_type` FKs that pair with a
+`GenericForeignKey` (e.g. `aci_object_type` in `contracts.py`,
+`aci_domain_object_type` in `aaep.py`) place `limit_choices_to` right
+after `related_name`, ahead of `verbose_name`/`blank`/`null`, so the
+`Q`-object content-type filter sits next to the relation it constrains.
 
 ### `ManyToManyField` (append after base)
 
