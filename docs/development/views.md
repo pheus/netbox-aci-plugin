@@ -201,8 +201,13 @@ Rules:
 - `child_model`, `filterset`, `tab`, `table` are all required.
 - `tab.badge` is a `lambda obj:` that returns the count via the
   parent's reverse-FK accessor (`obj.<related_name>.count()`).
-- `tab.weight` orders tabs left-to-right; default 1000, adjust in
-  steps of 1000 when ordering matters.
+- `tab.weight` orders tabs left-to-right; default 1000. Bump by 100
+  to tie-break a sibling tab declared in the same file (e.g.
+  `contracts.py`'s "Subjects" tab at 1000 and "Relations" tab at
+  1100, which share the ACI Contract detail page). When several
+  files contribute child tabs to the same parent (e.g. Fabric's
+  Routed Domains / VLAN Pools / Physical Domains tabs), pre-allocate
+  100-spaced slots (2000, 2100, 2200, ...) instead of reusing 1000.
 - `get_children()` returns the **unfiltered** queryset of the child
   model with the standard `select_related` + `prefetch_related`
   chain. The parent-specific subclass narrows it.

@@ -114,6 +114,11 @@ Every table declares **both** tuples on `Meta`:
   Shorter list; what shows up in a fresh install. Must include
   `"name_alias"` immediately after `"name"` on every model that has
   a `name_alias` field.
+- Derived accessor-traversal columns (e.g. `aci_fabric` declared via
+  `accessor="aci_tenant__aci_fabric"`) belong in `fields` too - they're
+  columns like any other, and the column picker should be able to
+  toggle them even though they resolve through a parent FK rather than
+  a field on the model itself.
 
 ```python
 class Meta(NetBoxTable.Meta):

@@ -131,6 +131,13 @@ def query(self, query_str: str) -> dict:
 `tests/tables/base.py` aliases `TableTestCases.StandardTableTestCase`
 for use as a smoke-test base.
 
+## Module docstrings
+
+API and table test modules carry a short top-level docstring naming
+the domain and layer, e.g. `"""API tests for access-policy VLAN pool
+models."""` or `"""Table tests for tenant L3Out models."""`. Model
+and form test modules omit one.
+
 ## Model-test method names
 
 Use this naming pattern so test output stays scannable across the

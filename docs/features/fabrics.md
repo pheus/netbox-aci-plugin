@@ -31,11 +31,11 @@ The **ACIFabric** model has the following fields:
 
 - **Name**: the ACI Fabric name.
 - **Fabric ID**: numeric identifier configured during APIC fabric setup.
-    - Values: `1`–`128`
+    - Values: `1`-`128`
     - Distinct from the Multi-Site **Site ID**; not globally unique.
 - **Infrastructure VLAN ID**: fabric-wide infrastructure VLAN used for
   APIC-to-switch communication.
-    - Values: `1`–`4094`
+    - Values: `1`-`4094`
 
 *Optional fields*:
 
@@ -64,7 +64,7 @@ The **ACIPod** model has the following fields:
 - **Name**: the Pod name.
 - **ACI Fabric**: reference to the related ACIFabric.
 - **Pod ID**: unique numeric identifier within the Fabric.
-    - Values: `1`–`255`
+    - Values: `1`-`255`
 
 *Optional fields*:
 
@@ -106,7 +106,7 @@ The **ACINode** model has the following fields:
 - **Name**: the Node name.
 - **ACI Pod**: reference to the related ACIPod.
 - **Node ID**: numeric identifier of the node within the Fabric.
-    - Values: `1`–`100` (APIC), `101`–`4000` (Leaf/Spine)
+    - Values: `1`-`100` (APIC), `101`-`4000` (Leaf/Spine)
 
 *Optional fields*:
 

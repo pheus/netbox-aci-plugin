@@ -86,7 +86,7 @@ The *ACIEsgEndpointGroupSelector* model has the following fields:
 The *ACIEsgEndpointSelector* model represents an endpoint selector associated
 with an Endpoint Security Group.
 This selector is used to match specified endpoints based on network
-parameters — such as IP addresses or network prefix information.
+parameters - such as IP addresses or network prefix information.
 
 The *ACIEsgEndpointSelector* model has the following fields:
 

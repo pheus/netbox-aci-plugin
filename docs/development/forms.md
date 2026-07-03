@@ -82,8 +82,12 @@ Body structure (order of class-level attributes):
 FilterForm fieldsets AND field declarations must use identity-first
 order: `name`, `name_alias`, `description` first, then FK/scope
 fields (`aci_fabric_id`, `aci_tenant_id`, etc.), then domain-specific
-fields. Field declarations in the class body must follow the same
-order as the fieldsets (not alphabetical).
+fields. Past that identity-first prefix, the class body follows the
+model's own field order, while fieldsets are free to regroup the same
+fields into function-based sections (e.g. "Policy Control Settings",
+"Multicast Settings"). Body order and fieldset order are allowed to
+diverge beyond the identity-first fields - don't reorder the body to
+mirror the fieldsets.
 
 ### `Meta.fields` ordering (EditForm and ImportForm)
 

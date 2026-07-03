@@ -11,7 +11,7 @@ We follow **Semantic Versioning** and **Keep a Changelog**.
    - README shows `pip install netbox-aci-plugin`.
    - `docs/index.md` Installing & Compatibility are correct.
 2. **Changelog**
-   - Add `## X.Y.Z – YYYY-MM-DD` with **Added / Changed / Fixed / Compatibility**.
+   - Add `## X.Y.Z - YYYY-MM-DD` with **Added / Changed / Fixed / Compatibility**.
 3. **Version bump**
    - `pyproject.toml` → `version = "X.Y.Z"`.
 4. **Tag**

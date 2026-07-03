@@ -138,10 +138,10 @@ ACI_NAME_MAX_LEN: Final[int] = 64
 ACI_DESC_MAX_LEN: Final[int] = 128
 NAME_CHAR_CLASS: Final[str] = r"[A-Za-z0-9_.:-]"
 DESC_CHAR_CLASS: Final[str] = r"[A-Za-z0-9!#$%()*,-./:;@ _{|}~?&+]"
-VLAN_VID_MIN = 1
-VLAN_VID_MAX = 4094
-FABRIC_ID_MIN = 1
-FABRIC_ID_MAX = 128
+VLAN_VID_MIN: Final[int] = 1
+VLAN_VID_MAX: Final[int] = 4094
+FABRIC_ID_MIN: Final[int] = 1
+FABRIC_ID_MAX: Final[int] = 128
 # ...
 
 #
@@ -163,8 +163,9 @@ ESG_ENDPOINT_SELECTORS_MODELS = Q(...)
   `NAME_CHAR_CLASS: Final[str]`, `DESC_CHAR_CLASS: Final[str]`
   (`constants.py:13-17`).
 - Range constants follow `<DOMAIN>_<PROPERTY>_<MIN|MAX>`:
-  `VLAN_VID_MIN`, `NODE_ID_MAX`, `FABRIC_ID_MIN`. These are currently
-  unannotated (no `Final`).
+  `VLAN_VID_MIN`, `NODE_ID_MAX`, `FABRIC_ID_MIN`. These also carry
+  `Final[int]`, same as the length constants above
+  (`constants.py:19-29`).
 
 ### Q-object content-type filters
 

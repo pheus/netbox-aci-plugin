@@ -29,11 +29,16 @@ Most detail templates start with these load lines:
 {% load i18n %}
 ```
 
-`render_table` is only required when the page renders a child table
-(common, but not universal; skip the import on objects without an
-inline child list). `{% load helpers %}` is optional - roughly half the
+Most detail templates load `render_table` whether or not the page
+actually renders an inline child table - treat the load line as a
+standard include and don't strip it just because a given object has
+no child list. `{% load helpers %}` is optional - roughly half the
 templates omit it (e.g. `acitenant.html`); include it only when the
 template uses tags provided by the plugin's own helpers module.
+
+A leading blank line before `{% extends %}` is common but not
+required; Django ignores it either way. Match the surrounding file
+rather than adding or stripping it for its own sake.
 
 ### Breadcrumbs
 
