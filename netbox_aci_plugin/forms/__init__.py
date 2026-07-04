@@ -1,3 +1,7 @@
+from .access_policies.aaep import (
+    ACIAAEPDomainBindingFilterForm,
+    ACIAttachableAccessEntityProfileFilterForm,
+)
 from .access_policies.domains import (
     ACIPhysicalDomainFilterForm,
     ACIRoutedDomainFilterForm,
@@ -44,7 +48,9 @@ from .tenant.tenants import ACITenantFilterForm
 from .tenant.vrfs import ACIVRFFilterForm
 
 __all__ = (
+    "ACIAAEPDomainBindingFilterForm",
     "ACIAppProfileFilterForm",
+    "ACIAttachableAccessEntityProfileFilterForm",
     "ACIBridgeDomainFilterForm",
     "ACIBridgeDomainL3OutBindingFilterForm",
     "ACIBridgeDomainSubnetFilterForm",
