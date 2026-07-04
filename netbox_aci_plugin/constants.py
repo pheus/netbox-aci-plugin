@@ -97,3 +97,17 @@ NODE_OBJECT_TYPES = Q(
     Q(app_label="dcim", model="device")
     | Q(app_label="virtualization", model="virtualmachine")
 )
+
+
+#
+# AAEP Domain Binding
+#
+
+# AAEP domain binding to possible ACI domain object types
+AAEP_DOMAIN_OBJECT_TYPES = Q(
+    app_label="netbox_aci_plugin",
+    model__in=(
+        "aciphysicaldomain",
+        "acirouteddomain",
+    ),
+)

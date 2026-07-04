@@ -1,5 +1,9 @@
 """Re-exports the plugin's ACI models as a single import namespace."""
 
+from .access_policies.aaep import (
+    ACIAAEPDomainBinding,
+    ACIAttachableAccessEntityProfile,
+)
 from .access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from .access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .fabric.fabrics import ACIFabric
@@ -38,7 +42,9 @@ from .tenant.vrfs import ACIVRF
 
 __all__ = (
     "ACIVRF",
+    "ACIAAEPDomainBinding",
     "ACIAppProfile",
+    "ACIAttachableAccessEntityProfile",
     "ACIBridgeDomain",
     "ACIBridgeDomainL3OutBinding",
     "ACIBridgeDomainSubnet",
