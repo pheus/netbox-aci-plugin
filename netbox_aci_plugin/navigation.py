@@ -445,6 +445,27 @@ acirouteddomain_item = PluginMenuItem(
     ),
 )
 
+# ACI Attachable Access Entity Profile
+aciattachableaccessentityprofile_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:aciattachableaccessentityprofile_list",
+    link_text="AAEPs",
+    permissions=["netbox_aci_plugin.view_aciattachableaccessentityprofile"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciattachableaccessentityprofile_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_aciattachableaccessentityprofile"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:aciattachableaccessentityprofile_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_aciattachableaccessentityprofile"],
+        ),
+    ),
+)
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -501,6 +522,7 @@ menu = PluginMenu(
                 acivlanpool_item,
                 aciphysicaldomain_item,
                 acirouteddomain_item,
+                aciattachableaccessentityprofile_item,
             ),
         ),
     ),
