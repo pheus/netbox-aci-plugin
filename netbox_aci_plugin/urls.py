@@ -36,6 +36,32 @@ urlpatterns: tuple = (
         "nodes/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acinode")),
     ),
+    # ACI Attachable Access Entity Profile
+    path(
+        "attachable-access-entity-profiles/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "aciattachableaccessentityprofile", detail=False
+            )
+        ),
+    ),
+    path(
+        "attachable-access-entity-profiles/<int:pk>/",
+        include(
+            get_model_urls("netbox_aci_plugin", "aciattachableaccessentityprofile")
+        ),
+    ),
+    # ACI AAEP Domain Binding
+    path(
+        "attachable-access-entity-profiles/domain-bindings/",
+        include(
+            get_model_urls("netbox_aci_plugin", "aciaaepdomainbinding", detail=False)
+        ),
+    ),
+    path(
+        "attachable-access-entity-profiles/domain-bindings/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciaaepdomainbinding")),
+    ),
     # ACI Physical Domain
     path(
         "physical-domains/",
