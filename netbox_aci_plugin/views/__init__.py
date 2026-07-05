@@ -1,3 +1,17 @@
+from .access_policies.aaep import (
+    ACIAAEPDomainBindingBulkDeleteView,
+    ACIAAEPDomainBindingBulkEditView,
+    ACIAAEPDomainBindingBulkImportView,
+    ACIAAEPDomainBindingEditView,
+    ACIAAEPDomainBindingListView,
+    ACIAAEPDomainBindingView,
+    ACIAttachableAccessEntityProfileBulkDeleteView,
+    ACIAttachableAccessEntityProfileBulkEditView,
+    ACIAttachableAccessEntityProfileBulkImportView,
+    ACIAttachableAccessEntityProfileEditView,
+    ACIAttachableAccessEntityProfileListView,
+    ACIAttachableAccessEntityProfileView,
+)
 from .access_policies.domains import (
     ACIPhysicalDomainBulkDeleteView,
     ACIPhysicalDomainBulkEditView,
@@ -172,12 +186,26 @@ from .tenant.vrfs import (
 )
 
 __all__ = (
+    # ACIAAEPDomainBinding
+    "ACIAAEPDomainBindingBulkDeleteView",
+    "ACIAAEPDomainBindingBulkEditView",
+    "ACIAAEPDomainBindingBulkImportView",
+    "ACIAAEPDomainBindingEditView",
+    "ACIAAEPDomainBindingListView",
+    "ACIAAEPDomainBindingView",
     # ACIAppProfile
     "ACIAppProfileBulkDeleteView",
     "ACIAppProfileBulkEditView",
     "ACIAppProfileBulkImportView",
     "ACIAppProfileEditView",
     "ACIAppProfileListView",
+    # ACIAttachableAccessEntityProfile
+    "ACIAttachableAccessEntityProfileBulkDeleteView",
+    "ACIAttachableAccessEntityProfileBulkEditView",
+    "ACIAttachableAccessEntityProfileBulkImportView",
+    "ACIAttachableAccessEntityProfileEditView",
+    "ACIAttachableAccessEntityProfileListView",
+    "ACIAttachableAccessEntityProfileView",
     # ACIBridgeDomain
     "ACIBridgeDomainBulkDeleteView",
     "ACIBridgeDomainBulkEditView",
