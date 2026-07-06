@@ -4,6 +4,10 @@
 
 from netbox.api.viewsets import NetBoxModelViewSet
 
+from ..filtersets.access_policies.aaep import (
+    ACIAAEPDomainBindingFilterSet,
+    ACIAttachableAccessEntityProfileFilterSet,
+)
 from ..filtersets.access_policies.domains import (
     ACIPhysicalDomainFilterSet,
     ACIRoutedDomainFilterSet,
@@ -48,6 +52,10 @@ from ..filtersets.tenant.l3outs import (
 )
 from ..filtersets.tenant.tenants import ACITenantFilterSet
 from ..filtersets.tenant.vrfs import ACIVRFFilterSet
+from ..models.access_policies.aaep import (
+    ACIAAEPDomainBinding,
+    ACIAttachableAccessEntityProfile,
+)
 from ..models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from ..models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ..models.fabric.fabrics import ACIFabric
@@ -87,7 +95,9 @@ from ..models.tenant.l3outs import (
 from ..models.tenant.tenants import ACITenant
 from ..models.tenant.vrfs import ACIVRF
 from .serializers import (
+    ACIAAEPDomainBindingSerializer,
     ACIAppProfileSerializer,
+    ACIAttachableAccessEntityProfileSerializer,
     ACIBridgeDomainL3OutBindingSerializer,
     ACIBridgeDomainSerializer,
     ACIBridgeDomainSubnetSerializer,
@@ -163,6 +173,34 @@ class ACINodeListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACINodeSerializer
     filterset_class = ACINodeFilterSet
+
+
+class ACIAttachableAccessEntityProfileListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Attachable Access Entity Profile instances."""
+
+    queryset = ACIAttachableAccessEntityProfile.objects.select_related(
+        "aci_fabric",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIAttachableAccessEntityProfileSerializer
+    filterset_class = ACIAttachableAccessEntityProfileFilterSet
+
+
+class ACIAAEPDomainBindingListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI AAEP Domain Binding instances."""
+
+    queryset = ACIAAEPDomainBinding.objects.select_related(
+        "aci_aaep",
+        "aci_domain_object_type",
+    ).prefetch_related(
+        "aci_domain_object",
+        "tags",
+    )
+    serializer_class = ACIAAEPDomainBindingSerializer
+    filterset_class = ACIAAEPDomainBindingFilterSet
 
 
 class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
