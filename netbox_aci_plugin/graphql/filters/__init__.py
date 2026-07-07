@@ -1,3 +1,7 @@
+from .access_policies.aaep import (
+    ACIAAEPDomainBindingFilter,
+    ACIAttachableAccessEntityProfileFilter,
+)
 from .access_policies.domains import ACIPhysicalDomainFilter, ACIRoutedDomainFilter
 from .access_policies.vlan_pools import ACIVLANPoolFilter, ACIVLANPoolRangeFilter
 from .fabric.fabrics import ACIFabricFilter
@@ -38,7 +42,9 @@ from .tenant.tenants import ACITenantFilter
 from .tenant.vrfs import ACIVRFFilter
 
 __all__ = (
+    "ACIAAEPDomainBindingFilter",
     "ACIAppProfileFilter",
+    "ACIAttachableAccessEntityProfileFilter",
     "ACIBridgeDomainFilter",
     "ACIBridgeDomainL3OutBindingFilter",
     "ACIBridgeDomainSubnetFilter",

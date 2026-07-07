@@ -6,7 +6,9 @@ import strawberry
 import strawberry_django
 
 from .types import (
+    ACIAAEPDomainBindingType,
     ACIAppProfileType,
+    ACIAttachableAccessEntityProfileType,
     ACIBridgeDomainL3OutBindingType,
     ACIBridgeDomainSubnetType,
     ACIBridgeDomainType,
@@ -49,6 +51,18 @@ class NetBoxACIQuery:
 
     aci_node: ACINodeType = strawberry_django.field()
     aci_node_list: list[ACINodeType] = strawberry_django.field()
+
+    aci_attachable_access_entity_profile: ACIAttachableAccessEntityProfileType = (
+        strawberry_django.field()
+    )
+    aci_attachable_access_entity_profile_list: list[
+        ACIAttachableAccessEntityProfileType
+    ] = strawberry_django.field()
+
+    aci_aaep_domain_binding: ACIAAEPDomainBindingType = strawberry_django.field()
+    aci_aaep_domain_binding_list: list[ACIAAEPDomainBindingType] = (
+        strawberry_django.field()
+    )
 
     aci_physical_domain: ACIPhysicalDomainType = strawberry_django.field()
     aci_physical_domain_list: list[ACIPhysicalDomainType] = strawberry_django.field()
