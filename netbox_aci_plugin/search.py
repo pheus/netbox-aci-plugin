@@ -4,6 +4,10 @@
 
 from netbox.search import SearchIndex, register_search
 
+from .models.access_policies.aaep import (
+    ACIAAEPDomainBinding,
+    ACIAttachableAccessEntityProfile,
+)
 from .models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from .models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .models.fabric.fabrics import ACIFabric
@@ -106,6 +110,41 @@ class ACINodeIndex(SearchIndex):
         "node_id",
         "nb_tenant",
     )
+
+
+@register_search
+class ACIAttachableAccessEntityProfileIndex(SearchIndex):
+    """NetBox search definition for the ACI AAEP model."""
+
+    model = ACIAttachableAccessEntityProfile
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIAAEPDomainBindingIndex(SearchIndex):
+    """NetBox search definition for the ACI AAEP Domain Binding model."""
+
+    model = ACIAAEPDomainBinding
+
+    fields: tuple = (
+        ("aci_aaep", 100),
+        ("_aci_physical_domain", 300),
+        ("_aci_routed_domain", 300),
+    )
+    display_attrs: tuple = ("aci_aaep", "aci_domain_object")
 
 
 @register_search
