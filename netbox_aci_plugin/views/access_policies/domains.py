@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
 from netbox.views import generic
@@ -30,6 +31,7 @@ from ...tables.access_policies.domains import (
     ACIPhysicalDomainTable,
     ACIRoutedDomainTable,
 )
+from .aaep import ACIAAEPDomainBindingChildrenView
 
 #
 # Base children views
@@ -175,6 +177,47 @@ class ACIFabricRoutedDomainView(ACIRoutedDomainChildrenView):
         return table
 
 
+@register_model_view(ACIRoutedDomain, "aaepbindings", path="aaeps")
+class ACIRoutedDomainAAEPBindingsView(ACIAAEPDomainBindingChildrenView):
+    """Children view of ACI AAEP Domain Bindings of an ACI Routed Domain."""
+
+    queryset = ACIRoutedDomain.objects.all()
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIAAEPDomainBinding",
+            _("Bind an AAEP"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
+                "aci_domain_object": lambda ctx: ctx["object"].pk,
+                "aci_domain_object_type": lambda ctx: (
+                    ContentType.objects.get_for_model(ctx["object"]).pk
+                ),
+            },
+        ),
+    ) + ACIAAEPDomainBindingChildrenView.actions
+    tab = ViewTab(
+        label=_("AAEPs"),
+        badge=lambda obj: obj.aci_aaep_domain_bindings.count(),
+        permission="netbox_aci_plugin.view_aciaaepdomainbinding",
+        weight=1100,
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return super().get_children(request, parent).filter(aci_routed_domain=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI domain object columns hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACI domain object type column
+        table.columns.hide("aci_domain_object_type")
+        # Hide ACI domain object column
+        table.columns.hide("aci_domain_object")
+
+        return table
+
+
 @register_model_view(ACIRoutedDomain, "bulk_import", path="import", detail=False)
 class ACIRoutedDomainBulkImportView(generic.BulkImportView):
     """Bulk import view for importing multiple objects of ACI Routed Domain."""
@@ -284,6 +327,49 @@ class ACIFabricPhysicalDomainView(ACIPhysicalDomainChildrenView):
         """Return the table with ACIFabric column hidden."""
         table = super().get_table(*args, **kwargs)
         table.columns.hide("aci_fabric")
+        return table
+
+
+@register_model_view(ACIPhysicalDomain, "aaepbindings", path="aaeps")
+class ACIPhysicalDomainAAEPBindingsView(ACIAAEPDomainBindingChildrenView):
+    """Children view of ACI AAEP Domain Bindings of an ACI Physical Domain."""
+
+    queryset = ACIPhysicalDomain.objects.all()
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIAAEPDomainBinding",
+            _("Bind an AAEP"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
+                "aci_domain_object": lambda ctx: ctx["object"].pk,
+                "aci_domain_object_type": lambda ctx: (
+                    ContentType.objects.get_for_model(ctx["object"]).pk
+                ),
+            },
+        ),
+    ) + ACIAAEPDomainBindingChildrenView.actions
+    tab = ViewTab(
+        label=_("AAEPs"),
+        badge=lambda obj: obj.aci_aaep_domain_bindings.count(),
+        permission="netbox_aci_plugin.view_aciaaepdomainbinding",
+        weight=1100,
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super().get_children(request, parent).filter(aci_physical_domain=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI domain object columns hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACI domain object type column
+        table.columns.hide("aci_domain_object_type")
+        # Hide ACI domain object column
+        table.columns.hide("aci_domain_object")
+
         return table
 
 

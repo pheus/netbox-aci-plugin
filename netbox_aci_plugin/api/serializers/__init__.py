@@ -1,3 +1,7 @@
+from .access_policies.aaep import (
+    ACIAAEPDomainBindingSerializer,
+    ACIAttachableAccessEntityProfileSerializer,
+)
 from .access_policies.domains import (
     ACIPhysicalDomainSerializer,
     ACIRoutedDomainSerializer,
@@ -44,7 +48,9 @@ from .tenant.tenants import ACITenantSerializer
 from .tenant.vrfs import ACIVRFSerializer
 
 __all__ = (
+    "ACIAAEPDomainBindingSerializer",
     "ACIAppProfileSerializer",
+    "ACIAttachableAccessEntityProfileSerializer",
     "ACIBridgeDomainL3OutBindingSerializer",
     "ACIBridgeDomainSerializer",
     "ACIBridgeDomainSubnetSerializer",

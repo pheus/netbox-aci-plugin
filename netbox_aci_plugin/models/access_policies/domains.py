@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -112,6 +113,15 @@ class ACIRoutedDomain(ACIDomainBaseModel):
         related_name="aci_routed_domains",
         verbose_name=_("ACI Fabric"),
     )
+
+    # Generic relations
+    aci_aaep_domain_bindings = GenericRelation(
+        to="netbox_aci_plugin.ACIAAEPDomainBinding",
+        content_type_field="aci_domain_object_type",
+        object_id_field="aci_domain_object_id",
+        related_query_name="aci_routed_domain",
+    )
+
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIFabric",)
 
     class Meta:
@@ -148,6 +158,15 @@ class ACIPhysicalDomain(ACIDomainBaseModel):
         related_name="aci_physical_domains",
         verbose_name=_("ACI VLAN Pool"),
     )
+
+    # Generic relations
+    aci_aaep_domain_bindings = GenericRelation(
+        to="netbox_aci_plugin.ACIAAEPDomainBinding",
+        content_type_field="aci_domain_object_type",
+        object_id_field="aci_domain_object_id",
+        related_query_name="aci_physical_domain",
+    )
+
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIFabric",)
 
     class Meta:
