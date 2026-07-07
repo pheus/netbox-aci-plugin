@@ -7,6 +7,7 @@ ACI Fabric and can be referenced by tenant policy objects such as L3Outs.
 ```mermaid
 flowchart TD
     FAB[Fabric]
+    AAEP(AAEP)
     PD(Physical Domain)
     RD(Routed Domain)
     L3O(L3Out)
@@ -15,10 +16,13 @@ flowchart TD
     NBVG[NetBox VLAN Group]
 
     subgraph graphAP [Access Policies]
+        FAB -->|1:n| AAEP
         FAB -->|1:n| PD
         FAB -->|1:n| RD
         FAB -->|1:n| VP
         VP -->|1:n| VPR
+        AAEP -.->|n:n| PD
+        AAEP -.->|n:n| RD
         PD -.->|n:1| VP
         RD -.->|n:1| VP
     end
@@ -57,6 +61,9 @@ The *ACIPhysicalDomain* model has the following fields:
   (duplicates are rejected).
 - The `(aci_fabric, name)` combination must be unique per fabric.
 
+AAEP bindings for a Physical Domain are managed on the domain's detail
+page via the **AAEPs** tab.
+
 ## Routed Domain
 
 A *Routed Domain* represents an ACI L3 Domain used for routed external
@@ -87,6 +94,9 @@ The *ACIRoutedDomain* model has the following fields:
 - Each domain name in **Security domains** must be unique within the list
   (duplicates are rejected).
 - The `(aci_fabric, name)` combination must be unique per fabric.
+
+AAEP bindings for a Routed Domain are managed on the domain's detail
+page via the **AAEPs** tab.
 
 ## VLAN Pool
 
@@ -155,3 +165,61 @@ The *ACIVLANPoolRange* model has the following fields:
 
 - The starting VLAN ID must not be greater than the ending VLAN ID.
 - A range must not overlap any existing range within the same pool.
+
+## Attachable Access Entity Profile
+
+An *Attachable Access Entity Profile* (AAEP) represents an ACI attachable
+access entity profile (`infraAttEntityP`) that ties interface policy groups to
+physical and routed domains, and optionally enables the infrastructure VLAN on
+the associated ports.
+
+The *ACIAttachableAccessEntityProfile* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the AAEP name in the ACI.
+- **ACI Fabric**: a reference to the `ACIFabric` model.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the AAEP.
+- **Description**: a description of the AAEP.
+- **Infrastructure VLAN**: a boolean field, whether the infrastructure VLAN is
+  enabled on ports associated with this AAEP.
+    - Default: `false`
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The `(aci_fabric, name)` combination must be unique per fabric.
+
+Domain bindings for an AAEP are managed on the profile's detail page via
+the **Domain Bindings** tab.
+
+## AAEP Domain Binding
+
+An *AAEP Domain Binding* represents an ACI domain-to-AAEP association
+(`infraRsDomP`) that links an AAEP to a Physical Domain or a Routed Domain.
+Each binding associates exactly one AAEP with exactly one domain, and the
+domain must belong to the same ACI Fabric as the AAEP.
+
+The *ACIAAEPDomainBinding* model has the following fields:
+
+*Required fields*:
+
+- **ACI AAEP**: a reference to the parent `ACIAttachableAccessEntityProfile`.
+- **ACI domain object**: the Physical Domain or Routed Domain to associate with
+  the AAEP.
+
+*Optional fields*:
+
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The assigned domain must belong to the same ACI Fabric as the parent AAEP.
+- Each `(aci_aaep, domain)` combination must be unique (an AAEP cannot be
+  bound to the same domain twice).
