@@ -325,6 +325,39 @@ class ContractSubjectFilterPriorityChoices(ChoiceSet):
 
 
 #
+# Endpoint Group Domain Binding
+#
+
+
+class DeploymentImmediacyChoices(ChoiceSet):
+    """Choice set of ACI deployment immediacy."""
+
+    # default "lazy"
+    IMMEDIACY_IMMEDIATE = "immediate"
+    IMMEDIACY_LAZY = "lazy"
+
+    CHOICES = (
+        (IMMEDIACY_IMMEDIATE, _("Immediate"), "green"),
+        (IMMEDIACY_LAZY, _("On Demand"), "orange"),
+    )
+
+
+class ResolutionImmediacyChoices(ChoiceSet):
+    """Choice set of ACI resolution immediacy."""
+
+    # default "lazy"
+    IMMEDIACY_IMMEDIATE = "immediate"
+    IMMEDIACY_LAZY = "lazy"
+    IMMEDIACY_PRE_PROVISION = "pre-provision"
+
+    CHOICES = (
+        (IMMEDIACY_IMMEDIATE, _("Immediate"), "green"),
+        (IMMEDIACY_LAZY, _("On Demand"), "orange"),
+        (IMMEDIACY_PRE_PROVISION, _("Pre-provision"), "blue"),
+    )
+
+
+#
 # Node
 #
 

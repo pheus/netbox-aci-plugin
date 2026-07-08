@@ -22,6 +22,7 @@ from .tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
+from .tenant.endpoint_group_bindings import ACIEndpointGroupDomainBinding
 from .tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
@@ -55,6 +56,7 @@ __all__ = (
     "ACIContractSubject",
     "ACIContractSubjectFilter",
     "ACIEndpointGroup",
+    "ACIEndpointGroupDomainBinding",
     "ACIEndpointSecurityGroup",
     "ACIEsgEndpointGroupSelector",
     "ACIEsgEndpointSelector",

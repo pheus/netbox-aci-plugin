@@ -111,3 +111,25 @@ AAEP_DOMAIN_OBJECT_TYPES = Q(
         "acirouteddomain",
     ),
 )
+
+
+#
+# Endpoint Group Domain Binding
+#
+
+# EPG domain binding to possible ACI endpoint group object types
+EPG_DOMAIN_BINDING_EPG_OBJECT_TYPES = Q(
+    app_label="netbox_aci_plugin",
+    model__in=(
+        "aciendpointgroup",
+        "aciusegendpointgroup",
+    ),
+)
+
+# EPG domain binding to possible ACI domain object types
+# (excludes acirouteddomain: L3 domains associate to L3Outs, not EPGs;
+# add acivmmdomain when VMM domains ship)
+EPG_DOMAIN_BINDING_DOMAIN_OBJECT_TYPES = Q(
+    app_label="netbox_aci_plugin",
+    model__in=("aciphysicaldomain",),
+)

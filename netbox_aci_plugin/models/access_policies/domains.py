@@ -166,6 +166,12 @@ class ACIPhysicalDomain(ACIDomainBaseModel):
         object_id_field="aci_domain_object_id",
         related_query_name="aci_physical_domain",
     )
+    aci_endpoint_group_domain_bindings = GenericRelation(
+        to="netbox_aci_plugin.ACIEndpointGroupDomainBinding",
+        content_type_field="aci_domain_object_type",
+        object_id_field="aci_domain_object_id",
+        related_query_name="aci_physical_domain",
+    )
 
     prerequisite_models: tuple = ("netbox_aci_plugin.ACIFabric",)
 
