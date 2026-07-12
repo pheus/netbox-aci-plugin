@@ -148,3 +148,41 @@ The *ACIUSegNetworkAttribute* model has the following fields:
   (read-only).
 - **Comments**: a text field for additional notes.
 - **Tags**: a list of NetBox tags.
+
+## Endpoint Group Domain Binding
+
+An *Endpoint Group Domain Binding* represents an ACI EPG-to-domain association
+(`fvRsDomAtt`) that links an Endpoint Group or uSeg Endpoint Group to a Physical
+Domain. Each binding associates exactly one endpoint group with exactly one
+domain, and the domain must belong to the same ACI Fabric as the endpoint group.
+It is the anchor that later EPG deployment methods build on: an endpoint group
+must be associated with a domain before it can be deployed through that domain.
+
+The *ACIEndpointGroupDomainBinding* model has the following fields:
+
+*Required fields*:
+
+- **ACI EPG object**: a reference to the parent `ACIEndpointGroup` or
+  `ACIUSegEndpointGroup`.
+- **ACI domain object**: the Physical Domain to associate with the endpoint
+  group.
+
+*Optional fields*:
+
+- **Deployment immediacy**: when the policy is pushed into the leaf hardware
+  (default *On Demand*).
+- **Resolution immediacy**: when the policy is downloaded to the leaf software
+  (default *On Demand*).
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The assigned domain must belong to the same ACI Fabric as the endpoint group.
+- Each `(aci_epg_object, aci_domain_object)` combination must be unique (an
+  endpoint group cannot be bound to the same domain twice).
+
+Domain bindings for an endpoint group are managed on the Endpoint Group (or uSeg
+Endpoint Group) detail page via the **Domain Bindings** tab; the reverse
+associations for a Physical Domain are managed on the domain's detail page via
+the **Endpoint Groups** tab.

@@ -35,6 +35,9 @@ from ..filtersets.tenant.contracts import (
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
+from ..filtersets.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupDomainBindingFilterSet,
+)
 from ..filtersets.tenant.endpoint_groups import (
     ACIEndpointGroupFilterSet,
     ACIUSegEndpointGroupFilterSet,
@@ -77,6 +80,7 @@ from ..models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
+from ..models.tenant.endpoint_group_bindings import ACIEndpointGroupDomainBinding
 from ..models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
@@ -107,6 +111,7 @@ from .serializers import (
     ACIContractSerializer,
     ACIContractSubjectFilterSerializer,
     ACIContractSubjectSerializer,
+    ACIEndpointGroupDomainBindingSerializer,
     ACIEndpointGroupSerializer,
     ACIEndpointSecurityGroupSerializer,
     ACIEsgEndpointGroupSelectorSerializer,
@@ -436,6 +441,21 @@ class ACIUSegNetworkAttributeListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIUSegNetworkAttributeSerializer
     filterset_class = ACIUSegNetworkAttributeFilterSet
+
+
+class ACIEndpointGroupDomainBindingListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Endpoint Group Domain Binding instances."""
+
+    queryset = ACIEndpointGroupDomainBinding.objects.select_related(
+        "aci_epg_object_type",
+        "aci_domain_object_type",
+    ).prefetch_related(
+        "aci_epg_object",
+        "aci_domain_object",
+        "tags",
+    )
+    serializer_class = ACIEndpointGroupDomainBindingSerializer
+    filterset_class = ACIEndpointGroupDomainBindingFilterSet
 
 
 class ACIEndpointSecurityGroupListViewSet(NetBoxModelViewSet):

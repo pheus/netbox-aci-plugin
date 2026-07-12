@@ -119,6 +119,14 @@ from .tenant.contracts import (
     ACIContractSubjectFilterListView,
     ACIContractSubjectListView,
 )
+from .tenant.endpoint_group_bindings import (
+    ACIEndpointGroupDomainBindingBulkDeleteView,
+    ACIEndpointGroupDomainBindingBulkEditView,
+    ACIEndpointGroupDomainBindingBulkImportView,
+    ACIEndpointGroupDomainBindingEditView,
+    ACIEndpointGroupDomainBindingListView,
+    ACIEndpointGroupDomainBindingView,
+)
 from .tenant.endpoint_groups import (
     ACIEndpointGroupBulkDeleteView,
     ACIEndpointGroupBulkEditView,
@@ -266,6 +274,13 @@ __all__ = (
     "ACIEndpointGroupBulkImportView",
     "ACIEndpointGroupEditView",
     "ACIEndpointGroupListView",
+    # ACIEndpointGroupDomainBinding
+    "ACIEndpointGroupDomainBindingBulkDeleteView",
+    "ACIEndpointGroupDomainBindingBulkEditView",
+    "ACIEndpointGroupDomainBindingBulkImportView",
+    "ACIEndpointGroupDomainBindingEditView",
+    "ACIEndpointGroupDomainBindingListView",
+    "ACIEndpointGroupDomainBindingView",
     # ACIEndpointSecurityGroup
     "ACIEndpointSecurityGroupBulkDeleteView",
     "ACIEndpointSecurityGroupBulkEditView",

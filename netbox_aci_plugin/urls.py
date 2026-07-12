@@ -125,6 +125,19 @@ urlpatterns: tuple = (
         "endpoint-groups/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciendpointgroup")),
     ),
+    # ACI Endpoint Group Domain Binding
+    path(
+        "endpoint-groups/domain-bindings/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "aciendpointgroupdomainbinding", detail=False
+            )
+        ),
+    ),
+    path(
+        "endpoint-groups/domain-bindings/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "aciendpointgroupdomainbinding")),
+    ),
     # ACI uSeg Endpoint Group
     path(
         "useg-endpoint-groups/",

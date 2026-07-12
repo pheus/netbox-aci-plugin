@@ -418,28 +418,19 @@ an owner.
 
 ## Relation / Binding models
 
-Models that represent ACI association MOs (the `fvRs*`, `vzRs*`
-families) use a suffix that encodes the model's **shape**, not just
-its ACI MO category:
+Use `Binding` for explicit ACI attachment/deployment associations where one
+policy object is bound to another operational target, such as a domain, path,
+L3Out, or AAEP domain. Binding models may carry configuration attributes such
+as deployment immediacy, resolution immediacy, VLAN encapsulation, mode, or
+VMM-specific settings. These attributes parameterize the binding and do not
+make the model a `Relation`.
 
-Use these suffixes:
+Use `Relation` for semantic policy relationships where a role, direction, or
+type discriminator changes the meaning of the relationship itself. For example,
+`ACIContractRelation.role` distinguishes provider and consumer semantics.
 
-- **`Binding`** for a fixed two-FK join with two concrete model types,
-  no role, and no polymorphism. Example:
-  `ACIBridgeDomainL3OutBinding` (`fvRsBDToOut`).
-- **`Relation`** for a polymorphic, directional, or role-based model
-  with a `GenericForeignKey`, a role field, or more than one possible
-  target type. Example: `ACIContractRelation`, which represents
-  `vzRsProv` / `vzRsCons` over EPG, ESG, uSeg EPG, VRF, and External
-  EPG targets.
-
-Read the GFK and polymorphism signals above as classifying what the
-association carries, not the FK mechanics: a `GenericForeignKey` that
-resolves to a single target object is still a plain join to one entity and
-takes `Binding`, as with `ACIAAEPDomainBinding`, whose `aci_domain_object`
-GFK names exactly one Physical or Routed Domain per row. `Relation` stays
-reserved for associations that carry attributes beyond the join itself,
-such as the `role` field on `ACIContractRelation`.
+Use more specific ACI/domain nouns such as `Selector`, `Attribute`, or `Filter`
+when those names better describe the modeled concept.
 
 ### Parent placement
 

@@ -20,10 +20,12 @@ from ..choices import (
     ContractSubjectFilterActionChoices,
     ContractSubjectFilterApplyDirectionChoices,
     ContractSubjectFilterPriorityChoices,
+    DeploymentImmediacyChoices,
     NodeRoleChoices,
     NodeTypeChoices,
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
+    ResolutionImmediacyChoices,
     USegAttributeMatchOperatorChoices,
     USegAttributeTypeChoices,
     VLANAllocationModeChoices,
@@ -49,10 +51,12 @@ __all__ = (
     "ContractSubjectFilterActionEnum",
     "ContractSubjectFilterApplyDirectionEnum",
     "ContractSubjectFilterPriorityEnum",
+    "DeploymentImmediacyEnum",
     "NodeRoleEnum",
     "NodeTypeEnum",
     "QualityOfServiceClassEnum",
     "QualityOfServiceDSCPEnum",
+    "ResolutionImmediacyEnum",
     "USegAttributeMatchOperatorEnum",
     "USegAttributeTypeEnum",
     "VLANAllocationModeEnum",
@@ -117,6 +121,13 @@ ContractSubjectFilterApplyDirectionEnum = strawberry.enum(
 ContractSubjectFilterPriorityEnum = strawberry.enum(
     ContractSubjectFilterPriorityChoices.as_enum()
 )
+
+#
+# Endpoint Group Domain Binding
+#
+
+DeploymentImmediacyEnum = strawberry.enum(DeploymentImmediacyChoices.as_enum())
+ResolutionImmediacyEnum = strawberry.enum(ResolutionImmediacyChoices.as_enum())
 
 #
 # Node
