@@ -627,6 +627,13 @@ class ACIContractRelationTestCase(ACIBaseTestCase):
             self.aci_contract_epg,
         )
 
+    def test_aci_contract_relation_aci_fabric(self) -> None:
+        """Test aci_fabric of ACI Contract Relation is the ACI Fabric."""
+        self.assertEqual(
+            self.aci_contract_relation_epg_cons.aci_fabric,
+            self.aci_fabric,
+        )
+
     def test_aci_contract_relation_clone_fields_excludes_object_id(self) -> None:
         """Test clone fields omit the unique generic object id."""
         self.assertNotIn("aci_object_id", ACIContractRelation.clone_fields)

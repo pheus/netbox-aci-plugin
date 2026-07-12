@@ -274,6 +274,12 @@ class ACIAAEPDomainBindingTestCase(ACIBaseTestCase):
             self.aci_aaep_domain_binding_physical.parent_object, self.aci_aaep
         )
 
+    def test_aci_aaep_domain_binding_aci_fabric(self) -> None:
+        """Test aci_fabric of ACI AAEP Domain Binding is the ACI Fabric."""
+        self.assertEqual(
+            self.aci_aaep_domain_binding_physical.aci_fabric, self.aci_fabric
+        )
+
     def test_invalid_aci_aaep_domain_binding_missing_aaep(
         self,
     ) -> None:

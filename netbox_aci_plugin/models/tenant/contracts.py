@@ -419,6 +419,11 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         return self.aci_object.aci_tenant
 
     @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACIFabric instance of the related ACIContract."""
+        return self.aci_contract.aci_fabric
+
+    @property
     def parent_object(self) -> ACITenantBaseModel:
         """Return the parent object of the instance."""
         return self.aci_contract

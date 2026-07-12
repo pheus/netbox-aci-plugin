@@ -229,6 +229,11 @@ class ACIAAEPDomainBinding(NetBoxModel, UniqueGenericForeignKeyMixin):
         return objectchange
 
     @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACIFabric instance of the related ACI AAEP."""
+        return self.aci_aaep.aci_fabric
+
+    @property
     def parent_object(self) -> ACIAttachableAccessEntityProfile:
         """Return the parent object of the instance."""
         return self.aci_aaep
