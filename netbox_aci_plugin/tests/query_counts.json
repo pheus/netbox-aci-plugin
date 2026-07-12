@@ -25,6 +25,8 @@
   "acicontractsubjectfilter:list_objects_with_permission": 30,
   "aciendpointgroup:api_list_objects": 23,
   "aciendpointgroup:list_objects_with_permission": 24,
+  "aciendpointgroupdomainbinding:api_list_objects": 29,
+  "aciendpointgroupdomainbinding:list_objects_with_permission": 24,
   "aciendpointsecuritygroup:api_list_objects": 19,
   "aciendpointsecuritygroup:list_objects_with_permission": 24,
   "aciesgendpointgroupselector:api_list_objects": 49,
