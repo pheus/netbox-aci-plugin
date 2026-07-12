@@ -18,6 +18,7 @@ from .types import (
     ACIContractSubjectFilterType,
     ACIContractSubjectType,
     ACIContractType,
+    ACIEndpointGroupDomainBindingType,
     ACIEndpointGroupType,
     ACIEndpointSecurityGroupType,
     ACIEsgEndpointGroupSelectorType,
@@ -123,6 +124,13 @@ class NetBoxACIQuery:
 
     aci_useg_network_attribute: ACIUSegNetworkAttributeType = strawberry_django.field()
     aci_useg_network_attribute_list: list[ACIUSegNetworkAttributeType] = (
+        strawberry_django.field()
+    )
+
+    aci_endpoint_group_domain_binding: ACIEndpointGroupDomainBindingType = (
+        strawberry_django.field()
+    )
+    aci_endpoint_group_domain_binding_list: list[ACIEndpointGroupDomainBindingType] = (
         strawberry_django.field()
     )
 

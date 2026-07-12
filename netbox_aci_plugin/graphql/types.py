@@ -24,6 +24,7 @@ from .filters import (
     ACIContractRelationFilter,
     ACIContractSubjectFilter,
     ACIContractSubjectFilterFilter,
+    ACIEndpointGroupDomainBindingFilter,
     ACIEndpointGroupFilter,
     ACIEndpointSecurityGroupFilter,
     ACIEsgEndpointGroupSelectorFilter,
@@ -284,6 +285,12 @@ class ACIPhysicalDomainType(OwnerMixin, NetBoxObjectType):
     aci_aaep_domain_bindings: list[
         Annotated[
             "ACIAAEPDomainBindingType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_endpoint_group_domain_bindings: list[
+        Annotated[
+            "ACIEndpointGroupDomainBindingType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
@@ -659,6 +666,12 @@ class ACIEndpointGroupType(OwnerMixin, NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+    aci_endpoint_group_domain_bindings: list[
+        Annotated[
+            "ACIEndpointGroupDomainBindingType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
 
 
 @strawberry_django.type(
@@ -690,6 +703,12 @@ class ACIUSegEndpointGroupType(OwnerMixin, NetBoxObjectType):
     aci_useg_network_attributes: list[
         Annotated[
             "ACIUSegNetworkAttributeType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_endpoint_group_domain_bindings: list[
+        Annotated[
+            "ACIEndpointGroupDomainBindingType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
@@ -731,6 +750,57 @@ class ACIUSegNetworkAttributeType(OwnerMixin, NetBoxObjectType):
     ):
         """Return the attribute object."""
         return self.attr_object  # pragma: no cover
+
+
+@strawberry_django.type(
+    models.ACIEndpointGroupDomainBinding,
+    exclude=[
+        "aci_epg_object_id",
+        "aci_epg_object_type",
+        "aci_domain_object_id",
+        "aci_domain_object_type",
+        "_aci_endpoint_group",
+        "_aci_useg_endpoint_group",
+        "_aci_physical_domain",
+    ],
+    filters=ACIEndpointGroupDomainBindingFilter,
+    pagination=True,
+)
+class ACIEndpointGroupDomainBindingType(NetBoxObjectType):
+    """GraphQL type definition for the ACIEndpointGroupDomainBinding model."""
+
+    @strawberry_django.field(description="ACI EPG Object")
+    def aci_epg_object(
+        self,
+    ) -> (
+        Annotated[
+            Annotated[
+                "ACIEndpointGroupType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
+            ]
+            | Annotated[
+                "ACIUSegEndpointGroupType",
+                strawberry.lazy("netbox_aci_plugin.graphql.types"),
+            ],
+            strawberry.union("ACIEndpointGroupDomainBindingEpgObjectType"),
+        ]
+        | None
+    ):
+        """Return the ACI EPG object."""
+        return self.aci_epg_object  # pragma: no cover
+
+    @strawberry_django.field(description="ACI Domain Object")
+    def aci_domain_object(
+        self,
+    ) -> (
+        Annotated[
+            "ACIPhysicalDomainType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+        | None
+    ):
+        """Return the ACI Domain object."""
+        return self.aci_domain_object  # pragma: no cover
 
 
 @strawberry_django.type(
