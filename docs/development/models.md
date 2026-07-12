@@ -201,6 +201,18 @@ machinery consult for the "what owns this?" relationship.
 `ACITenantBaseModel` already provides `aci_fabric` via
 `self.aci_tenant.aci_fabric`, so tenant-scoped models inherit it for free.
 
+Which owner shortcuts a model exposes follows its place in the ACI hierarchy. A
+tenant-scoped object can reach both its tenant and its fabric, so it exposes
+`aci_tenant` and `aci_fabric`. A fabric-scoped or access-policy object sits
+outside any tenant, so it exposes only `aci_fabric`.
+
+An association model reaches its owners through the objects it links, and names
+each shortcut after the owner it actually reaches. Reaching a single tenant, it
+exposes `aci_tenant`. Able to reach two different tenants, it names each one, as
+`ACIContractRelation` does with `aci_contract_tenant` and `aci_object_tenant`.
+The fabric follows the same idea, and an association whose sides are both
+access-policy objects has no tenant to expose.
+
 ## Choice color helpers
 
 For every `ChoiceSet`-backed field, declare a
