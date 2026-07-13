@@ -5,6 +5,7 @@
 """Table tests for ACI Endpoint Group domain bindings."""
 
 from ....tables.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBindingTable,
     ACIEndpointGroupDomainBindingTable,
 )
 from .. import base
@@ -12,3 +13,7 @@ from .. import base
 
 class ACIEndpointGroupDomainBindingTableTestCase(base.StandardTableTestCase):
     table = ACIEndpointGroupDomainBindingTable
+
+
+class ACIEndpointGroupAAEPBindingTableTestCase(base.StandardTableTestCase):
+    table = ACIEndpointGroupAAEPBindingTable

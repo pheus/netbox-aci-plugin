@@ -7,7 +7,10 @@ from django.utils.translation import gettext_lazy as _
 
 from netbox.tables import NetBoxTable, columns
 
-from ...models.tenant.endpoint_group_bindings import ACIEndpointGroupDomainBinding
+from ...models.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBinding,
+    ACIEndpointGroupDomainBinding,
+)
 
 
 class ACIEndpointGroupDomainBindingTable(NetBoxTable):
@@ -62,5 +65,56 @@ class ACIEndpointGroupDomainBindingTable(NetBoxTable):
             "aci_domain_object",
             "deployment_immediacy",
             "resolution_immediacy",
+            "tags",
+        )
+
+
+class ACIEndpointGroupAAEPBindingTable(NetBoxTable):
+    """NetBox table for the ACI Endpoint Group AAEP Binding model."""
+
+    aci_endpoint_group = tables.Column(
+        verbose_name=_("ACI Endpoint Group"),
+        linkify=True,
+    )
+    aci_aaep = tables.Column(
+        verbose_name=_("ACI AAEP"),
+        linkify=True,
+    )
+    nb_vlan = tables.Column(
+        verbose_name=_("NetBox VLAN"),
+        linkify=True,
+    )
+    effective_encap_vlan_id = tables.Column(
+        verbose_name=_("Effective Encap VLAN ID"),
+        orderable=False,
+    )
+    mode = columns.ChoiceFieldColumn()
+    deployment_immediacy = columns.ChoiceFieldColumn()
+    tags = columns.TagColumn()
+    comments = columns.MarkdownColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ACIEndpointGroupAAEPBinding
+        fields: tuple = (
+            "pk",
+            "id",
+            "aci_endpoint_group",
+            "aci_aaep",
+            "nb_vlan",
+            "encap_vlan_id",
+            "effective_encap_vlan_id",
+            "mode",
+            "deployment_immediacy",
+            "tags",
+            "comments",
+        )
+        default_columns: tuple = (
+            "aci_endpoint_group",
+            "aci_aaep",
+            "nb_vlan",
+            "encap_vlan_id",
+            "effective_encap_vlan_id",
+            "mode",
+            "deployment_immediacy",
             "tags",
         )
