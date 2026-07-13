@@ -139,6 +139,27 @@ class ACIVLANPoolTestCase(ACIBaseTestCase):
         pool.nb_vlan_group = group
         pool.full_clean()  # no ranges -> nothing to validate
 
+    def test_covers_vid_true_within_first_range(self) -> None:
+        """Test covers_vid returns True for a VID within the first range."""
+        self.assertTrue(self.aci_vlan_pool1.covers_vid(150))
+
+    def test_covers_vid_true_within_second_range(self) -> None:
+        """Test covers_vid returns True for a VID within a second range."""
+        self.assertTrue(self.aci_vlan_pool1.covers_vid(250))
+
+    def test_covers_vid_true_at_range_boundaries(self) -> None:
+        """Test covers_vid returns True for the inclusive range boundaries."""
+        self.assertTrue(self.aci_vlan_pool1.covers_vid(100))
+        self.assertTrue(self.aci_vlan_pool1.covers_vid(199))
+
+    def test_covers_vid_false_below_ranges(self) -> None:
+        """Test covers_vid returns False for a VID below all pool ranges."""
+        self.assertFalse(self.aci_vlan_pool1.covers_vid(50))
+
+    def test_covers_vid_false_above_ranges(self) -> None:
+        """Test covers_vid returns False for a VID above all pool ranges."""
+        self.assertFalse(self.aci_vlan_pool1.covers_vid(4000))
+
 
 class ACIVLANPoolRangeTestCase(ACIBaseTestCase):
     """Test case for the ACIVLANPoolRange model."""

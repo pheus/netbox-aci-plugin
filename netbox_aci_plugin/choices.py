@@ -342,6 +342,21 @@ class DeploymentImmediacyChoices(ChoiceSet):
     )
 
 
+class PortModeChoices(ChoiceSet):
+    """Choice set of ACI port encapsulation modes."""
+
+    # default "regular"
+    MODE_REGULAR = "regular"
+    MODE_NATIVE = "native"
+    MODE_UNTAGGED = "untagged"
+
+    CHOICES = (
+        (MODE_REGULAR, _("Trunk"), "blue"),
+        (MODE_NATIVE, _("Access (802.1P)"), "purple"),
+        (MODE_UNTAGGED, _("Access (untagged)"), "gray"),
+    )
+
+
 class ResolutionImmediacyChoices(ChoiceSet):
     """Choice set of ACI resolution immediacy."""
 
