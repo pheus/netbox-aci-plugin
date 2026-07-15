@@ -36,6 +36,7 @@ from ..filtersets.tenant.contracts import (
     ACIContractSubjectFilterSet,
 )
 from ..filtersets.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBindingFilterSet,
     ACIEndpointGroupDomainBindingFilterSet,
 )
 from ..filtersets.tenant.endpoint_groups import (
@@ -80,7 +81,10 @@ from ..models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ..models.tenant.endpoint_group_bindings import ACIEndpointGroupDomainBinding
+from ..models.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBinding,
+    ACIEndpointGroupDomainBinding,
+)
 from ..models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
@@ -111,6 +115,7 @@ from .serializers import (
     ACIContractSerializer,
     ACIContractSubjectFilterSerializer,
     ACIContractSubjectSerializer,
+    ACIEndpointGroupAAEPBindingSerializer,
     ACIEndpointGroupDomainBindingSerializer,
     ACIEndpointGroupSerializer,
     ACIEndpointSecurityGroupSerializer,
@@ -456,6 +461,19 @@ class ACIEndpointGroupDomainBindingListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIEndpointGroupDomainBindingSerializer
     filterset_class = ACIEndpointGroupDomainBindingFilterSet
+
+
+class ACIEndpointGroupAAEPBindingListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Endpoint Group AAEP Binding instances."""
+
+    queryset = ACIEndpointGroupAAEPBinding.objects.select_related(
+        "aci_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
+        "aci_aaep__aci_fabric",
+        "nb_vlan",
+        "primary_nb_vlan",
+    ).prefetch_related("tags")
+    serializer_class = ACIEndpointGroupAAEPBindingSerializer
+    filterset_class = ACIEndpointGroupAAEPBindingFilterSet
 
 
 class ACIEndpointSecurityGroupListViewSet(NetBoxModelViewSet):
