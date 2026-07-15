@@ -29,7 +29,10 @@ from .tenant.contracts import (
     ACIContractSubjectFilterSerializer,
     ACIContractSubjectSerializer,
 )
-from .tenant.endpoint_group_bindings import ACIEndpointGroupDomainBindingSerializer
+from .tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBindingSerializer,
+    ACIEndpointGroupDomainBindingSerializer,
+)
 from .tenant.endpoint_groups import (
     ACIEndpointGroupSerializer,
     ACIUSegEndpointGroupSerializer,
@@ -61,6 +64,7 @@ __all__ = (
     "ACIContractSerializer",
     "ACIContractSubjectFilterSerializer",
     "ACIContractSubjectSerializer",
+    "ACIEndpointGroupAAEPBindingSerializer",
     "ACIEndpointGroupDomainBindingSerializer",
     "ACIEndpointGroupSerializer",
     "ACIEndpointSecurityGroupSerializer",

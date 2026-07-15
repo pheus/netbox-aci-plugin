@@ -5,6 +5,7 @@
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 
+from ipam.api.serializers import VLANSerializer
 from netbox.api.fields import ContentTypeField
 from netbox.api.gfk_fields import GFKSerializerField
 from netbox.api.serializers import NetBoxModelSerializer
@@ -13,7 +14,12 @@ from ....constants import (
     EPG_DOMAIN_BINDING_DOMAIN_OBJECT_TYPES,
     EPG_DOMAIN_BINDING_EPG_OBJECT_TYPES,
 )
-from ....models.tenant.endpoint_group_bindings import ACIEndpointGroupDomainBinding
+from ....models.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBinding,
+    ACIEndpointGroupDomainBinding,
+)
+from ..access_policies.aaep import ACIAttachableAccessEntityProfileSerializer
+from .endpoint_groups import ACIEndpointGroupSerializer
 
 
 class ACIEndpointGroupDomainBindingSerializer(NetBoxModelSerializer):
@@ -77,4 +83,44 @@ class ACIEndpointGroupDomainBindingSerializer(NetBoxModelSerializer):
             "aci_domain_object_type",
             "aci_domain_object_id",
             "aci_domain_object",
+        )
+
+
+class ACIEndpointGroupAAEPBindingSerializer(NetBoxModelSerializer):
+    """Serializer for the ACI Endpoint Group AAEP Binding model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:aciendpointgroupaaepbinding-detail"
+    )
+    aci_endpoint_group = ACIEndpointGroupSerializer(nested=True, required=True)
+    aci_aaep = ACIAttachableAccessEntityProfileSerializer(nested=True, required=True)
+    nb_vlan = VLANSerializer(nested=True, required=False, allow_null=True)
+    primary_nb_vlan = VLANSerializer(nested=True, required=False, allow_null=True)
+
+    class Meta:
+        model = ACIEndpointGroupAAEPBinding
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "aci_endpoint_group",
+            "aci_aaep",
+            "nb_vlan",
+            "encap_vlan_id",
+            "primary_nb_vlan",
+            "primary_encap_vlan_id",
+            "mode",
+            "deployment_immediacy",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "aci_endpoint_group",
+            "aci_aaep",
         )
