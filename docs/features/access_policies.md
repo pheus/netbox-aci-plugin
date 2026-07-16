@@ -11,6 +11,7 @@ flowchart TD
     PD(Physical Domain)
     RD(Routed Domain)
     L3O(L3Out)
+    EPG(Endpoint Group)
     VP(VLAN Pool)
     VPR(VLAN Pool Range)
     NBVG[NetBox VLAN Group]
@@ -27,6 +28,7 @@ flowchart TD
         RD -.->|n:1| VP
     end
     L3O -.->|n:1| RD
+    EPG -.->|n:n| AAEP
     VP -.->|1:1| NBVG
 ```
 
@@ -196,7 +198,8 @@ The *ACIAttachableAccessEntityProfile* model has the following fields:
 - The `(aci_fabric, name)` combination must be unique per fabric.
 
 Domain bindings for an AAEP are managed on the profile's detail page via
-the **Domain Bindings** tab.
+the **Domain Bindings** tab, and endpoint group bindings via the
+**EPG Bindings** tab.
 
 ## AAEP Domain Binding
 
@@ -223,3 +226,92 @@ The *ACIAAEPDomainBinding* model has the following fields:
 - The assigned domain must belong to the same ACI Fabric as the parent AAEP.
 - Each `(aci_aaep, domain)` combination must be unique (an AAEP cannot be
   bound to the same domain twice).
+
+## Endpoint Group AAEP Binding
+
+A VLAN Pool supplies the fabric's encapsulation ranges, a domain consumes
+one of those pools, and an AAEP binds interface policy groups to that
+domain. An *Endpoint Group AAEP Binding* is the last link: it represents
+an ACI EPG-to-AAEP deployment association (`infraRsFuncToEpg`) that
+statically deploys an Endpoint Group's VLAN encapsulation on every
+interface the AAEP covers.
+
+The binding references the Endpoint Group directly, but deploying it
+still depends on the Endpoint Group already being bound to a domain: the
+Endpoint Group needs its own domain binding to a Physical Domain, and the
+AAEP needs its own binding to that same domain, or to at least one
+domain the two have in common if either side is bound to more than one.
+An Endpoint Group attached to a Physical Domain, for instance, can only
+be deployed through AAEPs that are themselves bound to that same domain.
+When none of the Endpoint Group's domains match one of the AAEP's, the
+fabric raises fault F0467.
+
+This binding models the deployment's AAEP-originated relation,
+`infraRsFuncToEpg`. It does not model `fvRsAepAtt`, the EPG-originated
+variant APIC introduced in 6.1(3f).
+
+The *ACIEndpointGroupAAEPBinding* model has the following fields:
+
+*Required fields*:
+
+- **ACI Endpoint Group**: the Endpoint Group to deploy through the AAEP.
+- **ACI AAEP**: the Attachable Access Entity Profile to deploy the
+  Endpoint Group through.
+- **Encap VLAN ID**: the VLAN encapsulation of the deployment. Required
+  when no NetBox VLAN is selected.
+    - Values: `1-4094`
+
+*Optional fields*:
+
+- **NetBox VLAN**: an optional reference to a NetBox VLAN.
+    - When set, its VID is used as the effective encap VLAN ID ahead of
+      the snapshotted value, and is what the snapshot falls back to if
+      the NetBox VLAN is later deleted.
+    - Re-pointing an existing binding to a different NetBox VLAN
+      requires clearing the Encap VLAN ID in the same edit, so the
+      snapshot re-syncs to the new VLAN deliberately rather than
+      silently keeping the stale value.
+- **Primary NetBox VLAN**: an optional reference to a NetBox VLAN used
+  as the primary VLAN when the deployment requires a paired
+  encapsulation, for example for intra-EPG isolation. It follows the
+  same snapshot and re-point rules as the main NetBox VLAN.
+- **Primary encap VLAN ID**: the primary VLAN encapsulation, snapshotted
+  the same way as the Encap VLAN ID.
+    - Values: `1-4094`
+- **Mode**: the VLAN tagging mode of the deployment.
+    - Values: `regular` (Trunk), `native` (Access (802.1P)),
+      `untagged` (Access (untagged))
+    - Default: `regular`
+- **Deployment immediacy**: when the policy is pushed into the leaf
+  hardware (default *On Demand*).
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The assigned ACI AAEP must belong to the same ACI Fabric as the ACI
+  Endpoint Group.
+- The AAEP and the Endpoint Group must share at least one bound
+  Physical Domain, or the fabric raises fault F0467.
+- Either a NetBox VLAN or an Encap VLAN ID is required, and a NetBox
+  VLAN paired with an Encap VLAN ID must agree with its VID.
+- A single shared Physical Domain's ACI VLAN Pool must satisfy the
+  whole encapsulation together: it has to cover both the encap VLAN ID
+  and the primary encap VLAN ID, and its NetBox VLAN group, if set,
+  has to admit both the main and the primary NetBox VLAN. These
+  requirements cannot be split across different domains. One shared
+  domain has to satisfy all of them.
+- Each `(aci_endpoint_group, aci_aaep)` combination must be unique (an
+  Endpoint Group cannot be deployed through the same AAEP twice).
+
+The shared-domain requirement is only checked when the binding is
+created or edited, not continuously afterwards. If a shared Physical
+Domain is later unbound from either the Endpoint Group or the AAEP,
+the binding is left in place rather than removed. It now reflects
+fault F0467, the same fault APIC itself would raise, until a shared
+domain exists again.
+
+The binding is managed from both sides: the AAEP's detail page carries
+the canonical **EPG Bindings** tab, and the Endpoint Group's detail
+page shows the same bindings in reverse under the **AAEP Bindings**
+tab.

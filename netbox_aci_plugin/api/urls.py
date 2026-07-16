@@ -42,6 +42,9 @@ router.register("useg-network-attributes", views.ACIUSegNetworkAttributeListView
 router.register(
     "endpoint-group-domain-bindings", views.ACIEndpointGroupDomainBindingListViewSet
 )
+router.register(
+    "endpoint-group-aaep-bindings", views.ACIEndpointGroupAAEPBindingListViewSet
+)
 router.register("endpoint-security-groups", views.ACIEndpointSecurityGroupListViewSet)
 router.register(
     "esg-endpoint-group-selectors", views.ACIEsgEndpointGroupSelectorListViewSet

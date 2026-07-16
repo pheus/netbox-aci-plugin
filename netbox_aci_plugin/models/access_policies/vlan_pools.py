@@ -117,6 +117,12 @@ class ACIVLANPool(ACIFabricBaseModel):
         """Return the associated color of choice from the ChoiceSet."""
         return VLANAllocationModeChoices.colors.get(self.allocation_mode)
 
+    def covers_vid(self, vid: int) -> bool:
+        """Return whether the VLAN ID is within one of the pool's ranges."""
+        return self.aci_vlan_pool_ranges.filter(
+            vlan_id_from__lte=vid, vlan_id_to__gte=vid
+        ).exists()
+
 
 class ACIVLANPoolRange(NetBoxModel):
     """ACI VLAN pool encapsulation range (fvnsEncapBlk).

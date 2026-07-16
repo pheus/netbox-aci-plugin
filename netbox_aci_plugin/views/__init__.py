@@ -120,6 +120,12 @@ from .tenant.contracts import (
     ACIContractSubjectListView,
 )
 from .tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBindingBulkDeleteView,
+    ACIEndpointGroupAAEPBindingBulkEditView,
+    ACIEndpointGroupAAEPBindingBulkImportView,
+    ACIEndpointGroupAAEPBindingEditView,
+    ACIEndpointGroupAAEPBindingListView,
+    ACIEndpointGroupAAEPBindingView,
     ACIEndpointGroupDomainBindingBulkDeleteView,
     ACIEndpointGroupDomainBindingBulkEditView,
     ACIEndpointGroupDomainBindingBulkImportView,
@@ -274,6 +280,13 @@ __all__ = (
     "ACIEndpointGroupBulkImportView",
     "ACIEndpointGroupEditView",
     "ACIEndpointGroupListView",
+    # ACIEndpointGroupAAEPBinding
+    "ACIEndpointGroupAAEPBindingBulkDeleteView",
+    "ACIEndpointGroupAAEPBindingBulkEditView",
+    "ACIEndpointGroupAAEPBindingBulkImportView",
+    "ACIEndpointGroupAAEPBindingEditView",
+    "ACIEndpointGroupAAEPBindingListView",
+    "ACIEndpointGroupAAEPBindingView",
     # ACIEndpointGroupDomainBinding
     "ACIEndpointGroupDomainBindingBulkDeleteView",
     "ACIEndpointGroupDomainBindingBulkEditView",

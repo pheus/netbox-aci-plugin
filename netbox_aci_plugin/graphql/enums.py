@@ -23,6 +23,7 @@ from ..choices import (
     DeploymentImmediacyChoices,
     NodeRoleChoices,
     NodeTypeChoices,
+    PortModeChoices,
     QualityOfServiceClassChoices,
     QualityOfServiceDSCPChoices,
     ResolutionImmediacyChoices,
@@ -54,6 +55,7 @@ __all__ = (
     "DeploymentImmediacyEnum",
     "NodeRoleEnum",
     "NodeTypeEnum",
+    "PortModeEnum",
     "QualityOfServiceClassEnum",
     "QualityOfServiceDSCPEnum",
     "ResolutionImmediacyEnum",
@@ -135,6 +137,12 @@ ResolutionImmediacyEnum = strawberry.enum(ResolutionImmediacyChoices.as_enum())
 
 NodeRoleEnum = strawberry.enum(NodeRoleChoices.as_enum())
 NodeTypeEnum = strawberry.enum(NodeTypeChoices.as_enum())
+
+#
+# Endpoint Group AAEP Binding
+#
+
+PortModeEnum = strawberry.enum(PortModeChoices.as_enum())
 
 #
 # Quality of Service (QoS)

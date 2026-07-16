@@ -11,19 +11,29 @@ from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
 from ...filtersets.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBindingFilterSet,
     ACIEndpointGroupDomainBindingFilterSet,
 )
 from ...forms.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBindingBulkEditForm,
+    ACIEndpointGroupAAEPBindingEditForm,
+    ACIEndpointGroupAAEPBindingFilterForm,
+    ACIEndpointGroupAAEPBindingImportForm,
     ACIEndpointGroupDomainBindingBulkEditForm,
     ACIEndpointGroupDomainBindingEditForm,
     ACIEndpointGroupDomainBindingFilterForm,
     ACIEndpointGroupDomainBindingImportForm,
 )
+from ...models.access_policies.aaep import ACIAttachableAccessEntityProfile
 from ...models.access_policies.domains import ACIPhysicalDomain
-from ...models.tenant.endpoint_group_bindings import ACIEndpointGroupDomainBinding
+from ...models.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBinding,
+    ACIEndpointGroupDomainBinding,
+)
 from ...models.tenant.endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
 from ...object_actions import add_child_action
 from ...tables.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBindingTable,
     ACIEndpointGroupDomainBindingTable,
 )
 
@@ -58,6 +68,27 @@ class ACIEndpointGroupDomainBindingChildrenView(generic.ObjectChildrenView):
                 "aci_domain_object",
                 "tags",
             )
+        )
+
+
+class ACIEndpointGroupAAEPBindingChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching a tab of ACI EPG AAEP Bindings."""
+
+    child_model = ACIEndpointGroupAAEPBinding
+    filterset = ACIEndpointGroupAAEPBindingFilterSet
+    table = ACIEndpointGroupAAEPBindingTable
+
+    def get_children(self, request, parent):
+        """Return all ACIEndpointGroupAAEPBinding objects."""
+        return (
+            ACIEndpointGroupAAEPBinding.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
+                "aci_aaep__aci_fabric",
+                "nb_vlan",
+                "primary_nb_vlan",
+            )
+            .prefetch_related("tags")
         )
 
 
@@ -279,3 +310,172 @@ class ACIEndpointGroupDomainBindingBulkDeleteView(generic.BulkDeleteView):
     queryset = ACIEndpointGroupDomainBinding.objects.all()
     filterset = ACIEndpointGroupDomainBindingFilterSet
     table = ACIEndpointGroupDomainBindingTable
+
+
+#
+# ACI Endpoint Group AAEP Binding views
+#
+
+
+@register_model_view(ACIEndpointGroupAAEPBinding)
+class ACIEndpointGroupAAEPBindingView(generic.ObjectView):
+    """Detail view for displaying a single object of ACI EPG AAEP Binding."""
+
+    queryset = ACIEndpointGroupAAEPBinding.objects.select_related(
+        "aci_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
+        "aci_aaep__aci_fabric",
+        "nb_vlan",
+        "primary_nb_vlan",
+    ).prefetch_related("tags")
+
+
+@register_model_view(ACIEndpointGroupAAEPBinding, "list", path="", detail=False)
+class ACIEndpointGroupAAEPBindingListView(generic.ObjectListView):
+    """List view for listing all objects of ACIEndpointGroupAAEPBinding."""
+
+    queryset = ACIEndpointGroupAAEPBinding.objects.select_related(
+        "aci_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
+        "aci_aaep__aci_fabric",
+        "nb_vlan",
+        "primary_nb_vlan",
+    ).prefetch_related("tags")
+    filterset = ACIEndpointGroupAAEPBindingFilterSet
+    filterset_form = ACIEndpointGroupAAEPBindingFilterForm
+    table = ACIEndpointGroupAAEPBindingTable
+
+
+@register_model_view(ACIEndpointGroupAAEPBinding, "add", detail=False)
+@register_model_view(ACIEndpointGroupAAEPBinding, "edit")
+class ACIEndpointGroupAAEPBindingEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACIEndpointGroupAAEPBinding."""
+
+    queryset = ACIEndpointGroupAAEPBinding.objects.select_related(
+        "aci_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
+        "aci_aaep__aci_fabric",
+        "nb_vlan",
+        "primary_nb_vlan",
+    ).prefetch_related("tags")
+    form = ACIEndpointGroupAAEPBindingEditForm
+
+
+@register_model_view(ACIEndpointGroupAAEPBinding, "delete")
+class ACIEndpointGroupAAEPBindingDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACIEndpointGroupAAEPBinding."""
+
+    queryset = ACIEndpointGroupAAEPBinding.objects.select_related(
+        "aci_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
+        "aci_aaep__aci_fabric",
+        "nb_vlan",
+        "primary_nb_vlan",
+    ).prefetch_related("tags")
+
+
+@register_model_view(ACIEndpointGroup, "aaepbindings", path="aaep-bindings")
+class ACIEndpointGroupAAEPBindingsView(ACIEndpointGroupAAEPBindingChildrenView):
+    """Children view of ACI EPG AAEP Bindings of an ACI Endpoint Group."""
+
+    queryset = ACIEndpointGroup.objects.all()
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEndpointGroupAAEPBinding",
+            _("Bind an AAEP"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_tenant.aci_fabric_id,
+                "aci_endpoint_group": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIEndpointGroupAAEPBindingChildrenView.actions
+    tab = ViewTab(
+        label=_("AAEP Bindings"),
+        badge=lambda obj: obj.aci_aaep_bindings.count(),
+        permission="netbox_aci_plugin.view_aciendpointgroupaaepbinding",
+        weight=1300,
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return (
+            super().get_children(request, parent).filter(aci_endpoint_group=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI Endpoint Group column hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACI Endpoint Group column
+        table.columns.hide("aci_endpoint_group")
+
+        return table
+
+
+@register_model_view(
+    ACIAttachableAccessEntityProfile, "epgbindings", path="epg-bindings"
+)
+class ACIAttachableAccessEntityProfileEPGBindingsView(
+    ACIEndpointGroupAAEPBindingChildrenView
+):
+    """Children view of ACI EPG AAEP Bindings of an ACI AAEP."""
+
+    queryset = ACIAttachableAccessEntityProfile.objects.all()
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACIEndpointGroupAAEPBinding",
+            _("Bind an Endpoint Group"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
+                "aci_aaep": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACIEndpointGroupAAEPBindingChildrenView.actions
+    tab = ViewTab(
+        label=_("EPG Bindings"),
+        badge=lambda obj: obj.aci_endpoint_group_bindings.count(),
+        permission="netbox_aci_plugin.view_aciendpointgroupaaepbinding",
+        weight=1100,
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return super().get_children(request, parent).filter(aci_aaep=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI AAEP column hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACI AAEP column
+        table.columns.hide("aci_aaep")
+
+        return table
+
+
+@register_model_view(
+    ACIEndpointGroupAAEPBinding, "bulk_import", path="import", detail=False
+)
+class ACIEndpointGroupAAEPBindingBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing Endpoint Group AAEP Binding objects."""
+
+    queryset = ACIEndpointGroupAAEPBinding.objects.all()
+    model_form = ACIEndpointGroupAAEPBindingImportForm
+
+
+@register_model_view(
+    ACIEndpointGroupAAEPBinding, "bulk_edit", path="edit", detail=False
+)
+class ACIEndpointGroupAAEPBindingBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing Endpoint Group AAEP Binding objects."""
+
+    queryset = ACIEndpointGroupAAEPBinding.objects.all()
+    filterset = ACIEndpointGroupAAEPBindingFilterSet
+    table = ACIEndpointGroupAAEPBindingTable
+    form = ACIEndpointGroupAAEPBindingBulkEditForm
+
+
+@register_model_view(
+    ACIEndpointGroupAAEPBinding, "bulk_delete", path="delete", detail=False
+)
+class ACIEndpointGroupAAEPBindingBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting Endpoint Group AAEP Binding objects."""
+
+    queryset = ACIEndpointGroupAAEPBinding.objects.all()
+    filterset = ACIEndpointGroupAAEPBindingFilterSet
+    table = ACIEndpointGroupAAEPBindingTable
