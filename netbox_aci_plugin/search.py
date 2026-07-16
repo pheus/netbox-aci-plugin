@@ -29,7 +29,10 @@ from .models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from .models.tenant.endpoint_group_bindings import ACIEndpointGroupDomainBinding
+from .models.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBinding,
+    ACIEndpointGroupDomainBinding,
+)
 from .models.tenant.endpoint_groups import (
     ACIEndpointGroup,
     ACIUSegEndpointGroup,
@@ -496,6 +499,23 @@ class ACIEndpointGroupDomainBindingIndex(SearchIndex):
         ("_aci_physical_domain", 300),
     )
     display_attrs: tuple = ("aci_epg_object", "aci_domain_object")
+
+
+@register_search
+class ACIEndpointGroupAAEPBindingIndex(SearchIndex):
+    """NetBox search definition for the ACI EPG AAEP Binding model."""
+
+    model = ACIEndpointGroupAAEPBinding
+
+    fields: tuple = (
+        ("aci_endpoint_group", 100),
+        ("aci_aaep", 300),
+    )
+    display_attrs: tuple = (
+        "aci_endpoint_group",
+        "aci_aaep",
+        "nb_vlan",
+    )
 
 
 @register_search
