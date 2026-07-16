@@ -18,6 +18,7 @@ from .types import (
     ACIContractSubjectFilterType,
     ACIContractSubjectType,
     ACIContractType,
+    ACIEndpointGroupAAEPBindingType,
     ACIEndpointGroupDomainBindingType,
     ACIEndpointGroupType,
     ACIEndpointSecurityGroupType,
@@ -131,6 +132,13 @@ class NetBoxACIQuery:
         strawberry_django.field()
     )
     aci_endpoint_group_domain_binding_list: list[ACIEndpointGroupDomainBindingType] = (
+        strawberry_django.field()
+    )
+
+    aci_endpoint_group_aaep_binding: ACIEndpointGroupAAEPBindingType = (
+        strawberry_django.field()
+    )
+    aci_endpoint_group_aaep_binding_list: list[ACIEndpointGroupAAEPBindingType] = (
         strawberry_django.field()
     )
 

@@ -24,6 +24,7 @@ from .filters import (
     ACIContractRelationFilter,
     ACIContractSubjectFilter,
     ACIContractSubjectFilterFilter,
+    ACIEndpointGroupAAEPBindingFilter,
     ACIEndpointGroupDomainBindingFilter,
     ACIEndpointGroupFilter,
     ACIEndpointSecurityGroupFilter,
@@ -215,6 +216,12 @@ class ACIAttachableAccessEntityProfileType(OwnerMixin, NetBoxObjectType):
     aci_aaep_domain_bindings: list[
         Annotated[
             "ACIAAEPDomainBindingType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_endpoint_group_bindings: list[
+        Annotated[
+            "ACIEndpointGroupAAEPBindingType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
@@ -672,6 +679,12 @@ class ACIEndpointGroupType(OwnerMixin, NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+    aci_aaep_bindings: list[
+        Annotated[
+            "ACIEndpointGroupAAEPBindingType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
 
 
 @strawberry_django.type(
@@ -801,6 +814,27 @@ class ACIEndpointGroupDomainBindingType(NetBoxObjectType):
     ):
         """Return the ACI Domain object."""
         return self.aci_domain_object  # pragma: no cover
+
+
+@strawberry_django.type(
+    models.ACIEndpointGroupAAEPBinding,
+    fields="__all__",
+    filters=ACIEndpointGroupAAEPBindingFilter,
+    pagination=True,
+)
+class ACIEndpointGroupAAEPBindingType(NetBoxObjectType):
+    """GraphQL type definition for the ACIEndpointGroupAAEPBinding model."""
+
+    # Model fields
+    aci_endpoint_group: Annotated[
+        "ACIEndpointGroupType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_aaep: Annotated[
+        "ACIAttachableAccessEntityProfileType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    nb_vlan: Annotated["VLANType", strawberry.lazy("ipam.graphql.types")] | None
+    primary_nb_vlan: Annotated["VLANType", strawberry.lazy("ipam.graphql.types")] | None
 
 
 @strawberry_django.type(
