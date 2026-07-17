@@ -188,12 +188,12 @@ useful cross-tier shortcuts:
 
 ```python
 @property
-def parent_object(self) -> ACITenant:
-    return self.aci_tenant
-
-@property
 def aci_fabric(self) -> ACIFabric:
     return self.aci_tenant.aci_fabric
+
+@property
+def parent_object(self) -> ACITenant:
+    return self.aci_tenant
 ```
 
 `parent_object` is what `to_objectchange()` and the URL/breadcrumb
@@ -212,6 +212,14 @@ exposes `aci_tenant`. Able to reach two different tenants, it names each one, as
 `ACIContractRelation` does with `aci_contract_tenant` and `aci_object_tenant`.
 The fabric follows the same idea, and an association whose sides are both
 access-policy objects has no tenant to expose.
+
+Keep the declaration order stable: the owner and cross-tier shortcuts come
+first, `parent_object` after them, and any computed value property last. An
+association model lists its owner shortcuts in hierarchy order, outermost owner
+first. A computed property, such as an `effective_*` encapsulation resolver or
+`ACIExternalSubnet`'s `prefix_source`, returns a derived value rather than a
+related object, so it belongs after the owner shortcuts and `parent_object`,
+never interleaved among them.
 
 ## Choice color helpers
 
