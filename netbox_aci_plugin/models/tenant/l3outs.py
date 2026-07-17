@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""Models for ACI L3Outs, external EPGs, and external subnets."""
+"""Models for ACI L3Outs, External EPGs, and External Subnets."""
 
 from __future__ import annotations
 
@@ -30,14 +30,14 @@ if TYPE_CHECKING:
 class ACIL3Out(ACITenantBaseModel):
     """External Layer 3 connection out of an ACI Fabric.
 
-    Parented by an ACITenant and bound to a VRF and a routed domain.
+    Parented by an ACITenant and bound to a VRF and a Routed Domain.
     Enables routing protocols (BGP, OSPF, EIGRP) and route control
     toward external peers.
 
     Notes:
         EIGRP cannot be combined with BGP or OSPF. Multi-Pod is
         allowed only in the 'infra' tenant. Export route control is
-        always enforced by APIC. The VRF and routed domain must
+        always enforced by APIC. The VRF and Routed Domain must
         share the L3Out's fabric.
     """
 
@@ -143,7 +143,7 @@ class ACIL3Out(ACITenantBaseModel):
             "Default is disabled."
         ),
     )
-    # Plugin-side marker; APIC derives Multi-Pod from bgpExtP on infra L3Outs.
+    # Plugin-side marker. APIC derives Multi-Pod from bgpExtP on infra L3Outs.
     multipod_enabled = models.BooleanField(
         verbose_name=_("Multi-Pod enabled"),
         default=False,
@@ -411,9 +411,9 @@ class ACIL3Out(ACITenantBaseModel):
 
 
 class ACIExternalEndpointGroup(ACITenantBaseModel):
-    """External endpoint group classifying outside traffic.
+    """External Endpoint Group classifying outside traffic.
 
-    Parented by an ACIL3Out. Groups the external subnets that map
+    Parented by an ACIL3Out. Groups the External Subnets that map
     outside prefixes to a policy group for contracts.
     """
 
@@ -512,7 +512,7 @@ class ACIExternalEndpointGroup(ACITenantBaseModel):
 
 
 class ACIExternalSubnet(ACITenantBaseModel):
-    """External prefix classified under an external endpoint group.
+    """External prefix classified under an External Endpoint Group.
 
     Parented by an ACIExternalEndpointGroup. The matched prefix is
     taken from a linked NetBox prefix when set, or entered directly.
@@ -719,7 +719,7 @@ class ACIExternalSubnet(ACITenantBaseModel):
             errors.setdefault("nb_prefix", []).append(
                 _(
                     "The selected prefix must belong to the same NetBox VRF "
-                    "as the ACI VRF mapped to this L3Out."
+                    "as the ACI VRF mapped to this ACI L3Out."
                 )
             )
 
@@ -832,7 +832,7 @@ class ACIExternalSubnet(ACITenantBaseModel):
 
             # Shared Security Import leaks the prefix-to-pcTag mapping for
             # shared L3Out contracts. ACI requires the subnet to be classified
-            # as an External Subnet for the External EPG first; otherwise
+            # as an External Subnet for the External EPG first. Otherwise
             # the original VRF does not know which External EPG the prefix
             # belongs to.
             if self.shared_security_enabled and not self.import_security_enabled:

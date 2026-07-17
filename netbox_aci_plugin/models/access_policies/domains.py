@@ -86,7 +86,10 @@ class ACIDomainBaseModel(ACIFabricBaseModel):
             and self.aci_vlan_pool.aci_fabric_id != self.aci_fabric_id
         ):
             errors.setdefault("aci_vlan_pool", []).append(
-                _("The assigned VLAN pool must belong to the domain's ACI Fabric.")
+                _(
+                    "The assigned ACI VLAN Pool must belong to the "
+                    "{domain}'s ACI Fabric."
+                ).format(domain=self._meta.verbose_name)
             )
         if errors:
             raise ValidationError(errors)
@@ -98,7 +101,7 @@ class ACIDomainBaseModel(ACIFabricBaseModel):
 
 
 class ACIRoutedDomain(ACIDomainBaseModel):
-    """Routed (L3) domain tying L3Outs to fabric access policy.
+    """Routed (L3) Domain tying L3Outs to fabric access policy.
 
     Parented by an ACIFabric and referenced by L3Outs to provide
     their routed connectivity profile.
@@ -137,7 +140,7 @@ class ACIRoutedDomain(ACIDomainBaseModel):
 
 
 class ACIPhysicalDomain(ACIDomainBaseModel):
-    """Physical domain tying EPGs to fabric access policy.
+    """Physical Domain tying EPGs to fabric access policy.
 
     Parented by an ACIFabric and referenced by EPG domain bindings to
     provide bare-metal and hypervisor connectivity.

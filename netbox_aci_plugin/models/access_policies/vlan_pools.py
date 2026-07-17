@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-"""Models for ACI access-policy VLAN pools."""
+"""Models for ACI access-policy VLAN Pools."""
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 
 class ACIVLANPool(ACIFabricBaseModel):
-    """ACI VLAN pool (fvnsVlanInstP) scoped to a fabric.
+    """ACI VLAN Pool (fvnsVlanInstP) scoped to a fabric.
 
     Groups VLAN encapsulation ranges with an allocation mode, optionally
     backed by a NetBox VLAN group.
@@ -98,7 +98,7 @@ class ACIVLANPool(ACIFabricBaseModel):
                 errors.setdefault("nb_vlan_group", []).append(
                     _(
                         "The assigned NetBox VLAN group's ranges ({ranges}) "
-                        "do not cover all existing pool ranges: {offending}."
+                        "do not cover all existing ACI VLAN Pool ranges: {offending}."
                     ).format(
                         ranges=ranges_to_string(vid_ranges),
                         offending=", ".join(str(r) for r in offending),
@@ -125,7 +125,7 @@ class ACIVLANPool(ACIFabricBaseModel):
 
 
 class ACIVLANPoolRange(NetBoxModel):
-    """ACI VLAN pool encapsulation range (fvnsEncapBlk).
+    """ACI VLAN Pool encapsulation range (fvnsEncapBlk).
 
     A contiguous VLAN ID block within an ACIVLANPool.
     """
@@ -222,7 +222,10 @@ class ACIVLANPoolRange(NetBoxModel):
             )
             if overlap:
                 errors.setdefault("vlan_id_from", []).append(
-                    _("This VLAN range overlaps an existing range in the pool.")
+                    _(
+                        "This VLAN range overlaps an existing range in "
+                        "the ACI VLAN Pool."
+                    )
                 )
             if not errors:
                 group = self.aci_vlan_pool.nb_vlan_group
