@@ -49,7 +49,7 @@ The *ACIL3Out* model has the following fields:
     - Default: `false`
 - **EIGRP interface policy name**: the name of the EIGRP interface policy
   associated with the L3Out.
-- **Export route control enforcement enabled**: a read-only boolean field; export
+- **Export route control enforcement enabled**: a read-only boolean field. Export
   route control enforcement is always enabled for APIC L3Outs and cannot be
   disabled.
     - Default: `true`

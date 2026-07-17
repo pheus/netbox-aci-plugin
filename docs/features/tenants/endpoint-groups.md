@@ -153,10 +153,11 @@ The *ACIUSegNetworkAttribute* model has the following fields:
 
 An *Endpoint Group Domain Binding* represents an ACI EPG-to-domain association
 (`fvRsDomAtt`) that links an Endpoint Group or uSeg Endpoint Group to a Physical
-Domain. Each binding associates exactly one endpoint group with exactly one
-domain, and the domain must belong to the same ACI Fabric as the endpoint group.
-It is the anchor that later EPG deployment methods build on: an endpoint group
-must be associated with a domain before it can be deployed through that domain.
+Domain. Each binding associates exactly one Endpoint Group with exactly one
+domain, and the domain must belong to the same ACI Fabric as the Endpoint Group.
+It is a prerequisite that later EPG deployment methods build on: an Endpoint
+Group must be associated with a domain before it can be deployed through that
+domain.
 
 The *ACIEndpointGroupDomainBinding* model has the following fields:
 
@@ -164,8 +165,8 @@ The *ACIEndpointGroupDomainBinding* model has the following fields:
 
 - **ACI EPG object**: a reference to the parent `ACIEndpointGroup` or
   `ACIUSegEndpointGroup`.
-- **ACI domain object**: the Physical Domain to associate with the endpoint
-  group.
+- **ACI domain object**: the Physical Domain to associate with the Endpoint
+  Group.
 
 *Optional fields*:
 
@@ -178,11 +179,11 @@ The *ACIEndpointGroupDomainBinding* model has the following fields:
 
 *Validation rules*:
 
-- The assigned domain must belong to the same ACI Fabric as the endpoint group.
+- The assigned domain must belong to the same ACI Fabric as the Endpoint Group.
 - Each `(aci_epg_object, aci_domain_object)` combination must be unique (an
-  endpoint group cannot be bound to the same domain twice).
+  Endpoint Group cannot be bound to the same domain twice).
 
-Domain bindings for an endpoint group are managed on the Endpoint Group (or uSeg
-Endpoint Group) detail page via the **Domain Bindings** tab; the reverse
+Domain bindings for an Endpoint Group are managed on the Endpoint Group (or uSeg
+Endpoint Group) detail page via the **Domain Bindings** tab. The reverse
 associations for a Physical Domain are managed on the domain's detail page via
 the **Endpoint Groups** tab.
