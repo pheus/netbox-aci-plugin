@@ -672,6 +672,10 @@ class ACIEndpointGroupAAEPBinding(ACIEndpointGroupVLANBindingBase):
                     )
                 )
 
+        # Encap VLAN IDs must stay unique and modes compatible across
+        # all bindings sharing the AAEP
+        self._validate_aaep_sibling_bindings(errors)
+
         if errors:
             raise ValidationError(errors)
 
@@ -721,3 +725,113 @@ class ACIEndpointGroupAAEPBinding(ACIEndpointGroupVLANBindingBase):
         return aci_physical_domain_model.objects.filter(
             pk__in=set(epg_domain_ids) & set(aaep_domain_ids)
         ).select_related("aci_vlan_pool")
+
+    def _validate_aaep_sibling_bindings(self, errors: dict) -> None:
+        """Validate encap uniqueness and mode compatibility on the AAEP.
+
+        Fetches only the sibling bindings on the same AAEP that can
+        conflict with this instance: encap VLAN ID collisions on the
+        main or primary slot (cross-slot included), an existing
+        untagged binding, or a second native binding. An untagged
+        binding must be the only binding on its AAEP, and at most one
+        native binding is allowed per AAEP.
+        """
+        # An unset AAEP cannot conflict with an existing sibling
+        # binding; defer to required-field validation.
+        if not self.aci_aaep_id:
+            return
+
+        encap_vid = self.effective_encap_vlan_id
+        primary_vid = self.effective_primary_encap_vlan_id
+        vids = [vid for vid in (encap_vid, primary_vid) if vid is not None]
+
+        siblings = ACIEndpointGroupAAEPBinding.objects.filter(
+            aci_aaep_id=self.aci_aaep_id
+        )
+        # If updating an existing instance, exclude the current record.
+        if self.pk:
+            siblings = siblings.exclude(pk=self.pk)
+
+        if self.mode == PortModeChoices.MODE_UNTAGGED:
+            # An untagged binding conflicts with every sibling.
+            conflicts = siblings
+        else:
+            # Let the database narrow the siblings to actual
+            # conflicts: encap collisions on either slot, an existing
+            # untagged binding and, for a native binding, a second
+            # native one.
+            conflict_q = models.Q(mode=PortModeChoices.MODE_UNTAGGED)
+            if vids:
+                conflict_q |= models.Q(encap_vlan_id__in=vids) | models.Q(
+                    primary_encap_vlan_id__in=vids
+                )
+            if self.mode == PortModeChoices.MODE_NATIVE:
+                conflict_q |= models.Q(mode=PortModeChoices.MODE_NATIVE)
+            conflicts = siblings.filter(conflict_q)
+
+        conflict_rows = conflicts.values_list(
+            "aci_endpoint_group__name",
+            "encap_vlan_id",
+            "primary_encap_vlan_id",
+            "mode",
+        )
+
+        conflicting_epgs = []
+        untagged_epgs = []
+        native_epg = None
+        # Classify each conflicting sibling; encap collisions report
+        # per slot, mode conflicts resolve after the loop.
+        for epg_name, sib_encap, sib_primary, sib_mode in conflict_rows:
+            conflicting_epgs.append(epg_name)
+            for sib_vid in (sib_encap, sib_primary):
+                if sib_vid is None:
+                    continue
+                if encap_vid is not None and encap_vid == sib_vid:
+                    errors.setdefault("encap_vlan_id", []).append(
+                        _(
+                            "The encap VLAN ID {vid} is already used on "
+                            "this ACI AAEP by ACI Endpoint Group {epg}."
+                        ).format(vid=encap_vid, epg=epg_name)
+                    )
+                if primary_vid is not None and primary_vid == sib_vid:
+                    errors.setdefault("primary_encap_vlan_id", []).append(
+                        _(
+                            "The primary encap VLAN ID {vid} is already "
+                            "used on this ACI AAEP by ACI Endpoint "
+                            "Group {epg}."
+                        ).format(vid=primary_vid, epg=epg_name)
+                    )
+            if sib_mode == PortModeChoices.MODE_UNTAGGED:
+                untagged_epgs.append(epg_name)
+            elif sib_mode == PortModeChoices.MODE_NATIVE and native_epg is None:
+                native_epg = epg_name
+
+        # An untagged binding must be the only binding on its AAEP
+        # (the hardware supports a single untagged VLAN per port and
+        # no tagged EPGs beside it); at most one native binding is
+        # allowed per AAEP.
+        if self.mode == PortModeChoices.MODE_UNTAGGED and conflicting_epgs:
+            errors.setdefault("mode", []).append(
+                _(
+                    "An 'untagged' mode binding must be the only ACI "
+                    "Endpoint Group AAEP Binding on its ACI AAEP. This "
+                    "ACI AAEP is already used by ACI Endpoint Group "
+                    "{epgs}."
+                ).format(epgs=", ".join(conflicting_epgs))
+            )
+        elif untagged_epgs:
+            errors.setdefault("mode", []).append(
+                _(
+                    "The ACI AAEP already has an 'untagged' mode "
+                    "binding for ACI Endpoint Group {epg}, which must "
+                    "remain the only binding on its ACI AAEP."
+                ).format(epg=untagged_epgs[0])
+            )
+        elif self.mode == PortModeChoices.MODE_NATIVE and native_epg:
+            errors.setdefault("mode", []).append(
+                _(
+                    "Only one 'native' mode binding is allowed per ACI "
+                    "AAEP. ACI Endpoint Group {epg} already uses "
+                    "'native' mode on this ACI AAEP."
+                ).format(epg=native_epg)
+            )

@@ -973,9 +973,12 @@ class ACIEndpointGroupAAEPBindingTestCase(ACIBaseTestCase):
 
         Uses a fresh EPG (rather than the shared ``self.aci_epg``) so the
         new binding does not collide with the unique ``setUpTestData``
-        binding's (endpoint group, AAEP) pair.
+        binding's (endpoint group, AAEP) pair, and a dedicated main
+        NetBox VLAN (rather than the shared ``self.nb_vlan``) so the
+        encap VLAN ID does not collide with the fixture binding's encap
+        on the same AAEP.
         """
-        # 150 and 175 both fall in aci_vlan_pool1 (100-199)
+        # 151 and 175 both fall in aci_vlan_pool1 (100-199)
         epg = ACIEndpointGroup.objects.create(
             name="ACITestEPGSurvivesDeletionForAAEPBinding",
             aci_app_profile=self.aci_app_profile,
@@ -985,21 +988,22 @@ class ACIEndpointGroupAAEPBindingTestCase(ACIBaseTestCase):
             aci_epg_object=epg,
             aci_domain_object=self.aci_physical_domain,
         )
+        main_vlan = VLAN.objects.create(vid=151, name="MainVLANForAAEPBinding")
         primary_vlan = VLAN.objects.create(vid=175, name="PrimaryVLANForAAEPBinding")
         binding = ACIEndpointGroupAAEPBinding.objects.create(
             aci_endpoint_group=epg,
             aci_aaep=self.aci_aaep,
-            nb_vlan=self.nb_vlan,
+            nb_vlan=main_vlan,
             primary_nb_vlan=primary_vlan,
         )
-        self.assertEqual(binding.encap_vlan_id, 150)
+        self.assertEqual(binding.encap_vlan_id, 151)
         self.assertEqual(binding.primary_encap_vlan_id, 175)
-        self.nb_vlan.delete()
+        main_vlan.delete()
         primary_vlan.delete()
         binding.refresh_from_db()
         self.assertIsNone(binding.nb_vlan_id)
         self.assertIsNone(binding.primary_nb_vlan_id)
-        self.assertEqual(binding.encap_vlan_id, 150)
+        self.assertEqual(binding.encap_vlan_id, 151)
         self.assertEqual(binding.primary_encap_vlan_id, 175)
         binding.full_clean()  # snapshots remain usable as effective encaps
         self.assertEqual(str(binding), f"{epg} - {self.aci_aaep.name}")
@@ -1127,3 +1131,248 @@ class ACIEndpointGroupAAEPBindingTestCase(ACIBaseTestCase):
     def test_default_ordering_queryset_evaluates(self) -> None:
         """Test that the default-ordered queryset evaluates without error."""
         self.assertIsNotNone(list(ACIEndpointGroupAAEPBinding.objects.all()))
+
+    def test_invalid_aci_endpoint_group_aaep_binding_duplicate_encap(
+        self,
+    ) -> None:
+        """Test clean rejects an encap VLAN ID already used on the AAEP."""
+        epg = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingDuplicateEncap",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=epg,
+            aci_aaep=self.aci_aaep,
+            encap_vlan_id=150,  # collides with the fixture binding's encap
+        )
+        with self.assertRaises(ValidationError) as context:
+            binding.full_clean()
+        self.assertIn("encap_vlan_id", context.exception.error_dict)
+
+    def test_invalid_aci_endpoint_group_aaep_binding_primary_collides_main(
+        self,
+    ) -> None:
+        """Test clean rejects a primary encap equal to a sibling's encap."""
+        epg = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingPrimaryCollidesMain",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=epg,
+            aci_aaep=self.aci_aaep,
+            encap_vlan_id=160,
+            primary_encap_vlan_id=150,  # collides with the fixture's encap
+        )
+        with self.assertRaises(ValidationError) as context:
+            binding.full_clean()
+        self.assertIn("primary_encap_vlan_id", context.exception.error_dict)
+
+    def test_invalid_aci_endpoint_group_aaep_binding_main_collides_primary(
+        self,
+    ) -> None:
+        """Test clean rejects an encap equal to a sibling's primary encap."""
+        epg_with_primary = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingSiblingWithPrimary",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg_with_primary,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        ACIEndpointGroupAAEPBinding.objects.create(
+            aci_endpoint_group=epg_with_primary,
+            aci_aaep=self.aci_aaep,
+            encap_vlan_id=161,
+            primary_encap_vlan_id=162,
+        )
+        epg = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingMainCollidesPrimary",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=epg,
+            aci_aaep=self.aci_aaep,
+            encap_vlan_id=162,  # collides with the sibling's primary encap
+        )
+        with self.assertRaises(ValidationError) as context:
+            binding.full_clean()
+        self.assertIn("encap_vlan_id", context.exception.error_dict)
+
+    def test_invalid_aci_endpoint_group_aaep_binding_untagged_not_alone(
+        self,
+    ) -> None:
+        """Test clean rejects an untagged binding joining a used AAEP."""
+        epg = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingUntaggedNotAlone",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=epg,
+            aci_aaep=self.aci_aaep,
+            encap_vlan_id=160,
+            mode=PortModeChoices.MODE_UNTAGGED,
+        )
+        with self.assertRaises(ValidationError) as context:
+            binding.full_clean()
+        self.assertIn("mode", context.exception.error_dict)
+
+    def test_invalid_aci_endpoint_group_aaep_binding_join_untagged_aaep(
+        self,
+    ) -> None:
+        """Test clean rejects any binding joining an untagged AAEP."""
+        second_aaep = ACIAttachableAccessEntityProfile.objects.create(
+            name="ACITestAAEPSecondForUntaggedConflict",
+            aci_fabric=self.aci_fabric,
+        )
+        ACIAAEPDomainBinding.objects.create(
+            aci_aaep=second_aaep,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        epg_untagged = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingUntaggedSibling",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg_untagged,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        ACIEndpointGroupAAEPBinding.objects.create(
+            aci_endpoint_group=epg_untagged,
+            aci_aaep=second_aaep,
+            encap_vlan_id=170,
+            mode=PortModeChoices.MODE_UNTAGGED,
+        )
+        epg_regular = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingAfterUntagged",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg_regular,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=epg_regular,
+            aci_aaep=second_aaep,
+            encap_vlan_id=171,
+        )
+        with self.assertRaises(ValidationError) as context:
+            binding.full_clean()
+        self.assertIn("mode", context.exception.error_dict)
+
+    def test_invalid_aci_endpoint_group_aaep_binding_second_native(
+        self,
+    ) -> None:
+        """Test clean rejects a second native mode binding on the AAEP."""
+        epg_native1 = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingFirstNative",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg_native1,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        ACIEndpointGroupAAEPBinding.objects.create(
+            aci_endpoint_group=epg_native1,
+            aci_aaep=self.aci_aaep,
+            encap_vlan_id=165,
+            mode=PortModeChoices.MODE_NATIVE,
+        )
+        epg_native2 = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingSecondNative",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg_native2,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=epg_native2,
+            aci_aaep=self.aci_aaep,
+            encap_vlan_id=166,
+            mode=PortModeChoices.MODE_NATIVE,
+        )
+        with self.assertRaises(ValidationError) as context:
+            binding.full_clean()
+        self.assertIn("mode", context.exception.error_dict)
+
+    def test_valid_aci_endpoint_group_aaep_binding_native_with_regular(
+        self,
+    ) -> None:
+        """Test a native mode binding coexists with a regular sibling."""
+        epg = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingNativeCoexist",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=epg,
+            aci_aaep=self.aci_aaep,
+            encap_vlan_id=167,
+            mode=PortModeChoices.MODE_NATIVE,
+        )
+        binding.full_clean()  # native plus the fixture's regular binding
+
+    def test_valid_aci_endpoint_group_aaep_binding_same_encap_other_aaep(
+        self,
+    ) -> None:
+        """Test the same encap VLAN ID is valid on a different AAEP."""
+        other_aaep = ACIAttachableAccessEntityProfile.objects.create(
+            name="ACITestAAEPOtherForSameEncap",
+            aci_fabric=self.aci_fabric,
+        )
+        ACIAAEPDomainBinding.objects.create(
+            aci_aaep=other_aaep,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        epg = ACIEndpointGroup.objects.create(
+            name="ACITestEPGForAAEPBindingSameEncapOtherAAEP",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=epg,
+            aci_domain_object=self.aci_physical_domain,
+        )
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=epg,
+            aci_aaep=other_aaep,
+            encap_vlan_id=150,  # same VID as the fixture, different AAEP
+        )
+        binding.full_clean()  # different AAEP scope raises no error
+
+    def test_valid_aci_endpoint_group_aaep_binding_self_exclusion(
+        self,
+    ) -> None:
+        """Test re-validating a persisted binding excludes itself."""
+        # Without pk exclusion, the binding's own encap VLAN ID 150
+        # in the database would collide with itself.
+        self.aci_epg_aaep_binding.full_clean()

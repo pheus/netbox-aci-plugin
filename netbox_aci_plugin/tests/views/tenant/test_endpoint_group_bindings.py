@@ -401,9 +401,14 @@ class ACIEndpointGroupAAEPBindingViewTestCase(
             f"{bindings[2].pk},Updated binding 3",
         )
 
+        # deployment_immediacy leads: the constrained bulk-edit test
+        # derives its permission constraint from the first key, which
+        # must be a field the bulk edit actually transitions. Mode
+        # stays 'regular' because any other mode on three same-AAEP
+        # siblings violates the untagged/native AAEP rules.
         cls.bulk_edit_data = {
-            "mode": PortModeChoices.MODE_NATIVE,
             "deployment_immediacy": DeploymentImmediacyChoices.IMMEDIACY_IMMEDIATE,
+            "mode": PortModeChoices.MODE_REGULAR,
             "comments": "Bulk-edited binding",
         }
 

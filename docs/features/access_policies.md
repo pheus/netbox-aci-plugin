@@ -303,6 +303,13 @@ The *ACIEndpointGroupAAEPBinding* model has the following fields:
   domain has to satisfy all of them.
 - Each `(aci_endpoint_group, aci_aaep)` combination must be unique (an
   Endpoint Group cannot be deployed through the same AAEP twice).
+- Every VLAN ID used on an AAEP must be unique across its bindings:
+  the encap VLAN ID and the primary encap VLAN ID of one binding
+  cannot equal the encap VLAN ID or the primary encap VLAN ID of
+  another binding on the same AAEP.
+- An `untagged` mode binding must be the only Endpoint Group AAEP
+  Binding on its AAEP. At most one `native` mode binding is allowed
+  per AAEP, and `regular` mode bindings are not limited.
 
 The shared-domain requirement is only checked when the binding is
 created or edited, not continuously afterwards. If a shared Physical
