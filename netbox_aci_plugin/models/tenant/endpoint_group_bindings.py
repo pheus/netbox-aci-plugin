@@ -401,7 +401,7 @@ class ACIEndpointGroupVLANBindingBase(NetBoxModel):
             errors.setdefault("encap_vlan_id", []).append(
                 _(
                     "The encap VLAN ID does not match the selected NetBox "
-                    "VLAN's ID; clear the encap VLAN ID to re-sync it from "
+                    "VLAN's ID. Clear the encap VLAN ID to re-sync it from "
                     "the selected VLAN."
                 )
             )
@@ -416,7 +416,7 @@ class ACIEndpointGroupVLANBindingBase(NetBoxModel):
             errors.setdefault("primary_encap_vlan_id", []).append(
                 _(
                     "The primary encap VLAN ID does not match the selected "
-                    "primary NetBox VLAN's ID; clear the primary encap "
+                    "primary NetBox VLAN's ID. Clear the primary encap "
                     "VLAN ID to re-sync it from the selected primary VLAN."
                 )
             )
