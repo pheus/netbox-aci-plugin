@@ -256,11 +256,11 @@ urlpatterns: tuple = (
     ),
     # ACI External Subnet
     path(
-        "external-endpoint-groups/subnets/",
+        "external-subnets/",
         include(get_model_urls("netbox_aci_plugin", "aciexternalsubnet", detail=False)),
     ),
     path(
-        "external-endpoint-groups/subnets/<int:pk>/",
+        "external-subnets/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciexternalsubnet")),
     ),
     # ACI Bridge Domain L3Out Binding
