@@ -162,6 +162,7 @@ ignore = [
     "D105",   # pydocstyle: missing docstring in magic method
     "D106",   # pydocstyle: missing docstring in nested class
     "D107",   # pydocstyle: missing docstring in __init__
+    "D421",   # pydocstyle: property docstring starts with a verb (kept: "Return the ..." idiom)
     "RET504", # flake8-return: unnecessary temporary variable before `return`
     "UP032",  # pyupgrade: prefer f-strings over `str.format()`
 ]
