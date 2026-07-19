@@ -416,7 +416,7 @@ class ACIContractRelationBulkEditView(generic.BulkEditView):
 
 @register_model_view(ACIContractRelation, "bulk_delete", path="delete", detail=False)
 class ACIContractRelationBulkDeleteView(generic.BulkDeleteView):
-    """Bulk delete view for deleting multiple objects of Contract Subject."""
+    """Bulk delete view for deleting multiple objects of Contract Relation."""
 
     queryset = ACIContractRelation.objects.all()
     filterset = ACIContractRelationFilterSet
