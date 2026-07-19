@@ -203,14 +203,4 @@ class ACIExternalSubnetSerializer(OwnerMixin, NetBoxModelSerializer):
                 {"matched_prefix": _("Must match the selected NetBox Prefix.")}
             )
 
-        if not nb_prefix and not matched_prefix:
-            raise serializers.ValidationError(
-                {
-                    "matched_prefix": _(
-                        "A matched prefix is required when no NetBox"
-                        " Prefix is selected."
-                    )
-                }
-            )
-
-        return attrs
+        return super().validate(attrs)

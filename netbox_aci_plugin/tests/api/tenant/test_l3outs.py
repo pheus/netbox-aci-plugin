@@ -547,6 +547,30 @@ class ACIExternalSubnetSerializerValidationTestCase(ACIExternalSubnetAPIViewTest
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("matched_prefix", response.data)
 
+    def test_model_clean_violation_returns_400(self) -> None:
+        """Test model validation runs on API writes via super().validate()."""
+        obj_perm = ObjectPermission(name="Test serializer perm add3", actions=["add"])
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ObjectType.objects.get_for_model(ACIExternalSubnet))
+
+        epg = ACIExternalEndpointGroup.objects.first()
+        prefix = Prefix.objects.filter(prefix="10.10.3.0/24").first()
+        url = self._get_list_url()
+        response = self.client.post(
+            url,
+            {
+                "name": "SubnetAggregateNoBase",
+                "aci_external_endpoint_group": epg.pk,
+                "nb_prefix": prefix.pk,
+                "aggregate_import_route_control_enabled": True,
+            },
+            format="json",
+            **self.header,
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("aggregate_import_route_control_enabled", response.data)
+
     def test_matched_prefix_equal_to_nb_prefix_on_patch_returns_200(self) -> None:
         """Re-saving with matched_prefix equal to nb_prefix.prefix must pass.
 
