@@ -308,10 +308,17 @@ urlpatterns: tuple = (
 
 Each pair is preceded by a `# ACI <Verbose Model>` section comment.
 
-### Child/relation models nest under the parent slug
+### Nav-visible models are flat, relation/binding models nest
 
-Primary models live at `<plural-kebab-noun>/`. Child and
-relation/binding models nest one level under the parent:
+Primary models live at `<plural-kebab-noun>/`. That includes every
+model with its own navigation entry, even conceptual children such
+as Bridge Domain Subnet (`bridge-domain-subnets/`) or External
+Subnet (`external-subnets/`): the navigation sidebar highlights the
+menu entry whose URL is a prefix of the current page, so a nested
+list path would highlight the parent's entry instead of the model's
+own. Relation/binding models have no navigation entry and nest one
+level under the parent, where that parent highlight is the intended
+behavior:
 
 ```python
 # ACI Bridge Domain L3Out Binding (parent_object = aci_bridge_domain)

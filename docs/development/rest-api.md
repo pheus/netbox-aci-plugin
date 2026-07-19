@@ -8,7 +8,7 @@ serializers under `api/serializers/<domain>/<model>.py`.
 ## Router paths
 
 Use kebab-case nouns. API routes stay **flat** even when the UI
-nests child/relation models under their parent (see [Views - URL
+nests relation/binding models under their parent (see [Views - URL
 routing](views.md#url-routing)). REST consumers expect unambiguous
 resource paths, so use flat compound names like
 `bridge-domain-l3out-bindings`:
