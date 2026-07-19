@@ -345,6 +345,13 @@ class ACIFabricImportForm(ScopedImportForm, NetBoxModelImportForm):
         label=_("Infrastructure VLAN"),
         help_text=_("Assigned NetBox VLAN"),
     )
+    infra_vlan_group = CSVModelChoiceField(
+        queryset=VLANGroup.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("Infrastructure VLAN group"),
+        help_text=_("VLAN group used to resolve the NetBox VLAN's VID."),
+    )
     gipo_pool = CSVModelChoiceField(
         queryset=Prefix.objects.all(),
         to_field_name="prefix",
@@ -374,6 +381,7 @@ class ACIFabricImportForm(ScopedImportForm, NetBoxModelImportForm):
             "fabric_id",
             "infra_vlan_vid",
             "infra_vlan",
+            "infra_vlan_group",
             "gipo_pool",
             "scope_type",
             "scope_id",
@@ -382,3 +390,13 @@ class ACIFabricImportForm(ScopedImportForm, NetBoxModelImportForm):
             "comments",
             "tags",
         )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+        if not data:
+            return
+        if data.get("infra_vlan_group"):
+            self.fields["infra_vlan"].queryset = self.fields[
+                "infra_vlan"
+            ].queryset.filter(group__name=data["infra_vlan_group"])

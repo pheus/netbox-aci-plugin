@@ -2,9 +2,11 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from ipam.models import VLAN, Prefix
+from django.db.backends.postgresql.psycopg_any import NumericRange
 
-from ....forms.fabric.fabrics import ACIFabricEditForm
+from ipam.models import VLAN, Prefix, VLANGroup
+
+from ....forms.fabric.fabrics import ACIFabricEditForm, ACIFabricImportForm
 from ..base import ACIBaseFormTestCase
 
 
@@ -65,3 +67,33 @@ class ACIFabricFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(aci_fabric_form.errors.get("infra_vlan_vid"), None)
         self.assertEqual(aci_fabric_form.errors.get("infra_vlan"), None)
         self.assertEqual(aci_fabric_form.errors.get("gipo_pool"), None)
+
+    def test_import_form_resolves_duplicate_vid_via_vlan_group(self) -> None:
+        """Test import disambiguates a duplicated VID by the VLAN group."""
+        group_a = VLANGroup.objects.create(
+            name="ACIFabricFormTestGroupA",
+            slug="aci-fabric-form-test-group-a",
+            vid_ranges=[NumericRange(3900, 3999)],
+        )
+        group_b = VLANGroup.objects.create(
+            name="ACIFabricFormTestGroupB",
+            slug="aci-fabric-form-test-group-b",
+            vid_ranges=[NumericRange(3900, 3999)],
+        )
+        VLAN.objects.create(vid=3900, name="ACIFabricDupVIDGroupA", group=group_a)
+        vlan_b = VLAN.objects.create(
+            vid=3900, name="ACIFabricDupVIDGroupB", group=group_b
+        )
+
+        form = ACIFabricImportForm(
+            data={
+                "name": "ACIFabricImportTest1",
+                "fabric_id": 120,
+                "infra_vlan_vid": 3900,
+                "infra_vlan": 3900,
+                "infra_vlan_group": group_b.name,
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["infra_vlan"], vlan_b)
