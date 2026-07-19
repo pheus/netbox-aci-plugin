@@ -201,6 +201,21 @@ references they relate:
 brief_fields = ("id", "url", "display", "aci_bridge_domain", "aci_l3out")
 ```
 
+### Custom `validate()`
+
+NetBox triggers the model's `full_clean()` inside
+`ValidatedModelSerializer.validate()`. A serializer that overrides
+`validate()` must therefore call `super().validate(attrs)` and return its
+result. Skipping the super() call silently disables the model's `clean()`
+and `clean_fields()` for every API write handled by that serializer.
+
+Reserve serializer-level checks for rules the model cannot express. The
+canonical example is `ACIExternalSubnetSerializer`: the model cannot tell a
+user-supplied conflicting `matched_prefix` apart from a stale value that is
+waiting to be re-synced from `nb_prefix`, so the serializer rejects the
+explicit conflict and leaves the re-sync to the model. Everything else
+belongs in the model's `clean()`.
+
 ## Serializer field kwarg ordering
 
 Pass kwargs to `rest_framework` serializer fields in this order. Skip
