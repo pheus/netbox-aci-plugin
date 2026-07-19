@@ -10,6 +10,7 @@ helper, lives in `models/mixins.py`.
 
 This is the longest layer doc. Use the table of contents to jump:
 
+- [ACI source-of-truth validation](#aci-source-of-truth-validation)
 - [Class hierarchy](#class-hierarchy)
 - [Member ordering](#member-ordering)
 - [Field ordering](#field-ordering)
@@ -29,6 +30,56 @@ This is the longest layer doc. Use the table of contents to jump:
 - [`CachedScopeMixin`](#cachedscopemixin)
 - [Choices](#choices)
 - [Model field kwarg ordering](#model-field-kwarg-ordering)
+
+## ACI source-of-truth validation
+
+Before writing or modifying any model field, validate the field set
+against both authoritative ACI sources. This is a per-model,
+every-time requirement - not a one-off review.
+
+### Cisco NaC APIC data model (coverage)
+
+The Cisco Network as Code (NaC) APIC data model documents the curated
+field set for each ACI MO as used in NaC-based automation. Use it to
+confirm that the plugin model covers every field an operator would
+configure and that no relevant attribute is omitted without reason.
+
+Source: <https://netascode.cisco.com/docs/data_models/apic/>
+
+Find the matching NaC object (e.g. `aaep` for
+`ACIAttachableAccessEntityProfile`, `bridge_domain` for
+`ACIBridgeDomain`) and walk through its attributes. Every NaC attribute
+should map to a plugin field or carry a documented reason for omission.
+
+### Cisco APIC MIM reference (attribute detail)
+
+The APIC Managed Information Model (MIM) reference specifies the exact
+attribute constraints for each APIC MO class. Use it to set
+`max_length`, `validators`, `default`, `choices`, and `blank`/`null`
+correctly for each field.
+
+Source pattern:
+`https://pubhub.devnetcloud.com/media/apic-mim-ref-<version>/docs/MO-<moClass>.html`
+
+Replace `<version>` with the APIC release being targeted and
+`<moClass>` with the MO class name. Examples:
+
+- `ACIAttachableAccessEntityProfile` (`infraAttEntityP`):
+  `https://pubhub.devnetcloud.com/media/apic-mim-ref-421e/docs/MO-infraAttEntityP.html`
+- `ACIBridgeDomain` (`fvBD`):
+  `https://pubhub.devnetcloud.com/media/apic-mim-ref-421e/docs/MO-fvBD.html`
+
+For each MO attribute, check:
+
+- **Name and alias constraints:** max length and allowed characters set
+  `max_length` and `validators` on the corresponding model field.
+- **Enumerated values:** map each to a constant in a `ChoiceSet` in
+  `choices.py` (see [Choices](#choices)) and add `# default "<value>"`
+  above the default member.
+- **Default value:** use as the field `default` kwarg.
+- **Optionality:** attributes the MIM marks as optional map to
+  `blank=True, null=True`; mandatory attributes map to a required field
+  with no `blank=True`.
 
 ## Class hierarchy
 
