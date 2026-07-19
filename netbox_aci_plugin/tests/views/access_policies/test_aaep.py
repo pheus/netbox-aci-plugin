@@ -229,7 +229,8 @@ class ACIAAEPDomainBindingViewTestCase(
         add_url = get_action_url(ACIAAEPDomainBinding, action="add")
         self.assertContains(
             response,
-            f'href="{add_url}?aci_aaep={self.aci_aaep.pk}',
+            f'href="{add_url}?aci_fabric={self.aci_fabric.pk}&amp;'
+            f"aci_aaep={self.aci_aaep.pk}",
         )
 
     def test_acirouteddomain_aaep_bindings_tab(self) -> None:

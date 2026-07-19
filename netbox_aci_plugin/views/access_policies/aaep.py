@@ -199,6 +199,7 @@ class ACIAttachableAccessEntityProfileDomainBindingView(
             "netbox_aci_plugin.ACIAAEPDomainBinding",
             _("Bind a Domain"),
             url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
                 "aci_aaep": lambda ctx: ctx["object"].pk,
             },
         ),
