@@ -5,6 +5,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
+from dcim.models import Region, Site, SiteGroup
 from ipam.models import Prefix
 from tenancy.models import Tenant
 
@@ -86,6 +87,35 @@ class ACIPodTestCase(ACIBaseTestCase):
     def test_aci_pod_parent_object(self) -> None:
         """Test parent object of ACI Pod is the ACI Fabric."""
         self.assertEqual(self.aci_pod.parent_object, self.aci_fabric)
+
+    def test_aci_pod_scope_ancestor_deletion(self) -> None:
+        """Test ACI Pod survives deletion of a scope ancestor."""
+        region = Region.objects.create(name="ACI-Test-Region", slug="aci-test-region")
+        site_group = SiteGroup.objects.create(
+            name="ACI-Test-SiteGroup", slug="aci-test-sitegroup"
+        )
+        site = Site.objects.create(
+            name="ACI-Test-Site",
+            slug="aci-test-site",
+            region=region,
+            group=site_group,
+        )
+        aci_pod = ACIPod.objects.create(
+            name="ACITestPodScoped",
+            pod_id=2,
+            aci_fabric=self.aci_fabric,
+            scope=site,
+        )
+        self.assertEqual(aci_pod._region, region)  # noqa: SLF001
+        self.assertEqual(aci_pod._site_group, site_group)  # noqa: SLF001
+
+        region.delete()
+        site_group.delete()
+
+        aci_pod.refresh_from_db()
+        self.assertIsNone(aci_pod._region)  # noqa: SLF001
+        self.assertIsNone(aci_pod._site_group)  # noqa: SLF001
+        self.assertEqual(aci_pod._site, site)  # noqa: SLF001
 
     def test_invalid_aci_pod_name(self) -> None:
         """Test validation of ACI Pod naming."""

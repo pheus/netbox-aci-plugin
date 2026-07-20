@@ -5,6 +5,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
+from dcim.models import Region, Site, SiteGroup
 from ipam.models import VLAN, Prefix
 from tenancy.models import Tenant
 
@@ -88,6 +89,35 @@ class ACIFabricTestCase(ACIBaseTestCase):
     def test_aci_fabric_aci_fabric_property(self) -> None:
         """Test the aci_fabric property returns the instance itself."""
         self.assertEqual(self.aci_fabric.aci_fabric, self.aci_fabric)
+
+    def test_aci_fabric_scope_ancestor_deletion(self) -> None:
+        """Test ACI Fabric survives deletion of a scope ancestor."""
+        region = Region.objects.create(name="ACI-Test-Region", slug="aci-test-region")
+        site_group = SiteGroup.objects.create(
+            name="ACI-Test-SiteGroup", slug="aci-test-sitegroup"
+        )
+        site = Site.objects.create(
+            name="ACI-Test-Site",
+            slug="aci-test-site",
+            region=region,
+            group=site_group,
+        )
+        aci_fabric = ACIFabric.objects.create(
+            name="ACITestFabricScoped",
+            fabric_id=42,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid,
+            scope=site,
+        )
+        self.assertEqual(aci_fabric._region, region)  # noqa: SLF001
+        self.assertEqual(aci_fabric._site_group, site_group)  # noqa: SLF001
+
+        region.delete()
+        site_group.delete()
+
+        aci_fabric.refresh_from_db()
+        self.assertIsNone(aci_fabric._region)  # noqa: SLF001
+        self.assertIsNone(aci_fabric._site_group)  # noqa: SLF001
+        self.assertEqual(aci_fabric._site, site)  # noqa: SLF001
 
     def test_aci_fabric_parent_object(self) -> None:
         """Test parent object of ACI Fabric is None."""

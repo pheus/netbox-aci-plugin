@@ -13,16 +13,15 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from dcim.models.mixins import CachedScopeMixin
-
 from ...constants import POD_ID_MAX, POD_ID_MIN
 from ..base import ACIFabricBaseModel
+from ..mixins import ACICachedScopeMixin
 
 if TYPE_CHECKING:
     from ..fabric.fabrics import ACIFabric
 
 
-class ACIPod(CachedScopeMixin, ACIFabricBaseModel):
+class ACIPod(ACICachedScopeMixin, ACIFabricBaseModel):
     """Pod (a leaf-spine cluster) within an ACI Fabric.
 
     Parented by an ACIFabric and may be scoped to a NetBox site or
