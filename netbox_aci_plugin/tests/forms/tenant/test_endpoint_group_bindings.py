@@ -416,6 +416,43 @@ class ACIEndpointGroupAAEPBindingFormTestCase(ACIBaseFormTestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.cleaned_data["nb_vlan"], vlan_b)
 
+    def test_import_form_resolves_duplicate_primary_vid_via_vlan_group(
+        self,
+    ) -> None:
+        """Test import disambiguates a duplicated primary VID by the group."""
+        group_a = VLANGroup.objects.create(
+            name="ACIEPGAAEPBindingFormTestPrimaryGroupA",
+            slug="aci-epg-aaep-binding-form-test-primary-group-a",
+            vid_ranges=[NumericRange(100, 299)],
+        )
+        group_b = VLANGroup.objects.create(
+            name="ACIEPGAAEPBindingFormTestPrimaryGroupB",
+            slug="aci-epg-aaep-binding-form-test-primary-group-b",
+            vid_ranges=[NumericRange(100, 299)],
+        )
+        VLAN.objects.create(
+            vid=165, name="ACIEPGAAEPDupPrimaryVIDGroupA", group=group_a
+        )
+        primary_vlan_b = VLAN.objects.create(
+            vid=165, name="ACIEPGAAEPDupPrimaryVIDGroupB", group=group_b
+        )
+
+        form = ACIEndpointGroupAAEPBindingImportForm(
+            data={
+                "aci_fabric": self.aci_fabric.name,
+                "aci_tenant": self.aci_tenant.name,
+                "aci_app_profile": self.aci_app_profile.name,
+                "aci_endpoint_group": self.aci_epg.name,
+                "aci_aaep": self.aci_aaep.name,
+                "nb_vlan": self.nb_vlan.vid,
+                "primary_nb_vlan": 165,
+                "primary_nb_vlan_group": group_b.name,
+            }
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["primary_nb_vlan"], primary_vlan_b)
+
     def test_import_form_clean_mode_defaults_to_regular(self) -> None:
         """Test the import form defaults an empty mode to 'regular'."""
         form = ACIEndpointGroupAAEPBindingImportForm(data={})
