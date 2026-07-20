@@ -854,7 +854,7 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
         queryset=ACIContract.objects.all(),
         query_params={
             "aci_fabric_id": "$aci_fabric",
-            "aci_tenant_id": "$aci_tenant",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
         },
         label=_("ACI Contract"),
     )
@@ -1074,7 +1074,7 @@ class ACIContractSubjectBulkEditForm(NetBoxModelBulkEditForm):
     )
     aci_contract = DynamicModelChoiceField(
         queryset=ACIContract.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
         required=False,
         label=_("ACI Contract"),
     )
@@ -1554,7 +1554,7 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
         queryset=ACIContract.objects.all(),
         query_params={
             "aci_fabric_id": "$aci_fabric",
-            "aci_tenant_id": "$aci_tenant",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
         },
         initial_params={"aci_contract_subjects": "$aci_contract_subject"},
         required=False,
@@ -1671,7 +1671,7 @@ class ACIContractSubjectFilterBulkEditForm(NetBoxModelBulkEditForm):
     )
     aci_contract = DynamicModelChoiceField(
         queryset=ACIContract.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
         required=False,
         label=_("ACI Contract"),
     )

@@ -340,7 +340,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
         queryset=ACIContractFilter.objects.all(),
         query_params={
             "aci_fabric_id": "$aci_fabric",
-            "aci_tenant_id": "$aci_tenant",
+            "present_in_aci_tenant_or_common_id": "$aci_tenant",
         },
         label=_("ACI Contract Filter"),
     )
@@ -726,7 +726,7 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
     )
     aci_contract_filter = DynamicModelChoiceField(
         queryset=ACIContractFilter.objects.all(),
-        query_params={"aci_tenant_id": "$aci_tenant"},
+        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant"},
         required=False,
         label=_("ACI Contract Filter"),
     )
