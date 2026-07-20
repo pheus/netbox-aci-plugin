@@ -113,7 +113,7 @@
       <div class="card">
         <h2 class="card-header">
           {% trans "Filters" %}
-          {% if perms.netbox_aci_plugin.add_acicontractsubject %}
+          {% if perms.netbox_aci_plugin.add_acicontractsubjectfilter %}
             <div class="card-actions">
               <a href="{% url 'plugins:netbox_aci_plugin:acicontractsubjectfilter_add' %}?aci_contract_subject={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
                 <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Assign a Filter" %}
