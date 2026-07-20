@@ -26,6 +26,7 @@ from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.endpoint_group_bindings import (
     ACIEndpointGroupAAEPBinding,
     ACIEndpointGroupDomainBinding,
+    ACIEndpointGroupVLANBindingBase,
 )
 from ....models.tenant.endpoint_groups import ACIEndpointGroup, ACIUSegEndpointGroup
 from ..base import ACIBaseTestCase
@@ -403,6 +404,34 @@ class ACIEndpointGroupAAEPBindingTestCase(ACIBaseTestCase):
         binding.save()
         self.assertIsNone(binding.nb_vlan_id)
         self.assertEqual(binding.encap_vlan_id, 180)
+
+    def test_vlan_binding_base_parent_object_default(self) -> None:
+        """Test the VLAN-binding base defaults parent object to the EPG."""
+        self.assertEqual(
+            ACIEndpointGroupVLANBindingBase.parent_object.fget(
+                self.aci_epg_aaep_binding
+            ),
+            self.aci_epg,
+        )
+
+    def test_vlan_binding_base_pool_physical_domains_guard(self) -> None:
+        """Test the VLAN-binding base guard raises NotImplementedError."""
+        with self.assertRaises(NotImplementedError):
+            ACIEndpointGroupVLANBindingBase._pool_physical_domains(  # noqa: SLF001
+                self.aci_epg_aaep_binding
+            )
+
+    def test_aci_endpoint_group_aaep_binding_unset_aaep_defers_validation(
+        self,
+    ) -> None:
+        """Test validation without an AAEP defers to required-field errors."""
+        binding = ACIEndpointGroupAAEPBinding(
+            aci_endpoint_group=self.aci_epg,
+            encap_vlan_id=170,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            binding.full_clean()
+        self.assertIn("aci_aaep", cm.exception.error_dict)
 
     def test_aci_endpoint_group_aaep_binding_create_with_matching_pair(self) -> None:
         """Test creating with a matching nb_vlan and encap VLAN ID is valid."""
