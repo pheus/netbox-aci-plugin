@@ -127,7 +127,6 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
     )
     qos_class = forms.ChoiceField(
         choices=QualityOfServiceClassChoices,
-        required=False,
         label=_("QoS class"),
         help_text=_(
             "Assignment of the ACI Quality-of-Service level for "
@@ -697,7 +696,6 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
     )
     qos_class = forms.ChoiceField(
         choices=QualityOfServiceClassChoices,
-        required=False,
         label=_("QoS class"),
         help_text=_(
             "Assignment of the ACI Quality-of-Service level for "

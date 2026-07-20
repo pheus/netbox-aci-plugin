@@ -81,7 +81,6 @@ class ACIContractEditForm(NetBoxModelForm):
     )
     qos_class = forms.ChoiceField(
         choices=QualityOfServiceClassChoices,
-        required=False,
         label=_("QoS class"),
         help_text=_(
             "Specifies the priority handling for traffic between Consumer and "
@@ -91,7 +90,6 @@ class ACIContractEditForm(NetBoxModelForm):
     )
     scope = forms.ChoiceField(
         choices=ContractScopeChoices,
-        required=False,
         label=_("Scope"),
         help_text=_(
             "Scope defines the extent within which the contract is "
@@ -100,7 +98,6 @@ class ACIContractEditForm(NetBoxModelForm):
     )
     target_dscp = forms.ChoiceField(
         choices=QualityOfServiceDSCPChoices,
-        required=False,
         label=_("Target DSCP"),
         help_text=_(
             "Rewrites the DSCP value of the incoming traffic to the specified "
@@ -871,7 +868,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
     )
     qos_class = forms.ChoiceField(
         choices=QualityOfServiceClassChoices,
-        required=False,
         label=_("QoS class"),
         help_text=_(
             "Specifies the priority handling for traffic between Consumer and "
@@ -881,7 +877,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
     )
     qos_class_cons_to_prov = forms.ChoiceField(
         choices=QualityOfServiceClassChoices,
-        required=False,
         label=_("QoS class (consumer to provider)"),
         help_text=_(
             "Specifies the priority handling for traffic from Consumer to "
@@ -891,7 +886,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
     )
     qos_class_prov_to_cons = forms.ChoiceField(
         choices=QualityOfServiceClassChoices,
-        required=False,
         label=_("QoS class (provider to consumer)"),
         help_text=_(
             "Specifies the priority handling for traffic from Provider to "
@@ -909,7 +903,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
     )
     target_dscp = forms.ChoiceField(
         choices=QualityOfServiceDSCPChoices,
-        required=False,
         label=_("Target DSCP"),
         help_text=_(
             "Rewrites the DSCP value of the incoming traffic to the specified "
@@ -918,7 +911,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
     )
     target_dscp_cons_to_prov = forms.ChoiceField(
         choices=QualityOfServiceDSCPChoices,
-        required=False,
         label=_("Target DSCP (consumer to provider)"),
         help_text=_(
             "Rewrites the DSCP value of the incoming traffic to the specified "
@@ -928,7 +920,6 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
     )
     target_dscp_prov_to_cons = forms.ChoiceField(
         choices=QualityOfServiceDSCPChoices,
-        required=False,
         label=_("Target DSCP (provider to consumer)"),
         help_text=_(
             "Rewrites the DSCP value of the incoming traffic to the specified "
@@ -1597,7 +1588,6 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
     )
     apply_direction = forms.ChoiceField(
         choices=ContractSubjectFilterApplyDirectionChoices,
-        required=False,
         label=_("Apply direction"),
         help_text=_(
             "Specifies the direction to apply the filter: 'both' directions, "
@@ -1621,7 +1611,6 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
     )
     priority = forms.ChoiceField(
         choices=ContractSubjectFilterPriorityChoices,
-        required=False,
         label=_("(Deny) Priority"),
         help_text=_(
             "Specifies the priority of the deny action for matched traffic. "

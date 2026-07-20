@@ -99,6 +99,20 @@ class ACIL3OutFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(form.errors.get("description"), None)
         self.assertEqual(form.errors.get("multipod_enabled"), None)
 
+    def test_edit_form_rejects_blank_target_dscp(self) -> None:
+        """Test the edit form rejects a blank target DSCP value."""
+        form = ACIL3OutEditForm(
+            data={
+                "name": "ACIL3OutBlankDSCP",
+                "aci_tenant": self.aci_tenant,
+                "aci_vrf": self.aci_vrf,
+                "aci_routed_domain": self.aci_routed_domain,
+                "target_dscp": "",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("target_dscp", form.errors)
+
     def test_invalid_aci_l3out_multipod_enabled_tenant(self) -> None:
         """Test Multi-Pod validation of invalid ACI L3Out tenant."""
         form = ACIL3OutEditForm(
@@ -125,6 +139,7 @@ class ACIL3OutFormTestCase(ACIBaseFormTestCase):
                 "aci_tenant": self.infra_tenant,
                 "aci_vrf": self.infra_vrf,
                 "aci_routed_domain": self.aci_routed_domain,
+                "target_dscp": QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
                 "multipod_enabled": True,
             }
         )
@@ -201,6 +216,20 @@ class ACIExternalEndpointGroupFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(form.errors.get("name"), None)
         self.assertEqual(form.errors.get("name_alias"), None)
         self.assertEqual(form.errors.get("description"), None)
+
+    def test_edit_form_rejects_blank_choice_values(self) -> None:
+        """Test the edit form rejects blank QoS class and DSCP values."""
+        form = ACIExternalEndpointGroupEditForm(
+            data={
+                "name": "ACIExternalEndpointGroupBlankChoices",
+                "aci_l3out": self.aci_l3out,
+                "qos_class": "",
+                "target_dscp": "",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("qos_class", form.errors)
+        self.assertIn("target_dscp", form.errors)
 
     def test_filter_form_choice_fields_accept_multiple(self) -> None:
         """Test the External EPG filter accepts multiple choice values."""

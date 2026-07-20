@@ -8,6 +8,11 @@ from ipam.models import IPAddress
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
+from ....choices import (
+    BDMultiDestinationFloodingChoices,
+    BDUnknownMulticastChoices,
+    BDUnknownUnicastChoices,
+)
 from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -238,6 +243,10 @@ class ACIBridgeDomainViewTestCase(
             "description": "Form-data Bridge Domain",
             "aci_tenant": cls.aci_tenant.pk,
             "aci_vrf": cls.aci_vrf.pk,
+            "multi_destination_flooding": BDMultiDestinationFloodingChoices.FLOOD_BD,
+            "unknown_ipv4_multicast": BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD,
+            "unknown_ipv6_multicast": BDUnknownMulticastChoices.UNKNOWN_MULTI_FLOOD,
+            "unknown_unicast": BDUnknownUnicastChoices.UNKNOWN_UNI_PROXY,
             "nb_tenant": cls.nb_tenant.pk,
             "tags": [t.pk for t in tags],
         }

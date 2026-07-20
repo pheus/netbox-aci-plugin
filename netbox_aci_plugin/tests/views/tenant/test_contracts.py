@@ -9,6 +9,12 @@ from django.contrib.contenttypes.models import ContentType
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
+from ....choices import (
+    ContractSubjectFilterApplyDirectionChoices,
+    ContractSubjectFilterPriorityChoices,
+    QualityOfServiceClassChoices,
+    QualityOfServiceDSCPChoices,
+)
 from ....models.tenant.contract_filters import ACIContractFilter
 from ....models.tenant.contracts import (
     ACIContract,
@@ -57,6 +63,8 @@ class ACIContractViewTestCase(
             "description": "Form-data Contract",
             "aci_tenant": cls.aci_tenant.pk,
             "scope": "context",
+            "qos_class": QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
+            "target_dscp": QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
             "nb_tenant": cls.nb_tenant.pk,
             "tags": [t.pk for t in tags],
         }
@@ -249,6 +257,12 @@ class ACIContractSubjectViewTestCase(
             "name_alias": "SubjectXAlias",
             "description": "Form-data Subject",
             "aci_contract": cls.aci_contract.pk,
+            "qos_class": QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
+            "qos_class_cons_to_prov": QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
+            "qos_class_prov_to_cons": QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
+            "target_dscp": QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
+            "target_dscp_cons_to_prov": QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
+            "target_dscp_prov_to_cons": QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
             "nb_tenant": cls.nb_tenant.pk,
             "tags": [t.pk for t in tags],
         }
@@ -338,6 +352,8 @@ class ACIContractSubjectFilterViewTestCase(
             "aci_contract_subject": cls.aci_subject.pk,
             "aci_contract_filter": filters[3].pk,
             "action": "permit",
+            "apply_direction": ContractSubjectFilterApplyDirectionChoices.DIR_BOTH,
+            "priority": ContractSubjectFilterPriorityChoices.CLASS_DEFAULT,
             "comments": "Form-data subject filter",
             "tags": [t.pk for t in tags],
         }

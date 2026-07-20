@@ -99,6 +99,26 @@ class ACIBridgeDomainFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(aci_bd_form.errors.get("name_alias"), None)
         self.assertEqual(aci_bd_form.errors.get("description"), None)
 
+    def test_edit_form_rejects_blank_choice_values(self) -> None:
+        """Test the edit form rejects blank forwarding-method values."""
+        blank_fields = (
+            "multi_destination_flooding",
+            "unknown_ipv4_multicast",
+            "unknown_ipv6_multicast",
+            "unknown_unicast",
+        )
+        aci_bd_form = ACIBridgeDomainEditForm(
+            data={
+                "name": "ACIBDBlankChoices",
+                "aci_tenant": self.aci_tenant,
+                "aci_vrf": self.aci_vrf,
+                **dict.fromkeys(blank_fields, ""),
+            }
+        )
+        self.assertFalse(aci_bd_form.is_valid())
+        for name in blank_fields:
+            self.assertIn(name, aci_bd_form.errors)
+
 
 class ACIBridgeDomainSubnetFormTestCase(ACIBaseFormTestCase):
     """Test case for ACIBridgeDomainSubnet form."""

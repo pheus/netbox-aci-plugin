@@ -9,6 +9,10 @@ from django.contrib.contenttypes.models import ContentType
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
+from ....choices import (
+    VRFPCEnforcementDirectionChoices,
+    VRFPCEnforcementPreferenceChoices,
+)
 from ....models.tenant.bridge_domains import ACIBridgeDomain
 from ....models.tenant.contracts import ACIContractRelation
 from ....models.tenant.vrfs import ACIVRF
@@ -43,6 +47,10 @@ class ACIVRFViewTestCase(ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTe
             "name_alias": "VRFXAlias",
             "description": "Form-data VRF",
             "aci_tenant": cls.aci_tenant.pk,
+            "pc_enforcement_direction": VRFPCEnforcementDirectionChoices.DIR_INGRESS,
+            "pc_enforcement_preference": (
+                VRFPCEnforcementPreferenceChoices.PREF_ENFORCED
+            ),
             "nb_tenant": cls.nb_tenant.pk,
             "tags": [t.pk for t in tags],
         }

@@ -141,6 +141,24 @@ class ACIEndpointGroupDomainBindingFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(form.instance.aci_epg_object, self.aci_epg)
         self.assertEqual(form.instance.aci_domain_object, self.aci_physical_domain)
 
+    def test_edit_form_rejects_blank_immediacy_values(self) -> None:
+        """Test the edit form rejects blank immediacy values."""
+        aci_epg_object_type = ContentType.objects.get_for_model(ACIEndpointGroup)
+        aci_domain_object_type = ContentType.objects.get_for_model(ACIPhysicalDomain)
+        form = ACIEndpointGroupDomainBindingEditForm(
+            data={
+                "aci_epg_object_type": aci_epg_object_type.pk,
+                "aci_epg_object": self.aci_epg.pk,
+                "aci_domain_object_type": aci_domain_object_type.pk,
+                "aci_domain_object": self.aci_physical_domain.pk,
+                "deployment_immediacy": "",
+                "resolution_immediacy": "",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("deployment_immediacy", form.errors)
+        self.assertIn("resolution_immediacy", form.errors)
+
     def test_edit_form_valid_useg_epg_domain_binding(self) -> None:
         """Test a valid full submit binds a uSeg EPG to a physical domain."""
         aci_epg_object_type = ContentType.objects.get_for_model(ACIUSegEndpointGroup)
@@ -151,6 +169,8 @@ class ACIEndpointGroupDomainBindingFormTestCase(ACIBaseFormTestCase):
                 "aci_epg_object": self.aci_useg_epg.pk,
                 "aci_domain_object_type": aci_domain_object_type.pk,
                 "aci_domain_object": self.aci_physical_domain.pk,
+                "deployment_immediacy": DeploymentImmediacyChoices.IMMEDIACY_LAZY,
+                "resolution_immediacy": ResolutionImmediacyChoices.IMMEDIACY_LAZY,
             }
         )
         self.assertTrue(form.is_valid(), form.errors)
@@ -297,6 +317,21 @@ class ACIEndpointGroupAAEPBindingFormTestCase(ACIBaseFormTestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.instance.aci_endpoint_group, self.aci_epg)
         self.assertEqual(form.instance.aci_aaep, self.aci_aaep)
+
+    def test_edit_form_rejects_blank_mode_and_immediacy(self) -> None:
+        """Test the edit form rejects blank mode and immediacy values."""
+        form = ACIEndpointGroupAAEPBindingEditForm(
+            data={
+                "aci_endpoint_group": self.aci_epg.pk,
+                "aci_aaep": self.aci_aaep.pk,
+                "nb_vlan": self.nb_vlan.pk,
+                "mode": "",
+                "deployment_immediacy": "",
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("mode", form.errors)
+        self.assertIn("deployment_immediacy", form.errors)
 
     def test_edit_form_partial_submit_missing_encap_vlan_id(self) -> None:
         """Test a submit without any VLAN encapsulation fails validation."""

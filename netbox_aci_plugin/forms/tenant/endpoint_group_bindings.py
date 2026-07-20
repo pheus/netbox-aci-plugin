@@ -88,7 +88,6 @@ class ACIEndpointGroupDomainBindingEditForm(NetBoxModelForm):
     )
     deployment_immediacy = forms.ChoiceField(
         choices=DeploymentImmediacyChoices,
-        required=False,
         label=_("Deployment immediacy"),
         help_text=_(
             "When the policy is pushed into the leaf hardware. Default is 'On Demand'."
@@ -96,7 +95,6 @@ class ACIEndpointGroupDomainBindingEditForm(NetBoxModelForm):
     )
     resolution_immediacy = forms.ChoiceField(
         choices=ResolutionImmediacyChoices,
-        required=False,
         label=_("Resolution immediacy"),
         help_text=_(
             "When the policy is downloaded to the leaf software. Default is "
@@ -433,13 +431,11 @@ class ACIEndpointGroupAAEPBindingEditForm(NetBoxModelForm):
     )
     mode = forms.ChoiceField(
         choices=PortModeChoices,
-        required=False,
         label=_("Mode"),
         help_text=_("VLAN tagging mode of the deployment (default 'Trunk')."),
     )
     deployment_immediacy = forms.ChoiceField(
         choices=DeploymentImmediacyChoices,
-        required=False,
         label=_("Deployment immediacy"),
         help_text=_(
             "When the policy is pushed into the leaf hardware. Default is 'On Demand'."

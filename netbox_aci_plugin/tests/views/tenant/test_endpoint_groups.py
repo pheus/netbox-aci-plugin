@@ -10,6 +10,7 @@ from ipam.models import IPAddress
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
+from ....choices import QualityOfServiceClassChoices
 from ....models.tenant.contracts import ACIContractRelation
 from ....models.tenant.endpoint_groups import (
     ACIEndpointGroup,
@@ -53,6 +54,7 @@ class ACIEndpointGroupViewTestCase(
         cls.form_data = {
             "name": "ACIViewTestEPGX",
             "name_alias": "EPGXAlias",
+            "qos_class": QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
             "description": "Form-data Endpoint Group",
             "aci_app_profile": cls.aci_app_profile.pk,
             "aci_bridge_domain": cls.aci_bd.pk,
@@ -142,6 +144,7 @@ class ACIUSegEndpointGroupViewTestCase(
         cls.form_data = {
             "name": "ACIViewTestUSegEPGX",
             "name_alias": "USegEPGXAlias",
+            "qos_class": QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
             "description": "Form-data uSeg Endpoint Group",
             "aci_app_profile": cls.aci_app_profile.pk,
             "aci_bridge_domain": cls.aci_bd.pk,

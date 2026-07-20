@@ -9,6 +9,10 @@ from django.contrib.contenttypes.models import ContentType
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
+from ....choices import (
+    QualityOfServiceClassChoices,
+    QualityOfServiceDSCPChoices,
+)
 from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.tenant.contracts import ACIContractRelation
 from ....models.tenant.l3outs import (
@@ -79,6 +83,7 @@ class ACIL3OutViewTestCase(
             "aci_tenant": cls.aci_tenant.pk,
             "aci_vrf": cls.aci_vrf.pk,
             "aci_routed_domain": cls.aci_routed_domain.pk,
+            "target_dscp": QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
             "tags": [t.pk for t in tags],
         }
 
@@ -212,6 +217,8 @@ class ACIExternalEndpointGroupViewTestCase(
             "name_alias": "ExtEPGXAlias",
             "description": "Form-data External EPG",
             "aci_l3out": cls.aci_l3out.pk,
+            "qos_class": QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
+            "target_dscp": QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
             "tags": [t.pk for t in tags],
         }
 

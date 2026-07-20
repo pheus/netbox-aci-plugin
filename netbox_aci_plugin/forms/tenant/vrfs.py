@@ -76,7 +76,6 @@ class ACIVRFEditForm(NetBoxModelForm):
     )
     pc_enforcement_direction = forms.ChoiceField(
         choices=VRFPCEnforcementDirectionChoices,
-        required=False,
         label=_("Enforcement direction"),
         help_text=_(
             "Controls policy enforcement direction for VRF. Default is 'ingress'."
@@ -84,7 +83,6 @@ class ACIVRFEditForm(NetBoxModelForm):
     )
     pc_enforcement_preference = forms.ChoiceField(
         choices=VRFPCEnforcementPreferenceChoices,
-        required=False,
         label=_("Enforcement preference"),
         help_text=_(
             "Controls policy enforcement preference for VRF. Default is 'enforced'."

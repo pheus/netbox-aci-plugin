@@ -89,6 +89,59 @@ fields into function-based sections (e.g. "Policy Control Settings",
 diverge beyond the identity-first fields - don't reorder the body to
 mirror the fieldsets.
 
+## Choice fields: blank values belong to bulk edit and filtering
+
+A `ChoiceField` on an EditForm that maps to a model field carrying a
+default and `blank=False` stays required, which is the Django default,
+so simply omit `required=False`. Marking it optional looks harmless but
+lets an empty submitted value through: Django treats a present-but-empty
+value as a real value rather than an omission, assigns `""` to the
+instance, and then skips the field during model validation precisely
+because the model forbids blanks while the form does not require one.
+The result is a stored empty string that matches no choice, so detail
+views and colour helpers render nothing. Omitting the field entirely is
+still safe - the model default applies - which is why the ImportForm
+keeps `required=False` and falls back through its
+`_clean_field_default_*` helpers.
+
+For the same reason an EditForm never wraps its choices in
+`add_blank_choice()`. Where the ACI object model needs a neutral value,
+the ChoiceSet already carries an explicit member for it (for example
+`unspecified` on the QoS and DSCP sets); pair that member with
+`initial=` instead of offering a blank entry that validation rejects.
+The blank entry does belong on a BulkEditForm, where it means "leave
+this field unchanged", and on a FilterForm, where it means "do not
+filter on this field".
+
+The one edit-form exception is a choice field paired with a
+`<field>_custom` input, built with `add_custom_choice()` from
+`choices.py`. There the trailing `None` entry is a working "custom"
+sentinel rather than a placeholder: the user picks it, types a numeric
+value into the paired field, and the form's `clean()` substitutes that
+value. Those fields keep `required=False` because `clean()` relies on
+the choice arriving empty. `ACIContractFilterEntryEditForm` is the only
+current example.
+
+`tests/forms/test_choice_field_conventions.py` enforces all of the
+above by walking every edit form at runtime, so a new form cannot
+reintroduce either mistake.
+
+```python
+# EditForm - required, no blank entry
+target_dscp = forms.ChoiceField(
+    choices=QualityOfServiceDSCPChoices,
+    initial=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
+    label=_("Target DSCP"),
+)
+
+# BulkEditForm - optional, blank means "leave unchanged"
+target_dscp = forms.ChoiceField(
+    choices=add_blank_choice(QualityOfServiceDSCPChoices),
+    required=False,
+    label=_("Target DSCP"),
+)
+```
+
 ### `Meta.fields` ordering (EditForm and ImportForm)
 
 ```python

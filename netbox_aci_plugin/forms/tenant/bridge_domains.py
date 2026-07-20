@@ -117,7 +117,6 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
     )
     multi_destination_flooding = forms.ChoiceField(
         choices=BDMultiDestinationFloodingChoices,
-        required=False,
         label=_("Multi destination flooding"),
         help_text=_(
             "Forwarding method for L2 multicast, broadcast, and link layer "
@@ -148,7 +147,6 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
     )
     unknown_ipv4_multicast = forms.ChoiceField(
         choices=BDUnknownMulticastChoices,
-        required=False,
         label=_("Unknown IPv4 multicast"),
         help_text=_(
             "Defines the IPv4 unknown multicast forwarding method. Default is 'flood'."
@@ -156,7 +154,6 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
     )
     unknown_ipv6_multicast = forms.ChoiceField(
         choices=BDUnknownMulticastChoices,
-        required=False,
         label=_("Unknown IPv6 multicast"),
         help_text=_(
             "Defines the IPv6 unknown multicast forwarding method. Default is 'flood'."
@@ -164,7 +161,6 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
     )
     unknown_unicast = forms.ChoiceField(
         choices=BDUnknownUnicastChoices,
-        required=False,
         label=_("Unknown unicast"),
         help_text=_(
             "Defines the layer 2 unknown unicast forwarding method. Default is 'proxy'."

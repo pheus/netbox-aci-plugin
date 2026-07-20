@@ -346,7 +346,6 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
     )
     arp_opc = forms.ChoiceField(
         choices=ContractFilterARPOpenPeripheralCodesChoices,
-        required=False,
         label=_("ARP open peripheral codes"),
         help_text=_(
             "Specifies the ARP flag (for ether type 'ARP'). Default is 'unspecified'."
@@ -394,7 +393,6 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
     )
     ether_type = forms.ChoiceField(
         choices=ContractFilterEtherTypeChoices,
-        required=False,
         label=_("Ether type"),
         help_text=_(
             "Specify the Ethernet type for the filter entry. Default is 'unspecified'."
@@ -402,7 +400,6 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
     )
     icmp_v4_type = forms.ChoiceField(
         choices=ContractFilterICMPv4TypesChoices,
-        required=False,
         label=_("ICMPv4 type"),
         help_text=_(
             "Match the specific ICMPv4 message type (for IP protocol "
@@ -411,7 +408,6 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
     )
     icmp_v6_type = forms.ChoiceField(
         choices=ContractFilterICMPv6TypesChoices,
-        required=False,
         label=_("ICMPv6 type"),
         help_text=_(
             "Match the specific ICMPv6 message type (for IP protocol "
@@ -439,7 +435,6 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
     )
     match_dscp = forms.ChoiceField(
         choices=QualityOfServiceDSCPChoices,
-        required=False,
         label=_("Match DSCP"),
         help_text=_(
             "Match the specific DSCP (Differentiated Services Code Point) "

@@ -71,8 +71,7 @@ class ACIL3OutEditForm(NetBoxModelForm):
         label=_("ACI Routed Domain"),
     )
     target_dscp = forms.ChoiceField(
-        choices=add_blank_choice(QualityOfServiceDSCPChoices),
-        required=False,
+        choices=QualityOfServiceDSCPChoices,
         initial=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
         label=_("Target DSCP"),
     )
@@ -681,14 +680,12 @@ class ACIExternalEndpointGroupEditForm(NetBoxModelForm):
         label=_("ACI L3Out"),
     )
     target_dscp = forms.ChoiceField(
-        choices=add_blank_choice(QualityOfServiceDSCPChoices),
-        required=False,
+        choices=QualityOfServiceDSCPChoices,
         initial=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
         label=_("Target DSCP"),
     )
     qos_class = forms.ChoiceField(
-        choices=add_blank_choice(QualityOfServiceClassChoices),
-        required=False,
+        choices=QualityOfServiceClassChoices,
         initial=QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
         label=_("QoS class"),
     )
