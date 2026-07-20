@@ -1182,7 +1182,6 @@ class ACIBridgeDomainSubnetFilterForm(NetBoxModelFilterSetForm):
             "aci_tenant_id",
             "aci_vrf_id",
             "aci_bridge_domain_id",
-            "nb_vrf_id",
             "gateway_ip_address",
             "preferred_ip_address_enabled",
             "virtual_ip_enabled",
