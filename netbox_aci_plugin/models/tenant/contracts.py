@@ -409,6 +409,11 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
         return objectchange
 
     @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACIFabric instance of the related ACIContract."""
+        return self.aci_contract.aci_fabric
+
+    @property
     def aci_contract_tenant(self) -> ACITenant:
         """Return the ACITenant instance of related ACIContract."""
         return self.aci_contract.aci_tenant
@@ -417,11 +422,6 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
     def aci_object_tenant(self) -> ACITenant:
         """Return the ACITenant instance of the related ACI object."""
         return self.aci_object.aci_tenant
-
-    @property
-    def aci_fabric(self) -> ACIFabric:
-        """Return the ACIFabric instance of the related ACIContract."""
-        return self.aci_contract.aci_fabric
 
     @property
     def parent_object(self) -> ACITenantBaseModel:
@@ -756,7 +756,7 @@ class ACIContractSubjectFilter(NetBoxModel):
         if errors:
             raise ValidationError(errors)
 
-    def to_objectchange(self, action):
+    def to_objectchange(self, action) -> ObjectChange:
         """Return an ObjectChange for the change made to an instance."""
         objectchange = super().to_objectchange(action)
         objectchange.related_object = self.aci_contract_subject

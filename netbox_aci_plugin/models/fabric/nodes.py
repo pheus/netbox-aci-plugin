@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from ..fabric.fabrics import ACIFabric
 
 
-class ACINode(UniqueGenericForeignKeyMixin, ACIFabricBaseModel):
+class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
     """Fabric switch or controller (leaf, spine, or APIC).
 
     Parented by an ACIPod and optionally linked to a NetBox device

@@ -31,6 +31,8 @@ from ...validators import (
 from ..base import ACITenantBaseModel
 
 if TYPE_CHECKING:
+    from core.models import ObjectChange
+
     from .tenants import ACITenant
 
 
@@ -416,7 +418,7 @@ class ACIContractFilterEntry(ACITenantBaseModel):
         if errors:
             raise ValidationError(errors)
 
-    def to_objectchange(self, action):
+    def to_objectchange(self, action) -> ObjectChange:
         """Return an ObjectChange for the change made to an instance."""
         objectchange = super().to_objectchange(action)
         objectchange.related_object = self.aci_contract_filter
