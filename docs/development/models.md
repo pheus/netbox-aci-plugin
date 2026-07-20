@@ -27,7 +27,7 @@ This is the longest layer doc. Use the table of contents to jump:
 - [Generic Foreign Key pattern](#generic-foreign-key-pattern)
 - [`OwnerMixin` coverage](#ownermixin-coverage)
 - [Relation / Binding models](#relation--binding-models)
-- [`CachedScopeMixin`](#cachedscopemixin)
+- [`ACICachedScopeMixin`](#acicachedscopemixin)
 - [Choices](#choices)
 - [Model field kwarg ordering](#model-field-kwarg-ordering)
 
@@ -542,18 +542,26 @@ the ACI-policy text fields don't apply. See [`OwnerMixin`
 coverage](#ownermixin-coverage) for the matching skip at serializer +
 GraphQL-type layers.
 
-## `CachedScopeMixin`
+## `ACICachedScopeMixin`
 
 Fabric-scoped models (`ACIFabric`, `ACIPod`) inherit
-`dcim.models.mixins.CachedScopeMixin`, which adds `scope_type` /
-`scope_id` / `scope` for assignment to a Site / Region / SiteGroup /
-Location. Include the scope fields in `clone_fields`:
+`ACICachedScopeMixin` from `models/mixins.py`, which adds
+`scope_type` / `scope_id` / `scope` for assignment to a Site / Region /
+SiteGroup / Location. The plugin mixin subclasses NetBox's
+`dcim.models.mixins.CachedScopeMixin` and pins the `_region` and
+`_site_group` cache fields to `on_delete=SET_NULL`, adopting the
+upstream fix for cache fields cascading on ancestor deletion (NetBox
+issue #22682) ahead of its release. The explicit declarations keep the
+plugin's migration state identical on every supported NetBox version;
+drop the overrides and inherit the NetBox mixin directly once the
+minimum supported NetBox release ships that fix. Include the scope
+fields in `clone_fields`:
 
 ```python
-from dcim.models.mixins import CachedScopeMixin
+from ..mixins import ACICachedScopeMixin
 
 
-class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
+class ACIFabric(ACICachedScopeMixin, OwnerMixin, NetBoxModel):
     # ...
     clone_fields: tuple = (
         "description",
