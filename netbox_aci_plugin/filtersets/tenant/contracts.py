@@ -336,13 +336,13 @@ class ACIContractSubjectFilterFilterSet(NetBoxModelFilterSet):
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_contract_subject__aci_contract__aci_tenant__aci_fabric__name",
-        queryset=ACITenant.objects.all(),
+        queryset=ACIFabric.objects.all(),
         to_field_name="name",
         label=_("ACI Fabric (name)"),
     )
     aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
         field_name="aci_contract_subject__aci_contract__aci_tenant__aci_fabric",
-        queryset=ACITenant.objects.all(),
+        queryset=ACIFabric.objects.all(),
         to_field_name="id",
         label=_("ACI Fabric (ID)"),
     )

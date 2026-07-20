@@ -13,6 +13,7 @@ from ....filtersets.tenant.contracts import (
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
+from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.contract_filters import ACIContractFilter
 from ....models.tenant.contracts import (
     ACIContract,
@@ -21,6 +22,7 @@ from ....models.tenant.contracts import (
     ACIContractSubjectFilter,
 )
 from ....models.tenant.endpoint_groups import ACIEndpointGroup
+from ....models.tenant.tenants import ACITenant
 from ...models.base import ACIBaseTestCase
 
 
@@ -196,11 +198,59 @@ class ACIContractSubjectFilterFilterSetTestCase(
         cls.sf_3 = ACIContractSubjectFilter.objects.create(
             aci_contract_subject=cls.aci_subject, aci_contract_filter=cls.filter_3
         )
+        # Second ACI Fabric/Tenant chain, to give the aci_fabric(_id) filter
+        # tests a real negative control. The PK is explicit and far outside
+        # any auto-assigned range, so it cannot coincidentally match an
+        # unrelated ACITenant PK (which is the bug this test covers).
+        cls.aci_fabric_b = ACIFabric.objects.create(
+            pk=999999,
+            name="ACIFSSFFabricB",
+            fabric_id=126,
+            infra_vlan_vid=3901,
+        )
+        cls.aci_tenant_b = ACITenant.objects.create(
+            name="ACIFSSFTenantB", aci_fabric=cls.aci_fabric_b
+        )
+        cls.aci_contract_b = ACIContract.objects.create(
+            name="ACIFSSFContractB", aci_tenant=cls.aci_tenant_b
+        )
+        cls.aci_subject_b = ACIContractSubject.objects.create(
+            name="ACIFSSFSubjectB", aci_contract=cls.aci_contract_b
+        )
+        cls.filter_b = ACIContractFilter.objects.create(
+            name="ACIFSSFFilterB", aci_tenant=cls.aci_tenant_b
+        )
+        cls.sf_b = ACIContractSubjectFilter.objects.create(
+            aci_contract_subject=cls.aci_subject_b, aci_contract_filter=cls.filter_b
+        )
 
     def test_q(self) -> None:
         """Test search() by the related ACI Contract Subject name."""
         params = {"q": "ACIFSSFSubject"}
         self.assertIn(self.sf_1, self.filterset(params, self.queryset).qs)
+
+    def test_aci_fabric(self) -> None:
+        """Test aci_fabric filters by the Subject Filter's own ACI Fabric."""
+        params = {"aci_fabric": [self.aci_fabric.name]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.sf_1, qs)
+        self.assertIn(self.sf_2, qs)
+        self.assertIn(self.sf_3, qs)
+        self.assertNotIn(self.sf_b, qs)
+
+    def test_aci_fabric_id(self) -> None:
+        """Test aci_fabric_id filters by the Subject Filter's Fabric."""
+        params = {"aci_fabric_id": [self.aci_fabric.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.sf_1, qs)
+        self.assertIn(self.sf_2, qs)
+        self.assertIn(self.sf_3, qs)
+        self.assertNotIn(self.sf_b, qs)
+
+        params_b = {"aci_fabric_id": [self.aci_fabric_b.pk]}
+        qs_b = self.filterset(params_b, self.queryset).qs
+        self.assertIn(self.sf_b, qs_b)
+        self.assertNotIn(self.sf_1, qs_b)
 
     def test_search_with_whitespace_only_returns_all(self) -> None:
         """Test search() with whitespace-only returns the full queryset."""
