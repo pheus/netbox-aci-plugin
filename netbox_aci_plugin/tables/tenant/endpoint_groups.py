@@ -32,7 +32,7 @@ class ACIEndpointGroupTable(NetBoxTable):
     )
     aci_tenant = tables.Column(
         verbose_name=_("ACI Tenant"),
-        accessor="aci_app_profile__aci_tenant",
+        orderable=False,
         linkify=True,
     )
     aci_app_profile = tables.Column(
