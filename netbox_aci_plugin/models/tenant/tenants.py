@@ -25,7 +25,7 @@ class ACITenant(ACITenantBaseModel):
         to="netbox_aci_plugin.ACIFabric",
         on_delete=models.PROTECT,
         related_name="aci_tenants",
-        verbose_name=_("ACI Tenant"),
+        verbose_name=_("ACI Fabric"),
     )
 
     clone_fields: tuple = ACITenantBaseModel.clone_fields + ("aci_fabric",)
