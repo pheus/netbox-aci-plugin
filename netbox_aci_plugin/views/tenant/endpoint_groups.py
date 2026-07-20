@@ -83,7 +83,7 @@ class ACIUSegEndpointGroupChildrenView(generic.ObjectChildrenView):
         label=_("uSeg Endpoint Groups"),
         badge=lambda obj: obj.aci_useg_endpoint_groups.count(),
         permission="netbox_aci_plugin.view_aciusegendpointgroup",
-        weight=1000,
+        weight=1100,
     )
     table = ACIUSegEndpointGroupTable
 

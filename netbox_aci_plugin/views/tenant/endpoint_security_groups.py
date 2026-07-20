@@ -113,7 +113,7 @@ class ACIEsgEndpointSelectorChildrenView(generic.ObjectChildrenView):
         label=_("Endpoint Selectors"),
         badge=lambda obj: obj.aci_esg_endpoint_selectors.count(),
         permission="netbox_aci_plugin.view_aciesgendpointselector",
-        weight=1000,
+        weight=1100,
     )
     table = ACIEsgEndpointSelectorTable
 
