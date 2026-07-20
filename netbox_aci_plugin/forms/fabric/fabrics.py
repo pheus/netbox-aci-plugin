@@ -82,8 +82,8 @@ class ACIFabricEditForm(ScopedForm, NetBoxModelForm):
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
         query_params={"group_id": "$owner_group"},
+        required=False,
         label=_("Owner"),
     )
     comments = CommentField()
@@ -375,7 +375,7 @@ class ACIFabricImportForm(ScopedImportForm, NetBoxModelImportForm):
 
     class Meta:
         model = ACIFabric
-        fields = (
+        fields: tuple = (
             "name",
             "description",
             "fabric_id",

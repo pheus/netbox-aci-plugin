@@ -135,8 +135,8 @@ class ACIEndpointSecurityGroupEditForm(NetBoxModelForm):
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
         query_params={"group_id": "$owner_group"},
+        required=False,
         label=_("Owner"),
     )
     comments = CommentField()
@@ -587,8 +587,8 @@ class ACIEsgEndpointGroupSelectorEditForm(NetBoxModelForm):
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
         query_params={"group_id": "$owner_group"},
+        required=False,
         label=_("Owner"),
     )
     comments = CommentField()
@@ -1111,8 +1111,8 @@ class ACIEsgEndpointSelectorEditForm(NetBoxModelForm):
     )
     owner = DynamicModelChoiceField(
         queryset=Owner.objects.all(),
-        required=False,
         query_params={"group_id": "$owner_group"},
+        required=False,
         label=_("Owner"),
     )
     comments = CommentField()
