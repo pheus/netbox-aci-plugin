@@ -8,7 +8,6 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from netbox.filtersets import NetBoxModelFilterSet
-from tenancy.models import Tenant
 from users.filterset_mixins import OwnerFilterMixin
 from utilities.filtersets import register_filterset
 
@@ -69,7 +68,9 @@ class ACIContractFilterFilterSet(
 
 
 @register_filterset
-class ACIContractFilterEntryFilterSet(OwnerFilterMixin, NetBoxModelFilterSet):
+class ACIContractFilterEntryFilterSet(
+    NBTenantFilterSetMixin, OwnerFilterMixin, NetBoxModelFilterSet
+):
     """Filter set for the ACI Contract Filter Entry model."""
 
     aci_fabric = django_filters.ModelMultipleChoiceFilter(
@@ -106,18 +107,6 @@ class ACIContractFilterEntryFilterSet(OwnerFilterMixin, NetBoxModelFilterSet):
         queryset=ACIContractFilter.objects.all(),
         to_field_name="id",
         label=_("ACI Contract Filter (ID)"),
-    )
-    nb_tenant = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract_filter__nb_tenant__slug",
-        queryset=Tenant.objects.all(),
-        to_field_name="slug",
-        label=_("NetBox tenant (slug)"),
-    )
-    nb_tenant_id = django_filters.ModelMultipleChoiceFilter(
-        field_name="aci_contract_filter__nb_tenant",
-        queryset=Tenant.objects.all(),
-        to_field_name="id",
-        label=_("NetBox tenant (ID)"),
     )
     arp_opc = django_filters.MultipleChoiceFilter(
         choices=ContractFilterARPOpenPeripheralCodesChoices,

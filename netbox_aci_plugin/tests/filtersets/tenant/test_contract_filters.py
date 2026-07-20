@@ -4,6 +4,7 @@
 
 """Filterset tests for tenant Contract Filter models."""
 
+from tenancy.models import Tenant
 from utilities.testing import ChangeLoggedFilterSetTests
 
 from ....filtersets.tenant.contract_filters import (
@@ -83,6 +84,35 @@ class ACIContractFilterEntryFilterSetTestCase(
         qs = self.filterset(params, self.queryset).qs
         self.assertIn(self.entry_1, qs)
         self.assertNotIn(self.entry_2, qs)
+
+    def test_nb_tenant_id_uses_entrys_own_tenant(self) -> None:
+        """Test nb_tenant_id uses the entry's tenant, not the parent's."""
+        nb_tenant_entry = Tenant.objects.create(
+            name="ACIFSEntryOwnTenant", slug="acifsentryowntenant"
+        )
+        nb_tenant_parent = Tenant.objects.create(
+            name="ACIFSEntryParentTenant", slug="acifsentryparenttenant"
+        )
+        aci_contract_filter = ACIContractFilter.objects.create(
+            name="ACIFSEntryTenantFilter",
+            aci_tenant=self.aci_tenant,
+            nb_tenant=nb_tenant_parent,
+        )
+        entry = ACIContractFilterEntry.objects.create(
+            name="ACIFSEntryTenantEntry",
+            aci_contract_filter=aci_contract_filter,
+            nb_tenant=nb_tenant_entry,
+        )
+
+        qs_own = self.filterset(
+            {"nb_tenant_id": [nb_tenant_entry.pk]}, self.queryset
+        ).qs
+        self.assertIn(entry, qs_own)
+
+        qs_parent = self.filterset(
+            {"nb_tenant_id": [nb_tenant_parent.pk]}, self.queryset
+        ).qs
+        self.assertNotIn(entry, qs_parent)
 
     def test_search_with_whitespace_only_returns_all(self) -> None:
         """Test search() with whitespace-only returns the full queryset."""
