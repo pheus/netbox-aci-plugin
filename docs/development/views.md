@@ -308,17 +308,29 @@ urlpatterns: tuple = (
 
 Each pair is preceded by a `# ACI <Verbose Model>` section comment.
 
-### Nav-visible models are flat, relation/binding models nest
+### Flat vs nested model URLs
 
-Primary models live at `<plural-kebab-noun>/`. That includes every
-model with its own navigation entry, even conceptual children such
-as Bridge Domain Subnet (`bridge-domain-subnets/`) or External
-Subnet (`external-subnets/`): the navigation sidebar highlights the
-menu entry whose URL is a prefix of the current page, so a nested
-list path would highlight the parent's entry instead of the model's
-own. Relation/binding models have no navigation entry and nest one
-level under the parent, where that parent highlight is the intended
-behavior:
+Whether a model gets a flat top-level URL or nests under its parent
+comes down to one question: is browsing and filtering every instance of
+the model, across all of its parents, useful to operators?
+
+When it is, the model gets a flat path (`<plural-kebab-noun>/`) plus a
+navigation entry, even for a conceptual child such as Bridge Domain
+Subnet (`bridge-domain-subnets/`) or Contract Filter Entry
+(`contract-filter-entries/`). The sidebar highlights the menu entry
+whose URL is a prefix of the current page, so a flat path keeps the
+model's own entry highlighted instead of the parent's.
+
+When it is not, the model nests one level under its parent and has no
+navigation entry. Two cases qualify. First, a Relation/Binding
+association with no identity of its own, a pure join extending
+`NetBoxModel` directly (see
+[Models - Class hierarchy](models.md#class-hierarchy)), such as
+`ACIContractRelation`, `ACIContractSubjectFilter`, or a Binding model
+like `ACIBridgeDomainL3OutBinding`. Second, a model that is only
+meaningful inside one specific parent, so a list spanning parents would
+have no use. Carrying its own `name` field does not by itself make a
+model flat:
 
 ```python
 # ACI Bridge Domain L3Out Binding (parent_object = aci_bridge_domain)
@@ -337,6 +349,23 @@ path(
 When the child slug would be ambiguous on its own (a BD has multiple
 binding types), include enough context to disambiguate
 (`l3out-bindings/`, not just `bindings/`).
+
+!!! note "Named models can still nest"
+    `ACIUSegNetworkAttribute`, `ACIEsgEndpointGroupSelector`, and
+    `ACIEsgEndpointSelector` carry their own `name` but nest under their
+    parent slug (`useg-endpoint-groups/network-attributes/`,
+    `endpoint-security-groups/epg-selectors/`,
+    `endpoint-security-groups/ep-selectors/`) because each is only
+    meaningful within its parent: there is no use in listing every uSeg
+    attribute or ESG selector across the fabric. They nest by the rule
+    above, not as an exception to it.
+
+!!! note "Borderline: browse-all vs. parent-only"
+    `ACIExternalSubnet` is the judgment case. It is only meaningful
+    within its L3Out, which argues for nesting, yet operators may want a
+    single list of all external subnets to filter across L3Outs, which
+    argues for a flat path (its current treatment). Decide per model on
+    that browse and filter utility.
 
 !!! note "API URLs stay flat"
     REST API consumers expect unambiguous resource paths. Use flat
