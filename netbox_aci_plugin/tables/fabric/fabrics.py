@@ -14,7 +14,7 @@ class ACIFabricTable(NetBoxTable):
     """NetBox table for the ACI Fabric model."""
 
     name = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         linkify=True,
     )
     fabric_id = tables.Column(

@@ -14,7 +14,7 @@ class ACINodeTable(NetBoxTable):
     """NetBox table for the ACI Node model."""
 
     name = tables.Column(
-        verbose_name=_("ACI Node"),
+        verbose_name=_("Node"),
         linkify=True,
     )
     name_alias = tables.Column(

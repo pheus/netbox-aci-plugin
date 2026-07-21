@@ -19,7 +19,10 @@ from ...models.tenant.l3outs import (
 class ACIL3OutTable(NetBoxTable):
     """Table for ACIL3Out model."""
 
-    name = tables.Column(linkify=True)
+    name = tables.Column(
+        verbose_name=_("L3Out"),
+        linkify=True,
+    )
     name_alias = tables.Column(verbose_name=_("Alias"), linkify=True)
     aci_fabric = tables.Column(
         verbose_name=_("ACI Fabric"),
@@ -100,7 +103,10 @@ class ACIL3OutTable(NetBoxTable):
 class ACIExternalEndpointGroupTable(NetBoxTable):
     """Table for ACIExternalEndpointGroup model."""
 
-    name = tables.Column(linkify=True)
+    name = tables.Column(
+        verbose_name=_("External EPG"),
+        linkify=True,
+    )
     name_alias = tables.Column(verbose_name=_("Alias"), linkify=True)
     aci_fabric = tables.Column(
         verbose_name=_("ACI Fabric"),
@@ -170,7 +176,10 @@ class ACIExternalEndpointGroupTable(NetBoxTable):
 class ACIExternalEndpointGroupReducedTable(NetBoxTable):
     """Reduced table for ACIExternalEndpointGroup model."""
 
-    name = tables.Column(linkify=True)
+    name = tables.Column(
+        verbose_name=_("External EPG"),
+        linkify=True,
+    )
     preferred_group_member_enabled = columns.BooleanColumn(
         verbose_name=_("Preferred member"),
     )
@@ -191,7 +200,10 @@ class ACIExternalEndpointGroupReducedTable(NetBoxTable):
 class ACIExternalSubnetTable(NetBoxTable):
     """Table for ACIExternalSubnet model."""
 
-    name = tables.Column(linkify=True)
+    name = tables.Column(
+        verbose_name=_("External Subnet"),
+        linkify=True,
+    )
     name_alias = tables.Column(verbose_name=_("Alias"), linkify=True)
     aci_fabric = tables.Column(
         verbose_name=_("ACI Fabric"),
@@ -294,7 +306,10 @@ class ACIExternalSubnetTable(NetBoxTable):
 class ACIExternalSubnetReducedTable(NetBoxTable):
     """Reduced table for ACIExternalSubnet model."""
 
-    name = tables.Column(linkify=True)
+    name = tables.Column(
+        verbose_name=_("External Subnet"),
+        linkify=True,
+    )
     matched_prefix = tables.Column(linkify=True)
     import_route_control_enabled = columns.BooleanColumn(verbose_name=_("Import RC"))
     export_route_control_enabled = columns.BooleanColumn(verbose_name=_("Export RC"))

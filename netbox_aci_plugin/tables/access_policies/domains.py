@@ -14,7 +14,7 @@ class ACIRoutedDomainTable(NetBoxTable):
     """NetBox table for the ACI Routed Domain model."""
 
     name = tables.Column(
-        verbose_name=_("ACI Routed Domain"),
+        verbose_name=_("Routed Domain"),
         linkify=True,
     )
     name_alias = tables.Column(
@@ -79,7 +79,7 @@ class ACIPhysicalDomainTable(NetBoxTable):
     """NetBox table for the ACI Physical Domain model."""
 
     name = tables.Column(
-        verbose_name=_("ACI Physical Domain"),
+        verbose_name=_("Physical Domain"),
         linkify=True,
     )
     name_alias = tables.Column(

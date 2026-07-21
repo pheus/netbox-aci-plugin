@@ -14,7 +14,7 @@ class ACIPodTable(NetBoxTable):
     """NetBox table for the ACI Pod model."""
 
     name = tables.Column(
-        verbose_name=_("ACI Pod"),
+        verbose_name=_("Pod"),
         linkify=True,
     )
     name_alias = tables.Column(

@@ -31,6 +31,14 @@ Use `linkify=True` on the `name`, `name_alias`, and any FK column.
 NetBox's table machinery routes the link to the related object's
 detail page automatically.
 
+### Name-column headers
+
+Every rendered `name` column passes an explicit short `verbose_name`: the
+model name without the `ACI` prefix (`Fabric`, `VLAN Pool`, `External
+EPG`). Keep the `ACI` prefix only where a NetBox core model of the same
+name appears in the same view (`ACI Tenant` vs `NB Tenant`, `ACI VRF` vs
+`NB VRF`). A guard test enforces this convention.
+
 ## Column-type catalog
 
 Use these column classes consistently:

@@ -14,7 +14,7 @@ class ACIVLANPoolTable(NetBoxTable):
     """NetBox table for the ACI VLAN Pool model."""
 
     name = tables.Column(
-        verbose_name=_("ACI VLAN Pool"),
+        verbose_name=_("VLAN Pool"),
         linkify=True,
     )
     name_alias = tables.Column(

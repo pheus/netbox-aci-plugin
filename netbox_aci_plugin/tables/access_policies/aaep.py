@@ -17,7 +17,7 @@ class ACIAttachableAccessEntityProfileTable(NetBoxTable):
     """NetBox table for the ACI Attachable Access Entity Profile model."""
 
     name = tables.Column(
-        verbose_name=_("ACI AAEP"),
+        verbose_name=_("AAEP"),
         linkify=True,
     )
     name_alias = tables.Column(
