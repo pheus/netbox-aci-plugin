@@ -148,7 +148,7 @@ The *ACIContractSubject* model has the following fields:
     - Values: `unspecified` (unspecified), `level1` (level 1),
       `level2` (level 2), `level3` (level 3), `level4` (level 4),
       `level5` (level 5), `level6` (level 6)
-      - Default: `unspecified`
+    - Default: `unspecified`
 - **QoS class Provider to Consumer**: specifies the priority handling,
   Quality of Service (QoS), for traffic from Provider to Consumer within the
   fabric (for disabled `apply_both_directions_enabled`).

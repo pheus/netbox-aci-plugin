@@ -37,7 +37,7 @@ The *ACIEndpointSecurityGroup* model has the following fields:
 *Optional fields*:
 
 - **Name alias**: a name alias in the ACI for the Endpoint Security Group.
-- **Description**: a description of the Endpoint Group.
+- **Description**: a description of the Endpoint Security Group.
 - **NetBox Tenant**: a reference to the NetBox tenant model.
 - **Admin shutdown**: a boolean field indicating whether the ESG is in shutdown
   mode, removing all policy configuration from all switches.

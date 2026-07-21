@@ -42,9 +42,8 @@ The **ACIFabric** model has the following fields:
 - **Description**: a description of the Fabric.
 - **Infrastructure VLAN**: reference to a NetBox VLAN documenting the
   same VLAN ID.
-- **GiPo pool**: reference to a NetBox Prefix representing the
-  Bridge Domain multicast (GiPo) pool used for fabric multicast
-  (for example, `225.0.0.0/15`).
+- **GIPo pool**: reference to a NetBox Prefix representing the
+  fabric-wide multicast (GIPo) pool (for example, `225.0.0.0/15`).
 - **NetBox tenant**: association to a NetBox Tenant.
 - **Comments**: a text field for notes (Markdown supported).
 - **Tags**: a list of NetBox tags.

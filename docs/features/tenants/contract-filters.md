@@ -79,14 +79,14 @@ The *ACIContractFilterEntry* model has the following fields:
       `ip` (IP), `ipv4` (IPv4), `ipv6` (IPv6), `mac_security` (MAC Security),
       `mpls_ucast` (MPLS Unicast), `trill` (Trill)
     - Default: `unspecified`
-- **ICMP v4 type**: matches the specified ICMPv4 message type for *IP Protocol*
+- **ICMPv4 type**: matches the specified ICMPv4 message type for *IP Protocol*
   `icmp` (ICMPv4).
     - Values: `unspecified` (unspecified),
       `dst-unreach` (destination unreachable), `echo` (echo request),
       `echo-rep` (echo reply), `src-quench` (source quench),
       `time-exceeded` (time exceeded)
     - Default: `unspecified`
-- **ICMP v6 type**: matches the specified ICMPv6 message type for *IP Protocol*
+- **ICMPv6 type**: matches the specified ICMPv6 message type for *IP Protocol*
   `icmpv6` (ICMPv6).
     - Values: `unspecified` (unspecified),
       `dst-unreach` (destination unreachable), `echo-req` (echo request),
@@ -123,7 +123,7 @@ The *ACIContractFilterEntry* model has the following fields:
       `smtp` (SMTP), `ssh` (SSH) or in range of `0`-`65535`
     - Default: `unspecified`
 - **Stateful enabled**: allows TCP packets from provider to consumer only if
-  the TCP flack ACK is set for *IP Protocol* `tcp` (TCP).
+  the TCP flag ACK is set for *IP Protocol* `tcp` (TCP).
     - Default: `false`
 - **TCP rules**: specifies a list of matching TCP flag values for *IP Protocol*
   `tcp` (TCP).

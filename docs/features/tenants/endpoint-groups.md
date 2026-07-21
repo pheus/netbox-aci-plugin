@@ -101,7 +101,7 @@ The *ACIUSegEndpointGroup* model has the following fields:
     - Default: `false`
 - **Match operator**: specifies the match operation for the referenced uSeg
   attributes.
-    - Values: `any` (any), `all` (all),
+    - Values: `any` (any), `all` (all)
     - Default: `any`
 - **QoS class**: represents the assignment of the ACI Quality of Service (QoS)
   level for traffic sourced in the uSeg EPG.

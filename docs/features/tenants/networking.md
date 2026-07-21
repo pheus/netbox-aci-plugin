@@ -115,7 +115,7 @@ The *ACIBridgeDomain* model has the following fields:
 - **PIM IPv4 source filter**: the name of the PIM IPv4 source filter.
 - **PIM IPv6 enabled**: a boolean field, whether IPv6 multicast is enabled.
     - Default: `false`
-- **Unicast routing enabled**: a boolean field, whether unicast routing is.
+- **Unicast routing enabled**: a boolean field, whether unicast routing is
   enabled.
     - Default: `true`
 - **Unknown IPv4 multicast**: defines the IPv4 unknown multicast forwarding
@@ -142,7 +142,7 @@ The *ACIBridgeDomainSubnet* model has the following fields:
 
 *Required fields*:
 
-- **Name**: represent the Bridge Domain name in the ACI.
+- **Name**: represent the Bridge Domain Subnet name in the ACI.
 - **ACI Bridge Domain**: a reference to the `ACIBridgeDomain` model.
 - **Gateway IP Address**: the gateway IP address of the Bridge Domain
   (referencing the NetBox IP address).
