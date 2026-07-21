@@ -24,6 +24,14 @@ Prefer one descriptive name over a long string of model names. If a
 single migration touches many models because they share a feature
 (e.g. `owner`), name it after the feature.
 
+## License header
+
+Migration files carry no SPDX license header. Leaving it off is a
+deliberate exception to the general rule that every non-empty Python
+source file starts with one. Migrations begin as generated files and
+keep the no-header convention even when later hand-edited, so the
+missing header is intentional and should not be backfilled.
+
 ## Data migration idempotency
 
 Every seed-data `RunPython` operation must be **idempotent**: running
