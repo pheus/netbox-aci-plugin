@@ -45,7 +45,7 @@ docs = [
 ]
 test = [
     "check-manifest==0.51",
-    "coverage[toml]==7.15.2",
+    "coverage==7.15.2",
     "pre-commit==4.6.0",
     "pytest==9.1.1",
     "ruff==0.15.22",
@@ -65,8 +65,7 @@ ignore = [
     ".editorconfig",
     ".markdownlint.yaml",
     ".pre-commit-config.yaml",
-    ".pypirc",
-    "requirements_dev.txt",
+    "CODEOWNERS",
     "ruff.toml",
 ]
 
@@ -84,20 +83,18 @@ sigterm = true
 show_missing = true
 skip_covered = false
 fail_under = 100
-exclude_lines = [
-    "pragma: no cover",
-    "if TYPE_CHECKING:",
-]
 
 [tool.setuptools]
-include-package-data = true
+include-package-data = false
 
 [tool.setuptools.packages.find]
 include = ["netbox_aci_plugin*"]
+exclude = ["netbox_aci_plugin.tests*"]
+namespaces = false
 
 [tool.setuptools.package-data]
 netbox_aci_plugin = [
     "templates/**",
     "static/**",
-    "locale/**/*.mo"
+    "locale/**/*.mo",
 ]

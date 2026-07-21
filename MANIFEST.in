@@ -2,6 +2,8 @@ include CONTRIBUTING.md
 include LICENSE
 include README.md
 include CHANGELOG.md
+include CODE_OF_CONDUCT.md
+include SECURITY.md
 include Makefile
 include mkdocs.yml
 
@@ -16,7 +18,9 @@ prune docs/site
 
 # Tests
 recursive-include netbox_aci_plugin/tests *
+include .ci/configuration.testing.py
 
 # Housekeeping
-global-exclude __pycache__ *.py[co] .DS_Store .ruff-cache
-prune .ci
+global-exclude __pycache__ *.py[cod] .DS_Store .ruff_cache
+global-exclude .coverage coverage.xml
+prune .pytest_cache
