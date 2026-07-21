@@ -29,6 +29,7 @@ This is the longest layer doc. Use the table of contents to jump:
 - [Relation / Binding models](#relation--binding-models)
 - [`ACICachedScopeMixin`](#acicachedscopemixin)
 - [Choices](#choices)
+- [ACI concept casing in prose](#aci-concept-casing-in-prose)
 - [Model field kwarg ordering](#model-field-kwarg-ordering)
 
 ## ACI source-of-truth validation
@@ -631,6 +632,24 @@ string (e.g. some Contract Filter port fields).
 Choice sets used by multiple domains (e.g. `QualityOfServiceClassChoices`,
 `QualityOfServiceDSCPChoices`) get their own conceptual section in
 `choices.py`. Put them after the domain sections that reference them.
+
+## ACI concept casing in prose
+
+When prose names the ACI concept that a model or field represents, in
+a class docstring, a `Notes:` block, a validation or error message, or
+a help_text sentence, Title-Case the concept noun: "a Bridge Domain",
+"the Endpoint Group", "a Contract Filter". This matches how the same
+noun is already capitalized inside that model's
+`verbose_name=_("ACI <X>")` value. A generic English use of the same
+word, one that isn't naming the ACI concept, stays lowercase:
+
+```python
+_("A Bridge Domain must have at least one gateway subnet.")
+```
+
+This rule is scoped to prose casing only; casing inside `verbose_name`
+values and code comments follows a separate, already-settled
+convention.
 
 ## Model field kwarg ordering
 
