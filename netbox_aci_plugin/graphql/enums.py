@@ -13,7 +13,6 @@ from ..choices import (
     ContractFilterICMPv4TypesChoices,
     ContractFilterICMPv6TypesChoices,
     ContractFilterIPProtocolChoices,
-    ContractFilterPortChoices,
     ContractFilterTCPRulesChoices,
     ContractRelationRoleChoices,
     ContractScopeChoices,
@@ -45,7 +44,6 @@ __all__ = (
     "ContractFilterICMPv4TypesEnum",
     "ContractFilterICMPv6TypesEnum",
     "ContractFilterIPProtocolEnum",
-    "ContractFilterPortEnum",
     "ContractFilterTCPRulesEnum",
     "ContractRelationRoleEnum",
     "ContractScopeEnum",
@@ -95,7 +93,6 @@ ContractFilterICMPv6TypesEnum = strawberry.enum(
 ContractFilterIPProtocolEnum = strawberry.enum(
     ContractFilterIPProtocolChoices.as_enum()
 )
-ContractFilterPortEnum = strawberry.enum(ContractFilterPortChoices.as_enum())
 ContractFilterTCPRulesEnum = strawberry.enum(ContractFilterTCPRulesChoices.as_enum())
 
 #
