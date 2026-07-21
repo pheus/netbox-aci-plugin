@@ -165,11 +165,13 @@ then `nb_tenant`, `owner`, `comments`, `tags` last.
 
 ## `FieldSet` fieldset organization
 
-Every form (Edit, BulkEdit, Filter, Import) declares a `fieldsets`
-tuple of `FieldSet(...)` calls, with **no raw `fields` list at the form
-level** (Meta still has `fields`; this is about presentational
-grouping). Each `FieldSet` takes positional field names and a `name=`
-kwarg holding the section heading:
+Every Edit, BulkEdit, and Filter form declares a `fieldsets` tuple of
+`FieldSet(...)` calls, with **no raw `fields` list at the form level**
+(Meta still has `fields`; this is about presentational grouping).
+`ImportForm` never declares `fieldsets`: CSV import renders as a flat
+column-mapped table, not a sectioned web form. Each `FieldSet` takes
+positional field names and a `name=` kwarg holding the section
+heading:
 
 ```python
 from utilities.forms.rendering import FieldSet
