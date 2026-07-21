@@ -46,7 +46,7 @@ docs = [
 test = [
     "check-manifest==0.51",
     "coverage==7.15.2",
-    "pre-commit==4.6.0",
+    "pre-commit==4.6.1",
     "pytest==9.1.1",
     "ruff==0.15.22",
     "tblib==3.2.2",
