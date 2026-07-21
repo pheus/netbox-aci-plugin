@@ -388,6 +388,10 @@ class ACIBridgeDomainTestCase(ACIBaseTestCase):
             bd.full_clean()
             bd.save()
 
+    def test_aci_bridge_domain_str(self) -> None:
+        """Test string representation for a non-'common' ACI Tenant."""
+        self.assertEqual(str(self.aci_bd), self.aci_bd.name)
+
     def test_aci_bridge_domain_str_common_tenant(self) -> None:
         """Test string representation appends the (common) suffix."""
         tenant_common = ACITenant.objects.get_or_create(
@@ -543,7 +547,7 @@ class ACIBridgeDomainSubnetTestCase(ACIBaseTestCase):
         """Test instance of created ACI Bridge Domain Subnet."""
         self.assertTrue(isinstance(self.aci_bd_subnet, ACIBridgeDomainSubnet))
 
-    def test_aci_bd_subnet_str(self) -> None:
+    def test_aci_bridge_domain_subnet_str(self) -> None:
         """Test string representation of ACI Bridge Domain Subnet."""
         self.assertEqual(self.aci_bd_subnet.__str__(), self.aci_bd_subnet.name)
 

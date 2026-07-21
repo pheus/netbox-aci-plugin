@@ -50,7 +50,7 @@ class ACIPodTestCase(ACIBaseTestCase):
         """Test type of created ACI Pod."""
         self.assertTrue(isinstance(self.aci_pod, ACIPod))
 
-    def test_aci_pod_str_return_value(self) -> None:
+    def test_aci_pod_str(self) -> None:
         """Test string value of created ACI Pod."""
         self.assertEqual(self.aci_pod.__str__(), self.aci_pod.name)
 

@@ -51,7 +51,7 @@ class ACIFabricTestCase(ACIBaseTestCase):
         """Test type of created ACI Fabric."""
         self.assertTrue(isinstance(self.aci_fabric, ACIFabric))
 
-    def test_aci_fabric_str_return_value(self) -> None:
+    def test_aci_fabric_str(self) -> None:
         """Test string value of created ACI Fabric."""
         self.assertEqual(self.aci_fabric.__str__(), self.aci_fabric.name)
 

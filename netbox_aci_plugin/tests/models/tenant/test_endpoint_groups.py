@@ -798,7 +798,7 @@ class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
             isinstance(self.aci_useg_network_attr_epg_subnet, ACIUSegNetworkAttribute)
         )
 
-    def test_aci_useg_network_attr_str(self) -> None:
+    def test_aci_useg_network_attribute_str(self) -> None:
         """Test string representation of ACI uSeg Network Attribute."""
         self.assertEqual(
             self.aci_useg_network_attr_ip_address.__str__(),

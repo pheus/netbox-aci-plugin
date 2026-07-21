@@ -66,7 +66,7 @@ class ACINodeTestCase(ACIBaseTestCase):
         """Test type of created ACI Node."""
         self.assertTrue(isinstance(self.aci_node, ACINode))
 
-    def test_aci_node_str_return_value(self) -> None:
+    def test_aci_node_str(self) -> None:
         """Test string value of created ACI Node."""
         self.assertEqual(self.aci_node.__str__(), self.aci_node.name)
 

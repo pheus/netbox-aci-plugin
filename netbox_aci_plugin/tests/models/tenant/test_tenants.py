@@ -41,7 +41,7 @@ class ACITenantTestCase(ACIBaseTestCase):
         """Test type of created ACI Tenant."""
         self.assertTrue(isinstance(self.aci_tenant, ACITenant))
 
-    def test_aci_tenant_str_return_value(self) -> None:
+    def test_aci_tenant_str(self) -> None:
         """Test string value of created ACI Tenant."""
         self.assertEqual(self.aci_tenant.__str__(), self.aci_tenant.name)
 
