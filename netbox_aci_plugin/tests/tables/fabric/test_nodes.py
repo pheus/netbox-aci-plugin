@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for fabric Node models."""
+
 from ....tables.fabric.nodes import ACINodeTable
 from .. import base
 

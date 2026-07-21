@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for tenant Contract models."""
+
 from ....choices import ContractRelationRoleChoices
 from ....models.tenant.contracts import ACIContract, ACIContractRelation
 from ....models.tenant.endpoint_groups import ACIEndpointGroup

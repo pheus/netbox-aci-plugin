@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for fabric Fabric models."""
+
 from ....tables.fabric.fabrics import ACIFabricTable
 from .. import base
 

@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for tenant Endpoint Security Group models."""
+
 from ....tables.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupTable,
     ACIEsgEndpointGroupSelectorTable,

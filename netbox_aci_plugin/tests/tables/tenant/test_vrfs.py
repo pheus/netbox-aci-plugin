@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for tenant VRF models."""
+
 from ....tables.tenant.vrfs import ACIVRFTable
 from .. import base
 

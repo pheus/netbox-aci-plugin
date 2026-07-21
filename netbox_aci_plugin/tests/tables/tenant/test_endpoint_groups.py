@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for tenant Endpoint Group models."""
+
 from ....tables.tenant.endpoint_groups import (
     ACIEndpointGroupTable,
     ACIUSegEndpointGroupTable,

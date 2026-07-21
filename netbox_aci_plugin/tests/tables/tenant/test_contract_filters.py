@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for tenant Contract Filter models."""
+
 from ....tables.tenant.contract_filters import (
     ACIContractFilterEntryTable,
     ACIContractFilterTable,

@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for tenant Bridge Domain models."""
+
 from ....tables.tenant.bridge_domains import (
     ACIBridgeDomainL3OutBindingTable,
     ACIBridgeDomainSubnetTable,

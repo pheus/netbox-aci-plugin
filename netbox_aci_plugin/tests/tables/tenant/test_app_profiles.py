@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for tenant Application Profile models."""
+
 from ....tables.tenant.app_profiles import ACIAppProfileTable
 from .. import base
 

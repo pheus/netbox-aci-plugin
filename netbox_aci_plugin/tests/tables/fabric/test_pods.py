@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""Table tests for fabric Pod models."""
+
 from ....tables.fabric.pods import ACIPodTable
 from .. import base
 
