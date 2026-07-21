@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""API tests for fabric Node models."""
+
 from dcim.models import Device, DeviceRole, DeviceType, Manufacturer, Site
 from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant

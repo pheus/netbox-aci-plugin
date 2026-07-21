@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""API tests for tenant Tenant models."""
+
 from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 

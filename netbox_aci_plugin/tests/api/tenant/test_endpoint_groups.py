@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""API tests for tenant Endpoint Group models."""
+
 from dcim.models import MACAddress
 from ipam.models import VRF, IPAddress, Prefix
 from tenancy.models import Tenant

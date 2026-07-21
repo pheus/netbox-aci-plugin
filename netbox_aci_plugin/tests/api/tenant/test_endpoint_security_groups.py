@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""API tests for tenant Endpoint Security Group models."""
+
 from ipam.models import VRF, IPAddress, Prefix
 from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases

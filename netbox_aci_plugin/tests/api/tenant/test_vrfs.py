@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+"""API tests for tenant VRF models."""
+
 from ipam.models import VRF
 from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
