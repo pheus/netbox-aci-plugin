@@ -4,7 +4,8 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
+from django.test.utils import CaptureQueriesContext
 
 from dcim.models import Device, Location, Region, Site, SiteGroup
 from ipam.models import IPAddress
@@ -368,6 +369,144 @@ class ACINodeTestCase(ACIBaseTestCase):
             node_object=virtual_machine,
         )
         node.save()
+        self.assertEqual(node._virtual_machine, virtual_machine)  # noqa: SLF001
+
+    def test_aci_node_save_update_fields_atomic_tuple(self) -> None:
+        """Test save expands a node object field to relation and caches."""
+        cluster_type = ClusterType.objects.create(
+            name="ACINodeAtomicClusterType", slug="acinodeatomicclustertype"
+        )
+        cluster = Cluster.objects.create(name="ACINodeAtomicCluster", type=cluster_type)
+        vm_content_type = ContentType.objects.get_for_model(VirtualMachine)
+
+        for offset, field_name in enumerate(
+            ("node_object_id", "node_object_type", "node_object_type_id")
+        ):
+            with self.subTest(field_name=field_name):
+                device = Device.objects.create(
+                    name=f"ACINodeAtomicDevice{offset}",
+                    device_type=self.device_type1,
+                    role=self.device_role1,
+                    site=self.site,
+                )
+                virtual_machine = VirtualMachine.objects.create(
+                    name=f"ACINodeAtomicVM{offset}", cluster=cluster
+                )
+                node = ACINode.objects.create(
+                    name=f"ACINodeAtomic{offset}",
+                    aci_pod=self.aci_pod,
+                    node_id=111 + offset,
+                    role=NodeRoleChoices.ROLE_LEAF,
+                    node_object=device,
+                )
+
+                node.node_object = virtual_machine
+                node.save(update_fields={field_name})
+                node.refresh_from_db()
+
+                self.assertEqual(node.node_object_type_id, vm_content_type.pk)
+                self.assertEqual(node.node_object_id, virtual_machine.pk)
+                self.assertIsNone(node._device)  # noqa: SLF001
+                self.assertEqual(
+                    node._virtual_machine,  # noqa: SLF001
+                    virtual_machine,
+                )
+
+    def test_aci_node_save_update_fields_unrelated_partial_inert(self) -> None:
+        """Test an unrelated save leaves node object and caches unchanged."""
+        device = Device.objects.create(
+            name="ACINodeInertDevice",
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        cluster_type = ClusterType.objects.create(
+            name="ACINodeInertClusterType", slug="acinodeinertclustertype"
+        )
+        cluster = Cluster.objects.create(name="ACINodeInertCluster", type=cluster_type)
+        virtual_machine = VirtualMachine.objects.create(
+            name="ACINodeInertVM", cluster=cluster
+        )
+        node = ACINode.objects.create(
+            name="ACINodeInert",
+            aci_pod=self.aci_pod,
+            node_id=114,
+            role=NodeRoleChoices.ROLE_LEAF,
+            node_object=device,
+        )
+
+        node.node_object = virtual_machine
+        node.name = "ACINodeInertRenamed"
+        node.save(update_fields={"name"})
+        node.refresh_from_db()
+
+        self.assertEqual(node.name, "ACINodeInertRenamed")
+        self.assertEqual(node.node_object, device)
+        self.assertEqual(node._device, device)  # noqa: SLF001
+        self.assertIsNone(node._virtual_machine)  # noqa: SLF001
+
+    def test_aci_node_save_update_fields_empty_set_skipped(self) -> None:
+        """Test an empty update_fields set skips the save."""
+        device = Device.objects.create(
+            name="ACINodeSkippedDevice",
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        node = ACINode.objects.create(
+            name="ACINodeSkipped",
+            aci_pod=self.aci_pod,
+            node_id=115,
+            role=NodeRoleChoices.ROLE_LEAF,
+            node_object=device,
+        )
+
+        node.name = "ACINodeSkippedRenamed"
+        with CaptureQueriesContext(connection) as queries:
+            node.save(update_fields=set())
+        node.refresh_from_db()
+
+        # No write may reach the database, not even a no-op UPDATE
+        self.assertFalse(
+            [
+                q
+                for q in queries.captured_queries
+                if q["sql"].lstrip().upper().startswith("UPDATE")
+            ]
+        )
+        self.assertEqual(node.name, "ACINodeSkipped")
+
+    def test_aci_node_save_full_persists_source_and_caches(self) -> None:
+        """Test a full save persists node object and caches together."""
+        device = Device.objects.create(
+            name="ACINodeFullSaveDevice",
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        cluster_type = ClusterType.objects.create(
+            name="ACINodeFullSaveClusterType", slug="acinodefullsaveclustertype"
+        )
+        cluster = Cluster.objects.create(
+            name="ACINodeFullSaveCluster", type=cluster_type
+        )
+        virtual_machine = VirtualMachine.objects.create(
+            name="ACINodeFullSaveVM", cluster=cluster
+        )
+        node = ACINode.objects.create(
+            name="ACINodeFullSave",
+            aci_pod=self.aci_pod,
+            node_id=116,
+            role=NodeRoleChoices.ROLE_LEAF,
+            node_object=device,
+        )
+
+        node.node_object = virtual_machine
+        node.save()
+        node.refresh_from_db()
+
+        self.assertEqual(node.node_object, virtual_machine)
+        self.assertIsNone(node._device)  # noqa: SLF001
         self.assertEqual(node._virtual_machine, virtual_machine)  # noqa: SLF001
 
     def test_aci_node_object_scope_with_region_group_location(self) -> None:

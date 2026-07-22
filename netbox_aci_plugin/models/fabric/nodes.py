@@ -288,6 +288,26 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
         # Cache the related objects for faster access
         self.cache_related_objects()
 
+        # Persist the whole node object relation and its derived caches
+        # whenever any part of that relation is being saved
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            update_fields = set(update_fields)
+            if {
+                "node_object_type",
+                "node_object_type_id",
+                "node_object_id",
+            } & update_fields:
+                update_fields.update(
+                    {
+                        "node_object_type",
+                        "node_object_id",
+                        "_device",
+                        "_virtual_machine",
+                    }
+                )
+            kwargs["update_fields"] = update_fields
+
         super().save(*args, **kwargs)
 
     def cache_related_objects(self) -> None:
