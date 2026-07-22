@@ -7,6 +7,88 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
+## [Unreleased]
+
+---
+
+## [0.4.0] – 2026-07-22
+
+> **Compatibility:** NetBox v4.5, NetBox v4.6
+
+### Added
+
+- Add ACI VLAN Pools and VLAN Pool Ranges with allocation modes, range roles,
+  and optional NetBox VLAN Group integration.
+- Add ACI Physical Domains and their ACI VLAN Pool associations.
+- Add ACI Attachable Access Entity Profiles (AAEPs), including infrastructure
+  VLAN support, and AAEP Domain Bindings.
+- Add ACI Endpoint Group Domain Bindings with deployment and resolution
+  immediacy.
+- Add ACI Endpoint Group AAEP Bindings with VLAN encapsulation, optional
+  primary encapsulation, port mode, and deployment immediacy, validated against
+  the ACI VLAN Pool of a Physical Domain shared by the Endpoint Group and AAEP.
+- Enforce unique encapsulation VLAN IDs across an AAEP's bindings; require
+  `untagged` bindings to be exclusive and allow at most one `native` binding
+  per AAEP.
+- Add NetBox tenant-group filters (`nb_tenant_group` and
+  `nb_tenant_group_id`) to the Contract Filter Entry list, matching the other
+  tenant-scoped filters.
+
+### Changed
+
+- **BREAKING:** Move the External Subnet UI to the top-level
+  `external-subnets/` path so the navigation highlights its own entry.
+  Existing bookmarks to v0.3.x URLs must be updated.
+- **BREAKING:** Pluralize the ESG selector REST API paths to
+  `esg-endpoint-group-selectors/` and `esg-endpoint-selectors/`. The former
+  singular paths no longer resolve; update any API integrations.
+- Show the parent ACI L3Out instead of the ACI Tenant and VRF in ACI External
+  Endpoint Group search results, aligning the L3Out-family search indexes.
+- Rename table name-column headers to the short model name without the
+  `ACI` prefix (for example `Fabric`, `VLAN Pool`); only ACI Tenant and ACI
+  VRF keep the prefix. The L3Out, External EPG, and External Subnet tables
+  get proper headers instead of a generic "Name".
+- Optimize ACI Fabric list and detail querysets with `select_related()` for
+  `infra_vlan` and `gipo_pool` to avoid redundant related-object queries.
+
+### Fixed
+
+- Run model validation on ACI External Subnet REST API writes.
+- Scope the ACI Fabric infrastructure VLAN CSV import by VLAN group so
+  duplicate VLAN IDs in different groups resolve correctly.
+- Reject blank choice values on ACI edit forms instead of storing them as empty
+  strings.
+- Prevent deleting a Region or Site Group ancestor from cascading to scoped ACI
+  Fabric or ACI Pod objects.
+- Return a validation error instead of an HTTP 500 response when a required
+  parent field is left unset on ACI Bridge Domain, ACI ESG Endpoint Group
+  Selector, and ACI Contract Relation submissions.
+- Correct the ACI Fabric filter on the Contract Subject Filter list; it
+  previously queried the tenant table and never matched.
+- Make the NetBox tenant filter on the Contract Filter Entry list match the
+  entry's own tenant rather than its parent Contract Filter's tenant.
+- Include Contracts and Contract Filters from the `common` ACI Tenant in
+  tenant-scoped edit and bulk-edit form lookups.
+- Include ACI VRFs from the `common` ACI Tenant in the ACI Bridge Domain VRF
+  form lookup.
+- Remove the invalid `nb_vrf_id` field from the ACI Bridge Domain Subnet
+  filter form.
+- Repair mislabeled and orphaned form fields on ACI Bridge Domain, Contract
+  Subject, Contract Subject Filter, Contract Filter Entry, and ESG forms so
+  custom labels, widgets, and cascading lookups apply again.
+- Disable ordering by ACI Tenant in the Endpoint Group table to prevent database
+  query errors.
+- Correct the `aci_fabric` field label on ACI Tenants from "ACI Tenant" to
+  "ACI Fabric".
+- Check the Contract Subject Filter add permission for the "Assign a Filter"
+  button instead of the Contract Subject add permission.
+- Prefill the ACI Fabric when adding a Domain Binding from an AAEP detail view.
+- Correct the ESG Endpoint Selector card header by removing the stray "Group".
+- Stabilize detail-view child-tab ordering for uSeg Endpoint Groups and ESG
+  Endpoint Selectors.
+
+---
+
 ## [0.3.1] – 2026-06-21
 
 > **Compatibility:** NetBox v4.5, NetBox v4.6
@@ -175,7 +257,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
-[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.1...HEAD
+[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.1...v0.2.2

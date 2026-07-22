@@ -2,7 +2,7 @@
 
 __author__ = """Martin Hauser"""
 __email__ = "git@pheus.dev"
-__version__ = "0.3.1"
+__version__ = "0.4.0"
 
 
 from netbox.plugins import PluginConfig
