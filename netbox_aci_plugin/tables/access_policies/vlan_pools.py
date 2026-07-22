@@ -75,11 +75,11 @@ class ACIVLANPoolRangeTable(NetBoxTable):
     """NetBox table for the ACI VLAN Pool Range model."""
 
     aci_vlan_pool = tables.Column(
-        verbose_name=_("ACI VLAN Pool"),
+        verbose_name=_("VLAN Pool"),
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_vlan_pool__aci_fabric",
         linkify=True,
     )

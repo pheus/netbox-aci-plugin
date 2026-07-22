@@ -15,7 +15,7 @@ table), prefer `accessor="parent__grandparent"` over a custom
 
 ```python
 aci_fabric = tables.Column(
-    verbose_name=_("ACI Fabric"),
+    verbose_name=_("Fabric"),
     accessor="aci_tenant__aci_fabric",
     linkify=True,
 )
@@ -31,13 +31,21 @@ Use `linkify=True` on the `name`, `name_alias`, and any FK column.
 NetBox's table machinery routes the link to the related object's
 detail page automatically.
 
-### Name-column headers
+### Column headers
 
-Every rendered `name` column passes an explicit short `verbose_name`: the
-model name without the `ACI` prefix (`Fabric`, `VLAN Pool`, `External
-EPG`). Keep the `ACI` prefix only where a NetBox core model of the same
-name appears in the same view (`ACI Tenant` vs `NB Tenant`, `ACI VRF` vs
-`NB VRF`). A guard test enforces this convention.
+Every rendered `name` column, and every FK or GFK column that points at
+another object, passes an explicit short `verbose_name`: the model name
+without the `ACI` prefix (`Fabric`, `VLAN Pool`, `External EPG`,
+`L3Out`). Keep the `ACI` prefix only where a NetBox core model of the
+same name appears in the same view, which today means columns pointing
+at ACI Tenant and ACI VRF (`ACI Tenant` vs `NB Tenant`, `ACI VRF` vs `NB
+VRF`). The polymorphic GFK columns that can resolve to either an
+Endpoint Group or a uSeg Endpoint Group use the shared umbrella
+header `EPG` (and `EPG Type` for the paired content-type column) rather
+than either model's own short name. NetBox-side `nb_tenant` and other
+`nb_*` columns keep their own "NetBox X" labelling, a separate concern
+from this rule. A guard test enforces the convention across every
+table.
 
 ## Column-type catalog
 

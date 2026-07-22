@@ -35,7 +35,7 @@ class ACIBridgeDomainTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -162,7 +162,7 @@ class ACIBridgeDomainSubnetTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_bridge_domain__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -287,7 +287,7 @@ class ACIBridgeDomainL3OutBindingTable(NetBoxTable):
     """Table for ACIBridgeDomainL3OutBinding model."""
 
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_bridge_domain__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -302,10 +302,10 @@ class ACIBridgeDomainL3OutBindingTable(NetBoxTable):
         linkify=True,
     )
     aci_bridge_domain = tables.Column(
-        verbose_name=_("ACI Bridge Domain"),
+        verbose_name=_("Bridge Domain"),
         linkify=True,
     )
-    aci_l3out = tables.Column(verbose_name=_("ACI L3Out"), linkify=True)
+    aci_l3out = tables.Column(verbose_name=_("L3Out"), linkify=True)
     tags = columns.TagColumn()
     comments = columns.MarkdownColumn()
 

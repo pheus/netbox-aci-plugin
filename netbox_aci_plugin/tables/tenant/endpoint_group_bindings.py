@@ -17,7 +17,7 @@ class ACIEndpointGroupDomainBindingTable(NetBoxTable):
     """NetBox table for the ACI Endpoint Group Domain Binding model."""
 
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_epg_object__aci_fabric",
         orderable=False,
         linkify=True,
@@ -26,7 +26,7 @@ class ACIEndpointGroupDomainBindingTable(NetBoxTable):
         verbose_name=_("EPG Type"),
     )
     aci_epg_object = tables.Column(
-        verbose_name=_("Endpoint Group"),
+        verbose_name=_("EPG"),
         orderable=False,
         linkify=True,
     )
@@ -73,11 +73,11 @@ class ACIEndpointGroupAAEPBindingTable(NetBoxTable):
     """NetBox table for the ACI Endpoint Group AAEP Binding model."""
 
     aci_endpoint_group = tables.Column(
-        verbose_name=_("ACI Endpoint Group"),
+        verbose_name=_("Endpoint Group"),
         linkify=True,
     )
     aci_aaep = tables.Column(
-        verbose_name=_("ACI AAEP"),
+        verbose_name=_("AAEP"),
         linkify=True,
     )
     nb_vlan = tables.Column(

@@ -25,7 +25,7 @@ class ACIAttachableAccessEntityProfileTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         linkify=True,
     )
     nb_tenant = tables.Column(
@@ -73,12 +73,12 @@ class ACIAAEPDomainBindingTable(NetBoxTable):
     """NetBox table for the ACI AAEP Domain Binding model."""
 
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_aaep__aci_fabric",
         linkify=True,
     )
     aci_aaep = tables.Column(
-        verbose_name=_("ACI AAEP"),
+        verbose_name=_("AAEP"),
         linkify=True,
     )
     aci_domain_object_type = columns.ContentTypeColumn(

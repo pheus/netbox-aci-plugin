@@ -22,7 +22,7 @@ class ACIAppProfileTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_tenant__aci_fabric",
         linkify=True,
     )

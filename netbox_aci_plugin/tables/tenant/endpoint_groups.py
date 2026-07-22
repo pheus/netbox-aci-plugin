@@ -26,7 +26,7 @@ class ACIEndpointGroupTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_app_profile__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -105,7 +105,7 @@ class ACIUSegEndpointGroupTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_app_profile__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -183,7 +183,7 @@ class ACIUSegNetworkAttributeTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_useg_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -193,7 +193,7 @@ class ACIUSegNetworkAttributeTable(NetBoxTable):
         linkify=True,
     )
     aci_app_profile = tables.Column(
-        verbose_name=_("ACI App Profile"),
+        verbose_name=_("App Profile"),
         orderable=False,
         linkify=True,
     )

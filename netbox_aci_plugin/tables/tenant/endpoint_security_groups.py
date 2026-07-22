@@ -26,7 +26,7 @@ class ACIEndpointSecurityGroupTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_app_profile__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -98,7 +98,7 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_endpoint_security_group__aci_app_profile__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -108,12 +108,12 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
         linkify=True,
     )
     aci_app_profile = tables.Column(
-        verbose_name=_("ACI App Profile (ESG)"),
+        verbose_name=_("App Profile (ESG)"),
         orderable=False,
         linkify=True,
     )
     aci_endpoint_security_group = tables.Column(
-        verbose_name=_("ACI ESG"),
+        verbose_name=_("ESG"),
         linkify=True,
     )
     aci_epg_object_tenant = tables.Column(
@@ -122,15 +122,15 @@ class ACIEsgEndpointGroupSelectorTable(NetBoxTable):
         linkify=True,
     )
     aci_epg_object_app_profile = tables.Column(
-        verbose_name=_("ACI App Profile (EPG)"),
+        verbose_name=_("App Profile (EPG)"),
         orderable=False,
         linkify=True,
     )
     aci_epg_object_type = columns.ContentTypeColumn(
-        verbose_name=_("ACI EPG Type"),
+        verbose_name=_("EPG Type"),
     )
     aci_epg_object = tables.Column(
-        verbose_name=_("ACI EPG"),
+        verbose_name=_("EPG"),
         orderable=False,
         linkify=True,
     )
@@ -195,7 +195,7 @@ class ACIEsgEndpointSelectorTable(NetBoxTable):
         linkify=True,
     )
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_endpoint_security_group__aci_app_profile__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -205,12 +205,12 @@ class ACIEsgEndpointSelectorTable(NetBoxTable):
         linkify=True,
     )
     aci_app_profile = tables.Column(
-        verbose_name=_("ACI App Profile"),
+        verbose_name=_("App Profile"),
         orderable=False,
         linkify=True,
     )
     aci_endpoint_security_group = tables.Column(
-        verbose_name=_("ACI ESG"),
+        verbose_name=_("ESG"),
         linkify=True,
     )
     ep_object_type = columns.ContentTypeColumn(

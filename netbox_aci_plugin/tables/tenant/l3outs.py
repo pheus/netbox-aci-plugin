@@ -25,13 +25,13 @@ class ACIL3OutTable(NetBoxTable):
     )
     name_alias = tables.Column(verbose_name=_("Alias"), linkify=True)
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_tenant__aci_fabric",
         linkify=True,
     )
     aci_tenant = tables.Column(verbose_name=_("ACI Tenant"), linkify=True)
     aci_vrf = tables.Column(verbose_name=_("ACI VRF"), linkify=True)
-    aci_routed_domain = tables.Column(verbose_name=_("ACI Routed Domain"), linkify=True)
+    aci_routed_domain = tables.Column(verbose_name=_("Routed Domain"), linkify=True)
     nb_tenant = tables.Column(verbose_name=_("NetBox Tenant"), linkify=True)
     target_dscp = columns.ChoiceFieldColumn()
     import_route_control_enforcement_enabled = columns.BooleanColumn(
@@ -109,7 +109,7 @@ class ACIExternalEndpointGroupTable(NetBoxTable):
     )
     name_alias = tables.Column(verbose_name=_("Alias"), linkify=True)
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_l3out__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -123,7 +123,7 @@ class ACIExternalEndpointGroupTable(NetBoxTable):
         accessor="aci_l3out__aci_vrf",
         linkify=True,
     )
-    aci_l3out = tables.Column(verbose_name=_("ACI L3Out"), linkify=True)
+    aci_l3out = tables.Column(verbose_name=_("L3Out"), linkify=True)
     nb_tenant = tables.Column(verbose_name=_("NetBox Tenant"), linkify=True)
     preferred_group_member_enabled = columns.BooleanColumn(
         verbose_name=_("Preferred member"),
@@ -206,7 +206,7 @@ class ACIExternalSubnetTable(NetBoxTable):
     )
     name_alias = tables.Column(verbose_name=_("Alias"), linkify=True)
     aci_fabric = tables.Column(
-        verbose_name=_("ACI Fabric"),
+        verbose_name=_("Fabric"),
         accessor="aci_external_endpoint_group__aci_l3out__aci_tenant__aci_fabric",
         linkify=True,
     )
@@ -216,12 +216,12 @@ class ACIExternalSubnetTable(NetBoxTable):
         linkify=True,
     )
     aci_l3out = tables.Column(
-        verbose_name=_("ACI L3Out"),
+        verbose_name=_("L3Out"),
         accessor="aci_external_endpoint_group__aci_l3out",
         linkify=True,
     )
     aci_external_endpoint_group = tables.Column(
-        verbose_name=_("ACI External EPG"),
+        verbose_name=_("External EPG"),
         linkify=True,
     )
     matched_prefix = tables.Column(linkify=True)
