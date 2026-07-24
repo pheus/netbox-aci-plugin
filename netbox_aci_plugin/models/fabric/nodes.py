@@ -16,6 +16,7 @@ from django.contrib.contenttypes.fields import (
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
 from dcim.models import Device
@@ -29,6 +30,7 @@ from ..mixins import UniqueGenericForeignKeyMixin
 
 if TYPE_CHECKING:
     from ..fabric.fabrics import ACIFabric
+    from .vpc_protection_groups import ACIVPCProtectionGroup
 
 
 class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
@@ -40,9 +42,11 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
 
     Notes:
         APIC node IDs are below 100; leaf and spine node IDs start
-        at 101. A TEP IP must sit within the pod's TEP pool prefix
-        and share its VRF and mask length. A given device or virtual
-        machine can back only one node.
+        at 101. Node IDs are unique per ACI Fabric, not per ACI Pod.
+        A TEP IP must sit within the pod's TEP pool prefix and share
+        its VRF and mask length. A given device or virtual machine
+        can back only one node. A Node that belongs to a VPC
+        Protection Group must keep its ACI Pod and stay a Leaf.
     """
 
     aci_pod = models.ForeignKey(
@@ -105,6 +109,17 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
         null=True,
     )
 
+    # Cached ACIFabric of the related ACIPod, for per-fabric node ID
+    # uniqueness and fast scope access
+    _aci_fabric = models.ForeignKey(
+        to="netbox_aci_plugin.ACIFabric",
+        on_delete=models.PROTECT,
+        related_name="+",
+        verbose_name=_("ACI Fabric (cached)"),
+        blank=True,
+        editable=False,
+    )
+
     # Cached related objects by association name for faster access
     _device = models.ForeignKey(
         to="dcim.Device",
@@ -136,8 +151,11 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
     class Meta:
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
-                fields=("aci_pod", "node_id"),
-                name="%(app_label)s_%(class)s_unique_nodeid_per_pod",
+                fields=("_aci_fabric", "node_id"),
+                name="%(app_label)s_%(class)s_uniq_nodeid_per_fabric",
+                violation_error_message=_(
+                    "ACI Node IDs must be unique per ACI Fabric."
+                ),
             ),
             models.UniqueConstraint(
                 fields=("aci_pod", "name"),
@@ -161,6 +179,10 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
 
     def clean(self) -> None:
         """Override the model's clean method for custom field validation."""
+        # Populate the fabric-scope and node-object caches before any
+        # validation below reads them
+        self.cache_related_objects()
+
         # Validate object assignment before validation of any other fields
         if self.node_object_type and not (self.node_object or self.node_object_id):
             model_class = self.node_object_type.model_class()
@@ -190,6 +212,20 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                     "Spine nodes."
                 )
             )
+
+        # The ModelForm path adds _aci_fabric to the validation
+        # exclusions because it is editable=False, so the constraint is
+        # never checked there and this guard carries the enforcement
+        if self._aci_fabric_id and self.node_id is not None:
+            duplicate_nodes = ACINode.objects.filter(
+                _aci_fabric_id=self._aci_fabric_id, node_id=self.node_id
+            )
+            if self.pk:
+                duplicate_nodes = duplicate_nodes.exclude(pk=self.pk)
+            if duplicate_nodes.exists():
+                errors.setdefault("node_id", []).append(
+                    _("An ACI Node with this Node ID already exists in the ACI Fabric.")
+                )
 
         # Validate Node Object location matches Pod scope
         if self.node_object and self.aci_pod.scope:
@@ -273,13 +309,16 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                         )
                     )
 
+        # A node in a VPC protection group keeps its ACI Pod and Leaf role
+        if self.pk:
+            for field, message in self._get_paired_node_transition_issues().items():
+                errors.setdefault(field, []).append(message)
+
         if errors:
             raise ValidationError(errors)
 
-        # Perform the mixin's unique constraint validation only when
-        # the GFK is fully populated. The DB-level UniqueConstraint
-        # exempts the null/null case via its condition, so clean()
-        # must skip the check too (multiple unassigned nodes are allowed).
+        # Only validate uniqueness when the GFK is fully populated, since
+        # the constraint's condition exempts the null case
         if self.node_object_type_id and self.node_object_id:
             self._validate_generic_uniqueness()
 
@@ -293,6 +332,8 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
         update_fields = kwargs.get("update_fields")
         if update_fields is not None:
             update_fields = set(update_fields)
+            if {"aci_pod", "aci_pod_id"} & update_fields:
+                update_fields.add("_aci_fabric")
             if {
                 "node_object_type",
                 "node_object_type_id",
@@ -308,6 +349,19 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                 )
             kwargs["update_fields"] = update_fields
 
+        # Re-check the paired-node transition here, limited to the
+        # fields this save actually persists
+        check_pod = update_fields is None or bool(
+            {"aci_pod", "aci_pod_id"} & update_fields
+        )
+        check_role = update_fields is None or "role" in update_fields
+        if self.pk and (check_pod or check_role):
+            issues = self._get_paired_node_transition_issues(
+                check_pod=check_pod, check_role=check_role
+            )
+            if issues:
+                raise ValidationError(list(issues.values()))
+
         super().save(*args, **kwargs)
 
     def cache_related_objects(self) -> None:
@@ -319,6 +373,19 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                 self._device = self.node_object
             elif node_object_type == apps.get_model("virtualization", "VirtualMachine"):
                 self._virtual_machine = self.node_object
+
+        if not self.aci_pod_id:
+            self._aci_fabric_id = None
+            return
+
+        # Read the stored ACI Pod, not the in-memory relation: this cache
+        # backs a uniqueness constraint and must not follow an unsaved parent
+        self._aci_fabric_id = (
+            apps.get_model("netbox_aci_plugin", "ACIPod")
+            .objects.filter(pk=self.aci_pod_id)
+            .values_list("aci_fabric_id", flat=True)
+            .first()
+        )
 
     cache_related_objects.alters_data = True
 
@@ -332,6 +399,28 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
         """Return the parent object of the instance."""
         return self.aci_pod
 
+    @property
+    def assigned_device(self) -> Device | None:
+        """Return the NetBox device assigned to the node, if any.
+
+        Named "assigned" because the plain "device" attribute is already
+        taken by the reverse relation from dcim.Device.
+        """
+        return self._device
+
+    @cached_property
+    def vpc_protection_group(self) -> ACIVPCProtectionGroup | None:
+        """Return the VPC protection group this node is a member of."""
+        protection_group_model = apps.get_model(
+            "netbox_aci_plugin", "ACIVPCProtectionGroup"
+        )
+        try:
+            return protection_group_model.objects.select_related(
+                "aci_node_a", "aci_node_b"
+            ).get(models.Q(aci_node_a=self) | models.Q(aci_node_b=self))
+        except protection_group_model.DoesNotExist:
+            return None
+
     def get_role_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return NodeRoleChoices.colors.get(self.role)
@@ -339,6 +428,45 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
     def get_node_type_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return NodeTypeChoices.colors.get(self.node_type)
+
+    def _get_paired_node_transition_issues(
+        self, check_pod: bool = True, check_role: bool = True
+    ) -> dict[str, str]:
+        """Return field-to-message issues for a paired-node transition.
+
+        Empty when the node is not a member of a VPC protection group.
+        Callers must only invoke this when ``self.pk`` is set. Uses an
+        existence query rather than the ``vpc_protection_group``
+        property, which raises on a corrupt double membership and would
+        turn a routine edit into a server error.
+
+        ``check_pod`` and ``check_role`` narrow the check to the fields
+        a partial update persists. Full validation leaves both enabled.
+        """
+        protection_group_model = apps.get_model(
+            "netbox_aci_plugin", "ACIVPCProtectionGroup"
+        )
+        is_paired = protection_group_model.objects.filter(
+            models.Q(aci_node_a=self) | models.Q(aci_node_b=self)
+        ).exists()
+        if not is_paired:
+            return {}
+
+        stored = ACINode.objects.only("aci_pod_id", "role").get(pk=self.pk)
+
+        issues: dict[str, str] = {}
+        if check_pod and stored.aci_pod_id != self.aci_pod_id:
+            issues["aci_pod"] = _(
+                "An ACI Node that belongs to a VPC Protection Group cannot "
+                "be moved to another ACI Pod. Remove the Protection Group "
+                "first."
+            )
+        if check_role and self.role != NodeRoleChoices.ROLE_LEAF:
+            issues["role"] = _(
+                "An ACI Node that belongs to a VPC Protection Group must "
+                "retain the Leaf role."
+            )
+        return issues
 
 
 #

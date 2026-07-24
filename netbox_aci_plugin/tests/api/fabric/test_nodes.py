@@ -181,7 +181,12 @@ class ACINodeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 comments="# ACI Test 3",
             ),
         )
-        ACINode.objects.bulk_create(aci_nodes)
+        # ACI nodes derive a cached ACI Fabric during validation
+        # (ACINode.clean()/save()), so this fixture cannot use
+        # bulk_create() like its sibling API test classes.
+        for aci_node in aci_nodes:
+            aci_node.full_clean()
+            aci_node.save()
 
         cls.create_data: list[dict] = [
             {

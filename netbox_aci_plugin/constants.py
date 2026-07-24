@@ -28,6 +28,16 @@ POD_ID_MAX: Final[int] = 255
 NODE_ID_MIN: Final[int] = 1
 NODE_ID_MAX: Final[int] = 4000
 
+NODE_INTERFACE_MODULE_MIN: Final[int] = 1
+NODE_INTERFACE_MODULE_MAX: Final[int] = 255
+NODE_INTERFACE_PORT_MIN: Final[int] = 1
+NODE_INTERFACE_PORT_MAX: Final[int] = 127
+NODE_INTERFACE_SUB_PORT_NONE: Final[int] = 0
+NODE_INTERFACE_SUB_PORT_MAX: Final[int] = 64
+
+VPC_LOGICAL_PAIR_ID_MIN: Final[int] = 1
+VPC_LOGICAL_PAIR_ID_MAX: Final[int] = 1000
+
 #
 # Contract Relation
 #

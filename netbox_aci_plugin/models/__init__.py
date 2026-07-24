@@ -5,10 +5,13 @@ from .access_policies.aaep import (
     ACIAttachableAccessEntityProfile,
 )
 from .access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
+from .access_policies.interface_policy_groups import ACILeafInterfacePolicyGroup
 from .access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .fabric.fabrics import ACIFabric
+from .fabric.node_interfaces import ACINodeInterface
 from .fabric.nodes import ACINode
 from .fabric.pods import ACIPod
+from .fabric.vpc_protection_groups import ACIVPCProtectionGroup
 from .tenant.app_profiles import ACIAppProfile
 from .tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -68,7 +71,9 @@ __all__ = (
     "ACIExternalSubnet",
     "ACIFabric",
     "ACIL3Out",
+    "ACILeafInterfacePolicyGroup",
     "ACINode",
+    "ACINodeInterface",
     "ACIPhysicalDomain",
     "ACIPod",
     "ACIRoutedDomain",
@@ -77,4 +82,5 @@ __all__ = (
     "ACIUSegNetworkAttribute",
     "ACIVLANPool",
     "ACIVLANPoolRange",
+    "ACIVPCProtectionGroup",
 )
