@@ -6,13 +6,18 @@ from .access_policies.domains import (
     ACIPhysicalDomainFilterSet,
     ACIRoutedDomainFilterSet,
 )
+from .access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroupFilterSet,
+)
 from .access_policies.vlan_pools import (
     ACIVLANPoolFilterSet,
     ACIVLANPoolRangeFilterSet,
 )
 from .fabric.fabrics import ACIFabricFilterSet
+from .fabric.node_interfaces import ACINodeInterfaceFilterSet
 from .fabric.nodes import ACINodeFilterSet
 from .fabric.pods import ACIPodFilterSet
+from .fabric.vpc_protection_groups import ACIVPCProtectionGroupFilterSet
 from .tenant.app_profiles import ACIAppProfileFilterSet
 from .tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
@@ -74,7 +79,9 @@ __all__ = (
     "ACIExternalSubnetFilterSet",
     "ACIFabricFilterSet",
     "ACIL3OutFilterSet",
+    "ACILeafInterfacePolicyGroupFilterSet",
     "ACINodeFilterSet",
+    "ACINodeInterfaceFilterSet",
     "ACIPhysicalDomainFilterSet",
     "ACIPodFilterSet",
     "ACIRoutedDomainFilterSet",
@@ -83,5 +90,6 @@ __all__ = (
     "ACIUSegNetworkAttributeFilterSet",
     "ACIVLANPoolFilterSet",
     "ACIVLANPoolRangeFilterSet",
+    "ACIVPCProtectionGroupFilterSet",
     "ACIVRFFilterSet",
 )
