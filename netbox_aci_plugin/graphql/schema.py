@@ -28,6 +28,8 @@ from .types import (
     ACIExternalSubnetType,
     ACIFabricType,
     ACIL3OutType,
+    ACILeafInterfacePolicyGroupType,
+    ACINodeInterfaceType,
     ACINodeType,
     ACIPhysicalDomainType,
     ACIPodType,
@@ -37,6 +39,7 @@ from .types import (
     ACIUSegNetworkAttributeType,
     ACIVLANPoolRangeType,
     ACIVLANPoolType,
+    ACIVPCProtectionGroupType,
     ACIVRFType,
 )
 
@@ -54,6 +57,14 @@ class NetBoxACIQuery:
     aci_node: ACINodeType = strawberry_django.field()
     aci_node_list: list[ACINodeType] = strawberry_django.field()
 
+    aci_node_interface: ACINodeInterfaceType = strawberry_django.field()
+    aci_node_interface_list: list[ACINodeInterfaceType] = strawberry_django.field()
+
+    aci_vpc_protection_group: ACIVPCProtectionGroupType = strawberry_django.field()
+    aci_vpc_protection_group_list: list[ACIVPCProtectionGroupType] = (
+        strawberry_django.field()
+    )
+
     aci_attachable_access_entity_profile: ACIAttachableAccessEntityProfileType = (
         strawberry_django.field()
     )
@@ -63,6 +74,13 @@ class NetBoxACIQuery:
 
     aci_aaep_domain_binding: ACIAAEPDomainBindingType = strawberry_django.field()
     aci_aaep_domain_binding_list: list[ACIAAEPDomainBindingType] = (
+        strawberry_django.field()
+    )
+
+    aci_leaf_interface_policy_group: ACILeafInterfacePolicyGroupType = (
+        strawberry_django.field()
+    )
+    aci_leaf_interface_policy_group_list: list[ACILeafInterfacePolicyGroupType] = (
         strawberry_django.field()
     )
 

@@ -34,7 +34,9 @@ from .filters import (
     ACIExternalSubnetFilter,
     ACIFabricFilter,
     ACIL3OutFilter,
+    ACILeafInterfacePolicyGroupFilter,
     ACINodeFilter,
+    ACINodeInterfaceFilter,
     ACIPhysicalDomainFilter,
     ACIPodFilter,
     ACIRoutedDomainFilter,
@@ -43,12 +45,14 @@ from .filters import (
     ACIUSegNetworkAttributeFilter,
     ACIVLANPoolFilter,
     ACIVLANPoolRangeFilter,
+    ACIVPCProtectionGroupFilter,
     ACIVRFFilter,
 )
 
 if TYPE_CHECKING:
     from dcim.graphql.types import (
         DeviceType,
+        InterfaceType,
         LocationType,
         MACAddressType,
         RegionType,
@@ -103,6 +107,12 @@ class ACIFabricType(OwnerMixin, NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+    aci_leaf_interface_policy_groups: list[
+        Annotated[
+            "ACILeafInterfacePolicyGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
     aci_physical_domains: list[
         Annotated[
             "ACIPhysicalDomainType",
@@ -119,6 +129,12 @@ class ACIFabricType(OwnerMixin, NetBoxObjectType):
     ]
     aci_vlan_pools: list[
         Annotated["ACIVLANPoolType", strawberry.lazy("netbox_aci_plugin.graphql.types")]
+    ]
+    aci_vpc_protection_groups: list[
+        Annotated[
+            "ACIVPCProtectionGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
     ]
 
 
@@ -163,7 +179,13 @@ class ACIPodType(OwnerMixin, NetBoxObjectType):
 
 @strawberry_django.type(
     models.ACINode,
-    exclude=["node_object_type", "node_object_id", "_device", "_virtual_machine"],
+    exclude=[
+        "node_object_type",
+        "node_object_id",
+        "_aci_fabric",
+        "_device",
+        "_virtual_machine",
+    ],
     filters=ACINodeFilter,
     pagination=True,
 )
@@ -196,6 +218,59 @@ class ACINodeType(OwnerMixin, NetBoxObjectType):
         """Return the node_object object."""
         return self.node_object  # pragma: no cover
 
+    # Related models
+    aci_node_interfaces: list[
+        Annotated[
+            "ACINodeInterfaceType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACINodeInterface,
+    fields="__all__",
+    filters=ACINodeInterfaceFilter,
+    pagination=True,
+)
+class ACINodeInterfaceType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACINodeInterface model."""
+
+    # Model fields
+    aci_node: Annotated[
+        "ACINodeType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_interface: (
+        Annotated["InterfaceType", strawberry.lazy("dcim.graphql.types")] | None
+    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    @strawberry_django.field(description="Interface Token")
+    def interface_token(self) -> str:
+        """Return the normalized APIC interface token."""
+        return self.interface_token  # pragma: no cover
+
+
+@strawberry_django.type(
+    models.ACIVPCProtectionGroup,
+    fields="__all__",
+    filters=ACIVPCProtectionGroupFilter,
+    pagination=True,
+)
+class ACIVPCProtectionGroupType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACIVPCProtectionGroup model."""
+
+    # Model fields
+    aci_fabric: Annotated[
+        "ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_node_a: Annotated[
+        "ACINodeType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_node_b: Annotated[
+        "ACINodeType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
 
 @strawberry_django.type(
     models.ACIAttachableAccessEntityProfile,
@@ -222,6 +297,12 @@ class ACIAttachableAccessEntityProfileType(OwnerMixin, NetBoxObjectType):
     aci_endpoint_group_bindings: list[
         Annotated[
             "ACIEndpointGroupAAEPBindingType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_leaf_interface_policy_groups: list[
+        Annotated[
+            "ACILeafInterfacePolicyGroupType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
@@ -266,6 +347,29 @@ class ACIAAEPDomainBindingType(NetBoxObjectType):
     ):
         """Return the ACI Domain object."""
         return self.aci_domain_object  # pragma: no cover
+
+
+@strawberry_django.type(
+    models.ACILeafInterfacePolicyGroup,
+    fields="__all__",
+    filters=ACILeafInterfacePolicyGroupFilter,
+    pagination=True,
+)
+class ACILeafInterfacePolicyGroupType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACILeafInterfacePolicyGroup model."""
+
+    # Model fields
+    aci_fabric: Annotated[
+        "ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_aaep: (
+        Annotated[
+            "ACIAttachableAccessEntityProfileType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+        | None
+    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
 
 @strawberry_django.type(
