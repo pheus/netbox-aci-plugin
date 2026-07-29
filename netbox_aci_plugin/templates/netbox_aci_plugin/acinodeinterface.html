@@ -1,0 +1,64 @@
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acinodeinterface_list' %}?aci_fabric_id={{ object.aci_fabric.pk }}">{{ object.aci_fabric }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acinodeinterface_list' %}?aci_pod_id={{ object.aci_node.aci_pod.pk }}">{{ object.aci_node.aci_pod }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acinodeinterface_list' %}?aci_node_id={{ object.aci_node.pk }}">{{ object.aci_node }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card">
+        <h2 class="card-header">{% trans "ACI Node Interface" %}</h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "ACI Node" %}</th>
+            <td>{{ object.aci_node|linkify }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Description" %}</th>
+            <td>{{ object.description|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox Interface" %}</th>
+            <td>{{ object.nb_interface|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Module" %}</th>
+            <td>{{ object.module }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Port" %}</th>
+            <td>{{ object.port }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Sub Port" %}</th>
+            <td>{% if object.sub_port %}{{ object.sub_port }}{% else %}{{ ''|placeholder }}{% endif %}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Interface Token" %}</th>
+            <td>{{ object.interface_token }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "NetBox Tenant" %}</th>
+            <td>
+                {% if object.nb_tenant.group %}
+                    {{ object.nb_tenant.group|linkify }} /
+                {% endif %}
+                {{ object.nb_tenant|linkify|placeholder }}
+            </td>
+          </tr>
+        </table>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+{% endblock content %}
