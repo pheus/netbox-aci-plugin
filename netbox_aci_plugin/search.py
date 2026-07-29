@@ -9,10 +9,15 @@ from .models.access_policies.aaep import (
     ACIAttachableAccessEntityProfile,
 )
 from .models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
+from .models.access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroup,
+)
 from .models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .models.fabric.fabrics import ACIFabric
+from .models.fabric.node_interfaces import ACINodeInterface
 from .models.fabric.nodes import ACINode
 from .models.fabric.pods import ACIPod
+from .models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
 from .models.tenant.app_profiles import ACIAppProfile
 from .models.tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -117,6 +122,48 @@ class ACINodeIndex(SearchIndex):
 
 
 @register_search
+class ACINodeInterfaceIndex(SearchIndex):
+    """NetBox search definition for the ACI Node Interface model."""
+
+    model = ACINodeInterface
+
+    fields: tuple = (
+        ("aci_node", 100),
+        ("nb_interface", 100),
+    )
+    display_attrs: tuple = (
+        "aci_node",
+        "nb_interface",
+        "description",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACIVPCProtectionGroupIndex(SearchIndex):
+    """NetBox search definition for the ACI VPC Protection Group model."""
+
+    model = ACIVPCProtectionGroup
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "logical_pair_id",
+        "aci_node_a",
+        "aci_node_b",
+        "nb_tenant",
+    )
+
+
+@register_search
 class ACIAttachableAccessEntityProfileIndex(SearchIndex):
     """NetBox search definition for the ACI AAEP model."""
 
@@ -149,6 +196,29 @@ class ACIAAEPDomainBindingIndex(SearchIndex):
         ("_aci_routed_domain", 300),
     )
     display_attrs: tuple = ("aci_aaep", "aci_domain_object")
+
+
+@register_search
+class ACILeafInterfacePolicyGroupIndex(SearchIndex):
+    """NetBox search definition for the ACI Policy Group model."""
+
+    model = ACILeafInterfacePolicyGroup
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "group_type",
+        "aci_aaep",
+        "nb_tenant",
+    )
 
 
 @register_search
