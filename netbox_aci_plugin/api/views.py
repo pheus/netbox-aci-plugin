@@ -12,13 +12,18 @@ from ..filtersets.access_policies.domains import (
     ACIPhysicalDomainFilterSet,
     ACIRoutedDomainFilterSet,
 )
+from ..filtersets.access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroupFilterSet,
+)
 from ..filtersets.access_policies.vlan_pools import (
     ACIVLANPoolFilterSet,
     ACIVLANPoolRangeFilterSet,
 )
 from ..filtersets.fabric.fabrics import ACIFabricFilterSet
+from ..filtersets.fabric.node_interfaces import ACINodeInterfaceFilterSet
 from ..filtersets.fabric.nodes import ACINodeFilterSet
 from ..filtersets.fabric.pods import ACIPodFilterSet
+from ..filtersets.fabric.vpc_protection_groups import ACIVPCProtectionGroupFilterSet
 from ..filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ..filtersets.tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
@@ -61,10 +66,15 @@ from ..models.access_policies.aaep import (
     ACIAttachableAccessEntityProfile,
 )
 from ..models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
+from ..models.access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroup,
+)
 from ..models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ..models.fabric.fabrics import ACIFabric
+from ..models.fabric.node_interfaces import ACINodeInterface
 from ..models.fabric.nodes import ACINode
 from ..models.fabric.pods import ACIPod
+from ..models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
 from ..models.tenant.app_profiles import ACIAppProfile
 from ..models.tenant.bridge_domains import (
     ACIBridgeDomain,
@@ -125,6 +135,8 @@ from .serializers import (
     ACIExternalSubnetSerializer,
     ACIFabricSerializer,
     ACIL3OutSerializer,
+    ACILeafInterfacePolicyGroupSerializer,
+    ACINodeInterfaceSerializer,
     ACINodeSerializer,
     ACIPhysicalDomainSerializer,
     ACIPodSerializer,
@@ -134,6 +146,7 @@ from .serializers import (
     ACIUSegNetworkAttributeSerializer,
     ACIVLANPoolRangeSerializer,
     ACIVLANPoolSerializer,
+    ACIVPCProtectionGroupSerializer,
     ACIVRFSerializer,
 )
 
@@ -185,6 +198,50 @@ class ACINodeListViewSet(NetBoxModelViewSet):
     filterset_class = ACINodeFilterSet
 
 
+class ACINodeInterfaceListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Node Interface instances."""
+
+    queryset = ACINodeInterface.objects.select_related(
+        "aci_node",
+        "aci_node__aci_pod",
+        "aci_node__aci_pod__aci_fabric",
+        "aci_node___aci_fabric",
+        "nb_interface",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACINodeInterfaceSerializer
+    filterset_class = ACINodeInterfaceFilterSet
+
+
+class ACIVPCProtectionGroupListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI VPC Protection Group instances."""
+
+    # Both nested Node serializers render their Pod, and the nested Pod
+    # renders its Fabric, so the graph has to be walked on both sides
+    queryset = ACIVPCProtectionGroup.objects.select_related(
+        "aci_fabric",
+        "aci_node_a",
+        "aci_node_a__aci_pod",
+        "aci_node_a__aci_pod__aci_fabric",
+        "aci_node_a__aci_pod__nb_tenant",
+        "aci_node_a__nb_tenant",
+        "aci_node_b",
+        "aci_node_b__aci_pod",
+        "aci_node_b__aci_pod__aci_fabric",
+        "aci_node_b__aci_pod__nb_tenant",
+        "aci_node_b__nb_tenant",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACIVPCProtectionGroupSerializer
+    filterset_class = ACIVPCProtectionGroupFilterSet
+
+
 class ACIAttachableAccessEntityProfileListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Attachable Access Entity Profile instances."""
 
@@ -211,6 +268,21 @@ class ACIAAEPDomainBindingListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACIAAEPDomainBindingSerializer
     filterset_class = ACIAAEPDomainBindingFilterSet
+
+
+class ACILeafInterfacePolicyGroupListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Leaf Interface Policy Group instances."""
+
+    queryset = ACILeafInterfacePolicyGroup.objects.select_related(
+        "aci_fabric",
+        "aci_aaep",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACILeafInterfacePolicyGroupSerializer
+    filterset_class = ACILeafInterfacePolicyGroupFilterSet
 
 
 class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
