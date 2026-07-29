@@ -29,9 +29,9 @@ class PluginTest(TestCase):
     menu_group_tenant_external_item_count: int = 3
 
     # Menu group: Fabric Inventory
-    menu_group_fabrics_item_count: int = 3
+    menu_group_fabrics_item_count: int = 5
     # Menu group: Fabric Access Policies
-    menu_group_fabric_access_policies_item_count: int = 4
+    menu_group_fabric_access_policies_item_count: int = 5
 
     def test_configuration(self) -> None:
         """Test for plugin configuration in NetBox."""
