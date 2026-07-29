@@ -26,6 +26,14 @@ from .access_policies.domains import (
     ACIRoutedDomainListView,
     ACIRoutedDomainView,
 )
+from .access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroupBulkDeleteView,
+    ACILeafInterfacePolicyGroupBulkEditView,
+    ACILeafInterfacePolicyGroupBulkImportView,
+    ACILeafInterfacePolicyGroupEditView,
+    ACILeafInterfacePolicyGroupListView,
+    ACILeafInterfacePolicyGroupView,
+)
 from .access_policies.vlan_pools import (
     ACIVLANPoolBulkDeleteView,
     ACIVLANPoolBulkEditView,
@@ -47,6 +55,14 @@ from .fabric.fabrics import (
     ACIFabricEditView,
     ACIFabricListView,
 )
+from .fabric.node_interfaces import (
+    ACINodeInterfaceBulkDeleteView,
+    ACINodeInterfaceBulkEditView,
+    ACINodeInterfaceBulkImportView,
+    ACINodeInterfaceEditView,
+    ACINodeInterfaceListView,
+    ACINodeInterfaceView,
+)
 from .fabric.nodes import (
     ACINodeBulkDeleteView,
     ACINodeBulkEditView,
@@ -60,6 +76,14 @@ from .fabric.pods import (
     ACIPodBulkImportView,
     ACIPodEditView,
     ACIPodListView,
+)
+from .fabric.vpc_protection_groups import (
+    ACIVPCProtectionGroupBulkDeleteView,
+    ACIVPCProtectionGroupBulkEditView,
+    ACIVPCProtectionGroupBulkImportView,
+    ACIVPCProtectionGroupEditView,
+    ACIVPCProtectionGroupListView,
+    ACIVPCProtectionGroupView,
 )
 from .tenant.app_profiles import (
     ACIAppProfileBulkDeleteView,
@@ -336,6 +360,20 @@ __all__ = (
     "ACIL3OutBulkImportView",
     "ACIL3OutEditView",
     "ACIL3OutListView",
+    # ACINodeInterface
+    "ACINodeInterfaceBulkDeleteView",
+    "ACINodeInterfaceBulkEditView",
+    "ACINodeInterfaceBulkImportView",
+    "ACINodeInterfaceEditView",
+    "ACINodeInterfaceListView",
+    "ACINodeInterfaceView",
+    # ACILeafInterfacePolicyGroup
+    "ACILeafInterfacePolicyGroupBulkDeleteView",
+    "ACILeafInterfacePolicyGroupBulkEditView",
+    "ACILeafInterfacePolicyGroupBulkImportView",
+    "ACILeafInterfacePolicyGroupEditView",
+    "ACILeafInterfacePolicyGroupListView",
+    "ACILeafInterfacePolicyGroupView",
     # ACINode
     "ACINodeBulkDeleteView",
     "ACINodeBulkEditView",
@@ -394,6 +432,13 @@ __all__ = (
     "ACIVLANPoolRangeEditView",
     "ACIVLANPoolRangeListView",
     "ACIVLANPoolRangeView",
+    # ACIVPCProtectionGroup
+    "ACIVPCProtectionGroupBulkDeleteView",
+    "ACIVPCProtectionGroupBulkEditView",
+    "ACIVPCProtectionGroupBulkImportView",
+    "ACIVPCProtectionGroupEditView",
+    "ACIVPCProtectionGroupListView",
+    "ACIVPCProtectionGroupView",
     # ACIVRF
     "ACIVRFBulkDeleteView",
     "ACIVRFBulkEditView",
