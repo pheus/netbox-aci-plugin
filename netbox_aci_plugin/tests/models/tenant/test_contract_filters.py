@@ -62,6 +62,16 @@ class ACIContractFilterTestCase(ACIBaseTestCase):
             self.aci_contract_filter.__str__(), self.aci_contract_filter.name
         )
 
+    def test_aci_contract_filter_str_common_tenant(self) -> None:
+        """Test string representation appends the (common) suffix."""
+        tenant_common = ACITenant.objects.get_or_create(
+            name="common", aci_fabric=self.aci_fabric
+        )[0]
+        contract_filter = ACIContractFilter.objects.create(
+            name="ACITestCommonContractFilter", aci_tenant=tenant_common
+        )
+        self.assertEqual(str(contract_filter), f"{contract_filter.name} (common)")
+
     def test_aci_contract_filter_alias(self) -> None:
         """Test alias of ACI Contract Filter."""
         self.assertEqual(
