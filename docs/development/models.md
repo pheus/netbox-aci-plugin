@@ -144,6 +144,13 @@ mutate field values before Django's built-in required/type checks run
 (e.g. `ACIExternalSubnet.clean_fields()` syncs `matched_prefix` from
 `nb_prefix` before the required-field check fires).
 
+`__str__()` is display-only. Several ACI models carry a `name` that is
+unique only within a narrower scope than the string alone suggests, for
+example `ACILeafInterfacePolicyGroup`, whose name is namespaced by group
+type in APIC (an access group and a bundle group may share a name). Never
+resolve a relation, an import row, or a form lookup by parsing or matching
+`__str__()`'s output. Use the model's actual scoped fields instead.
+
 ## Field ordering
 
 Place these fields **last** in every model, in this order, after any
@@ -185,6 +192,12 @@ models.UniqueConstraint(
 
 Migrations referencing constraints by name use the rendered form
 (e.g. `netbox_aci_plugin_acitenant_unique_name`).
+
+A new constraint name must fit PostgreSQL's 63-byte identifier limit once
+the template is fully expanded (app label, model class name, and the
+literal suffix all count towards it). Check the rendered length before
+adding a constraint. Existing longer names that predate this rule stay as
+shipped in their frozen migrations and are not retroactively renamed.
 
 ## Conditional `UniqueConstraint`
 
@@ -487,6 +500,21 @@ Relation / binding models (`ACIBridgeDomainL3OutBinding`,
 extend `NetBoxModel` / `NetBoxModelSerializer` / `NetBoxObjectType`
 directly. Relations have no independent identity worth attributing to
 an owner.
+
+A primary model without a `name` cannot inherit `ACIBaseModel`, and so
+loses the whole tail that base provides. It must hand-declare the parts
+it needs rather than doing without them. `ACIFabric` and
+`ACINodeInterface` both do this: they apply `OwnerMixin` themselves and
+declare `nb_tenant`, `description` and `comments` as their own fields.
+`description` always carries `max_length=ACI_DESC_MAX_LEN` and
+`validators=[ACIPolicyDescriptionValidator]`, matching what
+`ACIBaseModel` would have given it.
+
+NetBox's own `PrimaryModel` looks like a shortcut here, since it is
+`OwnerMixin` plus `description` and `comments`, but it is deliberately
+not used. Its `description` is 200 characters with no validator, which
+would let a user save a value the APIC rejects, and it carries no
+`nb_tenant` regardless.
 
 ## Relation / Binding models
 

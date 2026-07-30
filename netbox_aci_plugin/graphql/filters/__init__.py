@@ -3,10 +3,13 @@ from .access_policies.aaep import (
     ACIAttachableAccessEntityProfileFilter,
 )
 from .access_policies.domains import ACIPhysicalDomainFilter, ACIRoutedDomainFilter
+from .access_policies.interface_policy_groups import ACILeafInterfacePolicyGroupFilter
 from .access_policies.vlan_pools import ACIVLANPoolFilter, ACIVLANPoolRangeFilter
 from .fabric.fabrics import ACIFabricFilter
+from .fabric.node_interfaces import ACINodeInterfaceFilter
 from .fabric.nodes import ACINodeFilter
 from .fabric.pods import ACIPodFilter
+from .fabric.vpc_protection_groups import ACIVPCProtectionGroupFilter
 from .tenant.app_profiles import ACIAppProfileFilter
 from .tenant.bridge_domains import (
     ACIBridgeDomainFilter,
@@ -68,7 +71,9 @@ __all__ = (
     "ACIExternalSubnetFilter",
     "ACIFabricFilter",
     "ACIL3OutFilter",
+    "ACILeafInterfacePolicyGroupFilter",
     "ACINodeFilter",
+    "ACINodeInterfaceFilter",
     "ACIPhysicalDomainFilter",
     "ACIPodFilter",
     "ACIRoutedDomainFilter",
@@ -77,5 +82,6 @@ __all__ = (
     "ACIUSegNetworkAttributeFilter",
     "ACIVLANPoolFilter",
     "ACIVLANPoolRangeFilter",
+    "ACIVPCProtectionGroupFilter",
     "ACIVRFFilter",
 )

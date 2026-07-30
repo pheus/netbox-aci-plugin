@@ -14,6 +14,7 @@ flowchart TD
     EPG(Endpoint Group)
     VP(VLAN Pool)
     VPR(VLAN Pool Range)
+    LIPG(Leaf Interface Policy Group)
     NBVG[NetBox VLAN Group]
 
     subgraph graphAP [Access Policies]
@@ -21,11 +22,13 @@ flowchart TD
         FAB -->|1:n| PD
         FAB -->|1:n| RD
         FAB -->|1:n| VP
+        FAB -->|1:n| LIPG
         VP -->|1:n| VPR
         AAEP -.->|n:n| PD
         AAEP -.->|n:n| RD
         PD -.->|n:1| VP
         RD -.->|n:1| VP
+        LIPG -.->|n:1| AAEP
     end
     L3O -.->|n:1| RD
     EPG -.->|n:n| AAEP
@@ -322,3 +325,65 @@ The binding is managed from both sides: the AAEP's detail page carries
 the canonical **EPG Bindings** tab, and the Endpoint Group's detail
 page shows the same bindings in reverse under the **AAEP Bindings**
 tab.
+
+## Leaf Interface Policy Group
+
+An *ACI Leaf Interface Policy Group* defines the access or bundle policy
+that legacy interface selectors or modern interface configurations later
+assign to leaf interfaces, deciding whether those interfaces operate
+standalone, as a port channel, or as a virtual port channel. The type is
+fixed for the life of the Policy Group and decides both the APIC class and,
+for the two bundle types, the link aggregation type.
+
+| Type | APIC class | Link aggregation type |
+|---|---|---|
+| Access | `infraAccPortGrp` | n/a |
+| Port Channel | `infraAccBndlGrp` | `link` |
+| Virtual Port Channel | `infraAccBndlGrp` | `node` |
+
+The *ACILeafInterfacePolicyGroup* model has the following fields:
+
+*Required fields*:
+
+- **Name**: the Policy Group name in the ACI.
+- **ACI Fabric**: a reference to the `ACIFabric` model.
+- **Type**: the shape of the Policy Group.
+    - Values: `access` (Access), `pc` (Port Channel), `vpc` (Virtual Port
+      Channel)
+    - Cannot be changed after creation.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Policy Group.
+- **Description**: a description of the Policy Group.
+- **ACI AAEP**: a reference to an `ACIAttachableAccessEntityProfile`.
+  Required for the Policy Group to back a deployable access path.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The assigned ACI AAEP must belong to the same ACI Fabric as the Policy
+  Group.
+- The type cannot be changed once the Policy Group is created.
+- An access group and a bundle group (Port Channel or Virtual Port Channel)
+  may share a name, since they sit in different APIC name namespaces. A
+  Port Channel and a Virtual Port Channel group may not, since both are
+  bundle groups in the same namespace.
+
+Because the APIC namespace, not the plugin's stored name alone, is what
+actually keeps the two apart, the Policy Group's display string always
+appends its type, for example `Uplink-PG (Virtual Port Channel)`, and any
+by-name lookup narrows by Fabric and type as well.
+
+Extra port channel attributes beyond the link aggregation type are not
+modeled. The interface policy catalogue, CDP, LLDP, link level, LACP, MCP,
+STP, storm control, port security, MACsec, and 802.1X, is out of scope: a
+Policy Group documents its AAEP and type without any of them. The legacy
+profile tree that ties Node Interfaces to Policy Groups through switch
+profiles and selectors, and the access paths that bind Endpoint Groups to
+interfaces through these Policy Groups, arrive in later releases.
+
+Node Interfaces themselves, and the VPC Protection Groups that pair Leaf
+Nodes, are documented in [Fabrics](fabrics.md).

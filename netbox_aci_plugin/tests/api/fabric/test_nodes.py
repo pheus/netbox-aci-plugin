@@ -4,6 +4,8 @@
 
 """API tests for fabric Node models."""
 
+from rest_framework import status
+
 from dcim.models import Device, DeviceRole, DeviceType, Manufacturer, Site
 from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
@@ -13,6 +15,7 @@ from ....api.urls import app_name
 from ....models.fabric.fabrics import ACIFabric
 from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
+from ....models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
 
 
 class ACINodeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -181,7 +184,12 @@ class ACINodeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
                 comments="# ACI Test 3",
             ),
         )
-        ACINode.objects.bulk_create(aci_nodes)
+        # ACI nodes derive a cached ACI Fabric during validation
+        # (ACINode.clean()/save()), so this fixture cannot use
+        # bulk_create() like its sibling API test classes.
+        for aci_node in aci_nodes:
+            aci_node.full_clean()
+            aci_node.save()
 
         cls.create_data: list[dict] = [
             {
@@ -216,3 +224,59 @@ class ACINodeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+
+    def test_create_duplicate_node_id_returns_400(self) -> None:
+        """POSTing a Node ID already used in the ACI Fabric returns 400.
+
+        Node IDs are unique per ACI Fabric, not per ACI Pod, so a
+        duplicate in a different Pod of the same Fabric must still be
+        rejected.
+        """
+        self.add_permissions("netbox_aci_plugin.add_acinode")
+        aci_pod2 = ACIPod.objects.get(name="ACIPodTestAPI2")
+        data = {
+            "name": "ACINodeTestAPI6",
+            "aci_pod": aci_pod2.id,
+            "node_id": 101,
+            "role": "leaf",
+            "node_type": "unknown",
+        }
+        response = self.client.post(
+            self._get_list_url(), data, format="json", **self.header
+        )
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("node_id", response.data)
+
+    def test_update_vpc_paired_node_pod_returns_400(self) -> None:
+        """PATCHing a VPC-paired Node's ACI Pod returns 400.
+
+        A Node that belongs to a VPC Protection Group must keep its
+        ACI Pod. Removing the Protection Group is required first.
+        """
+        self.add_permissions("netbox_aci_plugin.change_acinode")
+        aci_pod1 = ACIPod.objects.get(name="ACIPodTestAPI1")
+        aci_pod2 = ACIPod.objects.get(name="ACIPodTestAPI2")
+        node_a = ACINode(
+            name="ACINodeTestAPIVPCNodeA", aci_pod=aci_pod1, node_id=110, role="leaf"
+        )
+        node_a.full_clean()
+        node_a.save()
+        node_b = ACINode(
+            name="ACINodeTestAPIVPCNodeB", aci_pod=aci_pod1, node_id=111, role="leaf"
+        )
+        node_b.full_clean()
+        node_b.save()
+        ACIVPCProtectionGroup.objects.create(
+            name="ACINodeTestAPIVPCGroup",
+            aci_fabric=aci_pod1.aci_fabric,
+            logical_pair_id=999,
+            aci_node_a=node_a,
+            aci_node_b=node_b,
+        )
+
+        url = self._get_detail_url(node_a)
+        response = self.client.patch(
+            url, {"aci_pod": aci_pod2.id}, format="json", **self.header
+        )
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("aci_pod", response.data)

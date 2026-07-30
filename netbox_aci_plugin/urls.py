@@ -36,6 +36,26 @@ urlpatterns: tuple = (
         "nodes/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acinode")),
     ),
+    # ACI Node Interface
+    path(
+        "node-interfaces/",
+        include(get_model_urls("netbox_aci_plugin", "acinodeinterface", detail=False)),
+    ),
+    path(
+        "node-interfaces/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acinodeinterface")),
+    ),
+    # ACI VPC Protection Group
+    path(
+        "vpc-protection-groups/",
+        include(
+            get_model_urls("netbox_aci_plugin", "acivpcprotectiongroup", detail=False)
+        ),
+    ),
+    path(
+        "vpc-protection-groups/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acivpcprotectiongroup")),
+    ),
     # ACI Attachable Access Entity Profile
     path(
         "attachable-access-entity-profiles/",
@@ -61,6 +81,19 @@ urlpatterns: tuple = (
     path(
         "attachable-access-entity-profiles/domain-bindings/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "aciaaepdomainbinding")),
+    ),
+    # ACI Leaf Interface Policy Group
+    path(
+        "leaf-interface-policy-groups/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acileafinterfacepolicygroup", detail=False
+            )
+        ),
+    ),
+    path(
+        "leaf-interface-policy-groups/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acileafinterfacepolicygroup")),
     ),
     # ACI Physical Domain
     path(

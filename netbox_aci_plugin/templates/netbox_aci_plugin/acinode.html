@@ -65,6 +65,25 @@
             <th scope="row">{% trans "TEP IP Address" %}</th>
             <td>{{ object.tep_ip_address|linkify|placeholder }}</td>
           </tr>
+          <tr>
+            <th scope="row">{% trans "ACI VPC Protection Group" %}</th>
+            <td>
+              {% with group=object.vpc_protection_group %}
+                {% if not group %}
+                  {{ ''|placeholder }}
+                {% else %}
+                  <div>
+                    {{ group|linkify }}
+                    <div class="fs-5 text-muted">
+                      {% trans "Peer" %}:
+                      {% if group.aci_node_a == object %}{{ group.aci_node_b|linkify }}{% else %}{{ group.aci_node_a|linkify }}{% endif %}
+                    </div>
+                    <div class="fs-5 text-muted">{% trans "Logical Pair ID" %}: {{ group.logical_pair_id }}</div>
+                  </div>
+                {% endif %}
+              {% endwith %}
+            </td>
+          </tr>
         </table>
       </div>
       {% include 'inc/panels/custom_fields.html' %}

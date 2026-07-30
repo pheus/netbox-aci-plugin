@@ -13,6 +13,8 @@ router = NetBoxRouter()
 router.register("fabrics", views.ACIFabricListViewSet)
 router.register("pods", views.ACIPodListViewSet)
 router.register("nodes", views.ACINodeListViewSet)
+router.register("node-interfaces", views.ACINodeInterfaceListViewSet)
+router.register("vpc-protection-groups", views.ACIVPCProtectionGroupListViewSet)
 
 # ACI Access Policies
 router.register(
@@ -20,6 +22,9 @@ router.register(
     views.ACIAttachableAccessEntityProfileListViewSet,
 )
 router.register("aaep-domain-bindings", views.ACIAAEPDomainBindingListViewSet)
+router.register(
+    "leaf-interface-policy-groups", views.ACILeafInterfacePolicyGroupListViewSet
+)
 router.register("physical-domains", views.ACIPhysicalDomainListViewSet)
 router.register("routed-domains", views.ACIRoutedDomainListViewSet)
 router.register("vlan-pools", views.ACIVLANPoolListViewSet)

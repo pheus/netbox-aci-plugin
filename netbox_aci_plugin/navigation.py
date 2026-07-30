@@ -466,6 +466,69 @@ aciattachableaccessentityprofile_item = PluginMenuItem(
     ),
 )
 
+# ACI Leaf Interface Policy Group
+acileafinterfacepolicygroup_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acileafinterfacepolicygroup_list",
+    link_text="Leaf Interface Policy Groups",
+    permissions=["netbox_aci_plugin.view_acileafinterfacepolicygroup"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acileafinterfacepolicygroup_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acileafinterfacepolicygroup"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acileafinterfacepolicygroup_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acileafinterfacepolicygroup"],
+        ),
+    ),
+)
+
+# ACI Node Interface
+acinodeinterface_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acinodeinterface_list",
+    link_text="Node Interfaces",
+    permissions=["netbox_aci_plugin.view_acinodeinterface"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acinodeinterface_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acinodeinterface"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acinodeinterface_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acinodeinterface"],
+        ),
+    ),
+)
+
+# ACI VPC Protection Group
+acivpcprotectiongroup_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acivpcprotectiongroup_list",
+    link_text="VPC Protection Groups",
+    permissions=["netbox_aci_plugin.view_acivpcprotectiongroup"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acivpcprotectiongroup_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acivpcprotectiongroup"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acivpcprotectiongroup_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acivpcprotectiongroup"],
+        ),
+    ),
+)
+
 # Plugin Menu Items
 menu = PluginMenu(
     label="ACI",
@@ -514,6 +577,8 @@ menu = PluginMenu(
                 acifabric_item,
                 acipod_item,
                 acinode_item,
+                acinodeinterface_item,
+                acivpcprotectiongroup_item,
             ),
         ),
         (
@@ -523,6 +588,7 @@ menu = PluginMenu(
                 aciphysicaldomain_item,
                 acirouteddomain_item,
                 aciattachableaccessentityprofile_item,
+                acileafinterfacepolicygroup_item,
             ),
         ),
     ),

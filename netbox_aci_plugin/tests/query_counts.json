@@ -43,6 +43,10 @@
   "acifabric:list_objects_with_permission": 21,
   "acil3out:api_list_objects": 19,
   "acil3out:list_objects_with_permission": 25,
+  "acinodeinterface:api_list_objects": 14,
+  "acinodeinterface:list_objects_with_permission": 21,
+  "acileafinterfacepolicygroup:api_list_objects": 14,
+  "acileafinterfacepolicygroup:list_objects_with_permission": 21,
   "acinode:api_list_objects": 15,
   "acinode:list_objects_with_permission": 22,
   "aciphysicaldomain:api_list_objects": 14,
@@ -61,6 +65,8 @@
   "acivlanpool:list_objects_with_permission": 21,
   "acivlanpoolrange:api_list_objects": 13,
   "acivlanpoolrange:list_objects_with_permission": 21,
+  "acivpcprotectiongroup:api_list_objects": 13,
+  "acivpcprotectiongroup:list_objects_with_permission": 21,
   "acivrf:api_list_objects": 14,
   "acivrf:list_objects_with_permission": 21
 }

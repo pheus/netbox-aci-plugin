@@ -6,13 +6,18 @@ from .access_policies.domains import (
     ACIPhysicalDomainSerializer,
     ACIRoutedDomainSerializer,
 )
+from .access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroupSerializer,
+)
 from .access_policies.vlan_pools import (
     ACIVLANPoolRangeSerializer,
     ACIVLANPoolSerializer,
 )
 from .fabric.fabrics import ACIFabricSerializer
+from .fabric.node_interfaces import ACINodeInterfaceSerializer
 from .fabric.nodes import ACINodeSerializer
 from .fabric.pods import ACIPodSerializer
+from .fabric.vpc_protection_groups import ACIVPCProtectionGroupSerializer
 from .tenant.app_profiles import ACIAppProfileSerializer
 from .tenant.bridge_domains import (
     ACIBridgeDomainL3OutBindingSerializer,
@@ -74,6 +79,8 @@ __all__ = (
     "ACIExternalSubnetSerializer",
     "ACIFabricSerializer",
     "ACIL3OutSerializer",
+    "ACILeafInterfacePolicyGroupSerializer",
+    "ACINodeInterfaceSerializer",
     "ACINodeSerializer",
     "ACIPhysicalDomainSerializer",
     "ACIPodSerializer",
@@ -83,5 +90,6 @@ __all__ = (
     "ACIUSegNetworkAttributeSerializer",
     "ACIVLANPoolRangeSerializer",
     "ACIVLANPoolSerializer",
+    "ACIVPCProtectionGroupSerializer",
     "ACIVRFSerializer",
 )

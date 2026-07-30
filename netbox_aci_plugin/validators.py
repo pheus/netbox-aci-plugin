@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import re
+from typing import NamedTuple
+
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
@@ -107,3 +110,42 @@ def validate_contract_filter_tcp_rules(value_list: list[str]) -> None:
         and len(value_list) > 1
     ):
         raise ValidationError(_("TCP rules cannot be combined with 'unspecified'."))
+
+
+#
+# Node Interface
+#
+
+# ACI node interface name: an Ethernet port with an optional breakout
+# sub port ("Ethernet1/1", "eth1/1", "Ethernet1/1/1").
+ACI_INTERFACE_NAME_REGEX = re.compile(
+    r"^(?i:eth(?:ernet)?)(?P<module>\d+)/(?P<port>\d+)(?:/(?P<sub_port>\d+))?$"
+)
+
+
+class ParsedInterfaceName(NamedTuple):
+    """Coordinates parsed from an ACI node interface name."""
+
+    module: int
+    port: int
+    sub_port: int | None
+
+
+def parse_interface_name(name: str) -> ParsedInterfaceName | None:
+    """Parse an Ethernet interface name into node interface coordinates.
+
+    Returns None when the name does not match the expected Ethernet
+    port pattern. The sub port is None when the name carries no
+    breakout segment, leaving any zero-sentinel substitution to the
+    caller.
+    """
+    match = ACI_INTERFACE_NAME_REGEX.match(name)
+    if not match:
+        return None
+
+    sub_port = match.group("sub_port")
+    return ParsedInterfaceName(
+        module=int(match.group("module")),
+        port=int(match.group("port")),
+        sub_port=int(sub_port) if sub_port is not None else None,
+    )

@@ -1,0 +1,338 @@
+# SPDX-FileCopyrightText: 2026 Martin Hauser
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+from django import forms
+from django.utils.translation import gettext_lazy as _
+
+from netbox.forms import (
+    NetBoxModelBulkEditForm,
+    NetBoxModelFilterSetForm,
+    NetBoxModelForm,
+    NetBoxModelImportForm,
+)
+from tenancy.models import Tenant, TenantGroup
+from users.models import Owner, OwnerGroup
+from utilities.forms.fields import (
+    CommentField,
+    CSVModelChoiceField,
+    DynamicModelChoiceField,
+    DynamicModelMultipleChoiceField,
+    TagFilterField,
+)
+from utilities.forms.rendering import FieldSet
+
+from ...choices import NodeRoleChoices
+from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...models.fabric.fabrics import ACIFabric
+from ...models.fabric.nodes import ACINode
+from ...models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
+
+#
+# VPC Protection Group forms
+#
+
+
+class ACIVPCProtectionGroupEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACI VPC Protection Group model."""
+
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        label=_("ACI Fabric"),
+    )
+    aci_node_a = DynamicModelChoiceField(
+        queryset=ACINode.objects.all(),
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "role": NodeRoleChoices.ROLE_LEAF,
+        },
+        label=_("ACI Node A"),
+        help_text=_("First ACI Leaf Node of the Protection Group."),
+    )
+    aci_node_b = DynamicModelChoiceField(
+        queryset=ACINode.objects.all(),
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "role": NodeRoleChoices.ROLE_LEAF,
+        },
+        label=_("ACI Node B"),
+        help_text=_("Second ACI Leaf Node of the Protection Group."),
+    )
+    nb_tenant_group = DynamicModelChoiceField(
+        queryset=TenantGroup.objects.all(),
+        initial_params={"tenants": "$nb_tenant"},
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group"},
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group = DynamicModelChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        initial_params={"members": "$owner"},
+        null_option="None",
+        required=False,
+        label=_("Owner group"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        query_params={"group_id": "$owner_group"},
+        label=_("Owner"),
+    )
+    comments = CommentField()
+
+    fieldsets: tuple = (
+        FieldSet(
+            "name",
+            "name_alias",
+            "aci_fabric",
+            "logical_pair_id",
+            "aci_node_a",
+            "aci_node_b",
+            "description",
+            "tags",
+            name=_("ACI VPC Protection Group"),
+        ),
+        FieldSet(
+            "nb_tenant_group",
+            "nb_tenant",
+            name=_("NetBox Tenancy"),
+        ),
+    )
+
+    class Meta:
+        model = ACIVPCProtectionGroup
+        fields: tuple = (
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric",
+            "logical_pair_id",
+            "aci_node_a",
+            "aci_node_b",
+            "nb_tenant",
+            "owner",
+            "comments",
+            "tags",
+        )
+
+
+class ACIVPCProtectionGroupBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for the ACI VPC Protection Group model.
+
+    aci_fabric is absent because clean() requires both members' cached
+    Fabric to equal the group's, so a bulk reparent never validates.
+    """
+
+    name_alias = forms.CharField(
+        max_length=ACI_NAME_MAX_LEN,
+        required=False,
+        label=_("Name Alias"),
+    )
+    description = forms.CharField(
+        max_length=ACI_DESC_MAX_LEN,
+        required=False,
+        label=_("Description"),
+    )
+    nb_tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False,
+        label=_("NetBox Tenant"),
+    )
+    owner = DynamicModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        label=_("Owner"),
+    )
+    comments = CommentField()
+
+    model = ACIVPCProtectionGroup
+    fieldsets: tuple = (
+        FieldSet(
+            "name_alias",
+            "description",
+            name=_("ACI VPC Protection Group"),
+        ),
+        FieldSet("nb_tenant", name=_("NetBox Tenancy")),
+    )
+    nullable_fields: tuple = (
+        "comments",
+        "description",
+        "name_alias",
+        "nb_tenant",
+    )
+
+
+class ACIVPCProtectionGroupFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for the ACI VPC Protection Group model."""
+
+    model = ACIVPCProtectionGroup
+    fieldsets: tuple = (
+        FieldSet(
+            "q",
+            "filter_id",
+            "tag",
+        ),
+        FieldSet(
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric_id",
+            "logical_pair_id",
+            "aci_node_a_id",
+            "aci_node_b_id",
+            name=_("Attributes"),
+        ),
+        FieldSet(
+            "nb_tenant_group_id",
+            "nb_tenant_id",
+            name=_("NetBox Tenancy"),
+        ),
+        FieldSet(
+            "owner_group_id",
+            "owner_id",
+            name=_("Ownership"),
+        ),
+    )
+
+    name = forms.CharField(
+        required=False,
+    )
+    name_alias = forms.CharField(
+        required=False,
+    )
+    description = forms.CharField(
+        required=False,
+    )
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
+    logical_pair_id = forms.IntegerField(
+        required=False,
+        label=_("Logical Pair ID"),
+    )
+    aci_node_a_id = DynamicModelMultipleChoiceField(
+        queryset=ACINode.objects.all(),
+        required=False,
+        label=_("ACI Node A"),
+    )
+    aci_node_b_id = DynamicModelMultipleChoiceField(
+        queryset=ACINode.objects.all(),
+        required=False,
+        label=_("ACI Node B"),
+    )
+    nb_tenant_group_id = DynamicModelMultipleChoiceField(
+        queryset=TenantGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant group"),
+    )
+    nb_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=Tenant.objects.all(),
+        query_params={"group_id": "$nb_tenant_group_id"},
+        null_option="None",
+        required=False,
+        label=_("NetBox tenant"),
+    )
+    owner_group_id = DynamicModelMultipleChoiceField(
+        queryset=OwnerGroup.objects.all(),
+        null_option="None",
+        required=False,
+        label=_("Owner Group"),
+    )
+    owner_id = DynamicModelMultipleChoiceField(
+        queryset=Owner.objects.all(),
+        query_params={"group_id": "$owner_group_id"},
+        null_option="None",
+        required=False,
+        label=_("Owner"),
+    )
+    tag = TagFilterField(model)
+
+
+class ACIVPCProtectionGroupImportForm(NetBoxModelImportForm):
+    """NetBox import form for the ACI VPC Protection Group model."""
+
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Assigned ACI Fabric."),
+    )
+    aci_node_a = CSVModelChoiceField(
+        queryset=ACINode.objects.all(),
+        to_field_name="node_id",
+        required=True,
+        label=_("ACI Node A"),
+        help_text=_(
+            "First ACI Leaf Node of the Protection Group, resolved by Node ID."
+        ),
+    )
+    aci_node_b = CSVModelChoiceField(
+        queryset=ACINode.objects.all(),
+        to_field_name="node_id",
+        required=True,
+        label=_("ACI Node B"),
+        help_text=_(
+            "Second ACI Leaf Node of the Protection Group, resolved by Node ID."
+        ),
+    )
+    nb_tenant = CSVModelChoiceField(
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+        required=False,
+        label=_("NetBox Tenant"),
+        help_text=_("Assigned NetBox Tenant."),
+    )
+    owner = CSVModelChoiceField(
+        queryset=Owner.objects.all(),
+        required=False,
+        to_field_name="name",
+        help_text=_("Name of the object's owner"),
+    )
+
+    class Meta:
+        model = ACIVPCProtectionGroup
+        fields: tuple = (
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric",
+            "logical_pair_id",
+            "aci_node_a",
+            "aci_node_b",
+            "nb_tenant",
+            "owner",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        # Limit ACINode choices to the given ACI Fabric. Node IDs are
+        # fabric-unique, not globally unique, so an unscoped lookup by
+        # Node ID could otherwise match more than one ACI Node.
+        node_queryset = None
+        if data.get("aci_fabric"):
+            node_queryset = ACINode.objects.filter(_aci_fabric__name=data["aci_fabric"])
+        elif self.instance.pk:
+            # A sparse update row may omit aci_fabric entirely
+            node_queryset = ACINode.objects.filter(
+                _aci_fabric_id=self.instance.aci_fabric_id
+            )
+
+        if node_queryset is not None:
+            self.fields["aci_node_a"].queryset = node_queryset
+            self.fields["aci_node_b"].queryset = node_queryset

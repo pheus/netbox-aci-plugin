@@ -33,6 +33,7 @@ from ...tables.access_policies.aaep import (
     ACIAAEPDomainBindingTable,
     ACIAttachableAccessEntityProfileTable,
 )
+from .interface_policy_groups import ACILeafInterfacePolicyGroupChildrenView
 
 #
 # Base children views
@@ -213,6 +214,42 @@ class ACIAttachableAccessEntityProfileDomainBindingView(
         """Return the table with ACI AAEP column hidden."""
         table = super().get_table(*args, **kwargs)
 
+        # Hide ACI AAEP column
+        table.columns.hide("aci_aaep")
+
+        return table
+
+
+@register_model_view(
+    ACIAttachableAccessEntityProfile, "policygroups", path="policy-groups"
+)
+class ACIAttachableAccessEntityProfilePolicyGroupView(
+    ACILeafInterfacePolicyGroupChildrenView
+):
+    """Children view of ACI Leaf Interface Policy Groups of an ACI AAEP."""
+
+    queryset = ACIAttachableAccessEntityProfile.objects.all()
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACILeafInterfacePolicyGroup",
+            _("Add a Policy Group"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
+                "aci_aaep": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACILeafInterfacePolicyGroupChildrenView.actions
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return super().get_children(request, parent).filter(aci_aaep=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI Fabric and ACI AAEP columns hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIFabric column
+        table.columns.hide("aci_fabric")
         # Hide ACI AAEP column
         table.columns.hide("aci_aaep")
 

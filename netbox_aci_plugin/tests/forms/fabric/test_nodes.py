@@ -3,12 +3,16 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 
 from dcim.models import Device
 from ipam.models import IPAddress
 
 from ....choices import NodeRoleChoices, NodeTypeChoices
 from ....forms.fabric.nodes import ACINodeBulkEditForm, ACINodeEditForm
+from ....models.fabric.nodes import ACINode
+from ....models.fabric.pods import ACIPod
+from ....models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
 from ..base import ACIBaseFormTestCase
 
 
@@ -34,6 +38,44 @@ class ACINodeFormTestCase(ACIBaseFormTestCase):
             device_type=cls.device_type1,
             role=cls.device_role1,
             site=cls.site,
+        )
+
+        # A second Pod in the same Fabric, for the cross-Pod cases below
+        cls.aci_pod2 = ACIPod.objects.create(
+            name="ACINodeFormTestPod2",
+            aci_fabric=cls.aci_fabric,
+            pod_id=102,
+        )
+
+        # An existing Node, for the duplicate Node ID case
+        cls.existing_node = ACINode.objects.create(
+            name="ACINodeFormTestExistingNode",
+            aci_pod=cls.aci_pod,
+            node_id=160,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+
+        # A Node pair already forming a VPC Protection Group, used by
+        # the tests below that reject moving a paired Node to another
+        # Pod
+        cls.paired_node_a = ACINode.objects.create(
+            name="ACINodeFormTestPairedNodeA",
+            aci_pod=cls.aci_pod,
+            node_id=161,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        cls.paired_node_b = ACINode.objects.create(
+            name="ACINodeFormTestPairedNodeB",
+            aci_pod=cls.aci_pod,
+            node_id=162,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        ACIVPCProtectionGroup.objects.create(
+            name="ACINodeFormTestProtectionGroup",
+            aci_fabric=cls.aci_fabric,
+            logical_pair_id=1,
+            aci_node_a=cls.paired_node_a,
+            aci_node_b=cls.paired_node_b,
         )
 
     def test_invalid_aci_node_field_values(self) -> None:
@@ -109,3 +151,51 @@ class ACINodeFormTestCase(ACIBaseFormTestCase):
         """Test the bulk edit form tolerates an unknown node object type."""
         form = ACINodeBulkEditForm(data={"node_object_type": 99999999})
         self.assertIn("node_object", form.fields)
+
+    def test_edit_form_rejects_duplicate_node_id_across_pods(self) -> None:
+        """Test the edit form rejects a Node ID already used in the Fabric."""
+        aci_node_form = ACINodeEditForm(
+            data={
+                "name": "ACINodeFormTestDuplicateNodeId",
+                "aci_pod": self.aci_pod2,
+                "node_id": self.existing_node.node_id,
+                "role": NodeRoleChoices.ROLE_LEAF,
+                "node_type": NodeTypeChoices.TYPE_UNKNOWN,
+            }
+        )
+        self.assertFalse(aci_node_form.is_valid())
+        self.assertIn("node_id", aci_node_form.errors)
+
+    def test_edit_form_rejects_moving_paired_node_to_another_pod(self) -> None:
+        """Test the edit form rejects moving a paired Node to another Pod."""
+        aci_node_form = ACINodeEditForm(
+            instance=self.paired_node_a,
+            data={
+                "name": self.paired_node_a.name,
+                "aci_pod": self.aci_pod2,
+                "node_id": self.paired_node_a.node_id,
+                "role": NodeRoleChoices.ROLE_LEAF,
+                "node_type": NodeTypeChoices.TYPE_UNKNOWN,
+            },
+        )
+        self.assertFalse(aci_node_form.is_valid())
+        self.assertIn("aci_pod", aci_node_form.errors)
+
+    def test_bulk_edit_form_rejects_moving_paired_node_to_another_pod(self) -> None:
+        """Test the bulk-edit validation path rejects moving a paired Node.
+
+        NetBox's bulk edit view applies each cleaned field onto the
+        fetched object and then calls full_clean() before save(). The
+        form itself carries no aci_pod-specific validation, so this
+        mirrors that view-level sequence directly against the model.
+        """
+        form = ACINodeBulkEditForm(
+            data={"pk": [self.paired_node_a.pk], "aci_pod": self.aci_pod2.pk}
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+        node = ACINode.objects.get(pk=self.paired_node_a.pk)
+        node.aci_pod = form.cleaned_data["aci_pod"]
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+        self.assertIn("aci_pod", cm.exception.message_dict)

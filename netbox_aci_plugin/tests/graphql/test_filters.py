@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from netbox.graphql.schema import schema
+
 from .base import ACIBaseGraphQLTestCase
 
 
@@ -41,3 +43,49 @@ class ACIFilterGraphQLTestCase(ACIBaseGraphQLTestCase):
         self.assertNotIn("errors", result, result)
         returned_ids = {row["id"] for row in result["data"]["aci_tenant_list"]}
         self.assertEqual(returned_ids, {str(self.aci_tenant1.pk)})
+
+
+class ACISchemaGraphQLTestCase(ACIBaseGraphQLTestCase):
+    """Test the plugin GraphQL schema shape for the Access Interface types."""
+
+    def test_node_type_excludes_cached_fabric_field(self):
+        """The ACINode type does not expose its cached fabric field."""
+        self.assertIsNone(schema.get_field_for_type("_aci_fabric", "ACINodeType"))
+
+    def test_fabric_type_includes_access_interface_reverse_lists(self):
+        """The ACIFabric type exposes the two new reverse list fields."""
+        self.assertIsNotNone(
+            schema.get_field_for_type(
+                "aci_leaf_interface_policy_groups", "ACIFabricType"
+            )
+        )
+        self.assertIsNotNone(
+            schema.get_field_for_type("aci_vpc_protection_groups", "ACIFabricType")
+        )
+
+    def test_fabric_list_query_returns_access_interface_reverse_lists(self):
+        """The aci_fabric_list query resolves both new reverse list fields."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_acileafinterfacepolicygroup",
+            "netbox_aci_plugin.view_acivpcprotectiongroup",
+        )
+
+        result = self.query(
+            "query { aci_fabric_list(filters: {id: {in_list: ["
+            f'"{self.aci_fabric1.pk}"'
+            "]}}) { id "
+            "aci_leaf_interface_policy_groups { id } "
+            "aci_vpc_protection_groups { id } } }"
+        )
+
+        self.assertNotIn("errors", result, result)
+        fabric_row = result["data"]["aci_fabric_list"][0]
+        self.assertEqual(
+            {row["id"] for row in fabric_row["aci_leaf_interface_policy_groups"]},
+            {str(self.aci_leaf_interface_policy_group1.pk)},
+        )
+        self.assertEqual(
+            {row["id"] for row in fabric_row["aci_vpc_protection_groups"]},
+            {str(self.aci_vpc_protection_group1.pk)},
+        )

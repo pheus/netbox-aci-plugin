@@ -4,7 +4,8 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
+from django.test.utils import CaptureQueriesContext
 
 from dcim.models import Device, Location, Region, Site, SiteGroup
 from ipam.models import IPAddress
@@ -12,8 +13,10 @@ from tenancy.models import Tenant
 from virtualization.models import Cluster, ClusterType, VirtualMachine
 
 from ....choices import NodeRoleChoices, NodeTypeChoices
+from ....models.fabric.fabrics import ACIFabric
 from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
+from ....models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
 from ..base import ACIBaseTestCase
 
 
@@ -61,6 +64,66 @@ class ACINodeTestCase(ACIBaseTestCase):
             nb_tenant=cls.nb_tenant,
             comments=cls.aci_node_comments,
         )
+
+        # Read-only move targets and a paired partner for cls.aci_node.
+        # The transition tests create their own Nodes instead.
+        cls.aci_pod2 = ACIPod.objects.create(
+            name="ACINodePod2",
+            aci_fabric=cls.aci_fabric,
+            pod_id=5,
+        )
+        cls.aci_fabric2 = ACIFabric.objects.create(
+            name="ACINodeOtherFabric",
+            fabric_id=cls.aci_fabric_id + 1,
+            infra_vlan_vid=cls.aci_fabric_infra_vlan_vid + 1,
+        )
+        cls.aci_pod3 = ACIPod.objects.create(
+            name="ACINodeOtherFabricPod",
+            aci_fabric=cls.aci_fabric2,
+            pod_id=1,
+        )
+        cls.aci_node_vpc_partner = ACINode.objects.create(
+            name="ACINodeVPCPartner",
+            aci_pod=cls.aci_pod,
+            node_id=150,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        cls.aci_vpc_group = ACIVPCProtectionGroup.objects.create(
+            name="ACINodeVPCGroup",
+            aci_fabric=cls.aci_fabric,
+            logical_pair_id=1,
+            aci_node_a=cls.aci_node,
+            aci_node_b=cls.aci_node_vpc_partner,
+        )
+
+    def _create_paired_nodes(
+        self, node_id_a: int, node_id_b: int
+    ) -> tuple[ACINode, ACINode, ACIVPCProtectionGroup]:
+        """Create and pair two fresh Leaf Nodes in a new VPC Protection Group.
+
+        Always parented by self.aci_pod, so the transition tests can
+        move or reconfigure the pair without touching shared fixtures.
+        """
+        node_a = ACINode.objects.create(
+            name=f"ACINodeD23A{node_id_a}",
+            aci_pod=self.aci_pod,
+            node_id=node_id_a,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node_b = ACINode.objects.create(
+            name=f"ACINodeD23B{node_id_b}",
+            aci_pod=self.aci_pod,
+            node_id=node_id_b,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        group = ACIVPCProtectionGroup.objects.create(
+            name=f"ACINodeD23Group{node_id_a}",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=node_id_a,
+            aci_node_a=node_a,
+            aci_node_b=node_b,
+        )
+        return node_a, node_b, group
 
     def test_aci_node_instance(self) -> None:
         """Test type of created ACI Node."""
@@ -370,6 +433,144 @@ class ACINodeTestCase(ACIBaseTestCase):
         node.save()
         self.assertEqual(node._virtual_machine, virtual_machine)  # noqa: SLF001
 
+    def test_aci_node_save_update_fields_atomic_tuple(self) -> None:
+        """Test save expands a node object field to relation and caches."""
+        cluster_type = ClusterType.objects.create(
+            name="ACINodeAtomicClusterType", slug="acinodeatomicclustertype"
+        )
+        cluster = Cluster.objects.create(name="ACINodeAtomicCluster", type=cluster_type)
+        vm_content_type = ContentType.objects.get_for_model(VirtualMachine)
+
+        for offset, field_name in enumerate(
+            ("node_object_id", "node_object_type", "node_object_type_id")
+        ):
+            with self.subTest(field_name=field_name):
+                device = Device.objects.create(
+                    name=f"ACINodeAtomicDevice{offset}",
+                    device_type=self.device_type1,
+                    role=self.device_role1,
+                    site=self.site,
+                )
+                virtual_machine = VirtualMachine.objects.create(
+                    name=f"ACINodeAtomicVM{offset}", cluster=cluster
+                )
+                node = ACINode.objects.create(
+                    name=f"ACINodeAtomic{offset}",
+                    aci_pod=self.aci_pod,
+                    node_id=111 + offset,
+                    role=NodeRoleChoices.ROLE_LEAF,
+                    node_object=device,
+                )
+
+                node.node_object = virtual_machine
+                node.save(update_fields={field_name})
+                node.refresh_from_db()
+
+                self.assertEqual(node.node_object_type_id, vm_content_type.pk)
+                self.assertEqual(node.node_object_id, virtual_machine.pk)
+                self.assertIsNone(node._device)  # noqa: SLF001
+                self.assertEqual(
+                    node._virtual_machine,  # noqa: SLF001
+                    virtual_machine,
+                )
+
+    def test_aci_node_save_update_fields_unrelated_partial_inert(self) -> None:
+        """Test an unrelated save leaves node object and caches unchanged."""
+        device = Device.objects.create(
+            name="ACINodeInertDevice",
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        cluster_type = ClusterType.objects.create(
+            name="ACINodeInertClusterType", slug="acinodeinertclustertype"
+        )
+        cluster = Cluster.objects.create(name="ACINodeInertCluster", type=cluster_type)
+        virtual_machine = VirtualMachine.objects.create(
+            name="ACINodeInertVM", cluster=cluster
+        )
+        node = ACINode.objects.create(
+            name="ACINodeInert",
+            aci_pod=self.aci_pod,
+            node_id=114,
+            role=NodeRoleChoices.ROLE_LEAF,
+            node_object=device,
+        )
+
+        node.node_object = virtual_machine
+        node.name = "ACINodeInertRenamed"
+        node.save(update_fields={"name"})
+        node.refresh_from_db()
+
+        self.assertEqual(node.name, "ACINodeInertRenamed")
+        self.assertEqual(node.node_object, device)
+        self.assertEqual(node._device, device)  # noqa: SLF001
+        self.assertIsNone(node._virtual_machine)  # noqa: SLF001
+
+    def test_aci_node_save_update_fields_empty_set_skipped(self) -> None:
+        """Test an empty update_fields set skips the save."""
+        device = Device.objects.create(
+            name="ACINodeSkippedDevice",
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        node = ACINode.objects.create(
+            name="ACINodeSkipped",
+            aci_pod=self.aci_pod,
+            node_id=115,
+            role=NodeRoleChoices.ROLE_LEAF,
+            node_object=device,
+        )
+
+        node.name = "ACINodeSkippedRenamed"
+        with CaptureQueriesContext(connection) as queries:
+            node.save(update_fields=set())
+        node.refresh_from_db()
+
+        # No write may reach the database, not even a no-op UPDATE
+        self.assertFalse(
+            [
+                q
+                for q in queries.captured_queries
+                if q["sql"].lstrip().upper().startswith("UPDATE")
+            ]
+        )
+        self.assertEqual(node.name, "ACINodeSkipped")
+
+    def test_aci_node_save_full_persists_source_and_caches(self) -> None:
+        """Test a full save persists node object and caches together."""
+        device = Device.objects.create(
+            name="ACINodeFullSaveDevice",
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        cluster_type = ClusterType.objects.create(
+            name="ACINodeFullSaveClusterType", slug="acinodefullsaveclustertype"
+        )
+        cluster = Cluster.objects.create(
+            name="ACINodeFullSaveCluster", type=cluster_type
+        )
+        virtual_machine = VirtualMachine.objects.create(
+            name="ACINodeFullSaveVM", cluster=cluster
+        )
+        node = ACINode.objects.create(
+            name="ACINodeFullSave",
+            aci_pod=self.aci_pod,
+            node_id=116,
+            role=NodeRoleChoices.ROLE_LEAF,
+            node_object=device,
+        )
+
+        node.node_object = virtual_machine
+        node.save()
+        node.refresh_from_db()
+
+        self.assertEqual(node.node_object, virtual_machine)
+        self.assertIsNone(node._device)  # noqa: SLF001
+        self.assertEqual(node._virtual_machine, virtual_machine)  # noqa: SLF001
+
     def test_aci_node_object_scope_with_region_group_location(self) -> None:
         """Test node-object scope validation accepts a matching site."""
         region = Region.objects.create(name="ACINodeRegion", slug="acinoderegion")
@@ -470,3 +671,418 @@ class ACINodeTestCase(ACIBaseTestCase):
         )
         # Multiple unassigned nodes must not raise a uniqueness ValidationError
         node2.full_clean()
+
+    # The fabric-scope cache and its fabric-wide uniqueness enforcement
+
+    def test_aci_node_aci_fabric_cache_set_on_create(self) -> None:
+        """Test _aci_fabric is cached on create without caller input."""
+        node = ACINode.objects.create(
+            name="ACINodeCacheOnCreate",
+            aci_pod=self.aci_pod,
+            node_id=160,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        self.assertEqual(node._aci_fabric_id, self.aci_pod.aci_fabric_id)  # noqa: SLF001
+
+    def test_invalid_aci_node_duplicate_node_id_across_pods_same_fabric(
+        self,
+    ) -> None:
+        """Test full_clean rejects a Node ID reused across two Pods."""
+        node = ACINode(
+            name="ACINodeDupCleanAcrossPods",
+            aci_pod=self.aci_pod2,
+            node_id=self.aci_node_id,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+        self.assertIn("node_id", cm.exception.error_dict)
+
+    def test_constraint_unique_aci_node_id_across_pods_same_fabric(self) -> None:
+        """Test the DB constraint rejects a Node ID reused across Pods."""
+        duplicate_node = ACINode(
+            name="ACINodeDupDirectAcrossPods",
+            aci_pod=self.aci_pod2,
+            node_id=self.aci_node_id,
+        )
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            duplicate_node.save()
+
+    def test_aci_node_same_node_id_different_fabric_accepted(self) -> None:
+        """Test the same Node ID in a different ACI Fabric is accepted."""
+        node = ACINode(
+            name="ACINodeSameIdOtherFabric",
+            aci_pod=self.aci_pod3,
+            node_id=self.aci_node_id,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node.full_clean()
+        node.save()
+
+    def test_aci_node_save_update_fields_aci_pod_persists_fabric_cache(
+        self,
+    ) -> None:
+        """Test save(update_fields={"aci_pod"}) also persists _aci_fabric."""
+        node = ACINode.objects.create(
+            name="ACINodeCachePersist",
+            aci_pod=self.aci_pod,
+            node_id=161,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node.aci_pod = self.aci_pod3
+        node.save(update_fields={"aci_pod"})
+        node.refresh_from_db()
+        self.assertEqual(node.aci_pod, self.aci_pod3)
+        self.assertEqual(node._aci_fabric_id, self.aci_pod3.aci_fabric_id)  # noqa: SLF001
+
+    def test_aci_node_save_update_fields_aci_pod_id_persists_fabric_cache(
+        self,
+    ) -> None:
+        """Test save(update_fields={"aci_pod_id"}) persists _aci_fabric."""
+        node = ACINode.objects.create(
+            name="ACINodeAttnameCache",
+            aci_pod=self.aci_pod,
+            node_id=171,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node.aci_pod = self.aci_pod3
+        node.save(update_fields={"aci_pod_id"})
+        node.refresh_from_db()
+        self.assertEqual(node.aci_pod, self.aci_pod3)
+        self.assertEqual(node._aci_fabric_id, self.aci_pod3.aci_fabric_id)  # noqa: SLF001
+
+    def test_aci_node_save_update_fields_generator_persists_fabric_cache(
+        self,
+    ) -> None:
+        """Test a single-use update_fields iterable persists _aci_fabric."""
+        node = ACINode.objects.create(
+            name="ACINodeGeneratorCache",
+            aci_pod=self.aci_pod,
+            node_id=170,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node.aci_pod = self.aci_pod3
+        node.save(update_fields=(field for field in ("aci_pod",)))
+        node.refresh_from_db()
+        self.assertEqual(node.aci_pod, self.aci_pod3)
+        self.assertEqual(node._aci_fabric_id, self.aci_pod3.aci_fabric_id)  # noqa: SLF001
+
+    def test_aci_node_vpc_protection_group_as_node_a(self) -> None:
+        """Test vpc_protection_group returns the group from the A side."""
+        self.assertEqual(self.aci_node.vpc_protection_group, self.aci_vpc_group)
+
+    def test_aci_node_vpc_protection_group_as_node_b(self) -> None:
+        """Test vpc_protection_group returns the group from the B side."""
+        self.assertEqual(
+            self.aci_node_vpc_partner.vpc_protection_group, self.aci_vpc_group
+        )
+
+    def test_aci_node_vpc_protection_group_none_when_unpaired(self) -> None:
+        """Test vpc_protection_group is None for a Node without a group."""
+        node = ACINode.objects.create(
+            name="ACINodeNoGroup",
+            aci_pod=self.aci_pod,
+            node_id=162,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        self.assertIsNone(node.vpc_protection_group)
+
+    def test_aci_node_vpc_protection_group_raises_on_double_membership(
+        self,
+    ) -> None:
+        """Test vpc_protection_group raises loudly on a corrupt double pair."""
+        node_x = ACINode.objects.create(
+            name="ACINodeDoubleX",
+            aci_pod=self.aci_pod,
+            node_id=163,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node_y = ACINode.objects.create(
+            name="ACINodeDoubleY",
+            aci_pod=self.aci_pod,
+            node_id=164,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node_z = ACINode.objects.create(
+            name="ACINodeDoubleZ",
+            aci_pod=self.aci_pod,
+            node_id=165,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        # Bypass clean(): its membership-exclusivity guard would reject
+        # this, but a direct ORM write can still create it.
+        ACIVPCProtectionGroup.objects.create(
+            name="ACINodeDoubleGroup1",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=163,
+            aci_node_a=node_x,
+            aci_node_b=node_y,
+        )
+        ACIVPCProtectionGroup.objects.create(
+            name="ACINodeDoubleGroup2",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=164,
+            aci_node_a=node_x,
+            aci_node_b=node_z,
+        )
+        with self.assertRaises(ACIVPCProtectionGroup.MultipleObjectsReturned):
+            _ = node_x.vpc_protection_group
+
+    # The cache never needs priming by the caller, and no other field's
+    # validation depends on it
+
+    def test_aci_node_full_clean_without_priming_aci_fabric(self) -> None:
+        """Test full_clean populates the fabric cache without caller input."""
+        node = ACINode(
+            name="ACINodeBootstrap",
+            aci_pod=self.aci_pod,
+            node_id=166,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node.full_clean()
+        self.assertEqual(node._aci_fabric_id, self.aci_pod.aci_fabric_id)  # noqa: SLF001
+
+    def test_invalid_aci_node_missing_aci_pod_error_not_on_aci_fabric(
+        self,
+    ) -> None:
+        """Test a missing aci_pod is keyed to aci_pod, never to _aci_fabric."""
+        node = ACINode(name="ACINodeNoPod", node_id=167, role=NodeRoleChoices.ROLE_LEAF)
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+        self.assertIn("aci_pod", cm.exception.error_dict)
+        self.assertNotIn("_aci_fabric", cm.exception.error_dict)
+
+    def test_aci_node_save_update_fields_name_leaves_pod_and_fabric_unchanged(
+        self,
+    ) -> None:
+        """Test a name-only save ignores an in-memory Pod mutation."""
+        node = ACINode.objects.create(
+            name="ACINodeNamePartial",
+            aci_pod=self.aci_pod,
+            node_id=168,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node.aci_pod = self.aci_pod3
+        node.name = "ACINodeNamePartialRenamed"
+        node.save(update_fields={"name"})
+        node.refresh_from_db()
+        self.assertEqual(node.name, "ACINodeNamePartialRenamed")
+        self.assertEqual(node.aci_pod, self.aci_pod)
+        self.assertEqual(node._aci_fabric_id, self.aci_pod.aci_fabric_id)  # noqa: SLF001
+
+    def test_constraint_aci_node_aci_fabric_not_null(self) -> None:
+        """Test the database rejects a Node row with no cached ACI Fabric."""
+        node = ACINode(
+            name="ACINodeNoFabricCache",
+            aci_pod=self.aci_pod,
+            node_id=169,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        # bulk_create bypasses save(), so cache_related_objects() never
+        # runs and _aci_fabric_id reaches the database still unset.
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            ACINode.objects.bulk_create([node])
+
+    # A Node in a VPC Protection Group keeps its ACI Pod and stays a Leaf,
+    # enforced in clean() field-keyed and in save() message-only
+
+    def test_invalid_aci_node_paired_move_to_pod_same_fabric(self) -> None:
+        """Test full_clean rejects a paired Node moving within its Fabric."""
+        node_a, _node_b, _group = self._create_paired_nodes(200, 201)
+        node_a.aci_pod = self.aci_pod2
+        with self.assertRaises(ValidationError) as cm:
+            node_a.full_clean()
+        self.assertIn("aci_pod", cm.exception.error_dict)
+
+    def test_invalid_aci_node_paired_move_to_pod_another_fabric(self) -> None:
+        """Test full_clean rejects a paired Node moving to another Fabric."""
+        node_a, _node_b, _group = self._create_paired_nodes(202, 203)
+        node_a.aci_pod = self.aci_pod3
+        with self.assertRaises(ValidationError) as cm:
+            node_a.full_clean()
+        self.assertIn("aci_pod", cm.exception.error_dict)
+
+    def test_invalid_aci_node_paired_role_change_to_spine(self) -> None:
+        """Test full_clean rejects a paired Node's role changing to Spine."""
+        node_a, _node_b, _group = self._create_paired_nodes(204, 205)
+        node_a.role = NodeRoleChoices.ROLE_SPINE
+        with self.assertRaises(ValidationError) as cm:
+            node_a.full_clean()
+        self.assertIn("role", cm.exception.error_dict)
+
+    def test_invalid_aci_node_paired_role_change_to_apic(self) -> None:
+        """Test full_clean rejects a paired Node's role changing to APIC."""
+        node_a, _node_b, _group = self._create_paired_nodes(206, 207)
+        node_a.role = NodeRoleChoices.ROLE_APIC
+        with self.assertRaises(ValidationError) as cm:
+            node_a.full_clean()
+        self.assertIn("role", cm.exception.error_dict)
+
+    def test_aci_node_unpaired_moves_freely(self) -> None:
+        """Test full_clean allows an unpaired Node to change Pod and role."""
+        node = ACINode.objects.create(
+            name="ACINodeUnpairedMove",
+            aci_pod=self.aci_pod,
+            node_id=208,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        node.aci_pod = self.aci_pod2
+        node.role = NodeRoleChoices.ROLE_SPINE
+        node.full_clean()
+
+    def test_aci_node_paired_move_allowed_after_group_removed(self) -> None:
+        """Test full_clean allows a move once the protection group is gone."""
+        node_a, _node_b, group = self._create_paired_nodes(209, 210)
+        group.delete()
+        node_a.aci_pod = self.aci_pod2
+        node_a.full_clean()
+
+    def test_aci_node_save_paired_aci_pod_change_rejected_message_only(
+        self,
+    ) -> None:
+        """Test direct save rejects a paired Node Pod change, message-only."""
+        node_a, _node_b, _group = self._create_paired_nodes(211, 212)
+        node_a.aci_pod = self.aci_pod2
+        with self.assertRaises(ValidationError) as cm:
+            node_a.save()
+        self.assertIn(
+            "cannot be moved to another ACI Pod", " ".join(cm.exception.messages)
+        )
+        self.assertFalse(hasattr(cm.exception, "error_dict"))
+
+    def test_aci_node_save_paired_aci_pod_id_change_rejected_message_only(
+        self,
+    ) -> None:
+        """Test the attname spelling still triggers the paired-Node guard."""
+        node_a, _node_b, _group = self._create_paired_nodes(225, 226)
+        node_a.aci_pod = self.aci_pod2
+        with self.assertRaises(ValidationError) as cm:
+            node_a.save(update_fields={"aci_pod_id"})
+        self.assertIn(
+            "cannot be moved to another ACI Pod", " ".join(cm.exception.messages)
+        )
+        self.assertFalse(hasattr(cm.exception, "error_dict"))
+
+    def test_aci_node_save_paired_role_change_rejected_message_only(
+        self,
+    ) -> None:
+        """Test direct save rejects a paired Node role change, message-only."""
+        node_a, _node_b, _group = self._create_paired_nodes(213, 214)
+        node_a.role = NodeRoleChoices.ROLE_SPINE
+        with self.assertRaises(ValidationError) as cm:
+            node_a.save()
+        self.assertIn("must retain the Leaf role", " ".join(cm.exception.messages))
+        self.assertFalse(hasattr(cm.exception, "error_dict"))
+
+    def test_aci_node_save_paired_unrelated_field_succeeds(self) -> None:
+        """Test a scoped save touching neither Pod nor role still succeeds."""
+        node_a, _node_b, _group = self._create_paired_nodes(215, 216)
+        node_a.name = "ACINodeD23Renamed"
+        node_a.save(update_fields={"name"})
+        node_a.refresh_from_db()
+        self.assertEqual(node_a.name, "ACINodeD23Renamed")
+
+    def test_aci_node_save_role_only_ignores_unsaved_aci_pod(self) -> None:
+        """Test a role-only save ignores an ACI Pod left dirty in memory."""
+        node_a, _node_b, _group = self._create_paired_nodes(217, 218)
+        node_a.aci_pod = self.aci_pod2
+
+        node_a.save(update_fields={"role"})
+
+        node_a.refresh_from_db()
+        self.assertEqual(node_a.aci_pod, self.aci_pod)
+
+    def test_aci_node_save_aci_pod_only_ignores_unsaved_role(self) -> None:
+        """Test an ACI Pod save ignores a role left dirty in memory."""
+        node_a, _node_b, _group = self._create_paired_nodes(219, 220)
+        node_a.role = NodeRoleChoices.ROLE_SPINE
+
+        node_a.save(update_fields={"aci_pod"})
+
+        node_a.refresh_from_db()
+        self.assertEqual(node_a.role, NodeRoleChoices.ROLE_LEAF)
+
+    # The fabric cache follows the stored ACI Pod, never an unsaved change
+    # to the Pod object in memory
+
+    def test_aci_node_create_ignores_unsaved_aci_pod_fabric(self) -> None:
+        """Test a new Node caches the Pod's stored ACI Fabric."""
+        other_fabric = ACIFabric.objects.create(
+            name="ACINodeDirtyPodFabric",
+            fabric_id=self.aci_fabric_id + 31,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid + 31,
+        )
+        self.aci_pod.aci_fabric = other_fabric
+
+        node = ACINode.objects.create(
+            name="ACINodeDirtyPodCreate",
+            aci_pod=self.aci_pod,
+            node_id=222,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+
+        node.refresh_from_db()
+        self.assertEqual(node._aci_fabric_id, self.aci_fabric.pk)  # noqa: SLF001
+
+    def test_aci_node_save_ignores_unsaved_aci_pod_fabric(self) -> None:
+        """Test a full save keeps the Pod's stored ACI Fabric cached."""
+        node = ACINode.objects.create(
+            name="ACINodeDirtyPodSave",
+            aci_pod=self.aci_pod,
+            node_id=223,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        other_fabric = ACIFabric.objects.create(
+            name="ACINodeDirtyPodSaveFabric",
+            fabric_id=self.aci_fabric_id + 32,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid + 32,
+        )
+        node.aci_pod.aci_fabric = other_fabric
+
+        node.save()
+
+        node.refresh_from_db()
+        self.assertEqual(node._aci_fabric_id, self.aci_fabric.pk)  # noqa: SLF001
+
+    def test_invalid_aci_node_duplicate_id_uses_stored_pod_fabric(self) -> None:
+        """Test the duplicate Node ID check uses the Pod's stored Fabric."""
+        ACINode.objects.create(
+            name="ACINodeStoredFabricIncumbent",
+            aci_pod=self.aci_pod,
+            node_id=224,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        other_fabric = ACIFabric.objects.create(
+            name="ACINodeStoredFabricOther",
+            fabric_id=self.aci_fabric_id + 33,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid + 33,
+        )
+        # Pointing the Pod object at an empty Fabric must not excuse the
+        # duplicate in the Fabric the Pod really belongs to
+        self.aci_pod.aci_fabric = other_fabric
+
+        duplicate = ACINode(
+            name="ACINodeStoredFabricDuplicate",
+            aci_pod=self.aci_pod,
+            node_id=224,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            duplicate.full_clean()
+
+        self.assertIn("node_id", cm.exception.error_dict)
+
+    def test_invalid_aci_node_unknown_aci_pod_stays_a_field_error(self) -> None:
+        """Test an ACI Pod ID matching no row reports on the field."""
+        unused_pod_pk = ACIPod.objects.order_by("-pk").first().pk + 1
+        node = ACINode(
+            name="ACINodeUnknownPod",
+            aci_pod_id=unused_pod_pk,
+            node_id=221,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+
+        self.assertIn("aci_pod", cm.exception.error_dict)

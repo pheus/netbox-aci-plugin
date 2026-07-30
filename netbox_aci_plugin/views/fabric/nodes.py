@@ -17,7 +17,9 @@ from ...forms.fabric.nodes import (
     ACINodeImportForm,
 )
 from ...models.fabric.nodes import ACINode
+from ...object_actions import add_child_action
 from ...tables.fabric.nodes import ACINodeTable
+from ..fabric.node_interfaces import ACINodeInterfaceChildrenView
 
 #
 # Base children views
@@ -99,6 +101,43 @@ class ACINodeDeleteView(generic.ObjectDeleteView):
     queryset = ACINode.objects.select_related(
         "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant", "owner"
     ).prefetch_related("node_object", "tags")
+
+
+@register_model_view(ACINode, "nodeinterfaces", path="interfaces")
+class ACINodeNodeInterfaceView(ACINodeInterfaceChildrenView):
+    """Children view of ACI Node Interfaces of an ACI Node."""
+
+    # aci_pod is joined so the prefill below costs no extra query:
+    # ACINode.aci_fabric walks the Pod rather than the cached FK
+    queryset = ACINode.objects.select_related("aci_pod")
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACINodeInterface",
+            _("Add a Node Interface"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_pod.aci_fabric_id,
+                "aci_pod": lambda ctx: ctx["object"].aci_pod_id,
+                "aci_node": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACINodeInterfaceChildrenView.actions
+
+    def get_children(self, request, parent):
+        """Return all children objects to the current parent object."""
+        return super().get_children(request, parent).filter(aci_node=parent.pk)
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACI Fabric, Pod, and Node columns hidden."""
+        table = super().get_table(*args, **kwargs)
+
+        # Hide ACIFabric column
+        table.columns.hide("aci_fabric")
+        # Hide ACIPod column
+        table.columns.hide("aci_pod")
+        # Hide ACINode column
+        table.columns.hide("aci_node")
+
+        return table
 
 
 @register_model_view(ACINode, "bulk_import", path="import", detail=False)

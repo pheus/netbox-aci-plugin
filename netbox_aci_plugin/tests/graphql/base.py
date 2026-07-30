@@ -7,7 +7,14 @@ from django.urls import reverse
 
 from utilities.testing import APITestCase
 
+from ...choices import LeafInterfacePolicyGroupTypeChoices, NodeRoleChoices
+from ...models.access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroup,
+)
 from ...models.fabric.fabrics import ACIFabric
+from ...models.fabric.nodes import ACINode
+from ...models.fabric.pods import ACIPod
+from ...models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
 
@@ -35,6 +42,35 @@ class ACIBaseGraphQLTestCase(APITestCase):
         )
         cls.aci_vrf1 = ACIVRF.objects.create(
             name="ACIGraphQLTestVRF1", aci_tenant=cls.aci_tenant1
+        )
+        cls.aci_pod1 = ACIPod.objects.create(
+            name="ACIGraphQLTestPod1", aci_fabric=cls.aci_fabric1, pod_id=1
+        )
+        cls.aci_node1 = ACINode.objects.create(
+            name="ACIGraphQLTestNode1",
+            aci_pod=cls.aci_pod1,
+            node_id=101,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        cls.aci_node2 = ACINode.objects.create(
+            name="ACIGraphQLTestNode2",
+            aci_pod=cls.aci_pod1,
+            node_id=102,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        cls.aci_leaf_interface_policy_group1 = (
+            ACILeafInterfacePolicyGroup.objects.create(
+                name="ACIGraphQLTestLeafInterfacePolicyGroup1",
+                aci_fabric=cls.aci_fabric1,
+                group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+            )
+        )
+        cls.aci_vpc_protection_group1 = ACIVPCProtectionGroup.objects.create(
+            name="ACIGraphQLTestVPCProtectionGroup1",
+            aci_fabric=cls.aci_fabric1,
+            logical_pair_id=1,
+            aci_node_a=cls.aci_node1,
+            aci_node_b=cls.aci_node2,
         )
 
     def query(self, query_str: str) -> dict:

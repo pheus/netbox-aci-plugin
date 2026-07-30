@@ -20,6 +20,7 @@ from ..choices import (
     ContractSubjectFilterApplyDirectionChoices,
     ContractSubjectFilterPriorityChoices,
     DeploymentImmediacyChoices,
+    LeafInterfacePolicyGroupTypeChoices,
     NodeRoleChoices,
     NodeTypeChoices,
     PortModeChoices,
@@ -51,6 +52,7 @@ __all__ = (
     "ContractSubjectFilterApplyDirectionEnum",
     "ContractSubjectFilterPriorityEnum",
     "DeploymentImmediacyEnum",
+    "LeafInterfacePolicyGroupTypeEnum",
     "NodeRoleEnum",
     "NodeTypeEnum",
     "PortModeEnum",
@@ -181,4 +183,12 @@ VRFPCEnforcementDirectionEnum = strawberry.enum(
 )
 VRFPCEnforcementPreferenceEnum = strawberry.enum(
     VRFPCEnforcementPreferenceChoices.as_enum()
+)
+
+#
+# Leaf Interface Policy Group
+#
+
+LeafInterfacePolicyGroupTypeEnum = strawberry.enum(
+    LeafInterfacePolicyGroupTypeChoices.as_enum()
 )

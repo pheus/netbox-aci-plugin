@@ -605,3 +605,23 @@ class VLANPoolRangeRoleChoices(ChoiceSet):
         (ROLE_EXTERNAL, _("external"), "blue"),
         (ROLE_INTERNAL, _("internal"), "purple"),
     )
+
+
+#
+# Leaf Interface Policy Group
+#
+
+
+class LeafInterfacePolicyGroupTypeChoices(ChoiceSet):
+    """Choice set of Leaf Interface Policy Group types."""
+
+    # No default. The type is required and immutable after creation.
+    TYPE_ACCESS = "access"
+    TYPE_PC = "pc"
+    TYPE_VPC = "vpc"
+
+    CHOICES = (
+        (TYPE_ACCESS, _("Access"), "blue"),
+        (TYPE_PC, _("Port Channel"), "cyan"),
+        (TYPE_VPC, _("Virtual Port Channel"), "purple"),
+    )
