@@ -13,6 +13,7 @@ DATABASES = {
         "HOST": "localhost",
         "PORT": "",
         "CONN_MAX_AGE": 300,
+        "TEST": {"NAME": "test_netbox_aci"},
     }
 }
 
