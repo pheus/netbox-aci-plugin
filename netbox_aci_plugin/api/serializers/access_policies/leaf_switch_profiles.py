@@ -1,0 +1,137 @@
+# SPDX-FileCopyrightText: 2026 Martin Hauser
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+from rest_framework import serializers
+
+from netbox.api.serializers import NetBoxModelSerializer
+from tenancy.api.serializers import TenantSerializer
+from users.api.serializers_.mixins import OwnerMixin
+
+from ....models.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlock,
+    ACILeafSelector,
+    ACILeafSwitchProfile,
+)
+from ..fabric.fabrics import ACIFabricSerializer
+
+
+class ACILeafSwitchProfileSerializer(OwnerMixin, NetBoxModelSerializer):
+    """Serializer for the ACI Leaf Switch Profile model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:acileafswitchprofile-detail"
+    )
+    aci_fabric = ACIFabricSerializer(nested=True, required=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+
+    class Meta:
+        model = ACILeafSwitchProfile
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric",
+            "nb_tenant",
+            "owner",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_fabric",
+            "nb_tenant",
+        )
+
+
+class ACILeafSelectorSerializer(OwnerMixin, NetBoxModelSerializer):
+    """Serializer for the ACI Leaf Selector model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:acileafselector-detail"
+    )
+    aci_leaf_switch_profile = ACILeafSwitchProfileSerializer(nested=True, required=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+
+    class Meta:
+        model = ACILeafSelector
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_leaf_switch_profile",
+            "nb_tenant",
+            "owner",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_leaf_switch_profile",
+            "nb_tenant",
+        )
+
+
+class ACILeafNodeBlockSerializer(OwnerMixin, NetBoxModelSerializer):
+    """Serializer for the ACI Leaf Node Block model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="plugins-api:netbox_aci_plugin-api:acileafnodeblock-detail"
+    )
+    aci_leaf_selector = ACILeafSelectorSerializer(nested=True, required=True)
+    nb_tenant = TenantSerializer(nested=True, required=False, allow_null=True)
+
+    class Meta:
+        model = ACILeafNodeBlock
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_leaf_selector",
+            "nb_tenant",
+            "node_id_from",
+            "node_id_to",
+            "owner",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_leaf_selector",
+            "nb_tenant",
+            "node_id_from",
+            "node_id_to",
+        )
