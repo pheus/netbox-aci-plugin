@@ -15,6 +15,11 @@ from ..filtersets.access_policies.domains import (
 from ..filtersets.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupFilterSet,
 )
+from ..filtersets.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlockFilterSet,
+    ACILeafSelectorFilterSet,
+    ACILeafSwitchProfileFilterSet,
+)
 from ..filtersets.access_policies.vlan_pools import (
     ACIVLANPoolFilterSet,
     ACIVLANPoolRangeFilterSet,
@@ -68,6 +73,11 @@ from ..models.access_policies.aaep import (
 from ..models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from ..models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
+)
+from ..models.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlock,
+    ACILeafSelector,
+    ACILeafSwitchProfile,
 )
 from ..models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ..models.fabric.fabrics import ACIFabric
@@ -136,6 +146,9 @@ from .serializers import (
     ACIFabricSerializer,
     ACIL3OutSerializer,
     ACILeafInterfacePolicyGroupSerializer,
+    ACILeafNodeBlockSerializer,
+    ACILeafSelectorSerializer,
+    ACILeafSwitchProfileSerializer,
     ACINodeInterfaceSerializer,
     ACINodeSerializer,
     ACIPhysicalDomainSerializer,
@@ -283,6 +296,51 @@ class ACILeafInterfacePolicyGroupListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACILeafInterfacePolicyGroupSerializer
     filterset_class = ACILeafInterfacePolicyGroupFilterSet
+
+
+class ACILeafSwitchProfileListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Leaf Switch Profile instances."""
+
+    queryset = ACILeafSwitchProfile.objects.select_related(
+        "aci_fabric",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACILeafSwitchProfileSerializer
+    filterset_class = ACILeafSwitchProfileFilterSet
+
+
+class ACILeafSelectorListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Leaf Selector instances."""
+
+    queryset = ACILeafSelector.objects.select_related(
+        "aci_leaf_switch_profile",
+        "aci_leaf_switch_profile__aci_fabric",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACILeafSelectorSerializer
+    filterset_class = ACILeafSelectorFilterSet
+
+
+class ACILeafNodeBlockListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Leaf Node Block instances."""
+
+    queryset = ACILeafNodeBlock.objects.select_related(
+        "aci_leaf_selector",
+        "aci_leaf_selector__aci_leaf_switch_profile",
+        "aci_leaf_selector__aci_leaf_switch_profile__aci_fabric",
+        "nb_tenant",
+        "owner",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACILeafNodeBlockSerializer
+    filterset_class = ACILeafNodeBlockFilterSet
 
 
 class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
