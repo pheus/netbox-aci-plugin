@@ -11,6 +11,11 @@ from ...choices import LeafInterfacePolicyGroupTypeChoices, NodeRoleChoices
 from ...models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
+from ...models.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlock,
+    ACILeafSelector,
+    ACILeafSwitchProfile,
+)
 from ...models.fabric.fabrics import ACIFabric
 from ...models.fabric.nodes import ACINode
 from ...models.fabric.pods import ACIPod
@@ -71,6 +76,19 @@ class ACIBaseGraphQLTestCase(APITestCase):
             logical_pair_id=1,
             aci_node_a=cls.aci_node1,
             aci_node_b=cls.aci_node2,
+        )
+        cls.aci_leaf_switch_profile1 = ACILeafSwitchProfile.objects.create(
+            name="ACIGraphQLTestLeafSwitchProfile1", aci_fabric=cls.aci_fabric1
+        )
+        cls.aci_leaf_selector1 = ACILeafSelector.objects.create(
+            name="ACIGraphQLTestLeafSelector1",
+            aci_leaf_switch_profile=cls.aci_leaf_switch_profile1,
+        )
+        cls.aci_leaf_node_block1 = ACILeafNodeBlock.objects.create(
+            name="ACIGraphQLTestLeafNodeBlock1",
+            aci_leaf_selector=cls.aci_leaf_selector1,
+            node_id_from=101,
+            node_id_to=102,
         )
 
     def query(self, query_str: str) -> dict:
