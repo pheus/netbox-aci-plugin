@@ -28,6 +28,9 @@ POD_ID_MAX: Final[int] = 255
 NODE_ID_MIN: Final[int] = 1
 NODE_ID_MAX: Final[int] = 4000
 
+# ACI Nodes reserve 1-100 for APIC controllers, so Leaf Nodes start at 101
+LEAF_NODE_ID_MIN: Final[int] = 101
+
 NODE_INTERFACE_MODULE_MIN: Final[int] = 1
 NODE_INTERFACE_MODULE_MAX: Final[int] = 255
 NODE_INTERFACE_PORT_MIN: Final[int] = 1

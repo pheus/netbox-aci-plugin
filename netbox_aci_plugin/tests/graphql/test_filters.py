@@ -89,3 +89,50 @@ class ACISchemaGraphQLTestCase(ACIBaseGraphQLTestCase):
             {row["id"] for row in fabric_row["aci_vpc_protection_groups"]},
             {str(self.aci_vpc_protection_group1.pk)},
         )
+
+    def test_fabric_type_includes_leaf_switch_profile_reverse_list(self):
+        """The ACIFabric type exposes the leaf switch profile reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type("aci_leaf_switch_profiles", "ACIFabricType")
+        )
+
+    def test_leaf_switch_profile_type_includes_leaf_selector_reverse_list(self):
+        """The Profile type exposes the leaf selector reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type("aci_leaf_selectors", "ACILeafSwitchProfileType")
+        )
+
+    def test_leaf_selector_type_includes_leaf_node_block_reverse_list(self):
+        """The Leaf Selector type exposes the leaf node block reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type("aci_leaf_node_blocks", "ACILeafSelectorType")
+        )
+
+    def test_fabric_list_query_returns_leaf_switch_profile_reverse_chain(self):
+        """The aci_fabric_list query resolves the three-level reverse chain."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_acileafswitchprofile",
+            "netbox_aci_plugin.view_acileafselector",
+            "netbox_aci_plugin.view_acileafnodeblock",
+        )
+
+        result = self.query(
+            "query { aci_fabric_list(filters: {id: {in_list: ["
+            f'"{self.aci_fabric1.pk}"'
+            "]}}) { id "
+            "aci_leaf_switch_profiles { id "
+            "aci_leaf_selectors { id "
+            "aci_leaf_node_blocks { id } } } } }"
+        )
+
+        self.assertNotIn("errors", result, result)
+        fabric_row = result["data"]["aci_fabric_list"][0]
+        profile_row = fabric_row["aci_leaf_switch_profiles"][0]
+        self.assertEqual(profile_row["id"], str(self.aci_leaf_switch_profile1.pk))
+        selector_row = profile_row["aci_leaf_selectors"][0]
+        self.assertEqual(selector_row["id"], str(self.aci_leaf_selector1.pk))
+        self.assertEqual(
+            {row["id"] for row in selector_row["aci_leaf_node_blocks"]},
+            {str(self.aci_leaf_node_block1.pk)},
+        )

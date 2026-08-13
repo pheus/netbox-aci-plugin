@@ -25,6 +25,9 @@ router.register("aaep-domain-bindings", views.ACIAAEPDomainBindingListViewSet)
 router.register(
     "leaf-interface-policy-groups", views.ACILeafInterfacePolicyGroupListViewSet
 )
+router.register("leaf-switch-profiles", views.ACILeafSwitchProfileListViewSet)
+router.register("leaf-selectors", views.ACILeafSelectorListViewSet)
+router.register("leaf-node-blocks", views.ACILeafNodeBlockListViewSet)
 router.register("physical-domains", views.ACIPhysicalDomainListViewSet)
 router.register("routed-domains", views.ACIRoutedDomainListViewSet)
 router.register("vlan-pools", views.ACIVLANPoolListViewSet)

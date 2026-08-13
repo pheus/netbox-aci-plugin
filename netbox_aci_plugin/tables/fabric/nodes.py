@@ -103,3 +103,24 @@ class ACINodeTable(NetBoxTable):
             "nb_tenant",
             "tags",
         )
+
+
+class ACINodeReducedTable(NetBoxTable):
+    """Reduced NetBox table for the ACI Node model."""
+
+    name = tables.Column(
+        verbose_name=_("Node"),
+        linkify=True,
+    )
+    node_id = tables.Column(
+        verbose_name=_("Node ID"),
+        linkify=True,
+    )
+    role = columns.ChoiceFieldColumn(
+        verbose_name=_("Role"),
+    )
+
+    class Meta(NetBoxTable.Meta):
+        model = ACINode
+        fields: tuple = ("pk", "id", "name", "node_id", "role")
+        default_columns: tuple = ("name", "node_id", "role")

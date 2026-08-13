@@ -12,6 +12,11 @@ from .models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from .models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
+from .models.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlock,
+    ACILeafSelector,
+    ACILeafSwitchProfile,
+)
 from .models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .models.fabric.fabrics import ACIFabric
 from .models.fabric.node_interfaces import ACINodeInterface
@@ -217,6 +222,71 @@ class ACILeafInterfacePolicyGroupIndex(SearchIndex):
         "aci_fabric",
         "group_type",
         "aci_aaep",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACILeafSwitchProfileIndex(SearchIndex):
+    """NetBox search definition for the ACI Leaf Switch Profile model."""
+
+    model = ACILeafSwitchProfile
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACILeafSelectorIndex(SearchIndex):
+    """NetBox search definition for the ACI Leaf Selector model."""
+
+    model = ACILeafSelector
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_leaf_switch_profile",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACILeafNodeBlockIndex(SearchIndex):
+    """NetBox search definition for the ACI Leaf Node Block model."""
+
+    model = ACILeafNodeBlock
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_leaf_selector",
+        "node_id_from",
+        "node_id_to",
         "nb_tenant",
     )
 

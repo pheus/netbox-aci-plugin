@@ -9,6 +9,11 @@ from .access_policies.domains import (
 from .access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupSerializer,
 )
+from .access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlockSerializer,
+    ACILeafSelectorSerializer,
+    ACILeafSwitchProfileSerializer,
+)
 from .access_policies.vlan_pools import (
     ACIVLANPoolRangeSerializer,
     ACIVLANPoolSerializer,
@@ -80,6 +85,9 @@ __all__ = (
     "ACIFabricSerializer",
     "ACIL3OutSerializer",
     "ACILeafInterfacePolicyGroupSerializer",
+    "ACILeafNodeBlockSerializer",
+    "ACILeafSelectorSerializer",
+    "ACILeafSwitchProfileSerializer",
     "ACINodeInterfaceSerializer",
     "ACINodeSerializer",
     "ACIPhysicalDomainSerializer",

@@ -9,6 +9,11 @@ from .access_policies.domains import (
 from .access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupFilterForm,
 )
+from .access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlockFilterForm,
+    ACILeafSelectorFilterForm,
+    ACILeafSwitchProfileFilterForm,
+)
 from .access_policies.vlan_pools import (
     ACIVLANPoolFilterForm,
     ACIVLANPoolRangeFilterForm,
@@ -76,6 +81,9 @@ __all__ = (
     "ACIFabricFilterForm",
     "ACIL3OutFilterForm",
     "ACILeafInterfacePolicyGroupFilterForm",
+    "ACILeafNodeBlockFilterForm",
+    "ACILeafSelectorFilterForm",
+    "ACILeafSwitchProfileFilterForm",
     "ACINodeFilterForm",
     "ACINodeInterfaceFilterForm",
     "ACIPhysicalDomainFilterForm",
