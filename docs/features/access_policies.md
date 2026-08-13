@@ -387,3 +387,119 @@ interfaces through these Policy Groups, arrive in later releases.
 
 Node Interfaces themselves, and the VPC Protection Groups that pair Leaf
 Nodes, are documented in [Fabrics](fabrics.md).
+
+## Leaf Switch Profile
+
+A *Leaf Switch Profile* represents an ACI Leaf Profile (`infra:NodeP`, RN
+`nprof-{name}`) that groups the selectors that select the leaf nodes an
+interface profile later applies to. It is the switch half of APIC's
+legacy switch profile and interface profile tree, the plugin's first step
+toward that tree.
+
+The *ACILeafSwitchProfile* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the Leaf Switch Profile name in the ACI.
+- **ACI Fabric**: a reference to the `ACIFabric` model.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Leaf Switch Profile.
+- **Description**: a description of the Leaf Switch Profile.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The `(aci_fabric, name)` combination must be unique per fabric.
+
+Leaf Selectors belonging to a profile are managed on the profile's detail
+page via the **Selectors** tab.
+
+## Leaf Selector
+
+A *Leaf Selector* represents an ACI Switch Association (`infra:LeafS`) that
+names leaf nodes, through its node blocks, for the parent Leaf Switch
+Profile. Only the `range` selector type is modeled. `infra:LeafS` carries a
+`type` naming property with values `ALL`, `range` and `ALL_IN_POD`, and the
+plugin follows Cisco NaC's curation, which only ever emits range selectors.
+The Selector's relative name is therefore fixed at
+`leaves-{name}-typ-range`, and `ALL` and `ALL_IN_POD` are explicit scope
+drops.
+
+The *ACILeafSelector* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the Leaf Selector name in the ACI.
+- **ACI Leaf Switch Profile**: a reference to the parent
+  `ACILeafSwitchProfile`.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Leaf Selector.
+- **Description**: a description of the Leaf Selector.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The `(aci_leaf_switch_profile, name)` combination must be unique per
+  profile.
+
+A Selector's resolved leaf nodes are the union of its Node Blocks' covered
+ACI Nodes within the same ACI Fabric as its profile, shown on the
+Selector's detail page. Node Blocks belonging to a Selector are managed
+there via the **Node Blocks** tab.
+
+## Leaf Node Block
+
+A *Leaf Node Block* represents an ACI Node Block (`infra:NodeBlk`, RN
+`nodeblk-{name}`), a contiguous ACI Node ID range covered by its Leaf
+Selector.
+
+The *ACILeafNodeBlock* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the Leaf Node Block name in the ACI.
+- **ACI Leaf Selector**: a reference to the parent `ACILeafSelector`.
+- **Node ID (from)**: the first ACI Node ID in the block.
+    - Values: `101-4000`
+- **Node ID (to)**: the last ACI Node ID in the block.
+    - Values: `101-4000`
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Leaf Node Block.
+- **Description**: a description of the Leaf Node Block.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The starting Node ID must not be greater than the ending Node ID.
+- The `(aci_leaf_selector, name)` combination must be unique per selector.
+
+The Node ID bounds are narrowed from the APIC MIM's `1-16000` to
+`101-4000`. `ACINode` reserves `1-100` for APIC controllers and requires
+Leaf Nodes to start at `101`, so a Leaf Node Block can never name an ID
+the plugin's Leaf inventory could not hold. Unlike a VLAN Pool Range,
+sibling Node Blocks are not rejected for overlapping ranges. APIC unions
+overlapping node blocks without complaint, so only the
+starting-before-ending rule is enforced.
+
+The leaf switch policy group relation (`infra:RsAccNodePGrp`) that ties a
+Selector to node policies is out of scope, along with the whole switch and
+interface policy catalogue. `infra:SelectorIssues`, and the plugin-wide
+`ownerKey`, `ownerTag` and `annotation` drops, are not modeled either.
+
+The relation that attaches an Interface Profile to this Switch Profile
+(`infra:RsAccPortP`) arrives in a later release, along with the interface
+half of the profile tree. A port's effective policy group comes from that
+relation together with this profile's node blocks, the interface
+profile's port blocks, and the Selector's own policy group field.
