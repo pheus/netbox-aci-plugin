@@ -23,6 +23,7 @@ This is the longest layer doc. Use the table of contents to jump:
 - [`clean()`](#clean)
 - [`to_objectchange()`](#to_objectchange)
 - [`save()` and `alters_data`](#save-and-alters_data)
+- [Foreign key `on_delete`](#foreign-key-on_delete)
 - [Denormalized FK caching](#denormalized-fk-caching)
 - [Generic Foreign Key pattern](#generic-foreign-key-pattern)
 - [`OwnerMixin` coverage](#ownermixin-coverage)
@@ -376,6 +377,69 @@ def cache_related_objects(self) -> None:
 
 cache_related_objects.alters_data = True
 ```
+
+## Foreign key `on_delete`
+
+What a foreign key passes to `on_delete` follows from what it points
+at, not from whatever a nearby field happens to use. Four patterns cover
+every public foreign key in the plugin:
+
+- **Anchoring ACI parent:** `PROTECT`. An ACI Fabric, ACI Tenant, ACI
+  Pod, ACI Node, ACI Application Profile, ACI VRF, ACI Bridge Domain,
+  ACI Domain or ACI VLAN Pool anchors everything beneath it, so
+  deleting one must never silently take its children with it.
+- **Child, join or binding row:** `CASCADE`. A child that is pure
+  configuration of its parent has no meaning without that parent, and
+  neither has either side of a join, relation or binding row.
+- **Optional NetBox object:** `SET_NULL`. This covers `nb_tenant`,
+  `nb_vrf`, `nb_vlan`, `nb_interface`, `tep_ip_address` and
+  `infra_vlan`.
+- **`ContentType` or generic foreign key plumbing:** `PROTECT`.
+
+The `SET_NULL` pattern exists so the plugin never blocks deletion of an
+object it does not own. That reasoning does not carry across to an
+ACI-to-ACI reference, where both sides are plugin-owned, so `SET_NULL`
+is the wrong default there.
+
+This section covers public foreign keys. The `_`-prefixed fields in
+[Denormalized FK caching](#denormalized-fk-caching) are a different
+mechanism and are uniformly `CASCADE`, and
+[`ACICachedScopeMixin`](#acicachedscopemixin) pins its `_region` and
+`_site_group` cache fields to `SET_NULL` to adopt an upstream fix ahead
+of its release. Both stay consistent with the four patterns once cache
+fields are read as sitting outside them.
+
+### Nullability is a separate decision
+
+`null=True` answers whether the relation may be absent. `on_delete`
+answers what happens to this row when the target is deleted. Decide the
+two independently.
+
+Nullable plus `PROTECT` is the established pairing for an optional
+pointer whose silent removal would be a destructive change. `SET_NULL`
+on such a field strips the reference from every row that used it, and
+leaves no record that anything was ever configured. The `OwnerMixin`
+`owner` field uses the same nullable `PROTECT` pairing (see
+[Migrations](migrations.md)).
+
+### Read the whole tree, not one nearby field
+
+Two declarations mislead anyone who samples instead of enumerating:
+
+- `aci_vlan_pool` is declared twice with different semantics.
+  `ACIDomainBaseModel` declares it optional on `SET_NULL`, and
+  `ACIPhysicalDomain` overrides it as required on `PROTECT`. Only
+  `ACIRoutedDomain` inherits the optional form, which makes the field a
+  `PROTECT` precedent rather than a `SET_NULL` one.
+- `ACILeafInterfacePolicyGroup.aci_aaep` is the only genuine optional
+  ACI-to-ACI reference on `SET_NULL`, and it was chosen for nullability
+  reasons rather than for delete semantics. One case is not a
+  convention.
+
+One field sits outside the four patterns.
+`ACIBridgeDomainSubnet.gateway_ip_address` is a required one-to-one link
+to a NetBox IP Address on `CASCADE`. It does not contradict the
+`SET_NULL` pattern, which covers optional links only.
 
 ## Denormalized FK caching
 
