@@ -112,6 +112,22 @@ class ACILeafInterfacePolicyGroup(ACIFabricBaseModel):
                 )
             )
 
+        # A Selector checks its Policy Group only on its own save
+        if (
+            self.pk
+            and self.aci_fabric_id
+            and self.aci_leaf_interface_selectors.exclude(
+                aci_leaf_interface_profile__aci_fabric=self.aci_fabric_id
+            ).exists()
+        ):
+            errors.setdefault("aci_fabric", []).append(
+                _(
+                    "The assigned ACI Fabric differs from the ACI Fabric of "
+                    "existing ACI Leaf Interface Selectors assigned to this "
+                    "ACI Leaf Interface Policy Group."
+                )
+            )
+
         stored_group_type = self._get_stored_group_type()
         if stored_group_type is not None and stored_group_type != self.group_type:
             errors.setdefault("group_type", []).append(

@@ -12,6 +12,10 @@ from ....models.access_policies.aaep import ACIAttachableAccessEntityProfile
 from ....models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
+from ....models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
+    ACILeafInterfaceSelector,
+)
 from ....models.fabric.fabrics import ACIFabric
 from ..base import ACIBaseTestCase
 
@@ -310,6 +314,41 @@ class ACILeafInterfacePolicyGroupTestCase(ACIBaseTestCase):
     ) -> None:
         """Test full_clean accepts an edit that leaves the type unchanged."""
         self.aci_lipg_pc.description = "Updated description"
+        self.aci_lipg_pc.full_clean()
+
+    def test_invalid_aci_leaf_interface_policy_group_fabric_move_with_selector(
+        self,
+    ) -> None:
+        """Test clean rejects a Fabric move away from assigned Selectors."""
+        profile = ACILeafInterfaceProfile.objects.create(
+            name="ACITestLIPGMoveProfile",
+            aci_fabric=self.aci_fabric,
+        )
+        ACILeafInterfaceSelector.objects.create(
+            name="ACITestLIPGMoveSelector",
+            aci_leaf_interface_profile=profile,
+            aci_leaf_interface_policy_group=self.aci_lipg_pc,
+        )
+        other_fabric = ACIFabric.objects.create(
+            name="ACITestLIPGMoveOtherFabric",
+            fabric_id=131,
+            infra_vlan_vid=3904,
+        )
+        self.aci_lipg_pc.aci_fabric = other_fabric
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_lipg_pc.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_aci_leaf_interface_policy_group_fabric_move_without_selector(
+        self,
+    ) -> None:
+        """Test a Fabric move is allowed when no Selector is assigned."""
+        other_fabric = ACIFabric.objects.create(
+            name="ACITestLIPGFreeMoveOtherFabric",
+            fabric_id=132,
+            infra_vlan_vid=3905,
+        )
+        self.aci_lipg_pc.aci_fabric = other_fabric
         self.aci_lipg_pc.full_clean()
 
     def test_invalid_aci_leaf_interface_policy_group_name(self) -> None:
