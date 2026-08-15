@@ -24,6 +24,7 @@ from ...models.access_policies.interface_policy_groups import (
 from ...tables.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupTable,
 )
+from .leaf_interface_profiles import ACILeafInterfaceSelectorChildrenView
 
 #
 # Base children views
@@ -123,6 +124,31 @@ class ACILeafInterfacePolicyGroupDeleteView(generic.ObjectDeleteView):
     ).prefetch_related(
         "tags",
     )
+
+
+@register_model_view(
+    ACILeafInterfacePolicyGroup, "leafinterfaceselectors", path="selectors"
+)
+class ACILeafInterfacePolicyGroupLeafInterfaceSelectorView(
+    ACILeafInterfaceSelectorChildrenView
+):
+    """Children view of Leaf Interface Selectors of a Policy Group."""
+
+    queryset = ACILeafInterfacePolicyGroup.objects.all()
+
+    def get_children(self, request, parent):
+        """Return all Leaf Interface Selectors for the current Policy Group."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_leaf_interface_policy_group=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACILeafInterfacePolicyGroup column hidden."""
+        table = super().get_table(*args, **kwargs)
+        table.columns.hide("aci_leaf_interface_policy_group")
+        return table
 
 
 @register_model_view(

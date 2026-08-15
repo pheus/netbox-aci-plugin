@@ -12,6 +12,10 @@ from ....models.access_policies.aaep import ACIAttachableAccessEntityProfile
 from ....models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
+from ....models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
+    ACILeafInterfaceSelector,
+)
 from ..base import ACIModelViewTestCase
 
 
@@ -99,3 +103,38 @@ class ACILeafInterfacePolicyGroupViewTestCase(
             f'href="{add_url}?aci_fabric={self.aci_fabric.pk}&amp;'
             f"aci_aaep={self.aci_aaep.pk}",
         )
+
+    def test_acileafinterfacepolicygroup_leafinterfaceselectors_tab(self) -> None:
+        """Selectors tab lists only the Selectors of this Policy Group."""
+        policy_group = ACILeafInterfacePolicyGroup.objects.get(
+            name="ACIViewTestPolicyGroup1"
+        )
+        other_policy_group = ACILeafInterfacePolicyGroup.objects.get(
+            name="ACIViewTestPolicyGroup2"
+        )
+        profile = ACILeafInterfaceProfile.objects.create(
+            name="ACIViewTestPolicyGroupTabProfile", aci_fabric=self.aci_fabric
+        )
+        ACILeafInterfaceSelector.objects.create(
+            name="ACIViewTestPolicyGroupTabSelector",
+            aci_leaf_interface_profile=profile,
+            aci_leaf_interface_policy_group=policy_group,
+        )
+        ACILeafInterfaceSelector.objects.create(
+            name="ACIViewTestPolicyGroupTabForeignSelector",
+            aci_leaf_interface_profile=profile,
+            aci_leaf_interface_policy_group=other_policy_group,
+        )
+        self.add_permissions(
+            "netbox_aci_plugin.view_acileafinterfacepolicygroup",
+            "netbox_aci_plugin.view_acileafinterfaceselector",
+        )
+        url = get_action_url(
+            policy_group,
+            action="leafinterfaceselectors",
+            kwargs={"pk": policy_group.pk},
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        self.assertContains(response, "ACIViewTestPolicyGroupTabSelector")
+        self.assertNotContains(response, "ACIViewTestPolicyGroupTabForeignSelector")

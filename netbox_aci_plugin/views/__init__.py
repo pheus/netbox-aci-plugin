@@ -34,6 +34,26 @@ from .access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupListView,
     ACILeafInterfacePolicyGroupView,
 )
+from .access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfileBulkDeleteView,
+    ACILeafInterfaceProfileBulkEditView,
+    ACILeafInterfaceProfileBulkImportView,
+    ACILeafInterfaceProfileEditView,
+    ACILeafInterfaceProfileListView,
+    ACILeafInterfaceProfileView,
+    ACILeafInterfaceSelectorBulkDeleteView,
+    ACILeafInterfaceSelectorBulkEditView,
+    ACILeafInterfaceSelectorBulkImportView,
+    ACILeafInterfaceSelectorEditView,
+    ACILeafInterfaceSelectorListView,
+    ACILeafInterfaceSelectorView,
+    ACILeafPortBlockBulkDeleteView,
+    ACILeafPortBlockBulkEditView,
+    ACILeafPortBlockBulkImportView,
+    ACILeafPortBlockEditView,
+    ACILeafPortBlockListView,
+    ACILeafPortBlockView,
+)
 from .access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockBulkDeleteView,
     ACILeafNodeBlockBulkEditView,
@@ -394,6 +414,20 @@ __all__ = (
     "ACILeafInterfacePolicyGroupEditView",
     "ACILeafInterfacePolicyGroupListView",
     "ACILeafInterfacePolicyGroupView",
+    # ACILeafInterfaceProfile
+    "ACILeafInterfaceProfileBulkDeleteView",
+    "ACILeafInterfaceProfileBulkEditView",
+    "ACILeafInterfaceProfileBulkImportView",
+    "ACILeafInterfaceProfileEditView",
+    "ACILeafInterfaceProfileListView",
+    "ACILeafInterfaceProfileView",
+    # ACILeafInterfaceSelector
+    "ACILeafInterfaceSelectorBulkDeleteView",
+    "ACILeafInterfaceSelectorBulkEditView",
+    "ACILeafInterfaceSelectorBulkImportView",
+    "ACILeafInterfaceSelectorEditView",
+    "ACILeafInterfaceSelectorListView",
+    "ACILeafInterfaceSelectorView",
     # ACILeafNodeBlock
     "ACILeafNodeBlockBulkDeleteView",
     "ACILeafNodeBlockBulkEditView",
@@ -401,6 +435,13 @@ __all__ = (
     "ACILeafNodeBlockEditView",
     "ACILeafNodeBlockListView",
     "ACILeafNodeBlockView",
+    # ACILeafPortBlock
+    "ACILeafPortBlockBulkDeleteView",
+    "ACILeafPortBlockBulkEditView",
+    "ACILeafPortBlockBulkImportView",
+    "ACILeafPortBlockEditView",
+    "ACILeafPortBlockListView",
+    "ACILeafPortBlockView",
     # ACILeafSelector
     "ACILeafSelectorBulkDeleteView",
     "ACILeafSelectorBulkEditView",
