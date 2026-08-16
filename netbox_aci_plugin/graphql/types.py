@@ -35,7 +35,10 @@ from .filters import (
     ACIFabricFilter,
     ACIL3OutFilter,
     ACILeafInterfacePolicyGroupFilter,
+    ACILeafInterfaceProfileFilter,
+    ACILeafInterfaceSelectorFilter,
     ACILeafNodeBlockFilter,
+    ACILeafPortBlockFilter,
     ACILeafSelectorFilter,
     ACILeafSwitchProfileFilter,
     ACINodeFilter,
@@ -113,6 +116,12 @@ class ACIFabricType(OwnerMixin, NetBoxObjectType):
     aci_leaf_interface_policy_groups: list[
         Annotated[
             "ACILeafInterfacePolicyGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+    aci_leaf_interface_profiles: list[
+        Annotated[
+            "ACILeafInterfaceProfileType",
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
@@ -378,6 +387,87 @@ class ACILeafInterfacePolicyGroupType(OwnerMixin, NetBoxObjectType):
         ]
         | None
     )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    # Related models
+    aci_leaf_interface_selectors: list[
+        Annotated[
+            "ACILeafInterfaceSelectorType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACILeafInterfaceProfile,
+    fields="__all__",
+    filters=ACILeafInterfaceProfileFilter,
+    pagination=True,
+)
+class ACILeafInterfaceProfileType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACILeafInterfaceProfile model."""
+
+    # Model fields
+    aci_fabric: Annotated[
+        "ACIFabricType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    # Related models
+    aci_leaf_interface_selectors: list[
+        Annotated[
+            "ACILeafInterfaceSelectorType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACILeafInterfaceSelector,
+    fields="__all__",
+    filters=ACILeafInterfaceSelectorFilter,
+    pagination=True,
+)
+class ACILeafInterfaceSelectorType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACILeafInterfaceSelector model."""
+
+    # Model fields
+    aci_leaf_interface_profile: Annotated[
+        "ACILeafInterfaceProfileType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+    aci_leaf_interface_policy_group: (
+        Annotated[
+            "ACILeafInterfacePolicyGroupType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+        | None
+    )
+    nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+    # Related models
+    aci_leaf_port_blocks: list[
+        Annotated[
+            "ACILeafPortBlockType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
+
+
+@strawberry_django.type(
+    models.ACILeafPortBlock,
+    fields="__all__",
+    filters=ACILeafPortBlockFilter,
+    pagination=True,
+)
+class ACILeafPortBlockType(OwnerMixin, NetBoxObjectType):
+    """GraphQL type definition for the ACILeafPortBlock model."""
+
+    # Model fields
+    aci_leaf_interface_selector: Annotated[
+        "ACILeafInterfaceSelectorType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
 
