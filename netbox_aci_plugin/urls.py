@@ -95,6 +95,39 @@ urlpatterns: tuple = (
         "leaf-interface-policy-groups/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acileafinterfacepolicygroup")),
     ),
+    # ACI Leaf Interface Profile
+    path(
+        "leaf-interface-profiles/",
+        include(
+            get_model_urls("netbox_aci_plugin", "acileafinterfaceprofile", detail=False)
+        ),
+    ),
+    path(
+        "leaf-interface-profiles/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acileafinterfaceprofile")),
+    ),
+    # ACI Leaf Interface Selector
+    path(
+        "leaf-interface-profiles/selectors/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acileafinterfaceselector", detail=False
+            )
+        ),
+    ),
+    path(
+        "leaf-interface-profiles/selectors/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acileafinterfaceselector")),
+    ),
+    # ACI Leaf Port Block
+    path(
+        "leaf-interface-profiles/port-blocks/",
+        include(get_model_urls("netbox_aci_plugin", "acileafportblock", detail=False)),
+    ),
+    path(
+        "leaf-interface-profiles/port-blocks/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acileafportblock")),
+    ),
     # ACI Leaf Switch Profile
     path(
         "leaf-switch-profiles/",

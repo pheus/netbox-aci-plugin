@@ -508,6 +508,27 @@ acileafswitchprofile_item = PluginMenuItem(
     ),
 )
 
+# ACI Leaf Interface Profile
+acileafinterfaceprofile_item = PluginMenuItem(
+    link="plugins:netbox_aci_plugin:acileafinterfaceprofile_list",
+    link_text="Leaf Interface Profiles",
+    permissions=["netbox_aci_plugin.view_acileafinterfaceprofile"],
+    buttons=(
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acileafinterfaceprofile_add",
+            title="Add",
+            icon_class="mdi mdi-plus-thick",
+            permissions=["netbox_aci_plugin.add_acileafinterfaceprofile"],
+        ),
+        PluginMenuButton(
+            link="plugins:netbox_aci_plugin:acileafinterfaceprofile_bulk_import",
+            title="Import",
+            icon_class="mdi mdi-upload",
+            permissions=["netbox_aci_plugin.add_acileafinterfaceprofile"],
+        ),
+    ),
+)
+
 # ACI Node Interface
 acinodeinterface_item = PluginMenuItem(
     link="plugins:netbox_aci_plugin:acinodeinterface_list",
@@ -610,6 +631,7 @@ menu = PluginMenu(
                 acirouteddomain_item,
                 aciattachableaccessentityprofile_item,
                 acileafinterfacepolicygroup_item,
+                acileafinterfaceprofile_item,
                 acileafswitchprofile_item,
             ),
         ),

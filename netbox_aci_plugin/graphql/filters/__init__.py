@@ -4,6 +4,11 @@ from .access_policies.aaep import (
 )
 from .access_policies.domains import ACIPhysicalDomainFilter, ACIRoutedDomainFilter
 from .access_policies.interface_policy_groups import ACILeafInterfacePolicyGroupFilter
+from .access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfileFilter,
+    ACILeafInterfaceSelectorFilter,
+    ACILeafPortBlockFilter,
+)
 from .access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockFilter,
     ACILeafSelectorFilter,
@@ -77,7 +82,10 @@ __all__ = (
     "ACIFabricFilter",
     "ACIL3OutFilter",
     "ACILeafInterfacePolicyGroupFilter",
+    "ACILeafInterfaceProfileFilter",
+    "ACILeafInterfaceSelectorFilter",
     "ACILeafNodeBlockFilter",
+    "ACILeafPortBlockFilter",
     "ACILeafSelectorFilter",
     "ACILeafSwitchProfileFilter",
     "ACINodeFilter",

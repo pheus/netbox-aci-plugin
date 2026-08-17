@@ -382,8 +382,9 @@ modeled. The interface policy catalogue, CDP, LLDP, link level, LACP, MCP,
 STP, storm control, port security, MACsec, and 802.1X, is out of scope: a
 Policy Group documents its AAEP and type without any of them. The legacy
 profile tree that ties Node Interfaces to Policy Groups through switch
-profiles and selectors, and the access paths that bind Endpoint Groups to
-interfaces through these Policy Groups, arrive in later releases.
+profiles and selectors is documented below. The access paths that bind
+Endpoint Groups to interfaces through these Policy Groups arrive in a
+later release.
 
 Node Interfaces themselves, and the VPC Protection Groups that pair Leaf
 Nodes, are documented in [Fabrics](fabrics.md).
@@ -499,7 +500,141 @@ interface policy catalogue. `infra:SelectorIssues`, and the plugin-wide
 `ownerKey`, `ownerTag` and `annotation` drops, are not modeled either.
 
 The relation that attaches an Interface Profile to this Switch Profile
-(`infra:RsAccPortP`) arrives in a later release, along with the interface
-half of the profile tree. A port's effective policy group comes from that
-relation together with this profile's node blocks, the interface
-profile's port blocks, and the Selector's own policy group field.
+(`infra:RsAccPortP`) arrives in a later release. A port's effective policy
+group comes from that relation together with this profile's node blocks,
+the interface profile's port blocks, and the Selector's own policy group
+field.
+
+## Leaf Interface Profile
+
+A *Leaf Interface Profile* represents an ACI Leaf Interface Profile
+(`infra:AccPortP`, RN `accportprof-{name}`) that groups the selectors
+that select the leaf ports a policy group later applies to. It is the
+interface half of APIC's legacy switch profile and interface profile
+tree. The relation that joins the two halves arrives in a later release.
+
+The *ACILeafInterfaceProfile* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the Leaf Interface Profile name in the ACI.
+- **ACI Fabric**: a reference to the `ACIFabric` model.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Leaf Interface Profile.
+- **Description**: a description of the Leaf Interface Profile.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The `(aci_fabric, name)` combination must be unique per fabric.
+
+Leaf Interface Selectors belonging to a profile are managed on the
+profile's detail page via the **Selectors** tab.
+
+## Leaf Interface Selector
+
+A *Leaf Interface Selector* represents an ACI Access Port Selector
+(`infra:HPortS`) that names leaf ports, through its port blocks, for the
+parent Leaf Interface Profile, and optionally assigns them a Leaf
+Interface Policy Group. Only the `range` selector type is modeled.
+`infra:HPortS` carries a `type` naming property with values `ALL` and
+`range`, and the plugin follows the same range-only curation already used
+for the Leaf Selector. The Selector's relative name is therefore fixed at
+`hports-{name}-typ-range`, and `ALL` is an explicit scope drop.
+
+The *ACILeafInterfaceSelector* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the Leaf Interface Selector name in the ACI.
+    - Values: up to 64 characters, narrower than the APIC MIM's 128
+- **ACI Leaf Interface Profile**: a reference to the parent
+  `ACILeafInterfaceProfile`.
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Leaf Interface Selector.
+- **Description**: a description of the Leaf Interface Selector.
+- **ACI Leaf Interface Policy Group**: a reference to an
+  `ACILeafInterfacePolicyGroup`.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The assigned ACI Leaf Interface Policy Group must belong to the same ACI
+  Fabric as the ACI Leaf Interface Profile.
+- The `(aci_leaf_interface_profile, name)` combination must be unique per
+  profile.
+
+The Name field is capped at the plugin's usual 64 characters rather than
+the APIC MIM's 128 for `infra:HPortS`. That wider bound is local to this
+one class: `infra:AccPortP`, `infra:LeafS` and `infra:NodeP` all keep 64.
+Capping at 64 keeps one name length across the plugin rather than
+introducing a second one for a single class.
+
+Port Blocks belonging to a Selector are managed on the Selector's detail
+page via the **Port Blocks** tab.
+
+## Leaf Port Block
+
+A *Leaf Port Block* represents an ACI Access Port Block (`infra:PortBlk`,
+RN `portblk-{name}`), a contiguous module and port range covered by its
+Leaf Interface Selector. APIC treats the block as the cartesian product of
+the two ranges rather than a single flat span.
+
+The *ACILeafPortBlock* model has the following fields:
+
+*Required fields*:
+
+- **Name**: represents the Leaf Port Block name in the ACI.
+- **ACI Leaf Interface Selector**: a reference to the parent
+  `ACILeafInterfaceSelector`.
+- **Module (from)**: the first module in the block.
+    - Values: `1-100`
+- **Module (to)**: the last module in the block.
+    - Values: `1-100`
+- **Port (from)**: the first port in the block.
+    - Values: `1-127`
+- **Port (to)**: the last port in the block.
+    - Values: `1-127`
+
+*Optional fields*:
+
+- **Name alias**: a name alias in the ACI for the Leaf Port Block.
+- **Description**: a description of the Leaf Port Block.
+- **NetBox Tenant**: a reference to the NetBox tenant model.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The starting module must not be greater than the ending module.
+- The starting port must not be greater than the ending port.
+- The `(aci_leaf_interface_selector, name)` combination must be unique per
+  selector.
+
+The module bound of `1-100` is exact fidelity to the APIC MIM's
+`infra:PortBlk`, not a narrowing to the plugin's own inventory the way the
+Leaf Node Block's Node ID bound is. `ACINodeInterface.module` itself
+allows `1-255`, so a port block cannot cover an interface on module
+101-255. APIC carries the same gap between its legacy and modern trees,
+and no leaf ships with more than 100 modules, so the gap is theoretical
+rather than a practical limitation.
+
+Sub-port blocks and breakout configuration (`infra:SubPortBlk`) are
+deferred as a scope call rather than a modeling limit, since sub-port
+blocks only exist for broken-out ports. The port channel member policy
+and the FEX container remain out of scope as well, along with the
+interface policy catalogue itself. The Selector's own policy group
+assignment (`infra:RsAccBaseGrp`) is modeled, as the Leaf Interface
+Policy Group field. The node policy group relation
+(`infra:RsAccNodePGrp`) is contained by `infra:LeafS` and so belongs to
+the Leaf Selector in the switch half of the tree, not here. The relation
+that attaches this profile to a Switch Profile (`infra:RsAccPortP`)
+arrives in a later release.

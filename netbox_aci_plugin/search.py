@@ -12,6 +12,11 @@ from .models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from .models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
+from .models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
+    ACILeafInterfaceSelector,
+    ACILeafPortBlock,
+)
 from .models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
@@ -222,6 +227,74 @@ class ACILeafInterfacePolicyGroupIndex(SearchIndex):
         "aci_fabric",
         "group_type",
         "aci_aaep",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACILeafInterfaceProfileIndex(SearchIndex):
+    """NetBox search definition for the ACI Leaf Interface Profile model."""
+
+    model = ACILeafInterfaceProfile
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_fabric",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACILeafInterfaceSelectorIndex(SearchIndex):
+    """NetBox search definition for the ACI Leaf Interface Selector model."""
+
+    model = ACILeafInterfaceSelector
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_leaf_interface_profile",
+        "aci_leaf_interface_policy_group",
+        "nb_tenant",
+    )
+
+
+@register_search
+class ACILeafPortBlockIndex(SearchIndex):
+    """NetBox search definition for the ACI Leaf Port Block model."""
+
+    model = ACILeafPortBlock
+
+    fields: tuple = (
+        ("name", 100),
+        ("name_alias", 300),
+        ("description", 500),
+        ("comments", 5000),
+    )
+    display_attrs: tuple = (
+        "name",
+        "name_alias",
+        "description",
+        "aci_leaf_interface_selector",
+        "module_from",
+        "module_to",
+        "port_from",
+        "port_to",
         "nb_tenant",
     )
 

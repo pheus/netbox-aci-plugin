@@ -1,0 +1,77 @@
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acileafportblock_list' %}?aci_fabric_id={{ object.aci_fabric.pk }}">{{ object.aci_fabric }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acileafportblock_list' %}?aci_leaf_interface_profile_id={{ object.aci_leaf_interface_selector.aci_leaf_interface_profile.pk }}">{{ object.aci_leaf_interface_selector.aci_leaf_interface_profile }}</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'plugins:netbox_aci_plugin:acileafportblock_list' %}?aci_leaf_interface_selector_id={{ object.aci_leaf_interface_selector.pk }}">{{ object.aci_leaf_interface_selector }}</a></li>
+{% endblock breadcrumbs %}
+
+{% block content %}
+<div class="row">
+  <div class="col col-md-6">
+    <div class="card">
+      <h2 class="card-header">{% trans "ACI Leaf Port Block" %}</h2>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">{% trans "ACI Fabric" %}</th>
+          <td>{{ object.aci_fabric|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI Leaf Interface Profile" %}</th>
+          <td>{{ object.aci_leaf_interface_selector.aci_leaf_interface_profile|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "ACI Leaf Interface Selector" %}</th>
+          <td>{{ object.aci_leaf_interface_selector|linkify }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Name Alias" %}</th>
+          <td>{{ object.name_alias|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Description" %}</th>
+          <td>{{ object.description|placeholder }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "NetBox Tenant" %}</th>
+          <td>
+            {% if object.nb_tenant.group %}
+              {{ object.nb_tenant.group|linkify }} /
+            {% endif %}
+            {{ object.nb_tenant|linkify|placeholder }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2 class="card-header">{% trans "Module and Port Ranges" %}</h2>
+      <table class="table table-hover attr-table">
+        <tr>
+          <th scope="row">{% trans "Module (from)" %}</th>
+          <td>{{ object.module_from }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Module (to)" %}</th>
+          <td>{{ object.module_to }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Port (from)" %}</th>
+          <td>{{ object.port_from }}</td>
+        </tr>
+        <tr>
+          <th scope="row">{% trans "Port (to)" %}</th>
+          <td>{{ object.port_to }}</td>
+        </tr>
+      </table>
+    </div>
+    {% include 'inc/panels/custom_fields.html' %}
+  </div>
+  <div class="col col-md-6">
+    {% include 'inc/panels/tags.html' %}
+    {% include 'inc/panels/comments.html' %}
+  </div>
+</div>
+{% endblock content %}

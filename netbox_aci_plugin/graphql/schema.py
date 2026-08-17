@@ -29,7 +29,10 @@ from .types import (
     ACIFabricType,
     ACIL3OutType,
     ACILeafInterfacePolicyGroupType,
+    ACILeafInterfaceProfileType,
+    ACILeafInterfaceSelectorType,
     ACILeafNodeBlockType,
+    ACILeafPortBlockType,
     ACILeafSelectorType,
     ACILeafSwitchProfileType,
     ACINodeInterfaceType,
@@ -86,6 +89,21 @@ class NetBoxACIQuery:
     aci_leaf_interface_policy_group_list: list[ACILeafInterfacePolicyGroupType] = (
         strawberry_django.field()
     )
+
+    aci_leaf_interface_profile: ACILeafInterfaceProfileType = strawberry_django.field()
+    aci_leaf_interface_profile_list: list[ACILeafInterfaceProfileType] = (
+        strawberry_django.field()
+    )
+
+    aci_leaf_interface_selector: ACILeafInterfaceSelectorType = (
+        strawberry_django.field()
+    )
+    aci_leaf_interface_selector_list: list[ACILeafInterfaceSelectorType] = (
+        strawberry_django.field()
+    )
+
+    aci_leaf_port_block: ACILeafPortBlockType = strawberry_django.field()
+    aci_leaf_port_block_list: list[ACILeafPortBlockType] = strawberry_django.field()
 
     aci_leaf_switch_profile: ACILeafSwitchProfileType = strawberry_django.field()
     aci_leaf_switch_profile_list: list[ACILeafSwitchProfileType] = (

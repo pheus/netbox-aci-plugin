@@ -136,3 +136,62 @@ class ACISchemaGraphQLTestCase(ACIBaseGraphQLTestCase):
             {row["id"] for row in selector_row["aci_leaf_node_blocks"]},
             {str(self.aci_leaf_node_block1.pk)},
         )
+
+    def test_fabric_type_includes_leaf_interface_profile_reverse_list(self):
+        """The ACIFabric type exposes the interface profile reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type("aci_leaf_interface_profiles", "ACIFabricType")
+        )
+
+    def test_leaf_interface_profile_type_includes_selector_reverse_list(self):
+        """The Profile type exposes the interface selector reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type(
+                "aci_leaf_interface_selectors", "ACILeafInterfaceProfileType"
+            )
+        )
+
+    def test_interface_policy_group_type_includes_selector_reverse_list(self):
+        """The Policy Group type exposes the selector reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type(
+                "aci_leaf_interface_selectors", "ACILeafInterfacePolicyGroupType"
+            )
+        )
+
+    def test_interface_selector_type_includes_leaf_port_block_reverse_list(self):
+        """The Selector type exposes the leaf port block reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type(
+                "aci_leaf_port_blocks", "ACILeafInterfaceSelectorType"
+            )
+        )
+
+    def test_fabric_list_query_returns_leaf_interface_profile_reverse_chain(self):
+        """The aci_fabric_list query resolves the three-level reverse chain."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_acileafinterfaceprofile",
+            "netbox_aci_plugin.view_acileafinterfaceselector",
+            "netbox_aci_plugin.view_acileafportblock",
+        )
+
+        result = self.query(
+            "query { aci_fabric_list(filters: {id: {in_list: ["
+            f'"{self.aci_fabric1.pk}"'
+            "]}}) { id "
+            "aci_leaf_interface_profiles { id "
+            "aci_leaf_interface_selectors { id "
+            "aci_leaf_port_blocks { id } } } } }"
+        )
+
+        self.assertNotIn("errors", result, result)
+        fabric_row = result["data"]["aci_fabric_list"][0]
+        profile_row = fabric_row["aci_leaf_interface_profiles"][0]
+        self.assertEqual(profile_row["id"], str(self.aci_leaf_interface_profile1.pk))
+        selector_row = profile_row["aci_leaf_interface_selectors"][0]
+        self.assertEqual(selector_row["id"], str(self.aci_leaf_interface_selector1.pk))
+        self.assertEqual(
+            {row["id"] for row in selector_row["aci_leaf_port_blocks"]},
+            {str(self.aci_leaf_port_block1.pk)},
+        )
