@@ -19,6 +19,10 @@ from ....models.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceSelector,
     ACILeafPortBlock,
 )
+from ....models.access_policies.leaf_switch_profiles import (
+    ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
+)
 from ....models.fabric.fabrics import ACIFabric
 from ..base import ACIBaseTestCase
 
@@ -217,6 +221,46 @@ class ACILeafInterfaceProfileTestCase(ACIBaseTestCase):
             name="ACITestLeafInterfaceProfileMoveFreeFabric",
             fabric_id=130,
             infra_vlan_vid=3903,
+        )
+        self.aci_leaf_interface_profile.aci_fabric = other_fabric
+        self.aci_leaf_interface_profile.full_clean()
+
+    def test_invalid_interface_profile_fabric_move_strands_binding(self) -> None:
+        """Test clean rejects a Fabric move stranding an assigned binding."""
+        switch_profile = ACILeafSwitchProfile.objects.create(
+            name="ACILIPMoveSwitchProfile", aci_fabric=self.aci_fabric
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=switch_profile,
+            aci_leaf_interface_profile=self.aci_leaf_interface_profile,
+        )
+        other_fabric = ACIFabric.objects.create(
+            name="ACILIPMoveOtherFabric", fabric_id=152, infra_vlan_vid=3922
+        )
+        self.aci_leaf_interface_profile.aci_fabric = other_fabric
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_leaf_interface_profile.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_interface_profile_fabric_move_with_binding_in_target(self) -> None:
+        """Test a Fabric move is allowed when the binding is already there.
+
+        Pins the guard's `.exclude()` half. A bare `.exists()` would
+        reject this move.
+        """
+        other_fabric = ACIFabric.objects.create(
+            name="ACILIPMoveTargetFabric",
+            fabric_id=133,
+            infra_vlan_vid=3905,
+        )
+        switch_profile_in_target = ACILeafSwitchProfile.objects.create(
+            name="ACILIPMoveTargetSwitchProfile", aci_fabric=other_fabric
+        )
+        # Created directly, since the Binding's own clean() rejects the
+        # cross-Fabric pair this scenario has to start from
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=switch_profile_in_target,
+            aci_leaf_interface_profile=self.aci_leaf_interface_profile,
         )
         self.aci_leaf_interface_profile.aci_fabric = other_fabric
         self.aci_leaf_interface_profile.full_clean()

@@ -11,10 +11,14 @@ from core.choices import ObjectChangeActionChoices
 from tenancy.models import Tenant
 
 from ....choices import NodeRoleChoices
+from ....models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
+)
 from ....models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ....models.fabric.fabrics import ACIFabric
 from ....models.fabric.nodes import ACINode
@@ -175,6 +179,53 @@ class ACILeafSwitchProfileTestCase(ACIBaseTestCase):
             aci_fabric=other_fabric,
         )
         self.assertEqual(profile.name, self.aci_leaf_switch_profile_name)
+
+    def test_invalid_switch_profile_fabric_move_strands_binding(self) -> None:
+        """Test clean rejects a Fabric move stranding an assigned binding."""
+        interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="ACILSPMoveInterfaceProfile", aci_fabric=self.aci_fabric
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+            aci_leaf_interface_profile=interface_profile,
+        )
+        other_fabric = ACIFabric.objects.create(
+            name="ACILSPMoveOtherFabric", fabric_id=150, infra_vlan_vid=3920
+        )
+        self.aci_leaf_switch_profile.aci_fabric = other_fabric
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_leaf_switch_profile.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_switch_profile_fabric_move_without_binding(self) -> None:
+        """Test a Fabric move is allowed when no binding is assigned."""
+        other_fabric = ACIFabric.objects.create(
+            name="ACILSPMoveFreeFabric", fabric_id=151, infra_vlan_vid=3921
+        )
+        self.aci_leaf_switch_profile.aci_fabric = other_fabric
+        self.aci_leaf_switch_profile.full_clean()
+
+    def test_switch_profile_fabric_move_with_binding_in_target(self) -> None:
+        """Test a Fabric move is allowed when the binding is already there.
+
+        Pins the guard's `.exclude()` half. A bare `.exists()` would
+        reject this move, and the zero-binding case above cannot tell
+        the two apart.
+        """
+        other_fabric = ACIFabric.objects.create(
+            name="ACILSPMoveTargetFabric", fabric_id=153, infra_vlan_vid=3923
+        )
+        profile_in_target = ACILeafInterfaceProfile.objects.create(
+            name="ACILSPMoveTargetProfile", aci_fabric=other_fabric
+        )
+        # Created directly, since the Binding's own clean() rejects the
+        # cross-Fabric pair this scenario has to start from
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+            aci_leaf_interface_profile=profile_in_target,
+        )
+        self.aci_leaf_switch_profile.aci_fabric = other_fabric
+        self.aci_leaf_switch_profile.full_clean()
 
 
 class ACILeafSelectorTestCase(ACIBaseTestCase):
@@ -694,3 +745,147 @@ class ACILeafNodeBlockTestCase(ACIBaseTestCase):
             node_id_to=104,
         )
         self.assertEqual(block.name, self.aci_leaf_node_block_name)
+
+
+class ACILeafSwitchProfileInterfaceBindingTestCase(ACIBaseTestCase):
+    """Test case for the ACILeafSwitchProfileInterfaceBinding model."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for the ACILeafSwitchProfileInterfaceBinding."""
+        super().setUpTestData()
+
+        cls.aci_leaf_switch_profile = ACILeafSwitchProfile.objects.create(
+            name="ACITestSwitchInterfaceBindingProfile",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_leaf_interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="ACITestSwitchInterfaceBindingInterfaceProfile",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_switch_interface_binding_comments = """
+        ACI Leaf Switch Profile Interface Binding for NetBox ACI Plugin testing.
+        """
+
+        # Create objects
+        cls.aci_switch_interface_binding = (
+            ACILeafSwitchProfileInterfaceBinding.objects.create(
+                aci_leaf_switch_profile=cls.aci_leaf_switch_profile,
+                aci_leaf_interface_profile=cls.aci_leaf_interface_profile,
+                comments=cls.aci_switch_interface_binding_comments,
+            )
+        )
+
+    def test_aci_switch_interface_binding_instance(self) -> None:
+        """Test type of created ACI Leaf Switch Profile Interface Binding."""
+        self.assertTrue(
+            isinstance(
+                self.aci_switch_interface_binding,
+                ACILeafSwitchProfileInterfaceBinding,
+            )
+        )
+
+    def test_aci_switch_interface_binding_str(self) -> None:
+        """Test string value of the created Binding."""
+        self.assertEqual(
+            self.aci_switch_interface_binding.__str__(),
+            f"{self.aci_leaf_switch_profile} - {self.aci_leaf_interface_profile}",
+        )
+
+    def test_aci_switch_interface_binding_comments(self) -> None:
+        """Test comments of ACI Leaf Switch Profile Interface Binding."""
+        self.assertEqual(
+            self.aci_switch_interface_binding.comments,
+            self.aci_switch_interface_binding_comments,
+        )
+
+    def test_aci_switch_interface_binding_aci_leaf_switch_profile_instance(
+        self,
+    ) -> None:
+        """Test the ACI Leaf Switch Profile instance on the binding."""
+        self.assertTrue(
+            isinstance(
+                self.aci_switch_interface_binding.aci_leaf_switch_profile,
+                ACILeafSwitchProfile,
+            )
+        )
+        self.assertEqual(
+            self.aci_switch_interface_binding.aci_leaf_switch_profile,
+            self.aci_leaf_switch_profile,
+        )
+
+    def test_aci_switch_interface_binding_aci_leaf_interface_profile_instance(
+        self,
+    ) -> None:
+        """Test the ACI Leaf Interface Profile instance on the binding."""
+        self.assertTrue(
+            isinstance(
+                self.aci_switch_interface_binding.aci_leaf_interface_profile,
+                ACILeafInterfaceProfile,
+            )
+        )
+        self.assertEqual(
+            self.aci_switch_interface_binding.aci_leaf_interface_profile,
+            self.aci_leaf_interface_profile,
+        )
+
+    def test_aci_switch_interface_binding_aci_fabric(self) -> None:
+        """Test aci_fabric returns the ACI Fabric of the related profile."""
+        self.assertTrue(
+            isinstance(self.aci_switch_interface_binding.aci_fabric, ACIFabric)
+        )
+        self.assertEqual(self.aci_switch_interface_binding.aci_fabric, self.aci_fabric)
+
+    def test_aci_switch_interface_binding_parent_object(self) -> None:
+        """Test parent object is the ACI Leaf Switch Profile."""
+        self.assertEqual(
+            self.aci_switch_interface_binding.parent_object,
+            self.aci_leaf_switch_profile,
+        )
+
+    def test_aci_switch_interface_binding_to_objectchange(self) -> None:
+        """Test to_objectchange relates the ACI Leaf Switch Profile."""
+        objectchange = self.aci_switch_interface_binding.to_objectchange(
+            ObjectChangeActionChoices.ACTION_UPDATE
+        )
+        self.assertEqual(objectchange.related_object, self.aci_leaf_switch_profile)
+
+    def test_aci_switch_interface_binding_valid_same_fabric(self) -> None:
+        """Test clean accepts a profile pair from the same ACI Fabric."""
+        other_interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="ACITestSwitchInterfaceBindingSameFabricInterfaceProfile",
+            aci_fabric=self.aci_fabric,
+        )
+        binding = ACILeafSwitchProfileInterfaceBinding(
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+            aci_leaf_interface_profile=other_interface_profile,
+        )
+        binding.full_clean()
+
+    def test_invalid_aci_switch_interface_binding_cross_fabric(self) -> None:
+        """Test clean rejects an interface profile from another ACI Fabric."""
+        other_fabric = ACIFabric.objects.create(
+            name="ACITestSwitchInterfaceBindingOtherFabric",
+            fabric_id=128,
+            infra_vlan_vid=3901,
+        )
+        other_interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="ACITestSwitchInterfaceBindingOtherInterfaceProfile",
+            aci_fabric=other_fabric,
+        )
+        binding = ACILeafSwitchProfileInterfaceBinding(
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+            aci_leaf_interface_profile=other_interface_profile,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            binding.full_clean()
+        self.assertIn("aci_leaf_interface_profile", cm.exception.error_dict)
+
+    def test_constraint_unique_aci_switch_interface_binding(self) -> None:
+        """Test unique constraint of the switch and interface profile pair."""
+        duplicate_binding = ACILeafSwitchProfileInterfaceBinding(
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+            aci_leaf_interface_profile=self.aci_leaf_interface_profile,
+        )
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            duplicate_binding.save()

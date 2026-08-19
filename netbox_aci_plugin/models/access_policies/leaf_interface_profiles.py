@@ -88,6 +88,22 @@ class ACILeafInterfaceProfile(ACIFabricBaseModel):
                         ).format(offending=", ".join(offending))
                     )
 
+        # The Binding cannot see a Fabric change made on this object
+        if (
+            self.pk
+            and self.aci_fabric_id
+            and self.aci_leaf_switch_profile_bindings.exclude(
+                aci_leaf_switch_profile__aci_fabric=self.aci_fabric_id
+            ).exists()
+        ):
+            errors.setdefault("aci_fabric", []).append(
+                _(
+                    "The assigned ACI Fabric differs from the ACI Fabric of "
+                    "the ACI Leaf Switch Profiles bound to this ACI Leaf "
+                    "Interface Profile."
+                )
+            )
+
         if errors:
             raise ValidationError(errors)
 

@@ -15,6 +15,7 @@ from .access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from .access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .fabric.fabrics import ACIFabric
@@ -88,6 +89,7 @@ __all__ = (
     "ACILeafPortBlock",
     "ACILeafSelector",
     "ACILeafSwitchProfile",
+    "ACILeafSwitchProfileInterfaceBinding",
     "ACINode",
     "ACINodeInterface",
     "ACIPhysicalDomain",
