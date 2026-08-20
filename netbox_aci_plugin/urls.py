@@ -157,6 +157,23 @@ urlpatterns: tuple = (
         "leaf-switch-profiles/node-blocks/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acileafnodeblock")),
     ),
+    # ACI Leaf Switch Profile Interface Binding
+    path(
+        "leaf-switch-profiles/interface-bindings/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin",
+                "acileafswitchprofileinterfacebinding",
+                detail=False,
+            )
+        ),
+    ),
+    path(
+        "leaf-switch-profiles/interface-bindings/<int:pk>/",
+        include(
+            get_model_urls("netbox_aci_plugin", "acileafswitchprofileinterfacebinding")
+        ),
+    ),
     # ACI Physical Domain
     path(
         "physical-domains/",
