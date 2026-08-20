@@ -12,8 +12,10 @@ from ....models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ..fabric.fabrics import ACIFabricSerializer
+from .leaf_interface_profiles import ACILeafInterfaceProfileSerializer
 
 
 class ACILeafSwitchProfileSerializer(OwnerMixin, NetBoxModelSerializer):
@@ -134,4 +136,41 @@ class ACILeafNodeBlockSerializer(OwnerMixin, NetBoxModelSerializer):
             "nb_tenant",
             "node_id_from",
             "node_id_to",
+        )
+
+
+class ACILeafSwitchProfileInterfaceBindingSerializer(NetBoxModelSerializer):
+    """Serializer for the ACI Leaf Switch Profile Interface Binding model."""
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name=(
+            "plugins-api:netbox_aci_plugin-api:"
+            "acileafswitchprofileinterfacebinding-detail"
+        ),
+    )
+    aci_leaf_switch_profile = ACILeafSwitchProfileSerializer(nested=True, required=True)
+    aci_leaf_interface_profile = ACILeafInterfaceProfileSerializer(
+        nested=True, required=True
+    )
+
+    class Meta:
+        model = ACILeafSwitchProfileInterfaceBinding
+        fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "aci_leaf_switch_profile",
+            "aci_leaf_interface_profile",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
+        )
+        brief_fields: tuple = (
+            "id",
+            "url",
+            "display",
+            "aci_leaf_switch_profile",
+            "aci_leaf_interface_profile",
         )
