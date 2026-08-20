@@ -20,6 +20,7 @@ from ...models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ...models.fabric.fabrics import ACIFabric
 from ...models.fabric.nodes import ACINode
@@ -110,6 +111,12 @@ class ACIBaseGraphQLTestCase(APITestCase):
             module_to=1,
             port_from=1,
             port_to=1,
+        )
+        cls.aci_leaf_switch_profile_interface_binding1 = (
+            ACILeafSwitchProfileInterfaceBinding.objects.create(
+                aci_leaf_switch_profile=cls.aci_leaf_switch_profile1,
+                aci_leaf_interface_profile=cls.aci_leaf_interface_profile1,
+            )
         )
 
     def query(self, query_str: str) -> dict:

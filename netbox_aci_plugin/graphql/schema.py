@@ -34,6 +34,7 @@ from .types import (
     ACILeafNodeBlockType,
     ACILeafPortBlockType,
     ACILeafSelectorType,
+    ACILeafSwitchProfileInterfaceBindingType,
     ACILeafSwitchProfileType,
     ACINodeInterfaceType,
     ACINodeType,
@@ -115,6 +116,11 @@ class NetBoxACIQuery:
 
     aci_leaf_node_block: ACILeafNodeBlockType = strawberry_django.field()
     aci_leaf_node_block_list: list[ACILeafNodeBlockType] = strawberry_django.field()
+
+    aci_leaf_switch_profile_interface_binding: ACILeafSwitchProfileInterfaceBindingType = strawberry_django.field()  # noqa: E501
+    aci_leaf_switch_profile_interface_binding_list: list[
+        ACILeafSwitchProfileInterfaceBindingType
+    ] = strawberry_django.field()
 
     aci_physical_domain: ACIPhysicalDomainType = strawberry_django.field()
     aci_physical_domain_list: list[ACIPhysicalDomainType] = strawberry_django.field()
