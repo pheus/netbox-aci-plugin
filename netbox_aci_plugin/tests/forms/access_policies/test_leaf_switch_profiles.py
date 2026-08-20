@@ -12,11 +12,18 @@ from ....forms.access_policies.leaf_switch_profiles import (
     ACILeafSelectorFilterForm,
     ACILeafSelectorImportForm,
     ACILeafSwitchProfileEditForm,
+    ACILeafSwitchProfileInterfaceBindingEditForm,
+    ACILeafSwitchProfileInterfaceBindingFilterForm,
+    ACILeafSwitchProfileInterfaceBindingImportForm,
+)
+from ....models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
 )
 from ....models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ....models.fabric.fabrics import ACIFabric
 from ..base import ACIBaseFormTestCase
@@ -434,3 +441,161 @@ class ACILeafNodeBlockFormTestCase(ACIBaseFormTestCase):
         self.assertTrue(form.is_valid(), form.errors)
         instance = form.save()
         self.assertEqual(instance.aci_leaf_selector, self.aci_leaf_selector)
+
+
+class ACILeafSwitchProfileInterfaceBindingFormTestCase(ACIBaseFormTestCase):
+    """Test case for the ACILeafSwitchProfileInterfaceBinding forms."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up required objects for the Interface Binding form tests."""
+        super().setUpTestData()
+        cls.aci_leaf_switch_profile = ACILeafSwitchProfile.objects.create(
+            name="ACILeafSwitchProfileInterfaceBindingFormTestProfile",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_leaf_interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="ACILeafSwitchProfileInterfaceBindingFormTestIfProfile",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.other_fabric = ACIFabric.objects.create(
+            name="ACILeafSwitchProfileInterfaceBindingFormTestOtherFabric",
+            fabric_id=cls.aci_fabric.fabric_id + 1,
+            infra_vlan_vid=cls.aci_fabric.infra_vlan_vid + 1,
+        )
+        cls.other_aci_leaf_interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="ACILeafSwitchProfileInterfaceBindingFormTestOtherIfProfile",
+            aci_fabric=cls.other_fabric,
+        )
+
+    #
+    # EditForm tests
+    #
+
+    def test_valid_aci_leaf_switch_profile_interface_binding_field_values(
+        self,
+    ) -> None:
+        """Test valid Interface Binding field values."""
+        form = ACILeafSwitchProfileInterfaceBindingEditForm(
+            data={
+                "aci_leaf_switch_profile": self.aci_leaf_switch_profile,
+                "aci_leaf_interface_profile": self.aci_leaf_interface_profile,
+            }
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_edit_form_rejects_cross_fabric_profiles(self) -> None:
+        """Test the edit form rejects Profiles from different ACI Fabrics."""
+        form = ACILeafSwitchProfileInterfaceBindingEditForm(
+            data={
+                "aci_leaf_switch_profile": self.aci_leaf_switch_profile,
+                "aci_leaf_interface_profile": self.other_aci_leaf_interface_profile,
+            }
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("aci_leaf_interface_profile", form.errors)
+
+    #
+    # FilterForm sanity
+    #
+
+    def test_filter_form_accepts_empty_data(self) -> None:
+        """Test the filter form validates with no filters applied."""
+        form = ACILeafSwitchProfileInterfaceBindingFilterForm(data={})
+        self.assertTrue(form.is_valid(), form.errors)
+
+    #
+    # Import form tests
+    #
+
+    def test_import_form_valid_row_resolves_scoped_profiles(self) -> None:
+        """Test the import form resolves both Profiles scoped by ACI Fabric."""
+        form = ACILeafSwitchProfileInterfaceBindingImportForm(
+            data={
+                "aci_fabric": self.aci_fabric.name,
+                "aci_leaf_switch_profile": self.aci_leaf_switch_profile.name,
+                "aci_leaf_interface_profile": self.aci_leaf_interface_profile.name,
+            }
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        instance = form.save()
+        self.assertEqual(instance.aci_leaf_switch_profile, self.aci_leaf_switch_profile)
+        self.assertEqual(
+            instance.aci_leaf_interface_profile, self.aci_leaf_interface_profile
+        )
+
+    def test_import_form_no_data_returns_early(self) -> None:
+        """Test an unbound import form leaves both Profile querysets alone."""
+        form = ACILeafSwitchProfileInterfaceBindingImportForm(data=None)
+        self.assertEqual(
+            form.fields["aci_leaf_switch_profile"].queryset.count(),
+            ACILeafSwitchProfile.objects.count(),
+        )
+        self.assertEqual(
+            form.fields["aci_leaf_interface_profile"].queryset.count(),
+            ACILeafInterfaceProfile.objects.count(),
+        )
+
+    def test_import_form_missing_profiles_leave_querysets_unnarrowed(self) -> None:
+        """Test a row with a Fabric but no Profile columns skips narrowing."""
+        form = ACILeafSwitchProfileInterfaceBindingImportForm(
+            data={"aci_fabric": self.aci_fabric.name}
+        )
+        self.assertEqual(
+            form.fields["aci_leaf_switch_profile"].queryset.count(),
+            ACILeafSwitchProfile.objects.count(),
+        )
+        self.assertEqual(
+            form.fields["aci_leaf_interface_profile"].queryset.count(),
+            ACILeafInterfaceProfile.objects.count(),
+        )
+
+    def test_import_form_update_row_narrows_switch_profile_from_stored_fabric(
+        self,
+    ) -> None:
+        """Test a sparse update row narrows the Switch Profile queryset.
+
+        An update row carries an id plus only the changed columns, so
+        aci_fabric is usually absent. Profile names are only
+        fabric-unique, so an unnarrowed queryset could resolve to a
+        foreign Fabric.
+        """
+        aci_binding = ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+            aci_leaf_interface_profile=self.aci_leaf_interface_profile,
+        )
+        form = ACILeafSwitchProfileInterfaceBindingImportForm(
+            data={
+                "id": str(aci_binding.pk),
+                "aci_leaf_switch_profile": self.aci_leaf_switch_profile.name,
+            },
+            instance=aci_binding,
+        )
+        self.assertQuerySetEqual(
+            form.fields["aci_leaf_switch_profile"].queryset.order_by("pk"),
+            ACILeafSwitchProfile.objects.filter(aci_fabric=self.aci_fabric).order_by(
+                "pk"
+            ),
+        )
+
+    def test_import_form_update_row_narrows_interface_profile_from_stored_fabric(
+        self,
+    ) -> None:
+        """Test a sparse update row narrows the Interface Profile queryset."""
+        aci_binding = ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+            aci_leaf_interface_profile=self.aci_leaf_interface_profile,
+        )
+        form = ACILeafSwitchProfileInterfaceBindingImportForm(
+            data={
+                "id": str(aci_binding.pk),
+                "aci_leaf_interface_profile": self.aci_leaf_interface_profile.name,
+            },
+            instance=aci_binding,
+        )
+        self.assertQuerySetEqual(
+            form.fields["aci_leaf_interface_profile"].queryset.order_by("pk"),
+            ACILeafInterfaceProfile.objects.filter(aci_fabric=self.aci_fabric).order_by(
+                "pk"
+            ),
+        )

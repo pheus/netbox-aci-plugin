@@ -18,6 +18,7 @@ from .access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockFilterForm,
     ACILeafSelectorFilterForm,
     ACILeafSwitchProfileFilterForm,
+    ACILeafSwitchProfileInterfaceBindingFilterForm,
 )
 from .access_policies.vlan_pools import (
     ACIVLANPoolFilterForm,
@@ -92,6 +93,7 @@ __all__ = (
     "ACILeafPortBlockFilterForm",
     "ACILeafSelectorFilterForm",
     "ACILeafSwitchProfileFilterForm",
+    "ACILeafSwitchProfileInterfaceBindingFilterForm",
     "ACINodeFilterForm",
     "ACINodeInterfaceFilterForm",
     "ACIPhysicalDomainFilterForm",
