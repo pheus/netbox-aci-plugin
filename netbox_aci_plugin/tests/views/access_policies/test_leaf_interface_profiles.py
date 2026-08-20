@@ -20,6 +20,10 @@ from ....models.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceSelector,
     ACILeafPortBlock,
 )
+from ....models.access_policies.leaf_switch_profiles import (
+    ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
+)
 from ....views.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceSelectorListView,
 )
@@ -96,6 +100,47 @@ class ACILeafInterfaceProfileViewTestCase(
             response,
             f'href="{add_url}?aci_fabric={instance.aci_fabric_id}&amp;'
             f"aci_leaf_interface_profile={instance.pk}",
+        )
+
+    def test_acileafinterfaceprofile_switchprofilebindings_tab(self) -> None:
+        """Switch Profiles tab lists only Bindings of this Profile."""
+        instance = ACILeafInterfaceProfile.objects.get(name="ACIViewTestProfile1")
+        other_profile = ACILeafInterfaceProfile.objects.get(name="ACIViewTestProfile2")
+        switch_profile = ACILeafSwitchProfile.objects.create(
+            name="ACIViewTestProfileTabSwitchProfile", aci_fabric=self.aci_fabric
+        )
+        other_switch_profile = ACILeafSwitchProfile.objects.create(
+            name="ACIViewTestProfileTabForeignSwitchProfile",
+            aci_fabric=self.aci_fabric,
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=switch_profile,
+            aci_leaf_interface_profile=instance,
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=other_switch_profile,
+            aci_leaf_interface_profile=other_profile,
+        )
+        self.add_permissions(
+            "netbox_aci_plugin.view_acileafinterfaceprofile",
+            "netbox_aci_plugin.view_acileafswitchprofileinterfacebinding",
+            "netbox_aci_plugin.add_acileafswitchprofileinterfacebinding",
+        )
+        url = get_action_url(
+            instance, action="switchprofilebindings", kwargs={"pk": instance.pk}
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACILeafSwitchProfileInterfaceBinding, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_fabric={instance.aci_fabric_id}&amp;'
+            f"aci_leaf_interface_profile={instance.pk}",
+        )
+        self.assertContains(response, switch_profile.name)
+        self.assertNotContains(response, other_switch_profile.name)
+        self.assertFalse(
+            response.context["table"].columns["aci_leaf_interface_profile"].visible
         )
 
 

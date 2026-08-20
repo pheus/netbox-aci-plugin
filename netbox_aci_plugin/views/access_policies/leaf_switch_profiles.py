@@ -14,6 +14,7 @@ from ...filtersets.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockFilterSet,
     ACILeafSelectorFilterSet,
     ACILeafSwitchProfileFilterSet,
+    ACILeafSwitchProfileInterfaceBindingFilterSet,
 )
 from ...forms.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockBulkEditForm,
@@ -28,16 +29,22 @@ from ...forms.access_policies.leaf_switch_profiles import (
     ACILeafSwitchProfileEditForm,
     ACILeafSwitchProfileFilterForm,
     ACILeafSwitchProfileImportForm,
+    ACILeafSwitchProfileInterfaceBindingBulkEditForm,
+    ACILeafSwitchProfileInterfaceBindingEditForm,
+    ACILeafSwitchProfileInterfaceBindingFilterForm,
+    ACILeafSwitchProfileInterfaceBindingImportForm,
 )
 from ...models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ...object_actions import add_child_action
 from ...tables.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockTable,
     ACILeafSelectorTable,
+    ACILeafSwitchProfileInterfaceBindingTable,
     ACILeafSwitchProfileTable,
 )
 from ...tables.fabric.nodes import ACINodeReducedTable
@@ -104,6 +111,33 @@ class ACILeafNodeBlockChildrenView(generic.ObjectChildrenView):
                 "owner",
             )
             .annotate(aci_node_count=ACILeafNodeBlock.aci_node_count_annotation())
+            .prefetch_related("tags")
+        )
+
+
+class ACILeafSwitchProfileInterfaceBindingChildrenView(generic.ObjectChildrenView):
+    """Base children view for attaching ACI Profile Bindings."""
+
+    child_model = ACILeafSwitchProfileInterfaceBinding
+    filterset = ACILeafSwitchProfileInterfaceBindingFilterSet
+    tab = ViewTab(
+        label=_("Interface Profiles"),
+        badge=lambda obj: obj.aci_leaf_interface_profile_bindings.count(),
+        permission="netbox_aci_plugin.view_acileafswitchprofileinterfacebinding",
+        weight=1000,
+    )
+    table = ACILeafSwitchProfileInterfaceBindingTable
+
+    def get_children(self, request, parent):
+        """Return all ACILeafSwitchProfileInterfaceBinding objects."""
+        return (
+            ACILeafSwitchProfileInterfaceBinding.objects.restrict(request.user, "view")
+            .select_related(
+                "aci_leaf_switch_profile",
+                "aci_leaf_switch_profile__aci_fabric",
+                "aci_leaf_interface_profile",
+                "aci_leaf_interface_profile__aci_fabric",
+            )
             .prefetch_related("tags")
         )
 
@@ -180,6 +214,41 @@ class ACILeafSwitchProfileLeafSelectorView(ACILeafSelectorChildrenView):
 
     def get_children(self, request, parent):
         """Return all Leaf Selectors for the current Leaf Switch Profile."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_leaf_switch_profile=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACILeafSwitchProfile column hidden."""
+        table = super().get_table(*args, **kwargs)
+        table.columns.hide("aci_leaf_switch_profile")
+        return table
+
+
+@register_model_view(
+    ACILeafSwitchProfile, "interfaceprofilebindings", path="interface-profiles"
+)
+class ACILeafSwitchProfileInterfaceBindingsView(
+    ACILeafSwitchProfileInterfaceBindingChildrenView
+):
+    """Children view of Profile Bindings of ACI Leaf Switch Profile."""
+
+    queryset = ACILeafSwitchProfile.objects.all()
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACILeafSwitchProfileInterfaceBinding",
+            _("Attach an Interface Profile"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
+                "aci_leaf_switch_profile": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACILeafSwitchProfileInterfaceBindingChildrenView.actions
+
+    def get_children(self, request, parent):
+        """Return all Profile Bindings for the current Switch Profile."""
         return (
             super()
             .get_children(request, parent)
@@ -472,3 +541,96 @@ class ACILeafNodeBlockBulkDeleteView(generic.BulkDeleteView):
     )
     filterset = ACILeafNodeBlockFilterSet
     table = ACILeafNodeBlockTable
+
+
+#
+# Leaf Switch Profile Interface Binding views
+#
+
+
+@register_model_view(ACILeafSwitchProfileInterfaceBinding)
+class ACILeafSwitchProfileInterfaceBindingView(generic.ObjectView):
+    """Detail view for a single object of ACI Profile Binding."""
+
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.select_related(
+        "aci_leaf_switch_profile",
+        "aci_leaf_switch_profile__aci_fabric",
+        "aci_leaf_interface_profile",
+        "aci_leaf_interface_profile__aci_fabric",
+    ).prefetch_related("tags")
+
+
+@register_model_view(
+    ACILeafSwitchProfileInterfaceBinding, "list", path="", detail=False
+)
+class ACILeafSwitchProfileInterfaceBindingListView(generic.ObjectListView):
+    """List view for listing all objects of ACI Profile Binding."""
+
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.select_related(
+        "aci_leaf_switch_profile",
+        "aci_leaf_switch_profile__aci_fabric",
+        "aci_leaf_interface_profile",
+        "aci_leaf_interface_profile__aci_fabric",
+    ).prefetch_related("tags")
+    filterset = ACILeafSwitchProfileInterfaceBindingFilterSet
+    filterset_form = ACILeafSwitchProfileInterfaceBindingFilterForm
+    table = ACILeafSwitchProfileInterfaceBindingTable
+
+
+@register_model_view(ACILeafSwitchProfileInterfaceBinding, "add", detail=False)
+@register_model_view(ACILeafSwitchProfileInterfaceBinding, "edit")
+class ACILeafSwitchProfileInterfaceBindingEditView(generic.ObjectEditView):
+    """Edit view for editing an object of ACI Profile Binding."""
+
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.select_related(
+        "aci_leaf_switch_profile",
+        "aci_leaf_switch_profile__aci_fabric",
+        "aci_leaf_interface_profile",
+        "aci_leaf_interface_profile__aci_fabric",
+    ).prefetch_related("tags")
+    form = ACILeafSwitchProfileInterfaceBindingEditForm
+
+
+@register_model_view(ACILeafSwitchProfileInterfaceBinding, "delete")
+class ACILeafSwitchProfileInterfaceBindingDeleteView(generic.ObjectDeleteView):
+    """Delete view for deleting an object of ACI Profile Binding."""
+
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.select_related(
+        "aci_leaf_switch_profile",
+        "aci_leaf_switch_profile__aci_fabric",
+        "aci_leaf_interface_profile",
+        "aci_leaf_interface_profile__aci_fabric",
+    ).prefetch_related("tags")
+
+
+@register_model_view(
+    ACILeafSwitchProfileInterfaceBinding, "bulk_import", path="import", detail=False
+)
+class ACILeafSwitchProfileInterfaceBindingBulkImportView(generic.BulkImportView):
+    """Bulk import view for importing multiple ACI Profile Bindings."""
+
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.all()
+    model_form = ACILeafSwitchProfileInterfaceBindingImportForm
+
+
+@register_model_view(
+    ACILeafSwitchProfileInterfaceBinding, "bulk_edit", path="edit", detail=False
+)
+class ACILeafSwitchProfileInterfaceBindingBulkEditView(generic.BulkEditView):
+    """Bulk edit view for editing multiple ACI Profile Bindings."""
+
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.all()
+    filterset = ACILeafSwitchProfileInterfaceBindingFilterSet
+    table = ACILeafSwitchProfileInterfaceBindingTable
+    form = ACILeafSwitchProfileInterfaceBindingBulkEditForm
+
+
+@register_model_view(
+    ACILeafSwitchProfileInterfaceBinding, "bulk_delete", path="delete", detail=False
+)
+class ACILeafSwitchProfileInterfaceBindingBulkDeleteView(generic.BulkDeleteView):
+    """Bulk delete view for deleting multiple ACI Profile Bindings."""
+
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.all()
+    filterset = ACILeafSwitchProfileInterfaceBindingFilterSet
+    table = ACILeafSwitchProfileInterfaceBindingTable

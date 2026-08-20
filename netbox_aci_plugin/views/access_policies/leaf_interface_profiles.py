@@ -40,6 +40,7 @@ from ...tables.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceSelectorTable,
     ACILeafPortBlockTable,
 )
+from .leaf_switch_profiles import ACILeafSwitchProfileInterfaceBindingChildrenView
 
 #
 # Base children views
@@ -183,6 +184,47 @@ class ACILeafInterfaceProfileLeafInterfaceSelectorView(
 
     def get_children(self, request, parent):
         """Return all Leaf Interface Selectors for the current Profile."""
+        return (
+            super()
+            .get_children(request, parent)
+            .filter(aci_leaf_interface_profile=parent.pk)
+        )
+
+    def get_table(self, *args, **kwargs):
+        """Return the table with ACILeafInterfaceProfile column hidden."""
+        table = super().get_table(*args, **kwargs)
+        table.columns.hide("aci_leaf_interface_profile")
+        return table
+
+
+@register_model_view(
+    ACILeafInterfaceProfile, "switchprofilebindings", path="switch-profiles"
+)
+class ACILeafInterfaceProfileSwitchProfileBindingsView(
+    ACILeafSwitchProfileInterfaceBindingChildrenView
+):
+    """Children view of Profile Bindings of ACI Leaf Interface Profile."""
+
+    queryset = ACILeafInterfaceProfile.objects.all()
+    actions = (
+        add_child_action(
+            "netbox_aci_plugin.ACILeafSwitchProfileInterfaceBinding",
+            _("Attach a Switch Profile"),
+            url_params={
+                "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
+                "aci_leaf_interface_profile": lambda ctx: ctx["object"].pk,
+            },
+        ),
+    ) + ACILeafSwitchProfileInterfaceBindingChildrenView.actions
+    tab = ViewTab(
+        label=_("Switch Profiles"),
+        badge=lambda obj: obj.aci_leaf_switch_profile_bindings.count(),
+        permission="netbox_aci_plugin.view_acileafswitchprofileinterfacebinding",
+        weight=1000,
+    )
+
+    def get_children(self, request, parent):
+        """Return all children objects of the current parent object."""
         return (
             super()
             .get_children(request, parent)

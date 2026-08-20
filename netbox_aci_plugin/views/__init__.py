@@ -71,6 +71,12 @@ from .access_policies.leaf_switch_profiles import (
     ACILeafSwitchProfileBulkEditView,
     ACILeafSwitchProfileBulkImportView,
     ACILeafSwitchProfileEditView,
+    ACILeafSwitchProfileInterfaceBindingBulkDeleteView,
+    ACILeafSwitchProfileInterfaceBindingBulkEditView,
+    ACILeafSwitchProfileInterfaceBindingBulkImportView,
+    ACILeafSwitchProfileInterfaceBindingEditView,
+    ACILeafSwitchProfileInterfaceBindingListView,
+    ACILeafSwitchProfileInterfaceBindingView,
     ACILeafSwitchProfileListView,
     ACILeafSwitchProfileView,
 )
@@ -456,6 +462,13 @@ __all__ = (
     "ACILeafSwitchProfileEditView",
     "ACILeafSwitchProfileListView",
     "ACILeafSwitchProfileView",
+    # ACILeafSwitchProfileInterfaceBinding
+    "ACILeafSwitchProfileInterfaceBindingBulkDeleteView",
+    "ACILeafSwitchProfileInterfaceBindingBulkEditView",
+    "ACILeafSwitchProfileInterfaceBindingBulkImportView",
+    "ACILeafSwitchProfileInterfaceBindingEditView",
+    "ACILeafSwitchProfileInterfaceBindingListView",
+    "ACILeafSwitchProfileInterfaceBindingView",
     # ACINode
     "ACINodeBulkDeleteView",
     "ACINodeBulkEditView",
