@@ -24,6 +24,7 @@ from ..filtersets.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockFilterSet,
     ACILeafSelectorFilterSet,
     ACILeafSwitchProfileFilterSet,
+    ACILeafSwitchProfileInterfaceBindingFilterSet,
 )
 from ..filtersets.access_policies.vlan_pools import (
     ACIVLANPoolFilterSet,
@@ -88,6 +89,7 @@ from ..models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ..models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ..models.fabric.fabrics import ACIFabric
@@ -161,6 +163,7 @@ from .serializers import (
     ACILeafNodeBlockSerializer,
     ACILeafPortBlockSerializer,
     ACILeafSelectorSerializer,
+    ACILeafSwitchProfileInterfaceBindingSerializer,
     ACILeafSwitchProfileSerializer,
     ACINodeInterfaceSerializer,
     ACINodeSerializer,
@@ -401,6 +404,25 @@ class ACILeafNodeBlockListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACILeafNodeBlockSerializer
     filterset_class = ACILeafNodeBlockFilterSet
+
+
+class ACILeafSwitchProfileInterfaceBindingListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Profile Binding instances."""
+
+    # Every nested brief representation renders its nb_tenant, so the
+    # tenant is joined at each walked level, not just the parents
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.select_related(
+        "aci_leaf_switch_profile",
+        "aci_leaf_switch_profile__aci_fabric",
+        "aci_leaf_switch_profile__nb_tenant",
+        "aci_leaf_interface_profile",
+        "aci_leaf_interface_profile__aci_fabric",
+        "aci_leaf_interface_profile__nb_tenant",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACILeafSwitchProfileInterfaceBindingSerializer
+    filterset_class = ACILeafSwitchProfileInterfaceBindingFilterSet
 
 
 class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
