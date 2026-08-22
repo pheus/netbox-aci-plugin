@@ -11,6 +11,9 @@ from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
 from utilities.filtersets import register_filterset
 
+from ...models.access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverride,
+)
 from ...models.fabric.fabrics import ACIFabric
 from ...models.fabric.node_interfaces import ACINodeInterface
 from ...models.fabric.nodes import ACINode
@@ -48,6 +51,12 @@ class ACINodeInterfaceFilterSet(
         queryset=ACINode.objects.all(),
         to_field_name="id",
         label=_("ACI Node (ID)"),
+    )
+    aci_leaf_interface_override_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_leaf_interface_override",
+        queryset=ACILeafInterfaceOverride.objects.all(),
+        to_field_name="id",
+        label=_("ACI Leaf Interface Override (ID)"),
     )
     nb_interface_id = django_filters.ModelMultipleChoiceFilter(
         queryset=Interface.objects.all(),
