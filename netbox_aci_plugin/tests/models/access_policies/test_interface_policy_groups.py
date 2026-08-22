@@ -12,11 +12,17 @@ from ....models.access_policies.aaep import ACIAttachableAccessEntityProfile
 from ....models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
+from ....models.access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverride,
+)
 from ....models.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfile,
     ACILeafInterfaceSelector,
 )
 from ....models.fabric.fabrics import ACIFabric
+from ....models.fabric.node_interfaces import ACINodeInterface
+from ....models.fabric.nodes import ACINode
+from ....models.fabric.pods import ACIPod
 from ..base import ACIBaseTestCase
 
 
@@ -396,3 +402,79 @@ class ACILeafInterfacePolicyGroupTestCase(ACIBaseTestCase):
     def test_default_ordering_queryset_evaluates(self) -> None:
         """Test that the default-ordered queryset evaluates without error."""
         self.assertIsNotNone(list(ACILeafInterfacePolicyGroup.objects.all()))
+
+    def test_invalid_policy_group_fabric_move_strands_override(self) -> None:
+        """Test clean rejects a Fabric move stranding an assigned override."""
+        policy_group = ACILeafInterfacePolicyGroup.objects.create(
+            name="ACILIPGOverrideMove",
+            aci_fabric=self.aci_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+        )
+        node_interface = ACINodeInterface.objects.create(
+            aci_node=self.aci_node, module=1, port=41
+        )
+        ACILeafInterfaceOverride.objects.create(
+            aci_node_interface=node_interface,
+            aci_leaf_interface_policy_group=policy_group,
+        )
+        other_fabric = ACIFabric.objects.create(
+            name="ACILIPGOverrideMoveOtherFabric",
+            fabric_id=140,
+            infra_vlan_vid=3910,
+        )
+        policy_group.aci_fabric = other_fabric
+        with self.assertRaises(ValidationError) as cm:
+            policy_group.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_policy_group_fabric_move_without_override(self) -> None:
+        """Test a Fabric move is allowed when no override is assigned."""
+        policy_group = ACILeafInterfacePolicyGroup.objects.create(
+            name="ACILIPGOverrideMoveFree",
+            aci_fabric=self.aci_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+        )
+        other_fabric = ACIFabric.objects.create(
+            name="ACILIPGOverrideMoveFreeFabric",
+            fabric_id=141,
+            infra_vlan_vid=3911,
+        )
+        policy_group.aci_fabric = other_fabric
+        policy_group.full_clean()
+
+    def test_policy_group_fabric_move_with_override_in_target(self) -> None:
+        """Test a Fabric move is allowed when the Override is already there.
+
+        Pins the guard's `.exclude()` half. A bare `.exists()` would
+        reject this move, and the zero-override case above cannot tell
+        the two apart.
+        """
+        policy_group = ACILeafInterfacePolicyGroup.objects.create(
+            name="ACILIPGOverrideMoveTarget",
+            aci_fabric=self.aci_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+        )
+        other_fabric = ACIFabric.objects.create(
+            name="ACILIPGOverrideMoveTargetFabric",
+            fabric_id=142,
+            infra_vlan_vid=3912,
+        )
+        other_pod = ACIPod.objects.create(
+            name="ACILIPGOverrideMoveTargetPod",
+            aci_fabric=other_fabric,
+            pod_id=1,
+        )
+        other_node = ACINode.objects.create(
+            name="ACILIPGOverrideMoveTargetNode", aci_pod=other_pod, node_id=101
+        )
+        interface_in_target = ACINodeInterface.objects.create(
+            aci_node=other_node, module=1, port=1
+        )
+        # Created directly, since the Override's own clean() rejects the
+        # cross-Fabric pair this scenario has to start from
+        ACILeafInterfaceOverride.objects.create(
+            aci_node_interface=interface_in_target,
+            aci_leaf_interface_policy_group=policy_group,
+        )
+        policy_group.aci_fabric = other_fabric
+        policy_group.full_clean()

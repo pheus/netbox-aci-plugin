@@ -6,6 +6,9 @@ from .access_policies.aaep import (
 )
 from .access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from .access_policies.interface_policy_groups import ACILeafInterfacePolicyGroup
+from .access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverride,
+)
 from .access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfile,
     ACILeafInterfaceSelector,
@@ -82,6 +85,7 @@ __all__ = (
     "ACIExternalSubnet",
     "ACIFabric",
     "ACIL3Out",
+    "ACILeafInterfaceOverride",
     "ACILeafInterfacePolicyGroup",
     "ACILeafInterfaceProfile",
     "ACILeafInterfaceSelector",
