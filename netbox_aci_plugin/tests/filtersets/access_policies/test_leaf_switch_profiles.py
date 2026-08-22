@@ -10,11 +10,16 @@ from ....filtersets.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockFilterSet,
     ACILeafSelectorFilterSet,
     ACILeafSwitchProfileFilterSet,
+    ACILeafSwitchProfileInterfaceBindingFilterSet,
+)
+from ....models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
 )
 from ....models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ....models.fabric.fabrics import ACIFabric
 from ...models.base import ACIBaseTestCase
@@ -286,3 +291,112 @@ class ACILeafNodeBlockFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTe
         self.assertIn(self.aci_leaf_node_block3, qs)
         self.assertNotIn(self.aci_leaf_node_block1, qs)
         self.assertNotIn(self.aci_leaf_node_block2, qs)
+
+
+class ACILeafSwitchProfileInterfaceBindingFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTests
+):
+    """Test case for ACILeafSwitchProfileInterfaceBindingFilterSet."""
+
+    queryset = ACILeafSwitchProfileInterfaceBinding.objects.all()
+    filterset = ACILeafSwitchProfileInterfaceBindingFilterSet
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for the Leaf Switch Profile Interface Binding."""
+        super().setUpTestData()
+        cls.aci_leaf_switch_profile1 = ACILeafSwitchProfile.objects.create(
+            name="LeafSwitchProfile1",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_leaf_switch_profile2 = ACILeafSwitchProfile.objects.create(
+            name="LeafSwitchProfile2",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_leaf_interface_profile1 = ACILeafInterfaceProfile.objects.create(
+            name="LeafInterfaceProfile1",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_leaf_interface_profile2 = ACILeafInterfaceProfile.objects.create(
+            name="LeafInterfaceProfile2",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_binding1 = ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=cls.aci_leaf_switch_profile1,
+            aci_leaf_interface_profile=cls.aci_leaf_interface_profile1,
+            comments="BindingOneComments",
+        )
+        cls.aci_binding2 = ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=cls.aci_leaf_switch_profile1,
+            aci_leaf_interface_profile=cls.aci_leaf_interface_profile2,
+        )
+        cls.other_fabric = ACIFabric.objects.create(
+            name="ACILeafSwitchProfileInterfaceBindingFilterSetOtherFabric",
+            fabric_id=cls.aci_fabric.fabric_id + 1,
+            infra_vlan_vid=cls.aci_fabric.infra_vlan_vid + 1,
+        )
+        cls.other_aci_leaf_switch_profile = ACILeafSwitchProfile.objects.create(
+            name="LeafSwitchProfileOther",
+            aci_fabric=cls.other_fabric,
+        )
+        cls.other_aci_leaf_interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="LeafInterfaceProfileOther",
+            aci_fabric=cls.other_fabric,
+        )
+        cls.aci_binding3 = ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=cls.other_aci_leaf_switch_profile,
+            aci_leaf_interface_profile=cls.other_aci_leaf_interface_profile,
+        )
+
+    def test_q(self) -> None:
+        """Test q search matches the Leaf Switch Profile name."""
+        params = {"q": "LeafSwitchProfile1"}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_binding1, qs)
+        self.assertIn(self.aci_binding2, qs)
+        self.assertNotIn(self.aci_binding3, qs)
+
+    def test_q_leaf_interface_profile_name(self) -> None:
+        """Test q search matches the Leaf Interface Profile name."""
+        params = {"q": "LeafInterfaceProfile2"}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_binding2, qs)
+        self.assertNotIn(self.aci_binding1, qs)
+
+    def test_q_comments(self) -> None:
+        """Test q search matches the comments field."""
+        params = {"q": "BindingOneComments"}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_binding1, qs)
+        self.assertNotIn(self.aci_binding2, qs)
+
+    def test_search_with_whitespace_only_returns_all(self) -> None:
+        """Test search() with whitespace-only returns the full queryset."""
+        qs = self.queryset
+        fs = self.filterset(queryset=qs)
+        result = fs.search(qs, "q", "   ")
+        self.assertEqual(result.count(), qs.count())
+
+    def test_filter_aci_fabric(self) -> None:
+        """Test filtering by the ACI fabric of the Leaf Switch Profile."""
+        params = {"aci_fabric_id": [self.aci_fabric.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_binding1, qs)
+        self.assertNotIn(self.aci_binding3, qs)
+
+    def test_filter_aci_leaf_switch_profile(self) -> None:
+        """Test filtering by the parent Leaf Switch Profile."""
+        params = {"aci_leaf_switch_profile_id": [self.aci_leaf_switch_profile1.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_binding1, qs)
+        self.assertIn(self.aci_binding2, qs)
+        self.assertNotIn(self.aci_binding3, qs)
+
+    def test_filter_aci_leaf_interface_profile(self) -> None:
+        """Test filtering by the assigned Leaf Interface Profile."""
+        params = {
+            "aci_leaf_interface_profile_id": [self.aci_leaf_interface_profile1.pk]
+        }
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_binding1, qs)
+        self.assertNotIn(self.aci_binding2, qs)

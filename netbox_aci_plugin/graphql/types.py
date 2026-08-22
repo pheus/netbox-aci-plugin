@@ -41,6 +41,7 @@ from .filters import (
     ACILeafPortBlockFilter,
     ACILeafSelectorFilter,
     ACILeafSwitchProfileFilter,
+    ACILeafSwitchProfileInterfaceBindingFilter,
     ACINodeFilter,
     ACINodeInterfaceFilter,
     ACIPhysicalDomainFilter,
@@ -420,6 +421,12 @@ class ACILeafInterfaceProfileType(OwnerMixin, NetBoxObjectType):
             strawberry.lazy("netbox_aci_plugin.graphql.types"),
         ]
     ]
+    aci_leaf_switch_profile_bindings: list[
+        Annotated[
+            "ACILeafSwitchProfileInterfaceBindingType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
 
 
 @strawberry_django.type(
@@ -487,6 +494,12 @@ class ACILeafSwitchProfileType(OwnerMixin, NetBoxObjectType):
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
+    aci_leaf_interface_profile_bindings: list[
+        Annotated[
+            "ACILeafSwitchProfileInterfaceBindingType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
     aci_leaf_selectors: list[
         Annotated[
             "ACILeafSelectorType",
@@ -533,6 +546,25 @@ class ACILeafNodeBlockType(OwnerMixin, NetBoxObjectType):
         "ACILeafSelectorType", strawberry.lazy("netbox_aci_plugin.graphql.types")
     ]
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
+
+
+@strawberry_django.type(
+    models.ACILeafSwitchProfileInterfaceBinding,
+    fields="__all__",
+    filters=ACILeafSwitchProfileInterfaceBindingFilter,
+    pagination=True,
+)
+class ACILeafSwitchProfileInterfaceBindingType(NetBoxObjectType):
+    """GraphQL type definition for the ACI Profile Binding model."""
+
+    # Model fields
+    aci_leaf_switch_profile: Annotated[
+        "ACILeafSwitchProfileType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_leaf_interface_profile: Annotated[
+        "ACILeafInterfaceProfileType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
 
 
 @strawberry_django.type(

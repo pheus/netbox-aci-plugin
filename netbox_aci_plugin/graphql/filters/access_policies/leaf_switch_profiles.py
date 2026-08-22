@@ -9,17 +9,21 @@ import strawberry_django
 from strawberry.scalars import ID
 from strawberry_django import ComparisonFilterLookup
 
+from netbox.graphql.filters import NetBoxModelFilter
+
 from .... import models
 from ..mixins import ACIBaseFilterMixin
 
 if TYPE_CHECKING:
     from ..fabric.fabrics import ACIFabricFilter
+    from .leaf_interface_profiles import ACILeafInterfaceProfileFilter
 
 
 __all__ = (
     "ACILeafNodeBlockFilter",
     "ACILeafSelectorFilter",
     "ACILeafSwitchProfileFilter",
+    "ACILeafSwitchProfileInterfaceBindingFilter",
 )
 
 
@@ -65,3 +69,27 @@ class ACILeafNodeBlockFilter(ACIBaseFilterMixin):
     aci_leaf_selector_id: ID | None = strawberry_django.filter_field()
     node_id_from: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
     node_id_to: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
+
+
+@strawberry_django.filter_type(
+    models.ACILeafSwitchProfileInterfaceBinding, lookups=True
+)
+class ACILeafSwitchProfileInterfaceBindingFilter(NetBoxModelFilter):
+    """GraphQL filter definition for the ACI Profile Binding model."""
+
+    aci_leaf_switch_profile: (
+        Annotated[
+            "ACILeafSwitchProfileFilter",
+            strawberry.lazy("netbox_aci_plugin.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    aci_leaf_switch_profile_id: ID | None = strawberry_django.filter_field()
+    aci_leaf_interface_profile: (
+        Annotated[
+            "ACILeafInterfaceProfileFilter",
+            strawberry.lazy("netbox_aci_plugin.graphql.filters"),
+        ]
+        | None
+    ) = strawberry_django.filter_field()
+    aci_leaf_interface_profile_id: ID | None = strawberry_django.filter_field()

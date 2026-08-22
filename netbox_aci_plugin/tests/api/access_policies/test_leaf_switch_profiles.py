@@ -4,13 +4,16 @@
 
 """API tests for access-policy Leaf Switch Profile models."""
 
+from tenancy.models import Tenant
 from utilities.testing import APIViewTestCases
 
 from ....api.urls import app_name
+from ....models.access_policies.leaf_interface_profiles import ACILeafInterfaceProfile
 from ....models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ....models.fabric.fabrics import ACIFabric
 
@@ -256,4 +259,129 @@ class ACILeafNodeBlockAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "comments": "New comments",
+        }
+
+
+class ACILeafSwitchProfileInterfaceBindingAPIViewTestCase(
+    APIViewTestCases.APIViewTestCase
+):
+    """API view test case for ACI Leaf Switch Profile Interface Binding.
+
+    The binding has no ``name``, so ``brief_fields`` carries only its two
+    parent references.
+    """
+
+    model = ACILeafSwitchProfileInterfaceBinding
+    view_namespace: str = f"plugins-api:{app_name}"
+    brief_fields: list[str] = [
+        "aci_leaf_interface_profile",
+        "aci_leaf_switch_profile",
+        "display",
+        "id",
+        "url",
+    ]
+    user_permissions = (
+        "netbox_aci_plugin.view_acifabric",
+        "netbox_aci_plugin.view_acileafinterfaceprofile",
+        "netbox_aci_plugin.view_acileafswitchprofile",
+    )
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up ACI Leaf Switch Profile Interface Binding for API testing."""
+        nb_tenant1 = Tenant.objects.create(
+            name="NetBox Tenant API 1", slug="netbox-tenant-api-1"
+        )
+        nb_tenant2 = Tenant.objects.create(
+            name="NetBox Tenant API 2", slug="netbox-tenant-api-2"
+        )
+        aci_fabric = ACIFabric.objects.create(
+            name="ACIProfileBindingTestFabricAPI",
+            fabric_id=117,
+            infra_vlan_vid=3900,
+        )
+
+        # nb_tenant is set on every parent so the API viewset's nb_tenant
+        # joins at each walked level are genuinely exercised, not just
+        # present in the select_related() chain
+        switch_profile1 = ACILeafSwitchProfile.objects.create(
+            name="ACIProfileBindingTestSwitchAPI1",
+            aci_fabric=aci_fabric,
+            nb_tenant=nb_tenant1,
+        )
+        switch_profile2 = ACILeafSwitchProfile.objects.create(
+            name="ACIProfileBindingTestSwitchAPI2",
+            aci_fabric=aci_fabric,
+            nb_tenant=nb_tenant2,
+        )
+        switch_profile3 = ACILeafSwitchProfile.objects.create(
+            name="ACIProfileBindingTestSwitchAPI3",
+            aci_fabric=aci_fabric,
+            nb_tenant=nb_tenant1,
+        )
+        switch_profile4 = ACILeafSwitchProfile.objects.create(
+            name="ACIProfileBindingTestSwitchAPI4",
+            aci_fabric=aci_fabric,
+        )
+        switch_profile5 = ACILeafSwitchProfile.objects.create(
+            name="ACIProfileBindingTestSwitchAPI5",
+            aci_fabric=aci_fabric,
+        )
+        interface_profile1 = ACILeafInterfaceProfile.objects.create(
+            name="ACIProfileBindingTestInterfaceAPI1",
+            aci_fabric=aci_fabric,
+            nb_tenant=nb_tenant2,
+        )
+        interface_profile2 = ACILeafInterfaceProfile.objects.create(
+            name="ACIProfileBindingTestInterfaceAPI2",
+            aci_fabric=aci_fabric,
+            nb_tenant=nb_tenant1,
+        )
+        interface_profile3 = ACILeafInterfaceProfile.objects.create(
+            name="ACIProfileBindingTestInterfaceAPI3",
+            aci_fabric=aci_fabric,
+            nb_tenant=nb_tenant2,
+        )
+        interface_profile4 = ACILeafInterfaceProfile.objects.create(
+            name="ACIProfileBindingTestInterfaceAPI4",
+            aci_fabric=aci_fabric,
+        )
+        interface_profile5 = ACILeafInterfaceProfile.objects.create(
+            name="ACIProfileBindingTestInterfaceAPI5",
+            aci_fabric=aci_fabric,
+        )
+
+        bindings: tuple = (
+            ACILeafSwitchProfileInterfaceBinding(
+                aci_leaf_switch_profile=switch_profile1,
+                aci_leaf_interface_profile=interface_profile1,
+                comments="# ACI Test 1",
+            ),
+            ACILeafSwitchProfileInterfaceBinding(
+                aci_leaf_switch_profile=switch_profile2,
+                aci_leaf_interface_profile=interface_profile2,
+                comments="# ACI Test 2",
+            ),
+            ACILeafSwitchProfileInterfaceBinding(
+                aci_leaf_switch_profile=switch_profile3,
+                aci_leaf_interface_profile=interface_profile3,
+                comments="# ACI Test 3",
+            ),
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.bulk_create(bindings)
+
+        cls.create_data: list[dict] = [
+            {
+                "aci_leaf_switch_profile": switch_profile4.id,
+                "aci_leaf_interface_profile": interface_profile4.id,
+                "comments": "# ACI Test 4",
+            },
+            {
+                "aci_leaf_switch_profile": switch_profile5.id,
+                "aci_leaf_interface_profile": interface_profile5.id,
+                "comments": "# ACI Test 5",
+            },
+        ]
+        cls.bulk_update_data = {
+            "comments": "# Updated ACI Test",
         }

@@ -21,6 +21,7 @@ from .models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from .models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from .models.fabric.fabrics import ACIFabric
@@ -362,6 +363,18 @@ class ACILeafNodeBlockIndex(SearchIndex):
         "node_id_to",
         "nb_tenant",
     )
+
+
+@register_search
+class ACILeafSwitchProfileInterfaceBindingIndex(SearchIndex):
+    """NetBox search definition for the ACI Profile Binding model."""
+
+    model = ACILeafSwitchProfileInterfaceBinding
+    fields: tuple = (
+        ("aci_leaf_switch_profile", 100),
+        ("aci_leaf_interface_profile", 300),
+    )
+    display_attrs: tuple = ("aci_leaf_switch_profile", "aci_leaf_interface_profile")
 
 
 @register_search

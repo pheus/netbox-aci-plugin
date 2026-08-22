@@ -31,6 +31,10 @@ router.register("leaf-port-blocks", views.ACILeafPortBlockListViewSet)
 router.register("leaf-switch-profiles", views.ACILeafSwitchProfileListViewSet)
 router.register("leaf-selectors", views.ACILeafSelectorListViewSet)
 router.register("leaf-node-blocks", views.ACILeafNodeBlockListViewSet)
+router.register(
+    "leaf-switch-profile-interface-bindings",
+    views.ACILeafSwitchProfileInterfaceBindingListViewSet,
+)
 router.register("physical-domains", views.ACIPhysicalDomainListViewSet)
 router.register("routed-domains", views.ACIRoutedDomainListViewSet)
 router.register("vlan-pools", views.ACIVLANPoolListViewSet)

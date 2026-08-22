@@ -57,6 +57,8 @@
   "acileafselector:list_objects_with_permission": 18,
   "acileafswitchprofile:api_list_objects": 12,
   "acileafswitchprofile:list_objects_with_permission": 18,
+  "acileafswitchprofileinterfacebinding:api_list_objects": 12,
+  "acileafswitchprofileinterfacebinding:list_objects_with_permission": 18,
   "acinode:api_list_objects": 14,
   "acinode:list_objects_with_permission": 19,
   "acinodeinterface:api_list_objects": 13,

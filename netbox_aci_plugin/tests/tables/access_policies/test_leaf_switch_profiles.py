@@ -7,6 +7,7 @@
 from ....tables.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockTable,
     ACILeafSelectorTable,
+    ACILeafSwitchProfileInterfaceBindingTable,
     ACILeafSwitchProfileTable,
 )
 from .. import base
@@ -22,3 +23,7 @@ class ACILeafSelectorTableTestCase(base.StandardTableTestCase):
 
 class ACILeafNodeBlockTableTestCase(base.StandardTableTestCase):
     table = ACILeafNodeBlockTable
+
+
+class ACILeafSwitchProfileInterfaceBindingTableTestCase(base.StandardTableTestCase):
+    table = ACILeafSwitchProfileInterfaceBindingTable

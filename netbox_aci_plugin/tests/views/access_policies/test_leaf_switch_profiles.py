@@ -14,10 +14,14 @@ from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
 from ....choices import NodeRoleChoices
+from ....models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
+)
 from ....models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
@@ -98,6 +102,47 @@ class ACILeafSwitchProfileViewTestCase(
             response,
             f'href="{add_url}?aci_fabric={instance.aci_fabric_id}&amp;'
             f"aci_leaf_switch_profile={instance.pk}",
+        )
+
+    def test_acileafswitchprofile_interfaceprofilebindings_tab(self) -> None:
+        """Interface Profiles tab lists only Bindings of this Profile."""
+        instance = ACILeafSwitchProfile.objects.get(name="ACIViewTestProfile1")
+        other_profile = ACILeafSwitchProfile.objects.get(name="ACIViewTestProfile2")
+        interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="ACIViewTestProfileTabInterfaceProfile", aci_fabric=self.aci_fabric
+        )
+        other_interface_profile = ACILeafInterfaceProfile.objects.create(
+            name="ACIViewTestProfileTabForeignInterfaceProfile",
+            aci_fabric=self.aci_fabric,
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=instance,
+            aci_leaf_interface_profile=interface_profile,
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=other_profile,
+            aci_leaf_interface_profile=other_interface_profile,
+        )
+        self.add_permissions(
+            "netbox_aci_plugin.view_acileafswitchprofile",
+            "netbox_aci_plugin.view_acileafswitchprofileinterfacebinding",
+            "netbox_aci_plugin.add_acileafswitchprofileinterfacebinding",
+        )
+        url = get_action_url(
+            instance, action="interfaceprofilebindings", kwargs={"pk": instance.pk}
+        )
+        response = self.client.get(url)
+        self.assertHttpStatus(response, 200)
+        add_url = get_action_url(ACILeafSwitchProfileInterfaceBinding, action="add")
+        self.assertContains(
+            response,
+            f'href="{add_url}?aci_fabric={instance.aci_fabric_id}&amp;'
+            f"aci_leaf_switch_profile={instance.pk}",
+        )
+        self.assertContains(response, interface_profile.name)
+        self.assertNotContains(response, other_interface_profile.name)
+        self.assertFalse(
+            response.context["table"].columns["aci_leaf_switch_profile"].visible
         )
 
 
@@ -486,3 +531,94 @@ class ACILeafNodeBlockViewTestCase(
                 self.aci_leaf_node_block1.name,
             ],
         )
+
+
+class ACILeafSwitchProfileInterfaceBindingViewTestCase(
+    ACIModelViewTestCase,
+    ViewTestCases.GetObjectViewTestCase,
+    ViewTestCases.GetObjectChangelogViewTestCase,
+    ViewTestCases.CreateObjectViewTestCase,
+    ViewTestCases.EditObjectViewTestCase,
+    ViewTestCases.DeleteObjectViewTestCase,
+    ViewTestCases.ListObjectsViewTestCase,
+    ViewTestCases.BulkImportObjectsViewTestCase,
+    ViewTestCases.BulkEditObjectsViewTestCase,
+    ViewTestCases.BulkDeleteObjectsViewTestCase,
+):
+    """Standard view tests for ACILeafSwitchProfileInterfaceBinding.
+
+    ``BulkRenameObjectsViewTestCase`` is intentionally excluded - the
+    binding has no ``name`` field.
+    """
+
+    model = ACILeafSwitchProfileInterfaceBinding
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACI Profile Binding view tests."""
+        super().setUpTestData()
+
+        cls.switch_profiles = [
+            ACILeafSwitchProfile.objects.create(
+                name=f"ACIViewTestBindingSwitchProfile{i}", aci_fabric=cls.aci_fabric
+            )
+            for i in range(1, 7)
+        ]
+        cls.interface_profiles = [
+            ACILeafInterfaceProfile.objects.create(
+                name=f"ACIViewTestBindingInterfaceProfile{i}", aci_fabric=cls.aci_fabric
+            )
+            for i in range(1, 7)
+        ]
+
+        # 3 existing binding instances for GET / edit / delete / list / bulk
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=cls.switch_profiles[0],
+            aci_leaf_interface_profile=cls.interface_profiles[0],
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=cls.switch_profiles[1],
+            aci_leaf_interface_profile=cls.interface_profiles[1],
+        )
+        ACILeafSwitchProfileInterfaceBinding.objects.create(
+            aci_leaf_switch_profile=cls.switch_profiles[2],
+            aci_leaf_interface_profile=cls.interface_profiles[2],
+        )
+
+        tags = create_tags("Alpha", "Bravo", "Charlie")
+
+        # Pair 4 is unused, so create and edit satisfy the unique constraint
+        cls.form_data = {
+            "aci_leaf_switch_profile": cls.switch_profiles[3].pk,
+            "aci_leaf_interface_profile": cls.interface_profiles[3].pk,
+            "comments": "Form-data binding",
+            "tags": [t.pk for t in tags],
+        }
+
+        fabric = cls.aci_fabric.name
+        cls.csv_data = (
+            "aci_fabric,aci_leaf_switch_profile,aci_leaf_interface_profile",
+            (
+                f"{fabric},{cls.switch_profiles[3].name},"
+                f"{cls.interface_profiles[3].name}"
+            ),
+            (
+                f"{fabric},{cls.switch_profiles[4].name},"
+                f"{cls.interface_profiles[4].name}"
+            ),
+            (
+                f"{fabric},{cls.switch_profiles[5].name},"
+                f"{cls.interface_profiles[5].name}"
+            ),
+        )
+
+        bindings = list(ACILeafSwitchProfileInterfaceBinding.objects.order_by("pk"))
+        cls.csv_update_data = (
+            "id,comments",
+            f"{bindings[0].pk},Updated binding 1",
+            f"{bindings[1].pk},Updated binding 2",
+            f"{bindings[2].pk},Updated binding 3",
+        )
+
+        # Setting either FK on all three would collide on the unique pair
+        cls.bulk_edit_data = {"comments": "Bulk-edited comment"}

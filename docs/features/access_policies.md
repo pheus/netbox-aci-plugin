@@ -500,10 +500,10 @@ interface policy catalogue. `infra:SelectorIssues`, and the plugin-wide
 `ownerKey`, `ownerTag` and `annotation` drops, are not modeled either.
 
 The relation that attaches an Interface Profile to this Switch Profile
-(`infra:RsAccPortP`) arrives in a later release. A port's effective policy
-group comes from that relation together with this profile's node blocks,
-the interface profile's port blocks, and the Selector's own policy group
-field.
+(`infra:RsAccPortP`) is documented below as the Interface Profile Binding.
+A port's effective policy group comes from that relation together with
+this profile's node blocks, the interface profile's port blocks, and the
+Selector's own policy group field.
 
 ## Leaf Interface Profile
 
@@ -511,7 +511,8 @@ A *Leaf Interface Profile* represents an ACI Leaf Interface Profile
 (`infra:AccPortP`, RN `accportprof-{name}`) that groups the selectors
 that select the leaf ports a policy group later applies to. It is the
 interface half of APIC's legacy switch profile and interface profile
-tree. The relation that joins the two halves arrives in a later release.
+tree. The relation that joins the two halves is documented below as the
+Interface Profile Binding.
 
 The *ACILeafInterfaceProfile* model has the following fields:
 
@@ -635,6 +636,46 @@ interface policy catalogue itself. The Selector's own policy group
 assignment (`infra:RsAccBaseGrp`) is modeled, as the Leaf Interface
 Policy Group field. The node policy group relation
 (`infra:RsAccNodePGrp`) is contained by `infra:LeafS` and so belongs to
-the Leaf Selector in the switch half of the tree, not here. The relation
-that attaches this profile to a Switch Profile (`infra:RsAccPortP`)
-arrives in a later release.
+the Leaf Selector in the switch half of the tree, not here.
+
+## Interface Profile Binding
+
+An *Interface Profile Binding* represents the ACI switch-to-interface
+association (`infra:RsAccPortP`) that finally joins the two halves of the
+legacy profile tree: one Leaf Switch Profile can carry many Leaf Interface
+Profiles, and one Leaf Interface Profile can apply to many Leaf Switch
+Profiles. The binding carries no fields of its own beyond the two
+references it joins. It is contained by `infra:NodeP`, the switch
+profile, so the model and every one of its layers live alongside the Leaf
+Switch Profile rather than the Leaf Interface Profile.
+
+A port's effective policy group is the union of this binding together
+with the Switch Profile's Node Blocks, the Interface Profile's Port
+Blocks, and the Selector's own Leaf Interface Policy Group field.
+
+The *ACILeafSwitchProfileInterfaceBinding* model has the following
+fields:
+
+*Required fields*:
+
+- **ACI Leaf Switch Profile**: a reference to the parent
+  `ACILeafSwitchProfile`.
+- **ACI Leaf Interface Profile**: a reference to the parent
+  `ACILeafInterfaceProfile`.
+
+*Optional fields*:
+
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The assigned ACI Leaf Interface Profile must belong to the same ACI
+  Fabric as the ACI Leaf Switch Profile.
+- The `(aci_leaf_switch_profile, aci_leaf_interface_profile)` combination
+  must be unique.
+
+The binding is managed from both sides: the Leaf Switch Profile's detail
+page carries the canonical **Interface Profiles** tab, and the Leaf
+Interface Profile's detail page shows the same bindings in reverse under
+the **Switch Profiles** tab.

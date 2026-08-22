@@ -14,6 +14,8 @@ from django.db import models
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
+from netbox.models import NetBoxModel
+
 from ...choices import NodeRoleChoices
 from ...constants import LEAF_NODE_ID_MIN, NODE_ID_MAX
 from ..base import ACIFabricBaseModel
@@ -54,6 +56,31 @@ class ACILeafSwitchProfile(ACIFabricBaseModel):
         default_related_name: str = "aci_leaf_switch_profiles"
         ordering: tuple = ("aci_fabric", "name")
         verbose_name: str = _("ACI Leaf Switch Profile")
+
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+        super().clean()
+
+        errors = {}
+
+        # The Binding cannot see a Fabric change made on this object
+        if (
+            self.pk
+            and self.aci_fabric_id
+            and self.aci_leaf_interface_profile_bindings.exclude(
+                aci_leaf_interface_profile__aci_fabric=self.aci_fabric_id
+            ).exists()
+        ):
+            errors.setdefault("aci_fabric", []).append(
+                _(
+                    "The assigned ACI Fabric differs from the ACI Fabric of "
+                    "the ACI Leaf Interface Profiles bound to this ACI Leaf "
+                    "Switch Profile."
+                )
+            )
+
+        if errors:
+            raise ValidationError(errors)
 
     @property
     def parent_object(self) -> ACIFabric:
@@ -236,3 +263,94 @@ class ACILeafNodeBlock(ACIFabricBaseModel):
         return Coalesce(
             models.Subquery(count_subquery, output_field=models.IntegerField()), 0
         )
+
+
+class ACILeafSwitchProfileInterfaceBinding(NetBoxModel):
+    """Association between a leaf switch profile and an interface profile.
+
+    Links one ACILeafSwitchProfile to one ACILeafInterfaceProfile so the
+    interface profile's port selectors apply to the switch profile's
+    nodes.
+
+    Notes:
+        Both sides must share the same ACI Fabric.
+    """
+
+    aci_leaf_switch_profile = models.ForeignKey(
+        to="netbox_aci_plugin.ACILeafSwitchProfile",
+        on_delete=models.CASCADE,
+        related_name="aci_leaf_interface_profile_bindings",
+        verbose_name=_("ACI Leaf Switch Profile"),
+    )
+    aci_leaf_interface_profile = models.ForeignKey(
+        to="netbox_aci_plugin.ACILeafInterfaceProfile",
+        on_delete=models.CASCADE,
+        related_name="aci_leaf_switch_profile_bindings",
+        verbose_name=_("ACI Leaf Interface Profile"),
+    )
+    comments = models.TextField(
+        verbose_name=_("comments"),
+        blank=True,
+    )
+
+    clone_fields: tuple = (
+        "aci_leaf_switch_profile",
+        "aci_leaf_interface_profile",
+    )
+    prerequisite_models: tuple = (
+        "netbox_aci_plugin.ACILeafSwitchProfile",
+        "netbox_aci_plugin.ACILeafInterfaceProfile",
+    )
+
+    class Meta:
+        constraints: list[models.UniqueConstraint] = [
+            models.UniqueConstraint(
+                fields=("aci_leaf_switch_profile", "aci_leaf_interface_profile"),
+                name="%(app_label)s_%(class)s_unique_binding",
+            ),
+        ]
+        default_related_name: str = "aci_leaf_switch_profile_interface_bindings"
+        ordering: tuple = ("aci_leaf_switch_profile", "aci_leaf_interface_profile")
+        verbose_name: str = _("ACI Leaf Switch Profile Interface Binding")
+
+    def __str__(self) -> str:
+        """Return string representation of the instance."""
+        return f"{self.aci_leaf_switch_profile} - {self.aci_leaf_interface_profile}"
+
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+        super().clean()
+
+        errors = {}
+
+        if (
+            self.aci_leaf_switch_profile_id
+            and self.aci_leaf_interface_profile_id
+            and self.aci_leaf_switch_profile.aci_fabric_id
+            != self.aci_leaf_interface_profile.aci_fabric_id
+        ):
+            errors.setdefault("aci_leaf_interface_profile", []).append(
+                _(
+                    "The assigned ACI Leaf Interface Profile must belong to "
+                    "the same ACI Fabric as the ACI Leaf Switch Profile."
+                )
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
+    def to_objectchange(self, action) -> ObjectChange:
+        """Return an ObjectChange for the change made to an instance."""
+        objectchange = super().to_objectchange(action)
+        objectchange.related_object = self.aci_leaf_switch_profile
+        return objectchange
+
+    @property
+    def aci_fabric(self) -> ACIFabric:
+        """Return the ACIFabric of the related ACILeafSwitchProfile."""
+        return self.aci_leaf_switch_profile.aci_fabric
+
+    @property
+    def parent_object(self) -> ACILeafSwitchProfile:
+        """Return the parent object of the instance."""
+        return self.aci_leaf_switch_profile

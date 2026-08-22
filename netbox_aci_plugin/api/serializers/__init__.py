@@ -17,6 +17,7 @@ from .access_policies.leaf_interface_profiles import (
 from .access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockSerializer,
     ACILeafSelectorSerializer,
+    ACILeafSwitchProfileInterfaceBindingSerializer,
     ACILeafSwitchProfileSerializer,
 )
 from .access_policies.vlan_pools import (
@@ -95,6 +96,7 @@ __all__ = (
     "ACILeafNodeBlockSerializer",
     "ACILeafPortBlockSerializer",
     "ACILeafSelectorSerializer",
+    "ACILeafSwitchProfileInterfaceBindingSerializer",
     "ACILeafSwitchProfileSerializer",
     "ACINodeInterfaceSerializer",
     "ACINodeSerializer",

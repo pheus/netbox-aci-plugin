@@ -13,6 +13,7 @@ from .access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockFilter,
     ACILeafSelectorFilter,
     ACILeafSwitchProfileFilter,
+    ACILeafSwitchProfileInterfaceBindingFilter,
 )
 from .access_policies.vlan_pools import ACIVLANPoolFilter, ACIVLANPoolRangeFilter
 from .fabric.fabrics import ACIFabricFilter
@@ -88,6 +89,7 @@ __all__ = (
     "ACILeafPortBlockFilter",
     "ACILeafSelectorFilter",
     "ACILeafSwitchProfileFilter",
+    "ACILeafSwitchProfileInterfaceBindingFilter",
     "ACINodeFilter",
     "ACINodeInterfaceFilter",
     "ACIPhysicalDomainFilter",

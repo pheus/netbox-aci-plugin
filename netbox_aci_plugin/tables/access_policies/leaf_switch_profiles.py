@@ -11,6 +11,7 @@ from ...models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 
 
@@ -208,4 +209,41 @@ class ACILeafNodeBlockTable(NetBoxTable):
             "aci_node_count",
             "nb_tenant",
             "tags",
+        )
+
+
+class ACILeafSwitchProfileInterfaceBindingTable(NetBoxTable):
+    """Table for ACILeafSwitchProfileInterfaceBinding model."""
+
+    aci_fabric = tables.Column(
+        verbose_name=_("Fabric"),
+        accessor="aci_leaf_switch_profile__aci_fabric",
+        linkify=True,
+    )
+    aci_leaf_switch_profile = tables.Column(
+        verbose_name=_("Leaf Switch Profile"),
+        linkify=True,
+    )
+    aci_leaf_interface_profile = tables.Column(
+        verbose_name=_("Leaf Interface Profile"),
+        linkify=True,
+    )
+    tags = columns.TagColumn()
+    comments = columns.MarkdownColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = ACILeafSwitchProfileInterfaceBinding
+        fields: tuple = (
+            "pk",
+            "id",
+            "aci_fabric",
+            "aci_leaf_switch_profile",
+            "aci_leaf_interface_profile",
+            "tags",
+            "comments",
+        )
+        default_columns: tuple = (
+            "aci_fabric",
+            "aci_leaf_switch_profile",
+            "aci_leaf_interface_profile",
         )

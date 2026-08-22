@@ -23,10 +23,14 @@ from utilities.forms.fields import (
 from utilities.forms.rendering import FieldSet
 
 from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
+)
 from ...models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ...models.fabric.fabrics import ACIFabric
 
@@ -876,3 +880,180 @@ class ACILeafNodeBlockImportForm(NetBoxModelImportForm):
             self.fields["aci_leaf_switch_profile"].queryset = profile_queryset
         if selector_queryset is not None:
             self.fields["aci_leaf_selector"].queryset = selector_queryset
+
+
+#
+# Leaf Switch Profile Interface Binding forms
+#
+
+
+class ACILeafSwitchProfileInterfaceBindingEditForm(NetBoxModelForm):
+    """NetBox edit form for the ACILeafSwitchProfileInterfaceBinding model."""
+
+    aci_fabric = DynamicModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        initial_params={"aci_leaf_switch_profiles": "$aci_leaf_switch_profile"},
+        required=False,
+        label=_("ACI Fabric"),
+    )
+    aci_leaf_switch_profile = DynamicModelChoiceField(
+        queryset=ACILeafSwitchProfile.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
+        label=_("ACI Leaf Switch Profile"),
+    )
+    aci_leaf_interface_profile = DynamicModelChoiceField(
+        queryset=ACILeafInterfaceProfile.objects.all(),
+        query_params={"aci_fabric_id": "$aci_fabric"},
+        label=_("ACI Leaf Interface Profile"),
+    )
+    comments = CommentField()
+
+    fieldsets: tuple = (
+        FieldSet(
+            "aci_fabric",
+            "aci_leaf_switch_profile",
+            "aci_leaf_interface_profile",
+            "tags",
+            name=_("ACI Leaf Switch Profile Interface Binding"),
+        ),
+    )
+
+    class Meta:
+        model = ACILeafSwitchProfileInterfaceBinding
+        fields: tuple = (
+            "aci_leaf_switch_profile",
+            "aci_leaf_interface_profile",
+            "comments",
+            "tags",
+        )
+
+
+class ACILeafSwitchProfileInterfaceBindingBulkEditForm(NetBoxModelBulkEditForm):
+    """NetBox bulk edit form for the Leaf Switch Profile Interface Binding."""
+
+    aci_leaf_switch_profile = DynamicModelChoiceField(
+        queryset=ACILeafSwitchProfile.objects.all(),
+        required=False,
+        label=_("ACI Leaf Switch Profile"),
+    )
+    aci_leaf_interface_profile = DynamicModelChoiceField(
+        queryset=ACILeafInterfaceProfile.objects.all(),
+        required=False,
+        label=_("ACI Leaf Interface Profile"),
+    )
+    comments = CommentField()
+
+    model = ACILeafSwitchProfileInterfaceBinding
+    fieldsets: tuple = (
+        FieldSet(
+            "aci_leaf_switch_profile",
+            "aci_leaf_interface_profile",
+            name=_("ACI Leaf Switch Profile Interface Binding"),
+        ),
+    )
+    nullable_fields: tuple = ("comments",)
+
+
+class ACILeafSwitchProfileInterfaceBindingFilterForm(NetBoxModelFilterSetForm):
+    """NetBox filter form for the Leaf Switch Profile Interface Binding."""
+
+    model = ACILeafSwitchProfileInterfaceBinding
+    fieldsets: tuple = (
+        FieldSet("q", "filter_id", "tag"),
+        FieldSet(
+            "aci_fabric_id",
+            "aci_leaf_switch_profile_id",
+            "aci_leaf_interface_profile_id",
+            name=_("Attributes"),
+        ),
+    )
+
+    aci_fabric_id = DynamicModelMultipleChoiceField(
+        queryset=ACIFabric.objects.all(),
+        required=False,
+        label=_("ACI Fabric"),
+    )
+    aci_leaf_switch_profile_id = DynamicModelMultipleChoiceField(
+        queryset=ACILeafSwitchProfile.objects.all(),
+        required=False,
+        label=_("ACI Leaf Switch Profile"),
+    )
+    aci_leaf_interface_profile_id = DynamicModelMultipleChoiceField(
+        queryset=ACILeafInterfaceProfile.objects.all(),
+        required=False,
+        label=_("ACI Leaf Interface Profile"),
+    )
+    tag = TagFilterField(model)
+
+
+class ACILeafSwitchProfileInterfaceBindingImportForm(NetBoxModelImportForm):
+    """NetBox import form for the Leaf Switch Profile Interface Binding."""
+
+    aci_fabric = CSVModelChoiceField(
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Fabric"),
+        help_text=_("Parent ACI Fabric of both ACI Leaf Profiles."),
+    )
+    aci_leaf_switch_profile = CSVModelChoiceField(
+        queryset=ACILeafSwitchProfile.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Leaf Switch Profile"),
+        help_text=_("Assigned ACI Leaf Switch Profile."),
+    )
+    aci_leaf_interface_profile = CSVModelChoiceField(
+        queryset=ACILeafInterfaceProfile.objects.all(),
+        to_field_name="name",
+        required=True,
+        label=_("ACI Leaf Interface Profile"),
+        help_text=_("Assigned ACI Leaf Interface Profile."),
+    )
+
+    class Meta:
+        model = ACILeafSwitchProfileInterfaceBinding
+        fields: tuple = (
+            "aci_fabric",
+            "aci_leaf_switch_profile",
+            "aci_leaf_interface_profile",
+            "comments",
+            "tags",
+        )
+
+    def __init__(self, data=None, *args, **kwargs) -> None:
+        """Extend import data processing with enhanced query sets."""
+        super().__init__(data, *args, **kwargs)
+
+        if not data:
+            return
+
+        # Limit ACILeafSwitchProfile by parent ACIFabric
+        switch_profile_queryset = None
+        if data.get("aci_fabric") and data.get("aci_leaf_switch_profile"):
+            switch_profile_queryset = ACILeafSwitchProfile.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
+        elif data.get("aci_leaf_switch_profile") and self.instance.pk:
+            # A sparse update row may omit aci_fabric entirely
+            switch_profile_queryset = ACILeafSwitchProfile.objects.filter(
+                aci_fabric_id=self.instance.aci_leaf_switch_profile.aci_fabric_id
+            )
+        if switch_profile_queryset is not None:
+            self.fields["aci_leaf_switch_profile"].queryset = switch_profile_queryset
+
+        # Limit ACILeafInterfaceProfile by parent ACIFabric
+        interface_profile_queryset = None
+        if data.get("aci_fabric") and data.get("aci_leaf_interface_profile"):
+            interface_profile_queryset = ACILeafInterfaceProfile.objects.filter(
+                aci_fabric__name=data["aci_fabric"]
+            )
+        elif data.get("aci_leaf_interface_profile") and self.instance.pk:
+            # A sparse update row may omit aci_fabric entirely
+            interface_profile_queryset = ACILeafInterfaceProfile.objects.filter(
+                aci_fabric_id=self.instance.aci_leaf_interface_profile.aci_fabric_id
+            )
+        if interface_profile_queryset is not None:
+            self.fields[
+                "aci_leaf_interface_profile"
+            ].queryset = interface_profile_queryset

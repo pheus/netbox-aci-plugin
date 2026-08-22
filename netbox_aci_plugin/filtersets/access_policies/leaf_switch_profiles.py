@@ -10,10 +10,14 @@ from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
 from utilities.filtersets import register_filterset
 
+from ...models.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfile,
+)
 from ...models.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlock,
     ACILeafSelector,
     ACILeafSwitchProfile,
+    ACILeafSwitchProfileInterfaceBinding,
 )
 from ...models.fabric.fabrics import ACIFabric
 from ..mixins import ACIFabricFilterSetMixin, NBTenantFilterSetMixin
@@ -177,5 +181,60 @@ class ACILeafNodeBlockFilterSet(
             Q(name__icontains=value)
             | Q(name_alias__icontains=value)
             | Q(description__icontains=value)
+        )
+        return queryset.filter(queryset_filter)
+
+
+@register_filterset
+class ACILeafSwitchProfileInterfaceBindingFilterSet(NetBoxModelFilterSet):
+    """Filter set for the ACI Leaf Switch Profile Interface Binding model."""
+
+    aci_fabric = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_leaf_switch_profile__aci_fabric__name",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="name",
+        label=_("ACI Fabric (name)"),
+    )
+    aci_fabric_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_leaf_switch_profile__aci_fabric",
+        queryset=ACIFabric.objects.all(),
+        to_field_name="id",
+        label=_("ACI Fabric (ID)"),
+    )
+    aci_leaf_switch_profile = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_leaf_switch_profile__name",
+        queryset=ACILeafSwitchProfile.objects.all(),
+        to_field_name="name",
+        label=_("ACI Leaf Switch Profile (name)"),
+    )
+    aci_leaf_switch_profile_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACILeafSwitchProfile.objects.all(),
+        to_field_name="id",
+        label=_("ACI Leaf Switch Profile (ID)"),
+    )
+    aci_leaf_interface_profile = django_filters.ModelMultipleChoiceFilter(
+        field_name="aci_leaf_interface_profile__name",
+        queryset=ACILeafInterfaceProfile.objects.all(),
+        to_field_name="name",
+        label=_("ACI Leaf Interface Profile (name)"),
+    )
+    aci_leaf_interface_profile_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=ACILeafInterfaceProfile.objects.all(),
+        to_field_name="id",
+        label=_("ACI Leaf Interface Profile (ID)"),
+    )
+
+    class Meta:
+        model = ACILeafSwitchProfileInterfaceBinding
+        fields: tuple = ("id", "comments")
+
+    def search(self, queryset, name, value):
+        """Return a QuerySet filtered by the model's related object names."""
+        if not value.strip():
+            return queryset
+        queryset_filter: Q = (
+            Q(aci_leaf_switch_profile__name__icontains=value)
+            | Q(aci_leaf_interface_profile__name__icontains=value)
+            | Q(comments__icontains=value)
         )
         return queryset.filter(queryset_filter)

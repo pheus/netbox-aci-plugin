@@ -195,3 +195,57 @@ class ACISchemaGraphQLTestCase(ACIBaseGraphQLTestCase):
             {row["id"] for row in selector_row["aci_leaf_port_blocks"]},
             {str(self.aci_leaf_port_block1.pk)},
         )
+
+    def test_leaf_switch_profile_type_includes_binding_reverse_list(self):
+        """The Switch Profile type exposes the Profile Binding reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type(
+                "aci_leaf_interface_profile_bindings", "ACILeafSwitchProfileType"
+            )
+        )
+
+    def test_leaf_interface_profile_type_includes_binding_reverse_list(self):
+        """The Interface Profile type exposes the Binding reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type(
+                "aci_leaf_switch_profile_bindings", "ACILeafInterfaceProfileType"
+            )
+        )
+
+    def test_fabric_list_query_returns_profile_binding_reverse_chain(self):
+        """The aci_fabric_list query resolves the Binding on both sides."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acifabric",
+            "netbox_aci_plugin.view_acileafswitchprofile",
+            "netbox_aci_plugin.view_acileafinterfaceprofile",
+            "netbox_aci_plugin.view_acileafswitchprofileinterfacebinding",
+        )
+
+        result = self.query(
+            "query { aci_fabric_list(filters: {id: {in_list: ["
+            f'"{self.aci_fabric1.pk}"'
+            "]}}) { id "
+            "aci_leaf_switch_profiles { id "
+            "aci_leaf_interface_profile_bindings { id } } "
+            "aci_leaf_interface_profiles { id "
+            "aci_leaf_switch_profile_bindings { id } } } }"
+        )
+
+        self.assertNotIn("errors", result, result)
+        fabric_row = result["data"]["aci_fabric_list"][0]
+        switch_profile_row = fabric_row["aci_leaf_switch_profiles"][0]
+        self.assertEqual(
+            {
+                row["id"]
+                for row in switch_profile_row["aci_leaf_interface_profile_bindings"]
+            },
+            {str(self.aci_leaf_switch_profile_interface_binding1.pk)},
+        )
+        interface_profile_row = fabric_row["aci_leaf_interface_profiles"][0]
+        self.assertEqual(
+            {
+                row["id"]
+                for row in interface_profile_row["aci_leaf_switch_profile_bindings"]
+            },
+            {str(self.aci_leaf_switch_profile_interface_binding1.pk)},
+        )
