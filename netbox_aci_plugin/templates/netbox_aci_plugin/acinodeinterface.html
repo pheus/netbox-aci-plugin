@@ -57,6 +57,38 @@
       {% include 'inc/panels/custom_fields.html' %}
     </div>
     <div class="col col-md-6">
+      <div class="card">
+        <h2 class="card-header">
+          {% trans "Leaf Interface Override" %}
+          <div class="card-actions">
+            {% if not object.aci_leaf_interface_override and perms.netbox_aci_plugin.add_acileafinterfaceoverride %}
+              <a href="{% url 'plugins:netbox_aci_plugin:acileafinterfaceoverride_add' %}?aci_fabric={{ object.aci_fabric.pk }}&aci_pod={{ object.aci_node.aci_pod.pk }}&aci_node={{ object.aci_node.pk }}&aci_node_interface={{ object.pk }}&return_url={{ object.get_absolute_url }}" class="btn btn-ghost-primary btn-sm">
+                <i class="mdi mdi-plus-thick" aria-hidden="true"></i> {% trans "Add an Override" %}
+              </a>
+            {% endif %}
+            {% if object.aci_leaf_interface_override and perms.netbox_aci_plugin.change_acileafinterfaceoverride %}
+              <a href="{% url 'plugins:netbox_aci_plugin:acileafinterfaceoverride_edit' pk=object.aci_leaf_interface_override.pk %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-warning btn-sm">
+                <i class="mdi mdi-pencil" aria-hidden="true"></i> {% trans "Edit" %}
+              </a>
+            {% endif %}
+            {% if object.aci_leaf_interface_override and perms.netbox_aci_plugin.delete_acileafinterfaceoverride %}
+              <a href="{% url 'plugins:netbox_aci_plugin:acileafinterfaceoverride_delete' pk=object.aci_leaf_interface_override.pk %}?return_url={{ object.get_absolute_url }}" class="btn btn-ghost-danger btn-sm">
+                <i class="mdi mdi-trash-can-outline" aria-hidden="true"></i> {% trans "Delete" %}
+              </a>
+            {% endif %}
+          </div>
+        </h2>
+        <table class="table table-hover attr-table">
+          <tr>
+            <th scope="row">{% trans "Leaf Interface Override" %}</th>
+            <td>{{ object.aci_leaf_interface_override|linkify|placeholder }}</td>
+          </tr>
+          <tr>
+            <th scope="row">{% trans "Leaf Interface Policy Group" %}</th>
+            <td>{{ object.aci_leaf_interface_override.aci_leaf_interface_policy_group|linkify|placeholder }}</td>
+          </tr>
+        </table>
+      </div>
       {% include 'inc/panels/tags.html' %}
       {% include 'inc/panels/comments.html' %}
     </div>
