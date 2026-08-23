@@ -45,6 +45,19 @@ urlpatterns: tuple = (
         "node-interfaces/<int:pk>/",
         include(get_model_urls("netbox_aci_plugin", "acinodeinterface")),
     ),
+    # ACI Leaf Interface Override
+    path(
+        "node-interfaces/leaf-interface-overrides/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acileafinterfaceoverride", detail=False
+            )
+        ),
+    ),
+    path(
+        "node-interfaces/leaf-interface-overrides/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acileafinterfaceoverride")),
+    ),
     # ACI VPC Protection Group
     path(
         "vpc-protection-groups/",
