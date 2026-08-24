@@ -12,6 +12,7 @@ from .models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from .models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
+from .models.access_policies.leaf_interface_overrides import ACILeafInterfaceOverride
 from .models.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfile,
     ACILeafInterfaceSelector,
@@ -375,6 +376,23 @@ class ACILeafSwitchProfileInterfaceBindingIndex(SearchIndex):
         ("aci_leaf_interface_profile", 300),
     )
     display_attrs: tuple = ("aci_leaf_switch_profile", "aci_leaf_interface_profile")
+
+
+@register_search
+class ACILeafInterfaceOverrideIndex(SearchIndex):
+    """NetBox search definition for the ACI Leaf Interface Override model."""
+
+    model = ACILeafInterfaceOverride
+    fields: tuple = (
+        ("aci_node_interface", 100),
+        ("aci_leaf_interface_policy_group", 300),
+        ("description", 500),
+    )
+    display_attrs: tuple = (
+        "aci_node_interface",
+        "aci_leaf_interface_policy_group",
+        "description",
+    )
 
 
 @register_search
