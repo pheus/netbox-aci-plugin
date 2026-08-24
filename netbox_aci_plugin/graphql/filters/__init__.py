@@ -4,6 +4,7 @@ from .access_policies.aaep import (
 )
 from .access_policies.domains import ACIPhysicalDomainFilter, ACIRoutedDomainFilter
 from .access_policies.interface_policy_groups import ACILeafInterfacePolicyGroupFilter
+from .access_policies.leaf_interface_overrides import ACILeafInterfaceOverrideFilter
 from .access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfileFilter,
     ACILeafInterfaceSelectorFilter,
@@ -82,6 +83,7 @@ __all__ = (
     "ACIExternalSubnetFilter",
     "ACIFabricFilter",
     "ACIL3OutFilter",
+    "ACILeafInterfaceOverrideFilter",
     "ACILeafInterfacePolicyGroupFilter",
     "ACILeafInterfaceProfileFilter",
     "ACILeafInterfaceSelectorFilter",

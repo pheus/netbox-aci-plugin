@@ -28,6 +28,7 @@ from .types import (
     ACIExternalSubnetType,
     ACIFabricType,
     ACIL3OutType,
+    ACILeafInterfaceOverrideType,
     ACILeafInterfacePolicyGroupType,
     ACILeafInterfaceProfileType,
     ACILeafInterfaceSelectorType,
@@ -121,6 +122,13 @@ class NetBoxACIQuery:
     aci_leaf_switch_profile_interface_binding_list: list[
         ACILeafSwitchProfileInterfaceBindingType
     ] = strawberry_django.field()
+
+    aci_leaf_interface_override: ACILeafInterfaceOverrideType = (
+        strawberry_django.field()
+    )
+    aci_leaf_interface_override_list: list[ACILeafInterfaceOverrideType] = (
+        strawberry_django.field()
+    )
 
     aci_physical_domain: ACIPhysicalDomainType = strawberry_django.field()
     aci_physical_domain_list: list[ACIPhysicalDomainType] = strawberry_django.field()
