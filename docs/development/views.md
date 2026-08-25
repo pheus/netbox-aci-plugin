@@ -360,6 +360,17 @@ binding types), include enough context to disambiguate
     attribute or ESG selector across the fabric. They nest by the rule
     above, not as an exception to it.
 
+!!! note "Nesting may cross domain folders"
+    The parent slug is chosen by the model's `parent_object`, not by the
+    child's own layer folder, so a nested path can span two domains.
+    `ACILeafInterfaceOverride` lives in `access_policies/` but its parent
+    `ACINodeInterface` lives in `fabric/`, giving
+    `node-interfaces/leaf-interface-overrides/`. That is correct: the
+    route describes where the object hangs in the object graph, and
+    `urls.py` is a flat list of paths, so nothing about the folder layout
+    constrains it. Do not flatten a nav-less child just to keep its route
+    inside its own domain.
+
 !!! note "Borderline: browse-all vs. parent-only"
     `ACIExternalSubnet` is the judgment case. It is only meaningful
     within its L3Out, which argues for nesting, yet operators may want a

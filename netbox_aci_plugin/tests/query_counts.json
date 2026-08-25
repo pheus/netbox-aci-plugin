@@ -43,6 +43,8 @@
   "acifabric:list_objects_with_permission": 18,
   "acil3out:api_list_objects": 18,
   "acil3out:list_objects_with_permission": 22,
+  "acileafinterfaceoverride:api_list_objects": 12,
+  "acileafinterfaceoverride:list_objects_with_permission": 18,
   "acileafinterfacepolicygroup:api_list_objects": 13,
   "acileafinterfacepolicygroup:list_objects_with_permission": 18,
   "acileafinterfaceprofile:api_list_objects": 12,

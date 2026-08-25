@@ -67,7 +67,11 @@ class ACINodeInterfaceChildrenView(generic.ObjectChildrenView):
 class ACINodeInterfaceView(generic.ObjectView):
     """Detail view for displaying a single object of ACI Node Interface."""
 
+    # The Leaf Interface Override panel reads the reverse one-to-one and
+    # its policy group, so both are joined here and nowhere else
     queryset = ACINodeInterface.objects.select_related(
+        "aci_leaf_interface_override",
+        "aci_leaf_interface_override__aci_leaf_interface_policy_group",
         "aci_node",
         "aci_node__aci_pod",
         "aci_node__aci_pod__aci_fabric",

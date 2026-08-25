@@ -11,6 +11,9 @@ from ...choices import LeafInterfacePolicyGroupTypeChoices, NodeRoleChoices
 from ...models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
+from ...models.access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverride,
+)
 from ...models.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfile,
     ACILeafInterfaceSelector,
@@ -23,6 +26,7 @@ from ...models.access_policies.leaf_switch_profiles import (
     ACILeafSwitchProfileInterfaceBinding,
 )
 from ...models.fabric.fabrics import ACIFabric
+from ...models.fabric.node_interfaces import ACINodeInterface
 from ...models.fabric.nodes import ACINode
 from ...models.fabric.pods import ACIPod
 from ...models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
@@ -117,6 +121,13 @@ class ACIBaseGraphQLTestCase(APITestCase):
                 aci_leaf_switch_profile=cls.aci_leaf_switch_profile1,
                 aci_leaf_interface_profile=cls.aci_leaf_interface_profile1,
             )
+        )
+        cls.aci_node_interface1 = ACINodeInterface.objects.create(
+            aci_node=cls.aci_node1, module=1, port=1
+        )
+        cls.aci_leaf_interface_override1 = ACILeafInterfaceOverride.objects.create(
+            aci_node_interface=cls.aci_node_interface1,
+            aci_leaf_interface_policy_group=cls.aci_leaf_interface_policy_group1,
         )
 
     def query(self, query_str: str) -> dict:

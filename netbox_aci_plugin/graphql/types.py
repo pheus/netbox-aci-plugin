@@ -34,6 +34,7 @@ from .filters import (
     ACIExternalSubnetFilter,
     ACIFabricFilter,
     ACIL3OutFilter,
+    ACILeafInterfaceOverrideFilter,
     ACILeafInterfacePolicyGroupFilter,
     ACILeafInterfaceProfileFilter,
     ACILeafInterfaceSelectorFilter,
@@ -268,6 +269,15 @@ class ACINodeInterfaceType(OwnerMixin, NetBoxObjectType):
         """Return the normalized APIC interface token."""
         return self.interface_token  # pragma: no cover
 
+    # Related models
+    aci_leaf_interface_override: (
+        Annotated[
+            "ACILeafInterfaceOverrideType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+        | None
+    )
+
 
 @strawberry_django.type(
     models.ACIVPCProtectionGroup,
@@ -391,6 +401,12 @@ class ACILeafInterfacePolicyGroupType(OwnerMixin, NetBoxObjectType):
     nb_tenant: Annotated["TenantType", strawberry.lazy("tenancy.graphql.types")] | None
 
     # Related models
+    aci_leaf_interface_overrides: list[
+        Annotated[
+            "ACILeafInterfaceOverrideType",
+            strawberry.lazy("netbox_aci_plugin.graphql.types"),
+        ]
+    ]
     aci_leaf_interface_selectors: list[
         Annotated[
             "ACILeafInterfaceSelectorType",
@@ -563,6 +579,25 @@ class ACILeafSwitchProfileInterfaceBindingType(NetBoxObjectType):
     ]
     aci_leaf_interface_profile: Annotated[
         "ACILeafInterfaceProfileType",
+        strawberry.lazy("netbox_aci_plugin.graphql.types"),
+    ]
+
+
+@strawberry_django.type(
+    models.ACILeafInterfaceOverride,
+    fields="__all__",
+    filters=ACILeafInterfaceOverrideFilter,
+    pagination=True,
+)
+class ACILeafInterfaceOverrideType(NetBoxObjectType):
+    """GraphQL type definition for the ACILeafInterfaceOverride model."""
+
+    # Model fields
+    aci_node_interface: Annotated[
+        "ACINodeInterfaceType", strawberry.lazy("netbox_aci_plugin.graphql.types")
+    ]
+    aci_leaf_interface_policy_group: Annotated[
+        "ACILeafInterfacePolicyGroupType",
         strawberry.lazy("netbox_aci_plugin.graphql.types"),
     ]
 

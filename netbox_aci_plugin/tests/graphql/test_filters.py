@@ -63,6 +63,16 @@ class ACISchemaGraphQLTestCase(ACIBaseGraphQLTestCase):
             schema.get_field_for_type("aci_vpc_protection_groups", "ACIFabricType")
         )
 
+    def test_fabric_type_excludes_leaf_interface_overrides(self):
+        """The ACIFabric type exposes no Leaf Interface Override reverse list.
+
+        The Override reaches its Fabric through a property, not a field, so
+        there is no reverse manager to expose. The absence is deliberate.
+        """
+        self.assertIsNone(
+            schema.get_field_for_type("aci_leaf_interface_overrides", "ACIFabricType")
+        )
+
     def test_fabric_list_query_returns_access_interface_reverse_lists(self):
         """The aci_fabric_list query resolves both new reverse list fields."""
         self.add_permissions(
@@ -248,4 +258,52 @@ class ACISchemaGraphQLTestCase(ACIBaseGraphQLTestCase):
                 for row in interface_profile_row["aci_leaf_switch_profile_bindings"]
             },
             {str(self.aci_leaf_switch_profile_interface_binding1.pk)},
+        )
+
+    def test_interface_policy_group_type_includes_override_reverse_list(self):
+        """The Policy Group type exposes the Override reverse list."""
+        self.assertIsNotNone(
+            schema.get_field_for_type(
+                "aci_leaf_interface_overrides", "ACILeafInterfacePolicyGroupType"
+            )
+        )
+
+    def test_node_interface_type_includes_override_reverse_field(self):
+        """The Node Interface type exposes the Override reverse field."""
+        self.assertIsNotNone(
+            schema.get_field_for_type(
+                "aci_leaf_interface_override", "ACINodeInterfaceType"
+            )
+        )
+
+    def test_node_interface_list_query_returns_override_reverse_field(self):
+        """The aci_node_interface_list query resolves the Override chain."""
+        self.add_permissions(
+            "netbox_aci_plugin.view_acinodeinterface",
+            "netbox_aci_plugin.view_acileafinterfacepolicygroup",
+            "netbox_aci_plugin.view_acileafinterfaceoverride",
+        )
+
+        result = self.query(
+            "query { aci_node_interface_list(filters: {id: {in_list: ["
+            f'"{self.aci_node_interface1.pk}"'
+            "]}}) { id aci_leaf_interface_override { id "
+            "aci_leaf_interface_policy_group { id "
+            "aci_leaf_interface_overrides { id } } } } }"
+        )
+
+        self.assertNotIn("errors", result, result)
+        interface_row = result["data"]["aci_node_interface_list"][0]
+        override_row = interface_row["aci_leaf_interface_override"]
+        self.assertEqual(override_row["id"], str(self.aci_leaf_interface_override1.pk))
+        policy_group_row = override_row["aci_leaf_interface_policy_group"]
+        self.assertEqual(
+            {row["id"] for row in policy_group_row["aci_leaf_interface_overrides"]},
+            {str(self.aci_leaf_interface_override1.pk)},
+        )
+
+    def test_override_filter_exposes_description(self):
+        """The Override GraphQL filter exposes its description field."""
+        self.assertIsNotNone(
+            schema.get_field_for_type("description", "ACILeafInterfaceOverrideFilter")
         )

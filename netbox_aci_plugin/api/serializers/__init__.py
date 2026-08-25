@@ -9,6 +9,9 @@ from .access_policies.domains import (
 from .access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupSerializer,
 )
+from .access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverrideSerializer,
+)
 from .access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfileSerializer,
     ACILeafInterfaceSelectorSerializer,
@@ -90,6 +93,7 @@ __all__ = (
     "ACIExternalSubnetSerializer",
     "ACIFabricSerializer",
     "ACIL3OutSerializer",
+    "ACILeafInterfaceOverrideSerializer",
     "ACILeafInterfacePolicyGroupSerializer",
     "ACILeafInterfaceProfileSerializer",
     "ACILeafInterfaceSelectorSerializer",

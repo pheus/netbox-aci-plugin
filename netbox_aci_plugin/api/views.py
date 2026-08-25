@@ -15,6 +15,9 @@ from ..filtersets.access_policies.domains import (
 from ..filtersets.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupFilterSet,
 )
+from ..filtersets.access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverrideFilterSet,
+)
 from ..filtersets.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfileFilterSet,
     ACILeafInterfaceSelectorFilterSet,
@@ -79,6 +82,9 @@ from ..models.access_policies.aaep import (
 from ..models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from ..models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
+)
+from ..models.access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverride,
 )
 from ..models.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfile,
@@ -157,6 +163,7 @@ from .serializers import (
     ACIExternalSubnetSerializer,
     ACIFabricSerializer,
     ACIL3OutSerializer,
+    ACILeafInterfaceOverrideSerializer,
     ACILeafInterfacePolicyGroupSerializer,
     ACILeafInterfaceProfileSerializer,
     ACILeafInterfaceSelectorSerializer,
@@ -423,6 +430,29 @@ class ACILeafSwitchProfileInterfaceBindingListViewSet(NetBoxModelViewSet):
     )
     serializer_class = ACILeafSwitchProfileInterfaceBindingSerializer
     filterset_class = ACILeafSwitchProfileInterfaceBindingFilterSet
+
+
+class ACILeafInterfaceOverrideListViewSet(NetBoxModelViewSet):
+    """API view for listing ACI Leaf Interface Override instances."""
+
+    # Every nested brief representation renders its nb_tenant, so the
+    # tenant is joined at each walked level, not just the parents
+    queryset = ACILeafInterfaceOverride.objects.select_related(
+        "aci_node_interface",
+        "aci_node_interface__aci_node",
+        "aci_node_interface__aci_node__aci_pod",
+        "aci_node_interface__aci_node__aci_pod__aci_fabric",
+        "aci_node_interface__aci_node__aci_pod__nb_tenant",
+        "aci_node_interface__aci_node__nb_tenant",
+        "aci_node_interface__nb_tenant",
+        "aci_leaf_interface_policy_group",
+        "aci_leaf_interface_policy_group__aci_fabric",
+        "aci_leaf_interface_policy_group__nb_tenant",
+    ).prefetch_related(
+        "tags",
+    )
+    serializer_class = ACILeafInterfaceOverrideSerializer
+    filterset_class = ACILeafInterfaceOverrideFilterSet
 
 
 class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):

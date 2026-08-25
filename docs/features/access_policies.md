@@ -679,3 +679,66 @@ The binding is managed from both sides: the Leaf Switch Profile's detail
 page carries the canonical **Interface Profiles** tab, and the Leaf
 Interface Profile's detail page shows the same bindings in reverse under
 the **Switch Profiles** tab.
+
+## Leaf Interface Override
+
+APIC models a per-port policy group override as `infra:HPathS`, a named
+path selector under `uni/infra` whose `infra:RsHPathAtt` child is 1:N
+(RN `rsHPathAtt-[{tDn}]`, identified by the target port's DN). The plugin
+flattens both into **one object keyed by the port**, on the standing
+philosophy of reducing ACI policy levels wherever valid policy can still
+be generated: one override per port covers the operational case, and a
+named selector with a single attached port would add a level of
+indirection without adding expressiveness. The *ACILeafInterfaceOverride*
+model therefore has **no name**. Its APIC name is derived from the port's
+coordinates rather than stored, for example `override-101-1-1` for
+module 1, port 1 on Node 101.
+
+Cisco NaC does not model `infra:HPathS` at all, zero hits across the
+1934-line `terraform-aci-nac-aci` defaults. This is a deliberate
+departure from NaC curation: the interface resolver planned for a later
+release needs a first-class Override object to report an "override
+applied" or "orphan override" status for a port, and APIC exposes exactly
+that object even though the Ansible-oriented NaC project never curated
+it.
+
+The *ACILeafInterfaceOverride* model has the following fields:
+
+*Required fields*:
+
+- **ACI Node Interface**: a one-to-one reference to the overridden
+  `ACINodeInterface`.
+- **ACI Leaf Interface Policy Group**: a reference to the
+  `ACILeafInterfacePolicyGroup` that replaces the port's inherited
+  policy.
+    - Only an access group may be assigned.
+
+*Optional fields*:
+
+- **Description**: a description of the Override.
+- **Comments**: a text field for additional notes.
+- **Tags**: a list of NetBox tags.
+
+*Validation rules*:
+
+- The assigned ACI Leaf Interface Policy Group must belong to the same
+  ACI Fabric as the ACI Node Interface.
+- The assigned ACI Leaf Interface Policy Group must be an access group.
+
+The Access-only restriction is a scope call, not a MIM restriction. MIM
+6.1(x) permits both `infra:AccPortGrp` (Access) and `infra:AccBndlGrp`
+(Port Channel and Virtual Port Channel) as `infra:RsPathToAccBaseGrp`
+targets, and `ACILeafInterfacePolicyGroup` does represent Port Channel
+and Virtual Port Channel groups, which is exactly why `clean()` has to
+reject them explicitly rather than relying on the field's shape to rule
+them out. Bundle overrides are deferred until port channel members are
+modeled.
+
+The Override is nav-less and reached only through its port: the Node
+Interface's detail page in [Fabrics](fabrics.md) shows it as a panel
+rather than a tab, since the one-to-one relation can only ever be present
+or absent. That panel's header carries the Override's actions: **Add an
+Override**, prefilled with the port and its Fabric, Pod and Node, while
+the port has none, and **Edit** and **Delete** once it has one. Each is
+shown only to a user holding the matching permission, and all three
+return to the port afterwards.

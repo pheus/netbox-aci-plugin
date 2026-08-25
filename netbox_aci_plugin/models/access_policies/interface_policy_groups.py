@@ -128,6 +128,22 @@ class ACILeafInterfacePolicyGroup(ACIFabricBaseModel):
                 )
             )
 
+        # The Override cannot see a Fabric change made on this object
+        if (
+            self.pk
+            and self.aci_fabric_id
+            and self.aci_leaf_interface_overrides.exclude(
+                aci_node_interface__aci_node___aci_fabric=self.aci_fabric_id
+            ).exists()
+        ):
+            errors.setdefault("aci_fabric", []).append(
+                _(
+                    "The assigned ACI Fabric differs from the ACI Fabric of "
+                    "the ACI Node Interfaces assigned to existing ACI Leaf "
+                    "Interface Overrides."
+                )
+            )
+
         stored_group_type = self._get_stored_group_type()
         if stored_group_type is not None and stored_group_type != self.group_type:
             errors.setdefault("group_type", []).append(

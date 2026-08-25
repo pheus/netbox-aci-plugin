@@ -9,6 +9,9 @@ from .access_policies.domains import (
 from .access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupFilterSet,
 )
+from .access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverrideFilterSet,
+)
 from .access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfileFilterSet,
     ACILeafInterfaceSelectorFilterSet,
@@ -90,6 +93,7 @@ __all__ = (
     "ACIExternalSubnetFilterSet",
     "ACIFabricFilterSet",
     "ACIL3OutFilterSet",
+    "ACILeafInterfaceOverrideFilterSet",
     "ACILeafInterfacePolicyGroupFilterSet",
     "ACILeafInterfaceProfileFilterSet",
     "ACILeafInterfaceSelectorFilterSet",

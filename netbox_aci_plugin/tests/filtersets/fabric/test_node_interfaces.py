@@ -8,8 +8,17 @@ from dcim.choices import InterfaceTypeChoices
 from dcim.models import Interface
 from utilities.testing import ChangeLoggedFilterSetTests
 
-from ....choices import NodeRoleChoices
+from ....choices import (
+    LeafInterfacePolicyGroupTypeChoices,
+    NodeRoleChoices,
+)
 from ....filtersets.fabric.node_interfaces import ACINodeInterfaceFilterSet
+from ....models.access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroup,
+)
+from ....models.access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverride,
+)
 from ....models.fabric.fabrics import ACIFabric
 from ....models.fabric.node_interfaces import ACINodeInterface
 from ....models.fabric.nodes import ACINode
@@ -82,6 +91,18 @@ class ACINodeInterfaceFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTe
             description="ACIFSTestNodeInterface4",
         )
 
+        # An override on the first interface only, so the reverse
+        # one-to-one filter has something to include and exclude
+        cls.aci_policy_group = ACILeafInterfacePolicyGroup.objects.create(
+            name="ACIFSNodeInterfaceOverridePolicyGroup",
+            aci_fabric=cls.aci_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+        )
+        cls.aci_leaf_interface_override = ACILeafInterfaceOverride.objects.create(
+            aci_node_interface=cls.aci_node_interface_1,
+            aci_leaf_interface_policy_group=cls.aci_policy_group,
+        )
+
     def test_q(self) -> None:
         """Test q search matches the description field."""
         params = {"q": "ACIFSTestNodeInterface1"}
@@ -141,6 +162,16 @@ class ACINodeInterfaceFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTe
         qs = self.filterset(params, self.queryset).qs
         self.assertIn(self.aci_node_interface_1, qs)
         self.assertIn(self.aci_node_interface_2, qs)
+        self.assertNotIn(self.aci_node_interface_3, qs)
+
+    def test_aci_leaf_interface_override_id(self) -> None:
+        """Test filtering by the ACI Leaf Interface Override ID."""
+        params = {
+            "aci_leaf_interface_override_id": [self.aci_leaf_interface_override.pk]
+        }
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_node_interface_1, qs)
+        self.assertNotIn(self.aci_node_interface_2, qs)
         self.assertNotIn(self.aci_node_interface_3, qs)
 
     def test_nb_interface_id(self) -> None:
