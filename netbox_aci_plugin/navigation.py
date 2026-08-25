@@ -620,8 +620,11 @@ menu = PluginMenu(
                 acipod_item,
                 acinode_item,
                 acinodeinterface_item,
-                acivpcprotectiongroup_item,
             ),
+        ),
+        (
+            "Fabric Policies",
+            (acivpcprotectiongroup_item,),
         ),
         (
             "Fabric Access Policies",

@@ -78,8 +78,11 @@ menu = PluginMenu(
 
 Group order follows the ACI policy hierarchy (Tenants, Tenant
 Application Profiles, Tenant Networking, Tenant External, Tenant
-Contracts, Fabric Inventory, Fabric Access Policies), not alphabetical.
-New groups go where they belong in the policy hierarchy.
+Contracts, Fabric Inventory, Fabric Policies, Fabric Access Policies),
+not alphabetical. New groups go where they belong in the policy
+hierarchy. The fabric split mirrors APIC's own: Inventory holds the
+physical objects, Fabric Policies holds fabric-wide switch policy, and
+Access Policies holds the interface and switch profile chain.
 
 !!! note "Core helper caveat"
     NetBox core ships `get_model_item` / `get_model_buttons` helpers,
