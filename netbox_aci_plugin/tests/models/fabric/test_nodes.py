@@ -7,13 +7,15 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection, transaction
 from django.test.utils import CaptureQueriesContext
 
-from dcim.models import Device, Location, Region, Site, SiteGroup
+from dcim.choices import InterfaceTypeChoices
+from dcim.models import Device, Interface, Location, Region, Site, SiteGroup
 from ipam.models import IPAddress
 from tenancy.models import Tenant
 from virtualization.models import Cluster, ClusterType, VirtualMachine
 
 from ....choices import NodeRoleChoices, NodeTypeChoices
 from ....models.fabric.fabrics import ACIFabric
+from ....models.fabric.node_interfaces import ACINodeInterface
 from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
 from ....models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
@@ -936,6 +938,101 @@ class ACINodeTestCase(ACIBaseTestCase):
         group.delete()
         node_a.aci_pod = self.aci_pod2
         node_a.full_clean()
+
+    # A Node carrying ACI Node Interfaces keeps its Leaf role and its
+    # assigned device, so neither change strands an existing interface
+
+    def _create_node_with_interface(
+        self, node_id: int, name: str, *, link_interface: bool = True
+    ) -> tuple[ACINode, Device, ACINodeInterface]:
+        """Return a Leaf Node, its device and one ACI Node Interface."""
+        device = Device.objects.create(
+            name=name,
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        node = ACINode.objects.create(
+            name=name,
+            aci_pod=self.aci_pod,
+            node_id=node_id,
+            role=NodeRoleChoices.ROLE_LEAF,
+            node_object=device,
+        )
+        nb_interface = None
+        if link_interface:
+            nb_interface = Interface.objects.create(
+                device=device,
+                name="eth1/1",
+                type=InterfaceTypeChoices.TYPE_1GE_FIXED,
+            )
+        interface = ACINodeInterface.objects.create(
+            aci_node=node, nb_interface=nb_interface, port=1
+        )
+        return node, device, interface
+
+    def test_invalid_aci_node_role_change_strands_node_interfaces(self) -> None:
+        """Test clean rejects a role change while Node Interfaces exist."""
+        node, _device, _interface = self._create_node_with_interface(
+            211, "ACINodeRoleStrand"
+        )
+        node.role = NodeRoleChoices.ROLE_SPINE
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+        self.assertIn("role", cm.exception.error_dict)
+
+    def test_invalid_aci_node_object_cleared_strands_node_interfaces(self) -> None:
+        """Test clean rejects clearing the Node Object of a linked port."""
+        node, _device, _interface = self._create_node_with_interface(
+            212, "ACINodeObjectCleared"
+        )
+        node.node_object = None
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+        self.assertIn("node_object", cm.exception.error_dict)
+
+    def test_invalid_aci_node_object_reassigned_strands_node_interfaces(self) -> None:
+        """Test clean rejects repointing the Node Object of a linked port."""
+        node, _device, _interface = self._create_node_with_interface(
+            213, "ACINodeObjectMoved"
+        )
+        node.node_object = Device.objects.create(
+            name="ACINodeObjectMovedTarget",
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+        self.assertIn("node_object", cm.exception.error_dict)
+
+    def test_aci_node_object_cleared_without_linked_node_interfaces(self) -> None:
+        """Test clearing the Node Object is allowed with no linked port.
+
+        Pins the guard's `nb_interface__isnull=False` filter. Without it
+        the cleared-device branch flags any ACI Node Interface at all,
+        including one that never referenced a NetBox interface.
+        """
+        node, _device, _interface = self._create_node_with_interface(
+            214, "ACINodeObjectClearedFree", link_interface=False
+        )
+        node.node_object = None
+        node.full_clean()
+
+    def test_aci_node_object_reassigned_to_the_matching_device(self) -> None:
+        """Test a Node Object change to the port's own device is allowed.
+
+        Pins the guard's `.exclude()` half. A bare `.exists()` would
+        reject this, and the no-linked-port case above cannot tell the
+        two apart.
+        """
+        node, device, _interface = self._create_node_with_interface(
+            215, "ACINodeObjectSameDevice"
+        )
+        # Re-assigning the identical device is the smallest change that
+        # still re-runs the guard against a populated interface set
+        node.node_object = device
+        node.full_clean()
 
     def test_aci_node_save_paired_aci_pod_change_rejected_message_only(
         self,

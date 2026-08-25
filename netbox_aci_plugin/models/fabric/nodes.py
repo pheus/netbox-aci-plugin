@@ -309,10 +309,38 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                         )
                     )
 
-        # A node in a VPC protection group keeps its ACI Pod and Leaf role
         if self.pk:
+            # A node in a VPC protection group keeps its ACI Pod and Leaf role
             for field, message in self._get_paired_node_transition_issues().items():
                 errors.setdefault(field, []).append(message)
+
+            # A role or Node Object change must not strand the ACI Node
+            # Interfaces already recorded on this ACI Node
+            if (
+                self.role != NodeRoleChoices.ROLE_LEAF
+                and self.aci_node_interfaces.exists()
+            ):
+                errors.setdefault("role", []).append(
+                    _(
+                        "An ACI Node with assigned ACI Node Interfaces must "
+                        "retain the Leaf role. Remove the ACI Node Interfaces "
+                        "first."
+                    )
+                )
+
+            # A cleared Node Object strands every linked row, so the
+            # device comparison only applies once one is assigned
+            stranded = self.aci_node_interfaces.filter(nb_interface__isnull=False)
+            if self.assigned_device is not None:
+                stranded = stranded.exclude(nb_interface__device=self.assigned_device)
+            if stranded.exists():
+                errors.setdefault("node_object", []).append(
+                    _(
+                        "The assigned device differs from the device of the "
+                        "NetBox interfaces assigned to existing ACI Node "
+                        "Interfaces."
+                    )
+                )
 
         if errors:
             raise ValidationError(errors)
