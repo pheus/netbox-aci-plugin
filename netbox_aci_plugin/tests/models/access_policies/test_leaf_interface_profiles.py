@@ -225,6 +225,35 @@ class ACILeafInterfaceProfileTestCase(ACIBaseTestCase):
         self.aci_leaf_interface_profile.aci_fabric = other_fabric
         self.aci_leaf_interface_profile.full_clean()
 
+    def test_aci_leaf_interface_profile_fabric_move_with_group_in_target(
+        self,
+    ) -> None:
+        """Test a Fabric move is allowed when the group is already there.
+
+        Pins the guard's `.exclude()` half. A bare `.exists()` would
+        reject this move, and the no-group case above cannot tell the
+        two apart.
+        """
+        other_fabric = ACIFabric.objects.create(
+            name="ACITestLeafInterfaceProfileMoveTargetFabric",
+            fabric_id=134,
+            infra_vlan_vid=3906,
+        )
+        policy_group_in_target = ACILeafInterfacePolicyGroup.objects.create(
+            name="ACITestLeafInterfaceProfileMoveTargetPolicyGroup",
+            aci_fabric=other_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+        )
+        # Created directly, since the Selector's own clean() rejects the
+        # cross-Fabric pair this scenario has to start from
+        ACILeafInterfaceSelector.objects.create(
+            name="ACITestLeafInterfaceProfileMoveTargetSelector",
+            aci_leaf_interface_profile=self.aci_leaf_interface_profile,
+            aci_leaf_interface_policy_group=policy_group_in_target,
+        )
+        self.aci_leaf_interface_profile.aci_fabric = other_fabric
+        self.aci_leaf_interface_profile.full_clean()
+
     def test_invalid_interface_profile_fabric_move_strands_binding(self) -> None:
         """Test clean rejects a Fabric move stranding an assigned binding."""
         switch_profile = ACILeafSwitchProfile.objects.create(

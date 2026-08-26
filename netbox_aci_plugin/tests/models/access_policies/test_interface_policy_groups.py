@@ -357,6 +357,34 @@ class ACILeafInterfacePolicyGroupTestCase(ACIBaseTestCase):
         self.aci_lipg_pc.aci_fabric = other_fabric
         self.aci_lipg_pc.full_clean()
 
+    def test_aci_leaf_interface_policy_group_fabric_move_with_selector_in_target(
+        self,
+    ) -> None:
+        """Test a Fabric move is allowed when the Selector is already there.
+
+        Pins the guard's `.exclude()` half. A bare `.exists()` would
+        reject this move, and the no-Selector case above cannot tell the
+        two apart.
+        """
+        other_fabric = ACIFabric.objects.create(
+            name="ACITestLIPGMoveTargetFabric",
+            fabric_id=143,
+            infra_vlan_vid=3913,
+        )
+        profile_in_target = ACILeafInterfaceProfile.objects.create(
+            name="ACITestLIPGMoveTargetProfile",
+            aci_fabric=other_fabric,
+        )
+        # Created directly, since the Selector's own clean() rejects the
+        # cross-Fabric pair this scenario has to start from
+        ACILeafInterfaceSelector.objects.create(
+            name="ACITestLIPGMoveTargetSelector",
+            aci_leaf_interface_profile=profile_in_target,
+            aci_leaf_interface_policy_group=self.aci_lipg_pc,
+        )
+        self.aci_lipg_pc.aci_fabric = other_fabric
+        self.aci_lipg_pc.full_clean()
+
     def test_invalid_aci_leaf_interface_policy_group_name(self) -> None:
         """Test validation of ACI Leaf Interface Policy Group naming."""
         lipg = ACILeafInterfacePolicyGroup(name="Invalid Name With Spaces")
