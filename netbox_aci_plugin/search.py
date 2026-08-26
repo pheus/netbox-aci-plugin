@@ -142,6 +142,8 @@ class ACINodeInterfaceIndex(SearchIndex):
     fields: tuple = (
         ("aci_node", 100),
         ("nb_interface", 100),
+        ("description", 500),
+        ("comments", 5000),
     )
     display_attrs: tuple = (
         "aci_node",
