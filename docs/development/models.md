@@ -194,11 +194,21 @@ models.UniqueConstraint(
 Migrations referencing constraints by name use the rendered form
 (e.g. `netbox_aci_plugin_acitenant_unique_name`).
 
-A new constraint name must fit PostgreSQL's 63-byte identifier limit once
-the template is fully expanded (app label, model class name, and the
-literal suffix all count towards it). Check the rendered length before
-adding a constraint. Existing longer names that predate this rule stay as
-shipped in their frozen migrations and are not retroactively renamed.
+PostgreSQL truncates identifiers past 63 bytes rather than rejecting
+them, on creation and on every later lookup alike, so a long rendered
+name stays valid. Django checks name length only for auto-generated
+column names and for `Index`, never for `UniqueConstraint`. Many shipped
+constraint names already run past the limit. Treat it as a readability
+concern rather than a validity one: prefer a name that survives
+untruncated, so the rendered form in a migration still reads as the
+constraint it names.
+
+Two traps when measuring rendered lengths. Grepping for a rendered name
+finds nothing, because what the source stores is the template. And
+slicing a model module with a `^class` regex silently drops constraints,
+while walking every `ClassDef` double counts them, since the nested
+`Meta` is a class too. Only an AST walk restricted to the outer class's
+`Meta` gives the right answer.
 
 ## Conditional `UniqueConstraint`
 
