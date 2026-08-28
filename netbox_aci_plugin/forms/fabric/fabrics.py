@@ -104,9 +104,9 @@ class ACIFabricEditForm(ScopedForm, NetBoxModelForm):
             name=_("Infrastructure"),
         ),
         FieldSet(
-            "scope_type",
             "scope",
             name=_("Scope"),
+            html_id="scope",
         ),
         FieldSet(
             "nb_tenant_group",
@@ -124,7 +124,6 @@ class ACIFabricEditForm(ScopedForm, NetBoxModelForm):
             "infra_vlan_vid",
             "infra_vlan",
             "gipo_pool",
-            "scope_type",
             "nb_tenant",
             "owner",
             "comments",
@@ -198,7 +197,6 @@ class ACIFabricBulkEditForm(ScopedBulkEditForm, NetBoxModelBulkEditForm):
             name=_("Infrastructure"),
         ),
         FieldSet(
-            "scope_type",
             "scope",
             name=_("Scope"),
         ),
