@@ -43,13 +43,13 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12", "3.13", "3.14"]
-        netbox-version: ["v4.5.0", "v4.5.10", "v4.6.0", "main"]
+        netbox-version: ["v4.7.0-beta2", "feature"]
         include:
           # Collect coverage on a single leg (newest stack); the other legs
           # run the plain test suite.
           - coverage: false
           - python-version: "3.14"
-            netbox-version: "main"
+            netbox-version: "feature"
             coverage: true
     services:
       redis:

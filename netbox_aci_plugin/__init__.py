@@ -19,8 +19,8 @@ class ACIConfig(PluginConfig):
     author = __author__
     author_email = __email__
     base_url = "aci"
-    min_version = "4.5.0"
-    max_version = "4.6.99"
+    min_version = "4.7.0-beta2"
+    max_version = "4.7.99"
     default_settings = {
         "create_default_aci_fabric": True,
         "create_default_aci_tenants": True,
