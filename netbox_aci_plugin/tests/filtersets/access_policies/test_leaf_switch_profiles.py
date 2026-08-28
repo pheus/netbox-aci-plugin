@@ -4,7 +4,7 @@
 
 """Filterset tests for access-policy Leaf Switch Profile models."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockFilterSet,
@@ -26,7 +26,7 @@ from ...models.base import ACIBaseTestCase
 
 
 class ACILeafSwitchProfileFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACILeafSwitchProfileFilterSet."""
 
@@ -85,7 +85,7 @@ class ACILeafSwitchProfileFilterSetTestCase(
         self.assertNotIn(self.aci_leaf_switch_profile3, qs)
 
 
-class ACILeafSelectorFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACILeafSelectorFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACILeafSelectorFilterSet."""
 
     queryset = ACILeafSelector.objects.all()
@@ -167,7 +167,9 @@ class ACILeafSelectorFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTes
         self.assertNotIn(self.aci_leaf_selector4, qs)
 
 
-class ACILeafNodeBlockFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACILeafNodeBlockFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACILeafNodeBlockFilterSet."""
 
     queryset = ACILeafNodeBlock.objects.all()
@@ -294,7 +296,7 @@ class ACILeafNodeBlockFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTe
 
 
 class ACILeafSwitchProfileInterfaceBindingFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACILeafSwitchProfileInterfaceBindingFilterSet."""
 

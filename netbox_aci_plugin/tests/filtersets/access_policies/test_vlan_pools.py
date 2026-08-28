@@ -4,7 +4,7 @@
 
 """Filterset tests for access-policy VLAN pool models."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import (
     VLANAllocationModeChoices,
@@ -19,7 +19,7 @@ from ....models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ...models.base import ACIBaseTestCase
 
 
-class ACIVLANPoolFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIVLANPoolFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIVLANPoolFilterSet."""
 
     queryset = ACIVLANPool.objects.all()
@@ -81,7 +81,9 @@ class ACIVLANPoolFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
         )
 
 
-class ACIVLANPoolRangeFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIVLANPoolRangeFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACIVLANPoolRangeFilterSet."""
 
     queryset = ACIVLANPoolRange.objects.all()

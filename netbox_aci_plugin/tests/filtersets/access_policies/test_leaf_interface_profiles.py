@@ -4,7 +4,7 @@
 
 """Filterset tests for access-policy Leaf Interface Profile models."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import LeafInterfacePolicyGroupTypeChoices
 from ....filtersets.access_policies.leaf_interface_profiles import (
@@ -25,7 +25,7 @@ from ...models.base import ACIBaseTestCase
 
 
 class ACILeafInterfaceProfileFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACILeafInterfaceProfileFilterSet."""
 
@@ -85,7 +85,7 @@ class ACILeafInterfaceProfileFilterSetTestCase(
 
 
 class ACILeafInterfaceSelectorFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACILeafInterfaceSelectorFilterSet."""
 
@@ -189,7 +189,9 @@ class ACILeafInterfaceSelectorFilterSetTestCase(
         self.assertNotIn(self.aci_leaf_interface_selector2, qs)
 
 
-class ACILeafPortBlockFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACILeafPortBlockFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACILeafPortBlockFilterSet."""
 
     queryset = ACILeafPortBlock.objects.all()

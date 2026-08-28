@@ -5,7 +5,7 @@
 """Filterset tests for tenant Bridge Domain models."""
 
 from ipam.models import IPAddress
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.tenant.bridge_domains import (
     ACIBridgeDomainFilterSet,
@@ -22,7 +22,7 @@ from ....models.tenant.l3outs import ACIL3Out
 from ...models.base import ACIBaseTestCase
 
 
-class ACIBridgeDomainFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIBridgeDomainFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIBridgeDomainFilterSet."""
 
     queryset = ACIBridgeDomain.objects.all()
@@ -55,7 +55,7 @@ class ACIBridgeDomainFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTes
 
 
 class ACIBridgeDomainSubnetFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIBridgeDomainSubnetFilterSet."""
 
@@ -101,7 +101,7 @@ class ACIBridgeDomainSubnetFilterSetTestCase(
 
 
 class ACIBridgeDomainL3OutBindingFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIBridgeDomainL3OutBindingFilterSet."""
 

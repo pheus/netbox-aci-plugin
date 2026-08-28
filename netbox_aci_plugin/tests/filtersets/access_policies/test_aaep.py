@@ -4,7 +4,7 @@
 
 """Filterset tests for ACI AAEP and AAEP Domain Binding models."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.access_policies.aaep import (
     ACIAAEPDomainBindingFilterSet,
@@ -19,7 +19,7 @@ from ...models.base import ACIBaseTestCase
 
 
 class ACIAttachableAccessEntityProfileFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIAttachableAccessEntityProfileFilterSet."""
 
@@ -67,7 +67,7 @@ class ACIAttachableAccessEntityProfileFilterSetTestCase(
 
 
 class ACIAAEPDomainBindingFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIAAEPDomainBindingFilterSet."""
 

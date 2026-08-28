@@ -4,7 +4,7 @@
 
 """Filterset tests for the ACI Leaf Interface Policy Group model."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import LeafInterfacePolicyGroupTypeChoices
 from ....filtersets.access_policies.interface_policy_groups import (
@@ -18,7 +18,7 @@ from ...models.base import ACIBaseTestCase
 
 
 class ACILeafInterfacePolicyGroupFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACILeafInterfacePolicyGroupFilterSet."""
 

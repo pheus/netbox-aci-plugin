@@ -4,14 +4,14 @@
 
 """Filterset tests for the ACI Tenant model."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.tenant.tenants import ACITenantFilterSet
 from ....models.tenant.tenants import ACITenant
 from ...models.base import ACIBaseTestCase
 
 
-class ACITenantFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACITenantFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACITenantFilterSet."""
 
     queryset = ACITenant.objects.all()

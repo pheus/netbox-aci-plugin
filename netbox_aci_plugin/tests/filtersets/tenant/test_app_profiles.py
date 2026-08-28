@@ -4,14 +4,14 @@
 
 """Filterset tests for the ACI Application Profile model."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.tenant.app_profiles import ACIAppProfileFilterSet
 from ....models.tenant.app_profiles import ACIAppProfile
 from ...models.base import ACIBaseTestCase
 
 
-class ACIAppProfileFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIAppProfileFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIAppProfileFilterSet."""
 
     queryset = ACIAppProfile.objects.all()

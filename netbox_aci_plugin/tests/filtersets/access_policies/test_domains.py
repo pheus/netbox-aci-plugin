@@ -4,7 +4,7 @@
 
 """Filterset tests for access-policy domain models."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.access_policies.domains import (
     ACIPhysicalDomainFilterSet,
@@ -16,7 +16,7 @@ from ....models.fabric.fabrics import ACIFabric
 from ...models.base import ACIBaseTestCase
 
 
-class ACIRoutedDomainFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIRoutedDomainFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIRoutedDomainFilterSet."""
 
     queryset = ACIRoutedDomain.objects.all()
@@ -113,7 +113,9 @@ class ACIRoutedDomainFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTes
         self.assertEqual(result.count(), qs.count())
 
 
-class ACIPhysicalDomainFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIPhysicalDomainFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACIPhysicalDomainFilterSet."""
 
     queryset = ACIPhysicalDomain.objects.all()

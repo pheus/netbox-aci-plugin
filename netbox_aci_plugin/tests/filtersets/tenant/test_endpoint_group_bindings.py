@@ -5,7 +5,7 @@
 """Filterset tests for tenant Endpoint Group Domain and AAEP Binding models."""
 
 from ipam.models import VLAN
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import (
     DeploymentImmediacyChoices,
@@ -34,7 +34,7 @@ from ...models.base import ACIBaseTestCase
 
 
 class ACIEndpointGroupDomainBindingFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIEndpointGroupDomainBindingFilterSet."""
 
@@ -226,7 +226,7 @@ class ACIEndpointGroupDomainBindingFilterSetTestCase(
 
 
 class ACIEndpointGroupAAEPBindingFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIEndpointGroupAAEPBindingFilterSet."""
 

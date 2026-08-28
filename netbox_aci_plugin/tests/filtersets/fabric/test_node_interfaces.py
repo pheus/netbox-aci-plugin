@@ -6,7 +6,7 @@
 
 from dcim.choices import InterfaceTypeChoices
 from dcim.models import Interface
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import (
     LeafInterfacePolicyGroupTypeChoices,
@@ -26,7 +26,9 @@ from ....models.fabric.pods import ACIPod
 from ...models.base import ACIBaseTestCase
 
 
-class ACINodeInterfaceFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACINodeInterfaceFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACINodeInterfaceFilterSet."""
 
     queryset = ACINodeInterface.objects.all()

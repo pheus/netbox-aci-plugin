@@ -4,14 +4,14 @@
 
 """Filterset tests for the ACI VRF model."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.tenant.vrfs import ACIVRFFilterSet
 from ....models.tenant.vrfs import ACIVRF
 from ...models.base import ACIBaseTestCase
 
 
-class ACIVRFFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIVRFFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIVRFFilterSet."""
 
     queryset = ACIVRF.objects.all()

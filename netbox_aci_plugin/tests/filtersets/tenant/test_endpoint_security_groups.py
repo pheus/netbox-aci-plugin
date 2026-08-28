@@ -5,7 +5,7 @@
 """Filterset tests for tenant Endpoint Security Group models."""
 
 from ipam.models import IPAddress, Prefix
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupFilterSet,
@@ -22,7 +22,7 @@ from ...models.base import ACIBaseTestCase
 
 
 class ACIEndpointSecurityGroupFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIEndpointSecurityGroupFilterSet."""
 
@@ -65,7 +65,7 @@ class ACIEndpointSecurityGroupFilterSetTestCase(
 
 
 class ACIEsgEndpointGroupSelectorFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIEsgEndpointGroupSelectorFilterSet."""
 
@@ -128,7 +128,7 @@ class ACIEsgEndpointGroupSelectorFilterSetTestCase(
 
 
 class ACIEsgEndpointSelectorFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIEsgEndpointSelectorFilterSet."""
 

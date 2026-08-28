@@ -5,7 +5,7 @@
 """Filterset tests for tenant Contract Filter models."""
 
 from tenancy.models import Tenant
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.tenant.contract_filters import (
     ACIContractFilterEntryFilterSet,
@@ -18,7 +18,9 @@ from ....models.tenant.contract_filters import (
 from ...models.base import ACIBaseTestCase
 
 
-class ACIContractFilterFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIContractFilterFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACIContractFilterFilterSet."""
 
     queryset = ACIContractFilter.objects.all()
@@ -54,7 +56,7 @@ class ACIContractFilterFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetT
 
 
 class ACIContractFilterEntryFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIContractFilterEntryFilterSet."""
 

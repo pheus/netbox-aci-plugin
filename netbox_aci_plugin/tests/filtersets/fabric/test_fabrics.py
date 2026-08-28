@@ -4,14 +4,14 @@
 
 """Filterset tests for the ACI Fabric model."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.fabric.fabrics import ACIFabricFilterSet
 from ....models.fabric.fabrics import ACIFabric
 from ...models.base import ACIBaseTestCase
 
 
-class ACIFabricFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIFabricFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIFabricFilterSet."""
 
     queryset = ACIFabric.objects.all()

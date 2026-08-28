@@ -4,7 +4,7 @@
 
 """Filterset tests for the access-policy Leaf Interface Override model."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import LeafInterfacePolicyGroupTypeChoices
 from ....filtersets.access_policies.leaf_interface_overrides import (
@@ -24,7 +24,7 @@ from ...models.base import ACIBaseTestCase
 
 
 class ACILeafInterfaceOverrideFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACILeafInterfaceOverrideFilterSet."""
 
