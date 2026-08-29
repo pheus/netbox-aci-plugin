@@ -697,9 +697,19 @@ class BDMultiDestinationFloodingChoices(ChoiceSet):
     FLOOD_DROP = "drop"
 
     CHOICES = (
-        (FLOOD_BD, _("bd-flood"), "blue"),
-        (FLOOD_ENCAP, _("encap-flood"), "yellow"),
-        (FLOOD_DROP, _("drop"), "red"),
+        Choice(
+            FLOOD_BD,
+            _("bd-flood"),
+            color="blue",
+            description=_("Flood in the Bridge Domain"),
+        ),
+        Choice(
+            FLOOD_ENCAP,
+            _("encap-flood"),
+            color="yellow",
+            description=_("Flood only in the ingress encapsulation"),
+        ),
+        Choice(FLOOD_DROP, _("drop"), color="red", description=_("Drop the traffic")),
     )
 ```
 
@@ -710,9 +720,27 @@ Conventions:
   (`FLOOD_BD`, `UNKNOWN_MULTI_FLOOD`).
 - Add a `# default "<value>"` comment so contributors see the model's
   field default at a glance.
-- The third tuple element is the badge color (NetBox table/template
-  helpers consume it via `get_<field>_color()`, see [Choice color
-  helpers](#choice-color-helpers)).
+- Every member is a `Choice`, never a plain tuple. `color` feeds the badge
+  helpers (see [Choice color helpers](#choice-color-helpers)) and
+  `description` renders as a subtitle under the option label in form
+  dropdowns.
+- Write a `description` only where it says something the label does not.
+  `level1` labelled "level 1" needs none. ACI semantics like `bd-flood`,
+  `pre-provision` or a named filter port do.
+
+### Descriptions need the right form field
+
+A `description` reaches the browser only through NetBox's own
+`ChoiceField` / `MultipleChoiceField` from `utilities.forms.fields`.
+Django's `forms.ChoiceField` silently drops it, and the option renders
+with no subtitle. Import the NetBox classes, and use
+`utilities.forms.widgets.SelectMultiple` when a field needs a custom
+widget. `add_blank_choice()` preserves `Choice` objects, so bulk edit and
+filter forms keep their subtitles.
+
+CSV import fields are the exception: `CSVChoiceField` extends Django's
+field directly, because an import form renders no dropdown.
+`tests/forms/test_choice_field_conventions.py` enforces all of this.
 
 ### `add_custom_choice()`
 

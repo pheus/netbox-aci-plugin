@@ -15,6 +15,7 @@ from netbox.forms import (
 )
 from utilities.forms import GenericObjectFormMixin, add_blank_choice
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVContentTypeField,
@@ -22,6 +23,7 @@ from utilities.forms.fields import (
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     GenericObjectChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
@@ -77,14 +79,14 @@ class ACIEndpointGroupDomainBindingEditForm(GenericObjectFormMixin, NetBoxModelF
         hx_target_id="aci_domain_object",
         label=_("ACI Domain Object"),
     )
-    deployment_immediacy = forms.ChoiceField(
+    deployment_immediacy = ChoiceField(
         choices=DeploymentImmediacyChoices,
         label=_("Deployment immediacy"),
         help_text=_(
             "When the policy is pushed into the leaf hardware. Default is 'On Demand'."
         ),
     )
-    resolution_immediacy = forms.ChoiceField(
+    resolution_immediacy = ChoiceField(
         choices=ResolutionImmediacyChoices,
         label=_("Resolution immediacy"),
         help_text=_(
@@ -144,12 +146,12 @@ class ACIEndpointGroupDomainBindingEditForm(GenericObjectFormMixin, NetBoxModelF
 class ACIEndpointGroupDomainBindingBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for ACI Endpoint Group Domain Binding model."""
 
-    deployment_immediacy = forms.ChoiceField(
+    deployment_immediacy = ChoiceField(
         choices=add_blank_choice(DeploymentImmediacyChoices),
         required=False,
         label=_("Deployment immediacy"),
     )
-    resolution_immediacy = forms.ChoiceField(
+    resolution_immediacy = ChoiceField(
         choices=add_blank_choice(ResolutionImmediacyChoices),
         required=False,
         label=_("Resolution immediacy"),
@@ -199,12 +201,12 @@ class ACIEndpointGroupDomainBindingFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Fabric"),
     )
-    deployment_immediacy = forms.MultipleChoiceField(
+    deployment_immediacy = MultipleChoiceField(
         choices=add_blank_choice(DeploymentImmediacyChoices),
         required=False,
         label=_("Deployment immediacy"),
     )
-    resolution_immediacy = forms.MultipleChoiceField(
+    resolution_immediacy = MultipleChoiceField(
         choices=add_blank_choice(ResolutionImmediacyChoices),
         required=False,
         label=_("Resolution immediacy"),
@@ -352,12 +354,12 @@ class ACIEndpointGroupAAEPBindingEditForm(NetBoxModelForm):
         required=False,
         label=_("Primary NetBox VLAN"),
     )
-    mode = forms.ChoiceField(
+    mode = ChoiceField(
         choices=PortModeChoices,
         label=_("Mode"),
         help_text=_("VLAN tagging mode of the deployment (default 'Trunk')."),
     )
-    deployment_immediacy = forms.ChoiceField(
+    deployment_immediacy = ChoiceField(
         choices=DeploymentImmediacyChoices,
         label=_("Deployment immediacy"),
         help_text=_(
@@ -409,12 +411,12 @@ class ACIEndpointGroupAAEPBindingEditForm(NetBoxModelForm):
 class ACIEndpointGroupAAEPBindingBulkEditForm(NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI Endpoint Group AAEP Binding model."""
 
-    mode = forms.ChoiceField(
+    mode = ChoiceField(
         choices=add_blank_choice(PortModeChoices),
         required=False,
         label=_("Mode"),
     )
-    deployment_immediacy = forms.ChoiceField(
+    deployment_immediacy = ChoiceField(
         choices=add_blank_choice(DeploymentImmediacyChoices),
         required=False,
         label=_("Deployment immediacy"),
@@ -501,12 +503,12 @@ class ACIEndpointGroupAAEPBindingFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Effective Encap VLAN ID"),
     )
-    mode = forms.MultipleChoiceField(
+    mode = MultipleChoiceField(
         choices=add_blank_choice(PortModeChoices),
         required=False,
         label=_("Mode"),
     )
-    deployment_immediacy = forms.MultipleChoiceField(
+    deployment_immediacy = MultipleChoiceField(
         choices=add_blank_choice(DeploymentImmediacyChoices),
         required=False,
         label=_("Deployment immediacy"),

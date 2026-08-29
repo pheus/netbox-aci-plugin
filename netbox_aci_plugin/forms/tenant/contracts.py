@@ -20,6 +20,7 @@ from utilities.forms import (
     add_blank_choice,
 )
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVContentTypeField,
@@ -27,6 +28,7 @@ from utilities.forms.fields import (
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     GenericObjectChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet, TabbedGroups
@@ -76,7 +78,7 @@ class ACIContractEditForm(NetBoxModelForm):
         query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI Tenant"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=QualityOfServiceClassChoices,
         label=_("QoS class"),
         help_text=_(
@@ -85,7 +87,7 @@ class ACIContractEditForm(NetBoxModelForm):
             "Default is 'unspecified'."
         ),
     )
-    scope = forms.ChoiceField(
+    scope = ChoiceField(
         choices=ContractScopeChoices,
         label=_("Scope"),
         help_text=_(
@@ -93,7 +95,7 @@ class ACIContractEditForm(NetBoxModelForm):
             "applicable. Default is 'context'."
         ),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = ChoiceField(
         choices=QualityOfServiceDSCPChoices,
         label=_("Target DSCP"),
         help_text=_(
@@ -189,17 +191,17 @@ class ACIContractBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI Tenant"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class"),
     )
-    scope = forms.ChoiceField(
+    scope = ChoiceField(
         choices=add_blank_choice(ContractScopeChoices),
         required=False,
         label=_("Scope"),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = ChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
@@ -305,17 +307,17 @@ class ACIContractFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Tenant"),
     )
-    qos_class = forms.MultipleChoiceField(
+    qos_class = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class"),
     )
-    scope = forms.MultipleChoiceField(
+    scope = MultipleChoiceField(
         choices=add_blank_choice(ContractScopeChoices),
         required=False,
         label=_("Scope"),
     )
-    target_dscp = forms.MultipleChoiceField(
+    target_dscp = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
@@ -493,7 +495,7 @@ class ACIContractRelationEditForm(GenericObjectFormMixin, NetBoxModelForm):
         hx_target_id="aci_object",
         label=_("ACI Object"),
     )
-    role = forms.ChoiceField(
+    role = ChoiceField(
         choices=ContractRelationRoleChoices,
         required=True,
         label=_("Role"),
@@ -572,7 +574,7 @@ class ACIContractRelationBulkEditForm(GenericObjectFormMixin, NetBoxModelBulkEdi
         hx_method="post",
         label=_("ACI Object"),
     )
-    role = forms.ChoiceField(
+    role = ChoiceField(
         choices=add_blank_choice(ContractRelationRoleChoices),
         required=False,
         label=_("Role"),
@@ -658,7 +660,7 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI VRF"),
     )
-    role = forms.MultipleChoiceField(
+    role = MultipleChoiceField(
         choices=add_blank_choice(ContractRelationRoleChoices),
         required=False,
         label=_("Role"),
@@ -791,7 +793,7 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "directions. Default is enabled."
         ),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=QualityOfServiceClassChoices,
         label=_("QoS class"),
         help_text=_(
@@ -800,7 +802,7 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "Default is 'unspecified'."
         ),
     )
-    qos_class_cons_to_prov = forms.ChoiceField(
+    qos_class_cons_to_prov = ChoiceField(
         choices=QualityOfServiceClassChoices,
         label=_("QoS class (consumer to provider)"),
         help_text=_(
@@ -809,7 +811,7 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "Default is 'unspecified'."
         ),
     )
-    qos_class_prov_to_cons = forms.ChoiceField(
+    qos_class_prov_to_cons = ChoiceField(
         choices=QualityOfServiceClassChoices,
         label=_("QoS class (provider to consumer)"),
         help_text=_(
@@ -826,7 +828,7 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "Default is enabled."
         ),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = ChoiceField(
         choices=QualityOfServiceDSCPChoices,
         label=_("Target DSCP"),
         help_text=_(
@@ -834,7 +836,7 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "value. Default is 'unspecified'."
         ),
     )
-    target_dscp_cons_to_prov = forms.ChoiceField(
+    target_dscp_cons_to_prov = ChoiceField(
         choices=QualityOfServiceDSCPChoices,
         label=_("Target DSCP (consumer to provider)"),
         help_text=_(
@@ -843,7 +845,7 @@ class ACIContractSubjectEditForm(NetBoxModelForm):
             "Default is 'unspecified'."
         ),
     )
-    target_dscp_prov_to_cons = forms.ChoiceField(
+    target_dscp_prov_to_cons = ChoiceField(
         choices=QualityOfServiceDSCPChoices,
         label=_("Target DSCP (provider to consumer)"),
         help_text=_(
@@ -1010,17 +1012,17 @@ class ACIContractSubjectBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Apply both direction enabled"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class"),
     )
-    qos_class_cons_to_prov = forms.ChoiceField(
+    qos_class_cons_to_prov = ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class (consumer to provider)"),
     )
-    qos_class_prov_to_cons = forms.ChoiceField(
+    qos_class_prov_to_cons = ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class (provider to consumer)"),
@@ -1044,17 +1046,17 @@ class ACIContractSubjectBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("Service Graph Name (provider to consumer)"),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = ChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
     )
-    target_dscp_cons_to_prov = forms.ChoiceField(
+    target_dscp_cons_to_prov = ChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP (consumer to provider)"),
     )
-    target_dscp_prov_to_cons = forms.ChoiceField(
+    target_dscp_prov_to_cons = ChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP (provider to consumer)"),
@@ -1200,17 +1202,17 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Apply both directions enabled"),
     )
-    qos_class = forms.MultipleChoiceField(
+    qos_class = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class"),
     )
-    qos_class_cons_to_prov = forms.MultipleChoiceField(
+    qos_class_cons_to_prov = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class (consumer to provider)"),
     )
-    qos_class_prov_to_cons = forms.MultipleChoiceField(
+    qos_class_prov_to_cons = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class (provider to consumer)"),
@@ -1234,17 +1236,17 @@ class ACIContractSubjectFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Service Graph name (provider to consumer)"),
     )
-    target_dscp = forms.MultipleChoiceField(
+    target_dscp = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
     )
-    target_dscp_cons_to_prov = forms.MultipleChoiceField(
+    target_dscp_cons_to_prov = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP (consumer to provider)"),
     )
-    target_dscp_prov_to_cons = forms.MultipleChoiceField(
+    target_dscp_prov_to_cons = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP (provider to consumer)"),
@@ -1502,7 +1504,7 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
         },
         label=_("ACI Contract Subject"),
     )
-    action = forms.ChoiceField(
+    action = ChoiceField(
         choices=ContractSubjectFilterActionChoices,
         label=_("Action"),
         help_text=_(
@@ -1511,7 +1513,7 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
             "it. Default is 'permit'."
         ),
     )
-    apply_direction = forms.ChoiceField(
+    apply_direction = ChoiceField(
         choices=ContractSubjectFilterApplyDirectionChoices,
         label=_("Apply direction"),
         help_text=_(
@@ -1534,7 +1536,7 @@ class ACIContractSubjectFilterEditForm(NetBoxModelForm):
             "Default is disabled."
         ),
     )
-    priority = forms.ChoiceField(
+    priority = ChoiceField(
         choices=ContractSubjectFilterPriorityChoices,
         label=_("(Deny) Priority"),
         help_text=_(
@@ -1612,12 +1614,12 @@ class ACIContractSubjectFilterBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI Contract Subject"),
     )
-    action = forms.ChoiceField(
+    action = ChoiceField(
         choices=add_blank_choice(ContractSubjectFilterActionChoices),
         required=False,
         label=_("Action"),
     )
-    apply_direction = forms.ChoiceField(
+    apply_direction = ChoiceField(
         choices=add_blank_choice(ContractSubjectFilterApplyDirectionChoices),
         required=False,
         label=_("Apply direction"),
@@ -1636,7 +1638,7 @@ class ACIContractSubjectFilterBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Policy compression enabled"),
     )
-    priority = forms.ChoiceField(
+    priority = ChoiceField(
         choices=add_blank_choice(ContractSubjectFilterPriorityChoices),
         required=False,
         label=_("(Deny) Priority"),
@@ -1729,12 +1731,12 @@ class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Contract Subject"),
     )
-    action = forms.MultipleChoiceField(
+    action = MultipleChoiceField(
         choices=add_blank_choice(ContractSubjectFilterActionChoices),
         required=False,
         label=_("Action"),
     )
-    apply_direction = forms.MultipleChoiceField(
+    apply_direction = MultipleChoiceField(
         choices=add_blank_choice(ContractSubjectFilterApplyDirectionChoices),
         required=False,
         label=_("Apply direction"),
@@ -1753,7 +1755,7 @@ class ACIContractSubjectFilterFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Policy compression enabled"),
     )
-    priority = forms.MultipleChoiceField(
+    priority = MultipleChoiceField(
         choices=add_blank_choice(ContractSubjectFilterPriorityChoices),
         required=False,
         label=_("(Deny) Priority"),

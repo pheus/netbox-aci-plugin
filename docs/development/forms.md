@@ -126,16 +126,21 @@ current example.
 above by walking every edit form at runtime, so a new form cannot
 reintroduce either mistake.
 
+`ChoiceField` and `MultipleChoiceField` come from
+`utilities.forms.fields`, not from `django.forms`. Only the NetBox
+classes render the description a `Choice` carries as an option subtitle
+(see [Models - Choices](models.md#choices)).
+
 ```python
 # EditForm - required, no blank entry
-target_dscp = forms.ChoiceField(
+target_dscp = ChoiceField(
     choices=QualityOfServiceDSCPChoices,
     initial=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
     label=_("Target DSCP"),
 )
 
 # BulkEditForm - optional, blank means "leave unchanged"
-target_dscp = forms.ChoiceField(
+target_dscp = ChoiceField(
     choices=add_blank_choice(QualityOfServiceDSCPChoices),
     required=False,
     label=_("Target DSCP"),

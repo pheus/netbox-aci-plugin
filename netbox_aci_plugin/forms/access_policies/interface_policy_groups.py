@@ -15,11 +15,13 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import add_blank_choice
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
@@ -44,7 +46,7 @@ class ACILeafInterfacePolicyGroupEditForm(NetBoxModelForm):
         queryset=ACIFabric.objects.all(),
         label=_("ACI Fabric"),
     )
-    group_type = forms.ChoiceField(
+    group_type = ChoiceField(
         choices=LeafInterfacePolicyGroupTypeChoices,
         label=_("Type"),
         help_text=_(
@@ -234,7 +236,7 @@ class ACILeafInterfacePolicyGroupFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Fabric"),
     )
-    group_type = forms.MultipleChoiceField(
+    group_type = MultipleChoiceField(
         choices=add_blank_choice(LeafInterfacePolicyGroupTypeChoices),
         required=False,
         label=_("Type"),

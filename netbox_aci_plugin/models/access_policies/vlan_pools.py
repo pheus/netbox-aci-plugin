@@ -50,7 +50,7 @@ class ACIVLANPool(ACIFabricBaseModel):
         default=VLANAllocationModeChoices.MODE_STATIC,
         help_text=_(
             "Dynamic pools let the APIC assign VLANs automatically (typically "
-            "for VMM domains); static pools use manually defined ranges."
+            "for VMM domains). Static pools use manually defined ranges."
         ),
     )
     nb_vlan_group = models.OneToOneField(
@@ -156,7 +156,7 @@ class ACIVLANPoolRange(NetBoxModel):
         choices=VLANPoolRangeAllocationModeChoices,
         default=VLANPoolRangeAllocationModeChoices.MODE_INHERIT,
         help_text=_(
-            "Overrides the pool allocation mode for this block; 'inherit' uses "
+            "Overrides the pool allocation mode for this block. 'inherit' uses "
             "the pool setting."
         ),
     )

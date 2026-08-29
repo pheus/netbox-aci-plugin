@@ -18,6 +18,7 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import GenericObjectFormMixin, add_blank_choice
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVContentTypeField,
@@ -25,6 +26,7 @@ from utilities.forms.fields import (
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
     GenericObjectChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
@@ -67,7 +69,7 @@ class ACINodeEditForm(GenericObjectFormMixin, NetBoxModelForm):
         hx_target_id="node_object",
         label=_("Node Object"),
     )
-    role = forms.ChoiceField(
+    role = ChoiceField(
         choices=NodeRoleChoices,
         label=_("Role"),
         help_text=_(
@@ -75,7 +77,7 @@ class ACINodeEditForm(GenericObjectFormMixin, NetBoxModelForm):
             "(e.g., Spine, Leaf, or APIC)."
         ),
     )
-    node_type = forms.ChoiceField(
+    node_type = ChoiceField(
         choices=NodeTypeChoices,
         label=_("Type"),
         help_text=_(
@@ -200,12 +202,12 @@ class ACINodeBulkEditForm(GenericObjectFormMixin, NetBoxModelBulkEditForm):
         hx_method="post",
         label=_("Node Object"),
     )
-    role = forms.ChoiceField(
+    role = ChoiceField(
         choices=add_blank_choice(NodeRoleChoices),
         required=False,
         label=_("Role"),
     )
-    node_type = forms.ChoiceField(
+    node_type = ChoiceField(
         choices=add_blank_choice(NodeTypeChoices),
         required=False,
         label=_("Type"),
@@ -338,12 +340,12 @@ class ACINodeFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Virtual Machine"),
     )
-    role = forms.MultipleChoiceField(
+    role = MultipleChoiceField(
         choices=add_blank_choice(NodeRoleChoices),
         required=False,
         label=_("Role"),
     )
-    node_type = forms.MultipleChoiceField(
+    node_type = MultipleChoiceField(
         choices=add_blank_choice(NodeTypeChoices),
         required=False,
         label=_("Type"),

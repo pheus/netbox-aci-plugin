@@ -4,7 +4,7 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from utilities.choices import ChoiceSet
+from utilities.choices import Choice, ChoiceSet
 
 #
 # Choice utilities
@@ -30,9 +30,19 @@ class BDMultiDestinationFloodingChoices(ChoiceSet):
     FLOOD_DROP = "drop"
 
     CHOICES = (
-        (FLOOD_BD, _("bd-flood"), "blue"),
-        (FLOOD_ENCAP, _("encap-flood"), "yellow"),
-        (FLOOD_DROP, _("drop"), "red"),
+        Choice(
+            FLOOD_BD,
+            _("bd-flood"),
+            color="blue",
+            description=_("Flood in the Bridge Domain"),
+        ),
+        Choice(
+            FLOOD_ENCAP,
+            _("encap-flood"),
+            color="yellow",
+            description=_("Flood only in the ingress encapsulation"),
+        ),
+        Choice(FLOOD_DROP, _("drop"), color="red", description=_("Drop the traffic")),
     )
 
 
@@ -44,8 +54,18 @@ class BDUnknownMulticastChoices(ChoiceSet):
     UNKNOWN_MULTI_OPT_FLOOD = "opt-flood"
 
     CHOICES = (
-        (UNKNOWN_MULTI_FLOOD, _("flood"), "yellow"),
-        (UNKNOWN_MULTI_OPT_FLOOD, _("opt-flood"), "blue"),
+        Choice(
+            UNKNOWN_MULTI_FLOOD,
+            _("flood"),
+            color="yellow",
+            description=_("Flood to every port in the Bridge Domain"),
+        ),
+        Choice(
+            UNKNOWN_MULTI_OPT_FLOOD,
+            _("opt-flood"),
+            color="blue",
+            description=_("Flood only to ports with multicast receivers"),
+        ),
     )
 
 
@@ -57,8 +77,18 @@ class BDUnknownUnicastChoices(ChoiceSet):
     UNKNOWN_UNI_FLOOD = "flood"
 
     CHOICES = (
-        (UNKNOWN_UNI_PROXY, _("proxy"), "blue"),
-        (UNKNOWN_UNI_FLOOD, _("flood"), "yellow"),
+        Choice(
+            UNKNOWN_UNI_PROXY,
+            _("proxy"),
+            color="blue",
+            description=_("Forward to the spine proxy for endpoint lookup"),
+        ),
+        Choice(
+            UNKNOWN_UNI_FLOOD,
+            _("flood"),
+            color="yellow",
+            description=_("Flood in the Bridge Domain"),
+        ),
     )
 
 
@@ -76,9 +106,11 @@ class ContractFilterARPOpenPeripheralCodesChoices(ChoiceSet):
     OPC_REPLY = "reply"
 
     CHOICES = (
-        (OPC_UNSPECIFIED, _("unspecified")),
-        (OPC_REQUEST, _("ARP Request")),
-        (OPC_REPLY, _("ARP Reply")),
+        Choice(
+            OPC_UNSPECIFIED, _("unspecified"), description=_("Match any ARP operation")
+        ),
+        Choice(OPC_REQUEST, _("ARP Request")),
+        Choice(OPC_REPLY, _("ARP Reply")),
     )
 
 
@@ -97,15 +129,17 @@ class ContractFilterEtherTypeChoices(ChoiceSet):
     TYPE_TRILL = "trill"
 
     CHOICES = (
-        (TYPE_UNSPECIFIED, _("unspecified")),
-        (TYPE_ARP, _("ARP")),
-        (TYPE_FCOE, _("FCOE")),
-        (TYPE_IP, _("IP")),
-        (TYPE_IPV4, _("IPv4")),
-        (TYPE_IPV6, _("IPv6")),
-        (TYPE_MAC_SEC, _("MAC Security")),
-        (TYPE_MPLS_UCAST, _("MPLS Unicast")),
-        (TYPE_TRILL, _("Trill")),
+        Choice(
+            TYPE_UNSPECIFIED, _("unspecified"), description=_("Match any ether type")
+        ),
+        Choice(TYPE_ARP, _("ARP")),
+        Choice(TYPE_FCOE, _("FCOE")),
+        Choice(TYPE_IP, _("IP")),
+        Choice(TYPE_IPV4, _("IPv4")),
+        Choice(TYPE_IPV6, _("IPv6")),
+        Choice(TYPE_MAC_SEC, _("MAC Security")),
+        Choice(TYPE_MPLS_UCAST, _("MPLS Unicast")),
+        Choice(TYPE_TRILL, _("Trill")),
     )
 
 
@@ -121,12 +155,16 @@ class ContractFilterICMPv4TypesChoices(ChoiceSet):
     ICMP_V4_TIME_EXCEEDED = "time-exceeded"
 
     CHOICES = (
-        (ICMP_V4_UNSPECIFIED, _("unspecified")),
-        (ICMP_V4_DST_UNREACHABLE, _("destination unreachable")),
-        (ICMP_V4_ECHO_REQUEST, _("echo request")),
-        (ICMP_V4_ECHO_REPLY, _("echo reply")),
-        (ICMP_V4_SRC_QUENCH, _("source quench")),
-        (ICMP_V4_TIME_EXCEEDED, _("time exceeded")),
+        Choice(
+            ICMP_V4_UNSPECIFIED,
+            _("unspecified"),
+            description=_("Match any ICMPv4 message type"),
+        ),
+        Choice(ICMP_V4_DST_UNREACHABLE, _("destination unreachable")),
+        Choice(ICMP_V4_ECHO_REQUEST, _("echo request")),
+        Choice(ICMP_V4_ECHO_REPLY, _("echo reply")),
+        Choice(ICMP_V4_SRC_QUENCH, _("source quench")),
+        Choice(ICMP_V4_TIME_EXCEEDED, _("time exceeded")),
     )
 
 
@@ -143,13 +181,17 @@ class ContractFilterICMPv6TypesChoices(ChoiceSet):
     ICMP_V6_TIME_EXCEEDED = "time-exceeded"
 
     CHOICES = (
-        (ICMP_V6_UNSPECIFIED, _("unspecified")),
-        (ICMP_V6_DST_UNREACHABLE, _("destination unreachable")),
-        (ICMP_V6_ECHO_REQUEST, _("echo request")),
-        (ICMP_V6_ECHO_REPLY, _("echo reply")),
-        (ICMP_V6_NBR_ADVERT, _("neighbor advertisement")),
-        (ICMP_V6_NBR_SOLICIT, _("neighbor solicitation")),
-        (ICMP_V6_TIME_EXCEEDED, _("time exceeded")),
+        Choice(
+            ICMP_V6_UNSPECIFIED,
+            _("unspecified"),
+            description=_("Match any ICMPv6 message type"),
+        ),
+        Choice(ICMP_V6_DST_UNREACHABLE, _("destination unreachable")),
+        Choice(ICMP_V6_ECHO_REQUEST, _("echo request")),
+        Choice(ICMP_V6_ECHO_REPLY, _("echo reply")),
+        Choice(ICMP_V6_NBR_ADVERT, _("neighbor advertisement")),
+        Choice(ICMP_V6_NBR_SOLICIT, _("neighbor solicitation")),
+        Choice(ICMP_V6_TIME_EXCEEDED, _("time exceeded")),
     )
 
 
@@ -171,18 +213,20 @@ class ContractFilterIPProtocolChoices(ChoiceSet):
     PROT_UDP = "udp"
 
     CHOICES = (
-        (PROT_UNSPECIFIED, _("unspecified")),
-        (PROT_EGP, _("EGP")),
-        (PROT_EIGRP, _("EIGRP")),
-        (PROT_ICMP_V4, _("ICMPv4")),
-        (PROT_ICMP_V6, _("ICMPv6")),
-        (PROT_IGMP, _("IGMP")),
-        (PROT_IGP, _("IGP")),
-        (PROT_L2TP, _("L2TP")),
-        (PROT_OSPF, _("OSPF")),
-        (PROT_PIM, _("PIM")),
-        (PROT_TCP, _("TCP")),
-        (PROT_UDP, _("UDP")),
+        Choice(
+            PROT_UNSPECIFIED, _("unspecified"), description=_("Match any IP protocol")
+        ),
+        Choice(PROT_EGP, _("EGP")),
+        Choice(PROT_EIGRP, _("EIGRP")),
+        Choice(PROT_ICMP_V4, _("ICMPv4")),
+        Choice(PROT_ICMP_V6, _("ICMPv6")),
+        Choice(PROT_IGMP, _("IGMP")),
+        Choice(PROT_IGP, _("IGP")),
+        Choice(PROT_L2TP, _("L2TP")),
+        Choice(PROT_OSPF, _("OSPF")),
+        Choice(PROT_PIM, _("PIM")),
+        Choice(PROT_TCP, _("TCP")),
+        Choice(PROT_UDP, _("UDP")),
     )
 
 
@@ -201,15 +245,15 @@ class ContractFilterPortChoices(ChoiceSet):
     PORT_SSH = "ssh"
 
     CHOICES = (
-        (PORT_UNSPECIFIED, _("unspecified")),
-        (PORT_DNS, _("DNS")),
-        (PORT_FTP_DATA, _("FTP Data")),
-        (PORT_HTTP, _("HTTP")),
-        (PORT_HTTPS, _("HTTPS")),
-        (PORT_POP3, _("POP3")),
-        (PORT_RTSP, _("RTSP")),
-        (PORT_SMTP, _("SMTP")),
-        (PORT_SSH, _("SSH")),
+        Choice(PORT_UNSPECIFIED, _("unspecified"), description=_("Match any port")),
+        Choice(PORT_DNS, _("DNS"), description=_("Port 53")),
+        Choice(PORT_FTP_DATA, _("FTP Data"), description=_("Port 20")),
+        Choice(PORT_HTTP, _("HTTP"), description=_("Port 80")),
+        Choice(PORT_HTTPS, _("HTTPS"), description=_("Port 443")),
+        Choice(PORT_POP3, _("POP3"), description=_("Port 110")),
+        Choice(PORT_RTSP, _("RTSP"), description=_("Port 554")),
+        Choice(PORT_SMTP, _("SMTP"), description=_("Port 25")),
+        Choice(PORT_SSH, _("SSH"), description=_("Port 22")),
     )
 
 
@@ -225,12 +269,16 @@ class ContractFilterTCPRulesChoices(ChoiceSet):
     TCP_SYN = "syn"
 
     CHOICES = (
-        (TCP_UNSPECIFIED, _("unspecified")),
-        (TCP_ACK, _("acknowledgment")),
-        (TCP_ESTABLISHED, _("established")),
-        (TCP_FINISH, _("finish")),
-        (TCP_RESET, _("reset")),
-        (TCP_SYN, _("synchronize")),
+        Choice(TCP_UNSPECIFIED, _("unspecified"), description=_("Match any TCP flag")),
+        Choice(TCP_ACK, _("acknowledgment"), description=_("Acknowledgment flag set")),
+        Choice(
+            TCP_ESTABLISHED,
+            _("established"),
+            description=_("Match established sessions"),
+        ),
+        Choice(TCP_FINISH, _("finish"), description=_("Finish flag set")),
+        Choice(TCP_RESET, _("reset"), description=_("Reset flag set")),
+        Choice(TCP_SYN, _("synchronize"), description=_("Synchronize flag set")),
     )
 
 
@@ -249,10 +297,30 @@ class ContractScopeChoices(ChoiceSet):
     SCOPE_GLOBAL = "global"
 
     CHOICES = (
-        (SCOPE_VRF, _("VRF (Context)"), "blue"),
-        (SCOPE_APP_PROFILE, _("Application Profile"), "green"),
-        (SCOPE_TENANT, _("Tenant"), "orange"),
-        (SCOPE_GLOBAL, _("Global"), "red"),
+        Choice(
+            SCOPE_VRF,
+            _("VRF"),
+            color="blue",
+            description=_("Applies within the VRF, known as a Context in the APIC"),
+        ),
+        Choice(
+            SCOPE_APP_PROFILE,
+            _("Application Profile"),
+            color="green",
+            description=_("Applies within the Application Profile"),
+        ),
+        Choice(
+            SCOPE_TENANT,
+            _("Tenant"),
+            color="orange",
+            description=_("Applies within the ACI Tenant"),
+        ),
+        Choice(
+            SCOPE_GLOBAL,
+            _("Global"),
+            color="red",
+            description=_("Applies across the whole fabric"),
+        ),
     )
 
 
@@ -269,8 +337,18 @@ class ContractRelationRoleChoices(ChoiceSet):
     ROLE_CONSUMER = "cons"
 
     CHOICES = (
-        (ROLE_PROVIDER, _("Provider"), "blue"),
-        (ROLE_CONSUMER, _("Consumer"), "yellow"),
+        Choice(
+            ROLE_PROVIDER,
+            _("Provider"),
+            color="blue",
+            description=_("Offers the service the Contract describes"),
+        ),
+        Choice(
+            ROLE_CONSUMER,
+            _("Consumer"),
+            color="yellow",
+            description=_("Uses the service the Contract describes"),
+        ),
     )
 
 
@@ -287,8 +365,15 @@ class ContractSubjectFilterActionChoices(ChoiceSet):
     ACTION_DENY = "deny"
 
     CHOICES = (
-        (ACTION_PERMIT, _("permit"), "green"),
-        (ACTION_DENY, _("deny"), "red"),
+        Choice(
+            ACTION_PERMIT,
+            _("permit"),
+            color="green",
+            description=_("Allow matching traffic"),
+        ),
+        Choice(
+            ACTION_DENY, _("deny"), color="red", description=_("Drop matching traffic")
+        ),
     )
 
 
@@ -301,9 +386,24 @@ class ContractSubjectFilterApplyDirectionChoices(ChoiceSet):
     DIR_PROV_TO_CONS = "ptc"
 
     CHOICES = (
-        (DIR_BOTH, _("both"), "green"),
-        (DIR_CONS_TO_PROV, _("Consumer to Provider"), "blue"),
-        (DIR_PROV_TO_CONS, _("Provider to Consumer"), "yellow"),
+        Choice(
+            DIR_BOTH,
+            _("both"),
+            color="green",
+            description=_("Apply in both directions"),
+        ),
+        Choice(
+            DIR_CONS_TO_PROV,
+            _("Consumer to Provider"),
+            color="blue",
+            description=_("Apply only to consumer to provider traffic"),
+        ),
+        Choice(
+            DIR_PROV_TO_CONS,
+            _("Provider to Consumer"),
+            color="yellow",
+            description=_("Apply only to provider to consumer traffic"),
+        ),
     )
 
 
@@ -317,10 +417,30 @@ class ContractSubjectFilterPriorityChoices(ChoiceSet):
     CLASS_LEVEL_3 = "level3"
 
     CHOICES = (
-        (CLASS_DEFAULT, _("default level"), "gray"),
-        (CLASS_LEVEL_1, _("lowest priority"), "red"),
-        (CLASS_LEVEL_2, _("medium priority"), "orange"),
-        (CLASS_LEVEL_3, _("highest priority"), "yellow"),
+        Choice(
+            CLASS_DEFAULT,
+            _("default"),
+            color="gray",
+            description=_("Default level"),
+        ),
+        Choice(
+            CLASS_LEVEL_1,
+            _("level 1"),
+            color="red",
+            description=_("Lowest priority"),
+        ),
+        Choice(
+            CLASS_LEVEL_2,
+            _("level 2"),
+            color="orange",
+            description=_("Medium priority"),
+        ),
+        Choice(
+            CLASS_LEVEL_3,
+            _("level 3"),
+            color="yellow",
+            description=_("Highest priority"),
+        ),
     )
 
 
@@ -337,8 +457,18 @@ class DeploymentImmediacyChoices(ChoiceSet):
     IMMEDIACY_LAZY = "lazy"
 
     CHOICES = (
-        (IMMEDIACY_IMMEDIATE, _("Immediate"), "green"),
-        (IMMEDIACY_LAZY, _("On Demand"), "orange"),
+        Choice(
+            IMMEDIACY_IMMEDIATE,
+            _("Immediate"),
+            color="green",
+            description=_("Program the policy in hardware as soon as it is downloaded"),
+        ),
+        Choice(
+            IMMEDIACY_LAZY,
+            _("On Demand"),
+            color="orange",
+            description=_("Program the policy in hardware on the first packet"),
+        ),
     )
 
 
@@ -351,9 +481,24 @@ class PortModeChoices(ChoiceSet):
     MODE_UNTAGGED = "untagged"
 
     CHOICES = (
-        (MODE_REGULAR, _("Trunk"), "blue"),
-        (MODE_NATIVE, _("Access (802.1P)"), "purple"),
-        (MODE_UNTAGGED, _("Access (untagged)"), "gray"),
+        Choice(
+            MODE_REGULAR,
+            _("Trunk"),
+            color="blue",
+            description=_("Tagged with the VLAN encapsulation"),
+        ),
+        Choice(
+            MODE_NATIVE,
+            _("Access (802.1P)"),
+            color="purple",
+            description=_("Untagged on ingress and priority tagged on egress"),
+        ),
+        Choice(
+            MODE_UNTAGGED,
+            _("Access (untagged)"),
+            color="gray",
+            description=_("Untagged in both directions"),
+        ),
     )
 
 
@@ -366,9 +511,24 @@ class ResolutionImmediacyChoices(ChoiceSet):
     IMMEDIACY_PRE_PROVISION = "pre-provision"
 
     CHOICES = (
-        (IMMEDIACY_IMMEDIATE, _("Immediate"), "green"),
-        (IMMEDIACY_LAZY, _("On Demand"), "orange"),
-        (IMMEDIACY_PRE_PROVISION, _("Pre-provision"), "blue"),
+        Choice(
+            IMMEDIACY_IMMEDIATE,
+            _("Immediate"),
+            color="green",
+            description=_("Download the policy when the domain is attached"),
+        ),
+        Choice(
+            IMMEDIACY_LAZY,
+            _("On Demand"),
+            color="orange",
+            description=_("Download the policy only when an endpoint attaches"),
+        ),
+        Choice(
+            IMMEDIACY_PRE_PROVISION,
+            _("Pre-provision"),
+            color="blue",
+            description=_("Download the policy before any endpoint attaches"),
+        ),
     )
 
 
@@ -386,9 +546,24 @@ class NodeRoleChoices(ChoiceSet):
     ROLE_APIC = "apic"
 
     CHOICES = (
-        (ROLE_LEAF, _("Leaf"), "blue"),
-        (ROLE_SPINE, _("Spine"), "teal"),
-        (ROLE_APIC, _("APIC"), "purple"),
+        Choice(
+            ROLE_LEAF,
+            _("Leaf"),
+            color="blue",
+            description=_("Access layer switch that endpoints attach to"),
+        ),
+        Choice(
+            ROLE_SPINE,
+            _("Spine"),
+            color="teal",
+            description=_("Backbone switch connecting the leaf switches"),
+        ),
+        Choice(
+            ROLE_APIC,
+            _("APIC"),
+            color="purple",
+            description=_("Controller managing the fabric"),
+        ),
     )
 
 
@@ -402,10 +577,30 @@ class NodeTypeChoices(ChoiceSet):
     TYPE_VIRTUAL = "virtual"
 
     CHOICES = (
-        (TYPE_UNKNOWN, _("Unknown"), "gray"),
-        (TYPE_TIER_2_LEAF, _("Tier 2 Leaf"), "blue"),
-        (TYPE_REMOTE_LEAF_WAN, _("Remote Leaf WAN"), "teal"),
-        (TYPE_VIRTUAL, _("Virtual"), "purple"),
+        Choice(
+            TYPE_UNKNOWN,
+            _("Unknown"),
+            color="gray",
+            description=_("Standard node with no special deployment type"),
+        ),
+        Choice(
+            TYPE_TIER_2_LEAF,
+            _("Tier 2 Leaf"),
+            color="blue",
+            description=_("Leaf attached to another leaf rather than a spine"),
+        ),
+        Choice(
+            TYPE_REMOTE_LEAF_WAN,
+            _("Remote Leaf WAN"),
+            color="teal",
+            description=_("Leaf connected to the fabric across a WAN"),
+        ),
+        Choice(
+            TYPE_VIRTUAL,
+            _("Virtual"),
+            color="purple",
+            description=_("Leaf running as a software instance"),
+        ),
     )
 
 
@@ -427,13 +622,18 @@ class QualityOfServiceClassChoices(ChoiceSet):
     CLASS_LEVEL_6 = "level6"
 
     CHOICES = (
-        (CLASS_UNSPECIFIED, _("unspecified"), "gray"),
-        (CLASS_LEVEL_1, _("level 1"), "red"),
-        (CLASS_LEVEL_2, _("level 2"), "orange"),
-        (CLASS_LEVEL_3, _("level 3"), "yellow"),
-        (CLASS_LEVEL_4, _("level 4"), "teal"),
-        (CLASS_LEVEL_5, _("level 5"), "cyan"),
-        (CLASS_LEVEL_6, _("level 6"), "blue"),
+        Choice(
+            CLASS_UNSPECIFIED,
+            _("unspecified"),
+            color="gray",
+            description=_("Use the default QoS class"),
+        ),
+        Choice(CLASS_LEVEL_1, _("level 1"), color="red"),
+        Choice(CLASS_LEVEL_2, _("level 2"), color="orange"),
+        Choice(CLASS_LEVEL_3, _("level 3"), color="yellow"),
+        Choice(CLASS_LEVEL_4, _("level 4"), color="teal"),
+        Choice(CLASS_LEVEL_5, _("level 5"), color="cyan"),
+        Choice(CLASS_LEVEL_6, _("level 6"), color="blue"),
     )
 
 
@@ -466,29 +666,117 @@ class QualityOfServiceDSCPChoices(ChoiceSet):
     DSCP_VA = "VA"
 
     CHOICES = (
-        (DSCP_UNSPECIFIED, _("unspecified")),
-        (DSCP_AF11, _("AF11 low drop")),
-        (DSCP_AF12, _("AF12 medium drop")),
-        (DSCP_AF13, _("AF13 high drop")),
-        (DSCP_AF21, _("AF21 low drop")),
-        (DSCP_AF22, _("AF22 medium drop")),
-        (DSCP_AF23, _("AF23 high drop")),
-        (DSCP_AF31, _("AF31 low drop")),
-        (DSCP_AF32, _("AF32 medium drop")),
-        (DSCP_AF33, _("AF33 high drop")),
-        (DSCP_AF41, _("AF41 low drop")),
-        (DSCP_AF42, _("AF42 medium drop")),
-        (DSCP_AF43, _("AF43 high drop")),
-        (DSCP_CS0, _("CS0 (best effort)")),
-        (DSCP_CS1, _("CS1 (streaming)")),
-        (DSCP_CS2, _("CS2 (OAM)")),
-        (DSCP_CS3, _("CS3 (signaling)")),
-        (DSCP_CS4, _("CS4 (policy plane, priority queue)")),
-        (DSCP_CS5, _("CS5 (broadcast video)")),
-        (DSCP_CS6, _("CS6 (network control)")),
-        (DSCP_CS7, _("CS7")),
-        (DSCP_EF, _("EF (Expedited Forwarding, low-loss, low-latency)")),
-        (DSCP_VA, _("VA (Voice Admit)")),
+        Choice(
+            DSCP_UNSPECIFIED,
+            _("unspecified"),
+            description=_("Do not rewrite the DSCP value"),
+        ),
+        Choice(
+            DSCP_AF11,
+            _("AF11"),
+            description=_("Assured Forwarding class 1, low drop probability"),
+        ),
+        Choice(
+            DSCP_AF12,
+            _("AF12"),
+            description=_("Assured Forwarding class 1, medium drop probability"),
+        ),
+        Choice(
+            DSCP_AF13,
+            _("AF13"),
+            description=_("Assured Forwarding class 1, high drop probability"),
+        ),
+        Choice(
+            DSCP_AF21,
+            _("AF21"),
+            description=_("Assured Forwarding class 2, low drop probability"),
+        ),
+        Choice(
+            DSCP_AF22,
+            _("AF22"),
+            description=_("Assured Forwarding class 2, medium drop probability"),
+        ),
+        Choice(
+            DSCP_AF23,
+            _("AF23"),
+            description=_("Assured Forwarding class 2, high drop probability"),
+        ),
+        Choice(
+            DSCP_AF31,
+            _("AF31"),
+            description=_("Assured Forwarding class 3, low drop probability"),
+        ),
+        Choice(
+            DSCP_AF32,
+            _("AF32"),
+            description=_("Assured Forwarding class 3, medium drop probability"),
+        ),
+        Choice(
+            DSCP_AF33,
+            _("AF33"),
+            description=_("Assured Forwarding class 3, high drop probability"),
+        ),
+        Choice(
+            DSCP_AF41,
+            _("AF41"),
+            description=_("Assured Forwarding class 4, low drop probability"),
+        ),
+        Choice(
+            DSCP_AF42,
+            _("AF42"),
+            description=_("Assured Forwarding class 4, medium drop probability"),
+        ),
+        Choice(
+            DSCP_AF43,
+            _("AF43"),
+            description=_("Assured Forwarding class 4, high drop probability"),
+        ),
+        Choice(
+            DSCP_CS0,
+            _("CS0"),
+            description=_("Class Selector 0, best effort"),
+        ),
+        Choice(
+            DSCP_CS1,
+            _("CS1"),
+            description=_("Class Selector 1, streaming"),
+        ),
+        Choice(
+            DSCP_CS2,
+            _("CS2"),
+            description=_("Class Selector 2, OAM"),
+        ),
+        Choice(
+            DSCP_CS3,
+            _("CS3"),
+            description=_("Class Selector 3, signaling"),
+        ),
+        Choice(
+            DSCP_CS4,
+            _("CS4"),
+            description=_("Class Selector 4, policy plane and priority queue"),
+        ),
+        Choice(
+            DSCP_CS5,
+            _("CS5"),
+            description=_("Class Selector 5, broadcast video"),
+        ),
+        Choice(
+            DSCP_CS6,
+            _("CS6"),
+            description=_("Class Selector 6, network control"),
+        ),
+        Choice(
+            DSCP_CS7,
+            _("CS7"),
+            description=_("Class Selector 7, reserved"),
+        ),
+        Choice(
+            DSCP_EF,
+            _("EF"),
+            description=_("Expedited Forwarding, low loss and low latency"),
+        ),
+        Choice(DSCP_VA, _("VA"), description=_("Voice Admit")),
     )
 
 
@@ -505,8 +793,18 @@ class USegAttributeMatchOperatorChoices(ChoiceSet):
     MATCH_ALL = "all"
 
     CHOICES = (
-        (MATCH_ANY, _("any"), "blue"),
-        (MATCH_ALL, _("all"), "yellow"),
+        Choice(
+            MATCH_ANY,
+            _("any"),
+            color="blue",
+            description=_("An endpoint matches if any attribute matches"),
+        ),
+        Choice(
+            MATCH_ALL,
+            _("all"),
+            color="yellow",
+            description=_("An endpoint matches only if every attribute matches"),
+        ),
     )
 
 
@@ -524,9 +822,24 @@ class USegAttributeTypeChoices(ChoiceSet):
     TYPE_VM = "vm"
 
     CHOICES = (
-        (TYPE_MAC, _("MAC"), "blue"),
-        (TYPE_IP, _("IP"), "teal"),
-        (TYPE_VM, _("Virtual Machine"), "yellow"),
+        Choice(
+            TYPE_MAC,
+            _("MAC"),
+            color="blue",
+            description=_("Match endpoints by MAC address"),
+        ),
+        Choice(
+            TYPE_IP,
+            _("IP"),
+            color="teal",
+            description=_("Match endpoints by IP address or subnet"),
+        ),
+        Choice(
+            TYPE_VM,
+            _("Virtual Machine"),
+            color="yellow",
+            description=_("Match endpoints by virtual machine attribute"),
+        ),
     )
 
 
@@ -543,8 +856,18 @@ class VRFPCEnforcementDirectionChoices(ChoiceSet):
     DIR_EGRESS = "egress"
 
     CHOICES = (
-        (DIR_INGRESS, _("ingress"), "blue"),
-        (DIR_EGRESS, _("egress"), "yellow"),
+        Choice(
+            DIR_INGRESS,
+            _("ingress"),
+            color="blue",
+            description=_("Apply the policy on the ingress leaf"),
+        ),
+        Choice(
+            DIR_EGRESS,
+            _("egress"),
+            color="yellow",
+            description=_("Apply the policy on the egress leaf"),
+        ),
     )
 
 
@@ -556,8 +879,18 @@ class VRFPCEnforcementPreferenceChoices(ChoiceSet):
     PREF_UNENFORCED = "unenforced"
 
     CHOICES = (
-        (PREF_ENFORCED, _("enforced"), "green"),
-        (PREF_UNENFORCED, _("unenforced"), "red"),
+        Choice(
+            PREF_ENFORCED,
+            _("enforced"),
+            color="green",
+            description=_("Contracts are required between Endpoint Groups"),
+        ),
+        Choice(
+            PREF_UNENFORCED,
+            _("unenforced"),
+            color="red",
+            description=_("Traffic flows without a Contract"),
+        ),
     )
 
 
@@ -574,8 +907,18 @@ class VLANAllocationModeChoices(ChoiceSet):
     MODE_DYNAMIC = "dynamic"
 
     CHOICES = (
-        (MODE_STATIC, _("static"), "blue"),
-        (MODE_DYNAMIC, _("dynamic"), "green"),
+        Choice(
+            MODE_STATIC,
+            _("static"),
+            color="blue",
+            description=_("VLAN IDs are assigned manually"),
+        ),
+        Choice(
+            MODE_DYNAMIC,
+            _("dynamic"),
+            color="green",
+            description=_("VLAN IDs are assigned by the APIC"),
+        ),
     )
 
 
@@ -588,9 +931,24 @@ class VLANPoolRangeAllocationModeChoices(ChoiceSet):
     MODE_DYNAMIC = "dynamic"
 
     CHOICES = (
-        (MODE_INHERIT, _("inherit"), "gray"),
-        (MODE_STATIC, _("static"), "blue"),
-        (MODE_DYNAMIC, _("dynamic"), "green"),
+        Choice(
+            MODE_INHERIT,
+            _("inherit"),
+            color="gray",
+            description=_("Follow the allocation mode of the parent VLAN Pool"),
+        ),
+        Choice(
+            MODE_STATIC,
+            _("static"),
+            color="blue",
+            description=_("VLAN IDs are assigned manually"),
+        ),
+        Choice(
+            MODE_DYNAMIC,
+            _("dynamic"),
+            color="green",
+            description=_("VLAN IDs are assigned by the APIC"),
+        ),
     )
 
 
@@ -602,8 +960,18 @@ class VLANPoolRangeRoleChoices(ChoiceSet):
     ROLE_INTERNAL = "internal"
 
     CHOICES = (
-        (ROLE_EXTERNAL, _("external"), "blue"),
-        (ROLE_INTERNAL, _("internal"), "purple"),
+        Choice(
+            ROLE_EXTERNAL,
+            _("external"),
+            color="blue",
+            description=_("Encapsulation used on the wire"),
+        ),
+        Choice(
+            ROLE_INTERNAL,
+            _("internal"),
+            color="purple",
+            description=_("Encapsulation used internally by a VMM domain"),
+        ),
     )
 
 
@@ -621,7 +989,22 @@ class LeafInterfacePolicyGroupTypeChoices(ChoiceSet):
     TYPE_VPC = "vpc"
 
     CHOICES = (
-        (TYPE_ACCESS, _("Access"), "blue"),
-        (TYPE_PC, _("Port Channel"), "cyan"),
-        (TYPE_VPC, _("Virtual Port Channel"), "purple"),
+        Choice(
+            TYPE_ACCESS,
+            _("Access"),
+            color="blue",
+            description=_("Single interface per leaf"),
+        ),
+        Choice(
+            TYPE_PC,
+            _("Port Channel"),
+            color="cyan",
+            description=_("Bundled interfaces on one leaf"),
+        ),
+        Choice(
+            TYPE_VPC,
+            _("Virtual Port Channel"),
+            color="purple",
+            description=_("Bundled interfaces across a leaf pair"),
+        ),
     )
