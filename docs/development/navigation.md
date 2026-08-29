@@ -86,7 +86,7 @@ Access Policies holds the interface and switch profile chain.
 
 !!! note "Core helper caveat"
     NetBox core ships `get_model_item` / `get_model_buttons` helpers,
-    but in NetBox 4.5 / 4.6 they build core `MenuItem` objects and
+    but in NetBox 4.7 they build core `MenuItem` objects and
     non-plugin view names. They do not replace `PluginMenuItem` /
     `PluginMenuButton` for this plugin yet. Keep the manual plugin menu
     entries until NetBox exposes plugin-aware helpers.

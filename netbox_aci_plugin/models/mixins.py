@@ -5,39 +5,7 @@
 """Reusable model mixins for ACI policy objects."""
 
 from django.core.exceptions import FieldDoesNotExist, ValidationError
-from django.db import models
 from django.utils.translation import gettext as _
-
-from dcim.models.mixins import CachedScopeMixin
-
-
-class ACICachedScopeMixin(CachedScopeMixin):
-    """Cached scope with a version-independent on_delete behavior.
-
-    Overrides the _region and _site_group cache fields inherited from
-    NetBox's CachedScopeMixin, pinning on_delete to SET_NULL. Both
-    fields may cache an ancestor of the actual scope, so deleting that
-    ancestor must not delete the scoped object (NetBox issue #22682).
-    The explicit declarations also keep the migration state identical
-    on every supported NetBox version. Remove the overrides once the
-    minimum supported NetBox release ships the upstream fix.
-    """
-
-    _region = models.ForeignKey(
-        to="dcim.Region",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    _site_group = models.ForeignKey(
-        to="dcim.SiteGroup",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-
-    class Meta:
-        abstract = True
 
 
 class UniqueGenericForeignKeyMixin:

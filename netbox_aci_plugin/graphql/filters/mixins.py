@@ -8,13 +8,9 @@ from typing import TYPE_CHECKING, Annotated
 import strawberry
 import strawberry_django
 from strawberry.scalars import ID
+from strawberry_django import StrFilterLookup
 
 from netbox.graphql.filters import NetBoxModelFilter
-
-try:
-    from strawberry_django import StrFilterLookup
-except ImportError:  # pragma: no cover
-    from strawberry_django import FilterLookup as StrFilterLookup
 
 if TYPE_CHECKING:
     from netbox.graphql.filter_lookups import TreeNodeFilter
