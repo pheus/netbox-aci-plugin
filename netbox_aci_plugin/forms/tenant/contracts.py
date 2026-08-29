@@ -4,7 +4,6 @@
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
@@ -17,22 +16,20 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import (
     BOOLEAN_WITH_BLANK_CHOICES,
+    GenericObjectFormMixin,
     add_blank_choice,
-    get_field_value,
 )
 from utilities.forms.fields import (
     CommentField,
-    ContentTypeChoiceField,
     CSVChoiceField,
     CSVContentTypeField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    GenericObjectChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet, TabbedGroups
-from utilities.forms.widgets import HTMXSelect
-from utilities.templatetags.builtins.filters import bettertitle
 
 from ...choices import (
     ContractRelationRoleChoices,
@@ -461,7 +458,7 @@ class ACIContractImportForm(NetBoxModelImportForm):
 #
 
 
-class ACIContractRelationEditForm(NetBoxModelForm):
+class ACIContractRelationEditForm(GenericObjectFormMixin, NetBoxModelForm):
     """NetBox edit form for the ACI Contract Relation model."""
 
     aci_fabric = DynamicModelChoiceField(
@@ -484,20 +481,17 @@ class ACIContractRelationEditForm(NetBoxModelForm):
         },
         label=_("ACI Contract"),
     )
-    aci_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(CONTRACT_RELATION_OBJECT_TYPES),
-        widget=HTMXSelect(),
-        label=_("ACI Object Type"),
-    )
-    aci_object = DynamicModelChoiceField(
-        queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
+    aci_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(
+            CONTRACT_RELATION_OBJECT_TYPES
+        ),
         query_params={
             "aci_fabric_id": "$aci_fabric",
             "aci_tenant_id": "$aci_tenant",
         },
         selector=True,
+        hx_target_id="aci_object",
         label=_("ACI Object"),
-        disabled=True,
     )
     role = forms.ChoiceField(
         choices=ContractRelationRoleChoices,
@@ -516,10 +510,10 @@ class ACIContractRelationEditForm(NetBoxModelForm):
             "aci_fabric",
             "aci_tenant",
             "aci_contract",
-            "aci_object_type",
             "aci_object",
             "tags",
             name=_("ACI Contract Relation"),
+            html_id="aci_object",
         ),
         FieldSet(
             "role",
@@ -531,7 +525,6 @@ class ACIContractRelationEditForm(NetBoxModelForm):
         model = ACIContractRelation
         fields: tuple = (
             "aci_contract",
-            "aci_object_type",
             "role",
             "comments",
             "tags",
@@ -539,20 +532,14 @@ class ACIContractRelationEditForm(NetBoxModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI Contract Relation form."""
-        # Initialize fields with initial values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()
 
+        # Seed the helper dropdowns from the OBJECT tenant, not the contract
+        # tenant. A contract held in "common" must still filter the object
+        # dropdown by its own tenant, and the contract dropdown must offer
+        # both the object's tenant and common.
         if instance is not None and instance.aci_object:
-            # Initialize ACI object field
-            initial["aci_object"] = instance.aci_object
-
-            # Initialize tenant/fabric from the OBJECT tenant, not the
-            # contract tenant.  When the contract comes from "common",
-            # the helper tenant must still point at the object's tenant
-            # so that the aci_object dropdown filters correctly and
-            # the aci_contract dropdown shows both own + common
-            # contracts.
             initial["aci_tenant"] = instance.aci_object_tenant
             initial["aci_fabric"] = instance.aci_object_tenant.aci_fabric
 
@@ -560,42 +547,8 @@ class ACIContractRelationEditForm(NetBoxModelForm):
 
         super().__init__(*args, **kwargs)
 
-        if aci_object_type_id := get_field_value(self, "aci_object_type"):
-            try:
-                # Retrieve the ContentType model class based on the ACI object
-                # type
-                aci_object_type = ContentType.objects.get(pk=aci_object_type_id)
-                aci_model = aci_object_type.model_class()
 
-                # Configure the queryset and label for the aci_object field
-                self.fields["aci_object"].queryset = aci_model.objects.all()
-                self.fields["aci_object"].widget.attrs["selector"] = (
-                    aci_model._meta.label_lower
-                )
-                self.fields["aci_object"].disabled = False
-                self.fields["aci_object"].label = _(
-                    bettertitle(aci_model._meta.verbose_name)
-                )
-            except ObjectDoesNotExist:  # pragma: no cover
-                pass
-
-            # Clears the aci_object field if the selected type changes
-            if (
-                self.instance
-                and self.instance.pk
-                and aci_object_type_id != self.instance.aci_object_type_id
-            ):
-                self.initial["aci_object"] = None
-
-    def clean(self) -> None:
-        """Validate form fields for the ACI Contract Relation form."""
-        super().clean()
-
-        # Ensure the selected ACI object gets assigned
-        self.instance.aci_object = self.cleaned_data.get("aci_object")
-
-
-class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
+class ACIContractRelationBulkEditForm(GenericObjectFormMixin, NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI Contract Relation model."""
 
     aci_tenant = DynamicModelChoiceField(
@@ -609,19 +562,15 @@ class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI Contract"),
     )
-    aci_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(CONTRACT_RELATION_OBJECT_TYPES),
-        required=False,
-        widget=HTMXSelect(method="post", attrs={"hx-select": "#form_fields"}),
-        label=_("ACI Object Type"),
-    )
-    aci_object = DynamicModelChoiceField(
-        queryset=ACIEndpointGroup.objects.none(),  # Initial queryset
+    aci_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(
+            CONTRACT_RELATION_OBJECT_TYPES
+        ),
         query_params={"aci_tenant_id": "$aci_tenant"},
         selector=True,
         required=False,
+        hx_method="post",
         label=_("ACI Object"),
-        disabled=True,
     )
     role = forms.ChoiceField(
         choices=add_blank_choice(ContractRelationRoleChoices),
@@ -635,7 +584,6 @@ class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
         FieldSet(
             "aci_tenant",
             "aci_contract",
-            "aci_object_type",
             "aci_object",
             name=_("ACI Contract Relation"),
         ),
@@ -645,29 +593,6 @@ class ACIContractRelationBulkEditForm(NetBoxModelBulkEditForm):
         ),
     )
     nullable_fields: tuple = ("comments",)
-
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize the ACI Contract Relation bulk edit form."""
-        super().__init__(*args, **kwargs)
-
-        if aci_object_type_id := get_field_value(self, "aci_object_type"):
-            try:
-                # Retrieve the ContentType model class based on the ACI object
-                # type
-                aci_object_type = ContentType.objects.get(pk=aci_object_type_id)
-                aci_model = aci_object_type.model_class()
-
-                # Configure the queryset and label for the aci_object field
-                self.fields["aci_object"].queryset = aci_model.objects.all()
-                self.fields["aci_object"].widget.attrs["selector"] = (
-                    aci_model._meta.label_lower
-                )
-                self.fields["aci_object"].disabled = False
-                self.fields["aci_object"].label = _(
-                    bettertitle(aci_model._meta.verbose_name)
-                )
-            except ObjectDoesNotExist:  # pragma: no cover
-                pass
 
 
 class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):

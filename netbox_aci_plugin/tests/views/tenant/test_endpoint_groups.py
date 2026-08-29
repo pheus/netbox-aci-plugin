@@ -105,8 +105,8 @@ class ACIEndpointGroupViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_tenant={self.aci_epg.aci_tenant.pk}&amp;'
-            f"aci_object={self.aci_epg.pk}&amp;"
-            f"aci_object_type={content_type.pk}",
+            f"aci_object_object_id={self.aci_epg.pk}&amp;"
+            f"aci_object_content_type={content_type.pk}",
         )
 
 
@@ -195,8 +195,8 @@ class ACIUSegEndpointGroupViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_tenant={self.aci_useg_epg.aci_tenant.pk}&amp;'
-            f"aci_object={self.aci_useg_epg.pk}&amp;"
-            f"aci_object_type={content_type.pk}",
+            f"aci_object_object_id={self.aci_useg_epg.pk}&amp;"
+            f"aci_object_content_type={content_type.pk}",
         )
 
     def test_aciusegendpointgroup_network_attributes_tab(self) -> None:
@@ -273,8 +273,8 @@ class ACIUSegNetworkAttributeViewTestCase(
             "name_alias": "NetAttrXAlias",
             "description": "Form-data Network Attribute",
             "aci_useg_endpoint_group": cls.aci_useg_epg.pk,
-            "attr_object_type": cls.ip_ct.pk,
-            "attr_object": ips[3].pk,
+            "attr_object_content_type": cls.ip_ct.pk,
+            "attr_object_object_id": ips[3].pk,
             "use_epg_subnet": False,
             "tags": [t.pk for t in tags],
         }

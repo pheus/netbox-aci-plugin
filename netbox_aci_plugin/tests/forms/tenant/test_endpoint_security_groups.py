@@ -36,42 +36,44 @@ class ACIEndpointSecurityGroupFormCoverageTestCase(ACIBaseFormTestCase):
     def test_esg_epg_selector_edit_form_object_type_unknown(self) -> None:
         """Test the ESG EPG selector edit form tolerates an unknown type."""
         form = ACIEsgEndpointGroupSelectorEditForm(
-            data={"aci_epg_object_type": 99999999}
+            data={"aci_epg_object_content_type": 99999999}
         )
-        self.assertIn("aci_epg_object", form.fields)
+        self.assertIsNone(form.fields["aci_epg_object"].selected_model)
 
     def test_esg_epg_selector_bulk_edit_form_configures_field(self) -> None:
         """Test the ESG EPG selector bulk edit form configures the field."""
         aci_epg_object_type = ContentType.objects.get_for_model(ACIEndpointGroup)
         form = ACIEsgEndpointGroupSelectorBulkEditForm(
-            data={"aci_epg_object_type": aci_epg_object_type.pk}
+            data={"aci_epg_object_content_type": aci_epg_object_type.pk}
         )
-        self.assertEqual(form.fields["aci_epg_object"].queryset.model, ACIEndpointGroup)
+        self.assertIs(form.fields["aci_epg_object"].selected_model, ACIEndpointGroup)
 
     def test_esg_epg_selector_bulk_edit_form_object_type_unknown(self) -> None:
         """Test the ESG EPG selector bulk edit form tolerates unknown type."""
         form = ACIEsgEndpointGroupSelectorBulkEditForm(
-            data={"aci_epg_object_type": 99999999}
+            data={"aci_epg_object_content_type": 99999999}
         )
-        self.assertIn("aci_epg_object", form.fields)
+        self.assertIsNone(form.fields["aci_epg_object"].selected_model)
 
     def test_esg_endpoint_selector_edit_form_object_type_unknown(self) -> None:
         """Test the ESG endpoint selector edit form tolerates unknown type."""
-        form = ACIEsgEndpointSelectorEditForm(data={"ep_object_type": 99999999})
-        self.assertIn("ep_object", form.fields)
+        form = ACIEsgEndpointSelectorEditForm(data={"ep_object_content_type": 99999999})
+        self.assertIsNone(form.fields["ep_object"].selected_model)
 
     def test_esg_endpoint_selector_bulk_edit_form_configures_field(self) -> None:
         """Test the ESG endpoint selector bulk edit form configures field."""
         ep_object_type = ContentType.objects.get_for_model(IPAddress)
         form = ACIEsgEndpointSelectorBulkEditForm(
-            data={"ep_object_type": ep_object_type.pk}
+            data={"ep_object_content_type": ep_object_type.pk}
         )
-        self.assertEqual(form.fields["ep_object"].queryset.model, IPAddress)
+        self.assertIs(form.fields["ep_object"].selected_model, IPAddress)
 
     def test_esg_endpoint_selector_bulk_edit_form_object_type_unknown(self) -> None:
         """Test the ESG endpoint selector bulk edit tolerates unknown type."""
-        form = ACIEsgEndpointSelectorBulkEditForm(data={"ep_object_type": 99999999})
-        self.assertIn("ep_object", form.fields)
+        form = ACIEsgEndpointSelectorBulkEditForm(
+            data={"ep_object_content_type": 99999999}
+        )
+        self.assertIsNone(form.fields["ep_object"].selected_model)
 
 
 class ACIEndpointSecurityGroupFormTestCase(ACIBaseFormTestCase):
@@ -138,10 +140,10 @@ class ACIEsgEndpointGroupSelectorFormTestCase(ACIBaseFormTestCase):
                 "name_alias": "ACI Test Alias 1",
                 "description": "Invalid Description: ö",
                 "aci_endpoint_security_group": self.aci_esg,
-                "aci_epg_object_type": ContentType.objects.get_for_model(
+                "aci_epg_object_content_type": ContentType.objects.get_for_model(
                     self.aci_bd._meta.model
                 ).id,
-                "aci_epg_object": self.aci_bd,
+                "aci_epg_object_object_id": self.aci_bd.pk,
             }
         )
         self.assertFalse(aci_esg_epg_selector_form.is_valid())
@@ -157,7 +159,7 @@ class ACIEsgEndpointGroupSelectorFormTestCase(ACIBaseFormTestCase):
             aci_esg_epg_selector_form.errors["description"],
             [self.description_error_message],
         )
-        self.assertIn("aci_epg_object_type", aci_esg_epg_selector_form.errors)
+        self.assertIn("aci_epg_object", aci_esg_epg_selector_form.errors)
 
     def test_valid_aci_esg_epg_selector_field_values(self) -> None:
         """Test validation of valid ACI ESG EPG Selector field values."""
@@ -167,17 +169,17 @@ class ACIEsgEndpointGroupSelectorFormTestCase(ACIBaseFormTestCase):
                 "name_alias": "Testing",
                 "description": "ESG Endpoint Group Selector for NetBox ACI Plugin",
                 "aci_endpoint_security_group": self.aci_esg,
-                "aci_epg_object_type": ContentType.objects.get_for_model(
+                "aci_epg_object_content_type": ContentType.objects.get_for_model(
                     self.aci_epg._meta.model
                 ).id,
-                "aci_epg_object": self.aci_epg,
+                "aci_epg_object_object_id": self.aci_epg.pk,
             }
         )
         self.assertTrue(aci_esg_epg_selector_form.is_valid())
         self.assertEqual(aci_esg_epg_selector_form.errors.get("name"), None)
         self.assertEqual(aci_esg_epg_selector_form.errors.get("name_alias"), None)
         self.assertEqual(aci_esg_epg_selector_form.errors.get("description"), None)
-        self.assertNotIn("aci_epg_object_type", aci_esg_epg_selector_form.errors)
+        self.assertNotIn("aci_epg_object", aci_esg_epg_selector_form.errors)
 
 
 class ACIEsgEndpointSelectorFormTestCase(ACIBaseFormTestCase):
@@ -203,10 +205,10 @@ class ACIEsgEndpointSelectorFormTestCase(ACIBaseFormTestCase):
                 "name_alias": "ACI Test Alias 1",
                 "description": "Invalid Description: ö",
                 "aci_endpoint_security_group": self.aci_esg,
-                "ep_object_type": ContentType.objects.get_for_model(
+                "ep_object_content_type": ContentType.objects.get_for_model(
                     self.aci_vrf._meta.model
                 ).id,
-                "ep_object": self.aci_vrf,
+                "ep_object_object_id": self.aci_vrf.pk,
             }
         )
         self.assertFalse(aci_esg_ep_selector_form.is_valid())
@@ -222,7 +224,7 @@ class ACIEsgEndpointSelectorFormTestCase(ACIBaseFormTestCase):
             aci_esg_ep_selector_form.errors["description"],
             [self.description_error_message],
         )
-        self.assertIn("ep_object_type", aci_esg_ep_selector_form.errors)
+        self.assertIn("ep_object", aci_esg_ep_selector_form.errors)
 
     def test_valid_aci_endpoint_selector_field_values(self) -> None:
         """Test validation of valid ESG Endpoint Selector field values."""
@@ -232,14 +234,14 @@ class ACIEsgEndpointSelectorFormTestCase(ACIBaseFormTestCase):
                 "name_alias": "Testing",
                 "description": "ESG Endpoint Selector for NetBox ACI Plugin",
                 "aci_endpoint_security_group": self.aci_esg,
-                "ep_object_type": ContentType.objects.get_for_model(
+                "ep_object_content_type": ContentType.objects.get_for_model(
                     self.ip_address._meta.model
                 ).id,
-                "ep_object": self.ip_address,
+                "ep_object_object_id": self.ip_address.pk,
             }
         )
         self.assertTrue(aci_esg_ep_selector_form.is_valid())
         self.assertEqual(aci_esg_ep_selector_form.errors.get("name"), None)
         self.assertEqual(aci_esg_ep_selector_form.errors.get("name_alias"), None)
         self.assertEqual(aci_esg_ep_selector_form.errors.get("description"), None)
-        self.assertNotIn("ep_object_type", aci_esg_ep_selector_form.errors)
+        self.assertNotIn("ep_object", aci_esg_ep_selector_form.errors)

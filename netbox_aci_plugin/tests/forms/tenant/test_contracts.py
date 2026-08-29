@@ -6,6 +6,7 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 
 from ....choices import (
+    ContractRelationRoleChoices,
     ContractSubjectFilterApplyDirectionChoices,
     ContractSubjectFilterPriorityChoices,
     QualityOfServiceClassChoices,
@@ -21,7 +22,11 @@ from ....forms.tenant.contracts import (
     ACIContractSubjectFilterImportForm,
     ACIContractSubjectImportForm,
 )
-from ....models.tenant.contracts import ACIContract, ACIContractSubject
+from ....models.tenant.contracts import (
+    ACIContract,
+    ACIContractRelation,
+    ACIContractSubject,
+)
 from ....models.tenant.endpoint_groups import ACIEndpointGroup
 from ..base import ACIBaseFormTestCase
 
@@ -110,21 +115,41 @@ class ACIContractRelationFormTestCase(ACIBaseFormTestCase):
 
     def test_edit_form_aci_object_type_unknown(self) -> None:
         """Test the edit form tolerates an unknown ACI object type."""
-        form = ACIContractRelationEditForm(data={"aci_object_type": 99999999})
-        self.assertIn("aci_object", form.fields)
+        form = ACIContractRelationEditForm(data={"aci_object_content_type": 99999999})
+        self.assertIsNone(form.fields["aci_object"].selected_model)
 
     def test_bulk_edit_form_aci_object_type_configures_field(self) -> None:
         """Test the bulk edit form configures aci_object for a valid type."""
         aci_object_type = ContentType.objects.get_for_model(ACIEndpointGroup)
         form = ACIContractRelationBulkEditForm(
-            data={"aci_object_type": aci_object_type.pk}
+            data={"aci_object_content_type": aci_object_type.pk}
         )
-        self.assertEqual(form.fields["aci_object"].queryset.model, ACIEndpointGroup)
+        self.assertIs(form.fields["aci_object"].selected_model, ACIEndpointGroup)
 
     def test_bulk_edit_form_aci_object_type_unknown(self) -> None:
         """Test the bulk edit form tolerates an unknown ACI object type."""
-        form = ACIContractRelationBulkEditForm(data={"aci_object_type": 99999999})
-        self.assertIn("aci_object", form.fields)
+        form = ACIContractRelationBulkEditForm(
+            data={"aci_object_content_type": 99999999}
+        )
+        self.assertIsNone(form.fields["aci_object"].selected_model)
+
+    def test_edit_form_seeds_helpers_from_the_object_tenant(self) -> None:
+        """Test the edit form pre-fills the helpers from the object tenant."""
+        aci_contract = ACIContract.objects.create(
+            name="ACIContractRelationHelperSeed",
+            aci_tenant=self.aci_tenant,
+        )
+        relation = ACIContractRelation.objects.create(
+            aci_contract=aci_contract,
+            aci_object=self.aci_vrf,
+            role=ContractRelationRoleChoices.ROLE_PROVIDER,
+        )
+
+        form = ACIContractRelationEditForm(instance=relation)
+
+        self.assertEqual(form.initial["aci_tenant"], self.aci_tenant)
+        self.assertEqual(form.initial["aci_fabric"], self.aci_fabric)
+        self.assertEqual(form.initial["aci_object"], self.aci_vrf)
 
 
 class ACIContractSubjectFilterImportFormTestCase(ACIBaseFormTestCase):

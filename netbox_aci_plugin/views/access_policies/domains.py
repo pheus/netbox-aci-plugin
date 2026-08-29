@@ -188,8 +188,8 @@ class ACIRoutedDomainAAEPBindingsView(ACIAAEPDomainBindingChildrenView):
             _("Bind an AAEP"),
             url_params={
                 "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
-                "aci_domain_object": lambda ctx: ctx["object"].pk,
-                "aci_domain_object_type": lambda ctx: (
+                "aci_domain_object_object_id": lambda ctx: ctx["object"].pk,
+                "aci_domain_object_content_type": lambda ctx: (
                     ContentType.objects.get_for_model(ctx["object"]).pk
                 ),
             },
@@ -341,8 +341,8 @@ class ACIPhysicalDomainAAEPBindingsView(ACIAAEPDomainBindingChildrenView):
             _("Bind an AAEP"),
             url_params={
                 "aci_fabric": lambda ctx: ctx["object"].aci_fabric_id,
-                "aci_domain_object": lambda ctx: ctx["object"].pk,
-                "aci_domain_object_type": lambda ctx: (
+                "aci_domain_object_object_id": lambda ctx: ctx["object"].pk,
+                "aci_domain_object_content_type": lambda ctx: (
                     ContentType.objects.get_for_model(ctx["object"]).pk
                 ),
             },

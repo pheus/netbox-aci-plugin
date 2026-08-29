@@ -558,6 +558,10 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 The mixin raises a `ValidationError` with the verbose names of the
 conflicting target model + the additional unique fields.
 
+On the form side the same `Q` object bounds a single
+`GenericObjectChoiceField` rather than a content-type plus object pair.
+See [Forms - Generic foreign keys](forms.md#generic-foreign-keys).
+
 ## `OwnerMixin` coverage
 
 `OwnerMixin` is the user-attribution mixin from `users.models`. It's

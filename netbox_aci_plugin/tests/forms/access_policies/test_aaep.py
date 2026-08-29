@@ -10,7 +10,10 @@ from ....forms.access_policies.aaep import (
     ACIAAEPDomainBindingImportForm,
     ACIAttachableAccessEntityProfileEditForm,
 )
-from ....models.access_policies.aaep import ACIAttachableAccessEntityProfile
+from ....models.access_policies.aaep import (
+    ACIAAEPDomainBinding,
+    ACIAttachableAccessEntityProfile,
+)
 from ....models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from ....models.access_policies.vlan_pools import ACIVLANPool
 from ..base import ACIBaseFormTestCase
@@ -73,47 +76,59 @@ class ACIAAEPDomainBindingFormTestCase(ACIBaseFormTestCase):
 
     def test_edit_form_aci_domain_object_type_unknown(self) -> None:
         """Test the edit form tolerates an unknown ACI domain object type."""
-        form = ACIAAEPDomainBindingEditForm(data={"aci_domain_object_type": 99999999})
-        self.assertTrue(form.fields["aci_domain_object"].disabled)
+        form = ACIAAEPDomainBindingEditForm(
+            data={"aci_domain_object_content_type": 99999999}
+        )
+        self.assertIsNone(form.fields["aci_domain_object"].selected_model)
         self.assertEqual(form.fields["aci_domain_object"].queryset.count(), 0)
 
     def test_edit_form_physical_domain_type_configures_field(self) -> None:
         """Test edit form configures aci_domain_object for physical domain."""
         aci_domain_object_type = ContentType.objects.get_for_model(ACIPhysicalDomain)
         form = ACIAAEPDomainBindingEditForm(
-            data={"aci_domain_object_type": aci_domain_object_type.pk}
+            data={"aci_domain_object_content_type": aci_domain_object_type.pk}
         )
-        self.assertEqual(
-            form.fields["aci_domain_object"].queryset.model, ACIPhysicalDomain
+        self.assertIs(
+            form.fields["aci_domain_object"].selected_model, ACIPhysicalDomain
         )
 
     def test_edit_form_routed_domain_type_configures_field(self) -> None:
         """Test edit form configures aci_domain_object for routed domain."""
         aci_domain_object_type = ContentType.objects.get_for_model(ACIRoutedDomain)
         form = ACIAAEPDomainBindingEditForm(
-            data={"aci_domain_object_type": aci_domain_object_type.pk}
+            data={"aci_domain_object_content_type": aci_domain_object_type.pk}
         )
-        self.assertEqual(
-            form.fields["aci_domain_object"].queryset.model, ACIRoutedDomain
-        )
+        self.assertIs(form.fields["aci_domain_object"].selected_model, ACIRoutedDomain)
 
     def test_bulk_edit_form_physical_domain_type_configures_field(self) -> None:
         """Test bulk edit form aci_domain_object for physical domain type."""
         aci_domain_object_type = ContentType.objects.get_for_model(ACIPhysicalDomain)
         form = ACIAAEPDomainBindingBulkEditForm(
-            data={"aci_domain_object_type": aci_domain_object_type.pk}
+            data={"aci_domain_object_content_type": aci_domain_object_type.pk}
         )
-        self.assertEqual(
-            form.fields["aci_domain_object"].queryset.model, ACIPhysicalDomain
+        self.assertIs(
+            form.fields["aci_domain_object"].selected_model, ACIPhysicalDomain
         )
 
     def test_bulk_edit_form_aci_domain_object_type_unknown(self) -> None:
         """Test bulk edit form tolerates an unknown ACI domain object type."""
         form = ACIAAEPDomainBindingBulkEditForm(
-            data={"aci_domain_object_type": 99999999}
+            data={"aci_domain_object_content_type": 99999999}
         )
-        self.assertTrue(form.fields["aci_domain_object"].disabled)
+        self.assertIsNone(form.fields["aci_domain_object"].selected_model)
         self.assertEqual(form.fields["aci_domain_object"].queryset.count(), 0)
+
+    def test_edit_form_seeds_helper_fabric_from_the_bound_domain(self) -> None:
+        """Test the edit form pre-fills aci_fabric from the bound domain."""
+        binding = ACIAAEPDomainBinding.objects.create(
+            aci_aaep=self.aci_aaep,
+            aci_domain_object=self.aci_physical_domain,
+        )
+
+        form = ACIAAEPDomainBindingEditForm(instance=binding)
+
+        self.assertEqual(form.initial["aci_fabric"], self.aci_fabric)
+        self.assertEqual(form.initial["aci_domain_object"], self.aci_physical_domain)
 
     def test_import_form_narrows_aaep_by_fabric(self) -> None:
         """Test the import form narrows ACI AAEP queryset by ACI Fabric."""

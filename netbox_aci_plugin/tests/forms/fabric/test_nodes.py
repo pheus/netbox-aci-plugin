@@ -87,10 +87,10 @@ class ACINodeFormTestCase(ACIBaseFormTestCase):
                 "description": "Invalid Description: ö",
                 "aci_pod": self.aci_pod,
                 "node_id": 5000,
-                "node_object_type": ContentType.objects.get_for_model(
+                "node_object_content_type": ContentType.objects.get_for_model(
                     self.aci_bd._meta.model
                 ).id,
-                "node_object": self.aci_bd,
+                "node_object_object_id": self.aci_bd.pk,
                 "role": "invalid",
                 "node_type": "invalid",
                 "tep_ip_address": self.invalid_tep_ip,
@@ -103,7 +103,7 @@ class ACINodeFormTestCase(ACIBaseFormTestCase):
             aci_node_form.errors["description"], [self.description_error_message]
         )
         self.assertIn("node_id", aci_node_form.errors)
-        self.assertIn("node_object_type", aci_node_form.errors)
+        self.assertIn("node_object", aci_node_form.errors)
         self.assertIn("role", aci_node_form.errors)
         self.assertIn("node_type", aci_node_form.errors)
         self.assertIn("tep_ip_address", aci_node_form.errors)
@@ -117,10 +117,10 @@ class ACINodeFormTestCase(ACIBaseFormTestCase):
                 "description": "ACI Node for NetBox ACI Plugin",
                 "aci_pod": self.aci_pod,
                 "node_id": 120,
-                "node_object_type": ContentType.objects.get_for_model(
+                "node_object_content_type": ContentType.objects.get_for_model(
                     self.valid_node_object._meta.model
                 ).id,
-                "node_object": self.valid_node_object,
+                "node_object_object_id": self.valid_node_object.pk,
                 "role": NodeRoleChoices.ROLE_LEAF,
                 "node_type": NodeTypeChoices.TYPE_UNKNOWN,
                 "tep_ip_address": self.valid_tep_ip,
@@ -131,26 +131,28 @@ class ACINodeFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(aci_node_form.errors.get("name_alias"), None)
         self.assertEqual(aci_node_form.errors.get("description"), None)
         self.assertEqual(aci_node_form.errors.get("node_id"), None)
-        self.assertEqual(aci_node_form.errors.get("node_object_type"), None)
+        self.assertEqual(aci_node_form.errors.get("node_object"), None)
         self.assertEqual(aci_node_form.errors.get("role"), None)
         self.assertEqual(aci_node_form.errors.get("node_type"), None)
         self.assertEqual(aci_node_form.errors.get("tep_ip_address"), None)
 
     def test_edit_form_node_object_type_unknown(self) -> None:
         """Test the edit form tolerates an unknown node object type."""
-        form = ACINodeEditForm(data={"node_object_type": 99999999})
-        self.assertIn("node_object", form.fields)
+        form = ACINodeEditForm(data={"node_object_content_type": 99999999})
+        self.assertIsNone(form.fields["node_object"].selected_model)
 
     def test_bulk_edit_form_node_object_type_configures_field(self) -> None:
         """Test the bulk edit form configures node_object for a valid type."""
         node_object_type = ContentType.objects.get_for_model(Device)
-        form = ACINodeBulkEditForm(data={"node_object_type": node_object_type.pk})
-        self.assertEqual(form.fields["node_object"].queryset.model, Device)
+        form = ACINodeBulkEditForm(
+            data={"node_object_content_type": node_object_type.pk}
+        )
+        self.assertIs(form.fields["node_object"].selected_model, Device)
 
     def test_bulk_edit_form_node_object_type_unknown(self) -> None:
         """Test the bulk edit form tolerates an unknown node object type."""
-        form = ACINodeBulkEditForm(data={"node_object_type": 99999999})
-        self.assertIn("node_object", form.fields)
+        form = ACINodeBulkEditForm(data={"node_object_content_type": 99999999})
+        self.assertIsNone(form.fields["node_object"].selected_model)
 
     def test_edit_form_rejects_duplicate_node_id_across_pods(self) -> None:
         """Test the edit form rejects a Node ID already used in the Fabric."""

@@ -118,6 +118,6 @@ class ACIVRFViewTestCase(ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTe
         self.assertContains(
             response,
             f'href="{add_url}?aci_tenant={self.aci_vrf.aci_tenant.pk}&amp;'
-            f"aci_object={self.aci_vrf.pk}&amp;"
-            f"aci_object_type={content_type.pk}",
+            f"aci_object_object_id={self.aci_vrf.pk}&amp;"
+            f"aci_object_content_type={content_type.pk}",
         )

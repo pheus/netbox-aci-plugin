@@ -421,8 +421,8 @@ class ACIExternalEndpointGroupContractRelationView(ACIContractRelationChildrenVi
             _("Assign a Contract"),
             url_params={
                 "aci_tenant": lambda ctx: ctx["object"].aci_tenant.pk,
-                "aci_object": lambda ctx: ctx["object"].pk,
-                "aci_object_type": lambda ctx: (
+                "aci_object_object_id": lambda ctx: ctx["object"].pk,
+                "aci_object_content_type": lambda ctx: (
                     ContentType.objects.get_for_model(ctx["object"]).pk
                 ),
             },

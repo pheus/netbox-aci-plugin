@@ -121,10 +121,10 @@ class ACIEndpointGroupDomainBindingViewTestCase(
         useg_epg_ct = ContentType.objects.get_for_model(ACIUSegEndpointGroup)
         phys_ct = ContentType.objects.get_for_model(ACIPhysicalDomain)
         cls.form_data = {
-            "aci_epg_object_type": useg_epg_ct.pk,
-            "aci_epg_object": cls.aci_useg_epg.pk,
-            "aci_domain_object_type": phys_ct.pk,
-            "aci_domain_object": cls.aci_physical_domain3.pk,
+            "aci_epg_object_content_type": useg_epg_ct.pk,
+            "aci_epg_object_object_id": cls.aci_useg_epg.pk,
+            "aci_domain_object_content_type": phys_ct.pk,
+            "aci_domain_object_object_id": cls.aci_physical_domain3.pk,
             "deployment_immediacy": DeploymentImmediacyChoices.IMMEDIACY_IMMEDIATE,
             "resolution_immediacy": ResolutionImmediacyChoices.IMMEDIACY_IMMEDIATE,
             "comments": "Form-data domain binding",
@@ -181,8 +181,8 @@ class ACIEndpointGroupDomainBindingViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_fabric={self.aci_fabric.pk}&amp;'
-            f"aci_epg_object={self.aci_epg.pk}&amp;"
-            f"aci_epg_object_type={epg_ct.pk}",
+            f"aci_epg_object_object_id={self.aci_epg.pk}&amp;"
+            f"aci_epg_object_content_type={epg_ct.pk}",
         )
 
     def test_aciusegendpointgroup_domain_bindings_tab(self) -> None:
@@ -204,8 +204,8 @@ class ACIEndpointGroupDomainBindingViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_fabric={self.aci_fabric.pk}&amp;'
-            f"aci_epg_object={self.aci_useg_epg.pk}&amp;"
-            f"aci_epg_object_type={useg_epg_ct.pk}",
+            f"aci_epg_object_object_id={self.aci_useg_epg.pk}&amp;"
+            f"aci_epg_object_content_type={useg_epg_ct.pk}",
         )
 
     def test_aciphysicaldomain_endpoint_group_bindings_tab(self) -> None:
@@ -227,8 +227,8 @@ class ACIEndpointGroupDomainBindingViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_fabric={self.aci_fabric.pk}&amp;'
-            f"aci_domain_object={self.aci_physical_domain.pk}&amp;"
-            f"aci_domain_object_type={phys_ct.pk}",
+            f"aci_domain_object_object_id={self.aci_physical_domain.pk}&amp;"
+            f"aci_domain_object_content_type={phys_ct.pk}",
         )
 
 

@@ -64,52 +64,52 @@ class ACIEndpointGroupDomainBindingFormTestCase(ACIBaseFormTestCase):
     def test_edit_form_aci_epg_object_type_unknown(self) -> None:
         """Test the edit form tolerates an unknown ACI EPG object type."""
         form = ACIEndpointGroupDomainBindingEditForm(
-            data={"aci_epg_object_type": 99999999}
+            data={"aci_epg_object_content_type": 99999999}
         )
-        self.assertTrue(form.fields["aci_epg_object"].disabled)
+        self.assertIsNone(form.fields["aci_epg_object"].selected_model)
         self.assertEqual(form.fields["aci_epg_object"].queryset.count(), 0)
 
     def test_edit_form_aci_domain_object_type_unknown(self) -> None:
         """Test the edit form tolerates an unknown ACI domain object type."""
         form = ACIEndpointGroupDomainBindingEditForm(
-            data={"aci_domain_object_type": 99999999}
+            data={"aci_domain_object_content_type": 99999999}
         )
-        self.assertTrue(form.fields["aci_domain_object"].disabled)
+        self.assertIsNone(form.fields["aci_domain_object"].selected_model)
         self.assertEqual(form.fields["aci_domain_object"].queryset.count(), 0)
 
     def test_edit_form_endpoint_group_type_configures_field(self) -> None:
         """Test edit form configures aci_epg_object for the EPG type."""
         aci_epg_object_type = ContentType.objects.get_for_model(ACIEndpointGroup)
         form = ACIEndpointGroupDomainBindingEditForm(
-            data={"aci_epg_object_type": aci_epg_object_type.pk}
+            data={"aci_epg_object_content_type": aci_epg_object_type.pk}
         )
-        self.assertEqual(form.fields["aci_epg_object"].queryset.model, ACIEndpointGroup)
+        self.assertIs(form.fields["aci_epg_object"].selected_model, ACIEndpointGroup)
 
     def test_edit_form_useg_endpoint_group_type_configures_field(self) -> None:
         """Test edit form configures aci_epg_object for the uSeg EPG type."""
         aci_epg_object_type = ContentType.objects.get_for_model(ACIUSegEndpointGroup)
         form = ACIEndpointGroupDomainBindingEditForm(
-            data={"aci_epg_object_type": aci_epg_object_type.pk}
+            data={"aci_epg_object_content_type": aci_epg_object_type.pk}
         )
-        self.assertEqual(
-            form.fields["aci_epg_object"].queryset.model, ACIUSegEndpointGroup
+        self.assertIs(
+            form.fields["aci_epg_object"].selected_model, ACIUSegEndpointGroup
         )
 
     def test_edit_form_physical_domain_type_configures_field(self) -> None:
         """Test edit form configures aci_domain_object for physical domain."""
         aci_domain_object_type = ContentType.objects.get_for_model(ACIPhysicalDomain)
         form = ACIEndpointGroupDomainBindingEditForm(
-            data={"aci_domain_object_type": aci_domain_object_type.pk}
+            data={"aci_domain_object_content_type": aci_domain_object_type.pk}
         )
-        self.assertEqual(
-            form.fields["aci_domain_object"].queryset.model, ACIPhysicalDomain
+        self.assertIs(
+            form.fields["aci_domain_object"].selected_model, ACIPhysicalDomain
         )
 
     def test_edit_form_partial_submit_missing_epg_object(self) -> None:
         """Test a partial submit without aci_epg_object fails validation."""
         aci_epg_object_type = ContentType.objects.get_for_model(ACIEndpointGroup)
         form = ACIEndpointGroupDomainBindingEditForm(
-            data={"aci_epg_object_type": aci_epg_object_type.pk}
+            data={"aci_epg_object_content_type": aci_epg_object_type.pk}
         )
         self.assertFalse(form.is_valid())
         self.assertIn("aci_epg_object", form.errors)
@@ -118,7 +118,7 @@ class ACIEndpointGroupDomainBindingFormTestCase(ACIBaseFormTestCase):
         """Test a partial submit without aci_domain_object fails validation."""
         aci_domain_object_type = ContentType.objects.get_for_model(ACIPhysicalDomain)
         form = ACIEndpointGroupDomainBindingEditForm(
-            data={"aci_domain_object_type": aci_domain_object_type.pk}
+            data={"aci_domain_object_content_type": aci_domain_object_type.pk}
         )
         self.assertFalse(form.is_valid())
         self.assertIn("aci_domain_object", form.errors)
@@ -129,10 +129,10 @@ class ACIEndpointGroupDomainBindingFormTestCase(ACIBaseFormTestCase):
         aci_domain_object_type = ContentType.objects.get_for_model(ACIPhysicalDomain)
         form = ACIEndpointGroupDomainBindingEditForm(
             data={
-                "aci_epg_object_type": aci_epg_object_type.pk,
-                "aci_epg_object": self.aci_epg.pk,
-                "aci_domain_object_type": aci_domain_object_type.pk,
-                "aci_domain_object": self.aci_physical_domain.pk,
+                "aci_epg_object_content_type": aci_epg_object_type.pk,
+                "aci_epg_object_object_id": self.aci_epg.pk,
+                "aci_domain_object_content_type": aci_domain_object_type.pk,
+                "aci_domain_object_object_id": self.aci_physical_domain.pk,
                 "deployment_immediacy": DeploymentImmediacyChoices.IMMEDIACY_IMMEDIATE,
                 "resolution_immediacy": ResolutionImmediacyChoices.IMMEDIACY_IMMEDIATE,
             }
@@ -147,10 +147,10 @@ class ACIEndpointGroupDomainBindingFormTestCase(ACIBaseFormTestCase):
         aci_domain_object_type = ContentType.objects.get_for_model(ACIPhysicalDomain)
         form = ACIEndpointGroupDomainBindingEditForm(
             data={
-                "aci_epg_object_type": aci_epg_object_type.pk,
-                "aci_epg_object": self.aci_epg.pk,
-                "aci_domain_object_type": aci_domain_object_type.pk,
-                "aci_domain_object": self.aci_physical_domain.pk,
+                "aci_epg_object_content_type": aci_epg_object_type.pk,
+                "aci_epg_object_object_id": self.aci_epg.pk,
+                "aci_domain_object_content_type": aci_domain_object_type.pk,
+                "aci_domain_object_object_id": self.aci_physical_domain.pk,
                 "deployment_immediacy": "",
                 "resolution_immediacy": "",
             }
@@ -165,10 +165,10 @@ class ACIEndpointGroupDomainBindingFormTestCase(ACIBaseFormTestCase):
         aci_domain_object_type = ContentType.objects.get_for_model(ACIPhysicalDomain)
         form = ACIEndpointGroupDomainBindingEditForm(
             data={
-                "aci_epg_object_type": aci_epg_object_type.pk,
-                "aci_epg_object": self.aci_useg_epg.pk,
-                "aci_domain_object_type": aci_domain_object_type.pk,
-                "aci_domain_object": self.aci_physical_domain.pk,
+                "aci_epg_object_content_type": aci_epg_object_type.pk,
+                "aci_epg_object_object_id": self.aci_useg_epg.pk,
+                "aci_domain_object_content_type": aci_domain_object_type.pk,
+                "aci_domain_object_object_id": self.aci_physical_domain.pk,
                 "deployment_immediacy": DeploymentImmediacyChoices.IMMEDIACY_LAZY,
                 "resolution_immediacy": ResolutionImmediacyChoices.IMMEDIACY_LAZY,
             }
@@ -183,8 +183,21 @@ class ACIEndpointGroupDomainBindingFormTestCase(ACIBaseFormTestCase):
         self.assertIn("deployment_immediacy", form.fields)
         self.assertIn("resolution_immediacy", form.fields)
         self.assertIn("comments", form.fields)
-        self.assertNotIn("aci_epg_object_type", form.fields)
-        self.assertNotIn("aci_domain_object_type", form.fields)
+        self.assertNotIn("aci_epg_object", form.fields)
+        self.assertNotIn("aci_domain_object", form.fields)
+
+    def test_edit_form_seeds_helper_fabric_from_the_bound_domain(self) -> None:
+        """Test the edit form pre-fills aci_fabric from the bound domain."""
+        binding = ACIEndpointGroupDomainBinding.objects.create(
+            aci_epg_object=self.aci_epg,
+            aci_domain_object=self.aci_physical_domain,
+        )
+
+        form = ACIEndpointGroupDomainBindingEditForm(instance=binding)
+
+        self.assertEqual(form.initial["aci_fabric"], self.aci_fabric)
+        self.assertEqual(form.initial["aci_epg_object"], self.aci_epg)
+        self.assertEqual(form.initial["aci_domain_object"], self.aci_physical_domain)
 
     def test_import_form_resolves_epg_and_domain_object_columns(self) -> None:
         """Test the import form resolves both GFK object/type CSV columns."""

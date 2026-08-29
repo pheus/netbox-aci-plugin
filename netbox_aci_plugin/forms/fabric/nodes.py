@@ -4,7 +4,6 @@
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
 
 from dcim.models import Device
@@ -17,20 +16,18 @@ from netbox.forms import (
 )
 from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
-from utilities.forms import add_blank_choice, get_field_value
+from utilities.forms import GenericObjectFormMixin, add_blank_choice
 from utilities.forms.fields import (
     CommentField,
-    ContentTypeChoiceField,
     CSVChoiceField,
     CSVContentTypeField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    GenericObjectChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
-from utilities.forms.widgets import HTMXSelect
-from utilities.templatetags.builtins.filters import bettertitle
 from virtualization.models import VirtualMachine
 
 from ...choices import NodeRoleChoices, NodeTypeChoices
@@ -50,7 +47,7 @@ from ...models.fabric.pods import ACIPod
 #
 
 
-class ACINodeEditForm(NetBoxModelForm):
+class ACINodeEditForm(GenericObjectFormMixin, NetBoxModelForm):
     """NetBox edit form for ACI Node model."""
 
     aci_fabric = DynamicModelChoiceField(
@@ -64,16 +61,11 @@ class ACINodeEditForm(NetBoxModelForm):
         query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI Pod"),
     )
-    node_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(NODE_OBJECT_TYPES),
-        widget=HTMXSelect(),
-        label=_("Node Object Type"),
-    )
-    node_object = DynamicModelChoiceField(
-        queryset=Device.objects.none(),  # Initial queryset
+    node_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(NODE_OBJECT_TYPES),
         selector=True,
+        hx_target_id="node_object",
         label=_("Node Object"),
-        disabled=True,
     )
     role = forms.ChoiceField(
         choices=NodeRoleChoices,
@@ -135,9 +127,9 @@ class ACINodeEditForm(NetBoxModelForm):
             name=_("ACI Node"),
         ),
         FieldSet(
-            "node_object_type",
             "node_object",
             name=_("Node"),
+            html_id="node_object",
         ),
         FieldSet(
             "node_id",
@@ -160,7 +152,6 @@ class ACINodeEditForm(NetBoxModelForm):
             "name_alias",
             "description",
             "aci_pod",
-            "node_object_type",
             "node_id",
             "role",
             "node_type",
@@ -171,56 +162,8 @@ class ACINodeEditForm(NetBoxModelForm):
             "tags",
         )
 
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize the ACINode form."""
-        # Initialize fields with initial values
-        instance = kwargs.get("instance")
-        initial = kwargs.get("initial", {}).copy()
 
-        if instance is not None and instance.node_object:
-            # Initialize node object field
-            initial["node_object"] = instance.node_object
-
-        kwargs["initial"] = initial
-
-        super().__init__(*args, **kwargs)
-
-        if node_object_type_id := get_field_value(self, "node_object_type"):
-            try:
-                # Retrieve the ContentType model class based on the node object
-                # type
-                node_object_type = ContentType.objects.get(pk=node_object_type_id)
-                node_model = node_object_type.model_class()
-
-                # Configure the queryset and label for the node_object field
-                self.fields["node_object"].queryset = node_model.objects.all()
-                self.fields["node_object"].widget.attrs["selector"] = (
-                    node_model._meta.label_lower
-                )
-                self.fields["node_object"].disabled = False
-                self.fields["node_object"].label = _(
-                    bettertitle(node_model._meta.verbose_name)
-                )
-            except ObjectDoesNotExist:  # pragma: no cover
-                pass
-
-            # Clears the node_object field if the selected type changes
-            if (
-                self.instance
-                and self.instance.pk
-                and node_object_type_id != self.instance.node_object_type_id
-            ):
-                self.initial["node_object"] = None
-
-    def clean(self) -> None:
-        """Validate form fields for the ACINode form."""
-        super().clean()
-
-        # Ensure the selected node object gets assigned
-        self.instance.node_object = self.cleaned_data.get("node_object")
-
-
-class ACINodeBulkEditForm(NetBoxModelBulkEditForm):
+class ACINodeBulkEditForm(GenericObjectFormMixin, NetBoxModelBulkEditForm):
     """NetBox bulk edit form for ACI Node model."""
 
     name_alias = forms.CharField(
@@ -250,18 +193,12 @@ class ACINodeBulkEditForm(NetBoxModelBulkEditForm):
         min_value=NODE_ID_MIN,
         max_value=NODE_ID_MAX,
     )
-    node_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(NODE_OBJECT_TYPES),
-        required=False,
-        widget=HTMXSelect(method="post", attrs={"hx-select": "#form_fields"}),
-        label=_("Node Object Type"),
-    )
-    node_object = DynamicModelChoiceField(
-        queryset=Device.objects.none(),  # Initial queryset
+    node_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(NODE_OBJECT_TYPES),
         selector=True,
         required=False,
+        hx_method="post",
         label=_("Node Object"),
-        disabled=True,
     )
     role = forms.ChoiceField(
         choices=add_blank_choice(NodeRoleChoices),
@@ -300,7 +237,6 @@ class ACINodeBulkEditForm(NetBoxModelBulkEditForm):
             name=_("ACI Node"),
         ),
         FieldSet(
-            "node_object_type",
             "node_object",
             name=_("Node"),
         ),
@@ -323,29 +259,6 @@ class ACINodeBulkEditForm(NetBoxModelBulkEditForm):
         "nb_tenant",
         "comments",
     )
-
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize the ACINode bulk edit form."""
-        super().__init__(*args, **kwargs)
-
-        if node_object_type_id := get_field_value(self, "node_object_type"):
-            try:
-                # Retrieve the ContentType model class based on the node object
-                # type
-                node_object_type = ContentType.objects.get(pk=node_object_type_id)
-                node_model = node_object_type.model_class()
-
-                # Configure the queryset and label for the node_object field
-                self.fields["node_object"].queryset = node_model.objects.all()
-                self.fields["node_object"].widget.attrs["selector"] = (
-                    node_model._meta.label_lower
-                )
-                self.fields["node_object"].disabled = False
-                self.fields["node_object"].label = _(
-                    bettertitle(node_model._meta.verbose_name)
-                )
-            except ObjectDoesNotExist:  # pragma: no cover
-                pass
 
 
 class ACINodeFilterForm(NetBoxModelFilterSetForm):
