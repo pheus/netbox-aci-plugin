@@ -6,6 +6,7 @@ from django.test import SimpleTestCase
 
 import netbox_aci_plugin.forms  # noqa: F401  ensure every form module is imported
 from netbox.forms import NetBoxModelBulkEditForm, NetBoxModelForm
+from utilities.forms.fields import GenericObjectChoiceField
 from utilities.forms.rendering import InlineFields, TabbedGroups
 
 # Fields NetBox auto-renders on bulk-edit forms (Ownership / Tags /
@@ -13,6 +14,12 @@ from utilities.forms.rendering import InlineFields, TabbedGroups
 # `render_fieldset` silently drops a fieldset item the form has no field
 # for, so listing these here is dead code.
 AUTO_RENDERED_FIELDS = frozenset({"tags", "comments", "owner", "owner_group"})
+
+# Bulk-edit field sets that name `nb_tenant_group` without declaring it. The
+# entry renders as nothing today, but the open question is whether bulk edit
+# should instead gain the tenant-group cascade its edit form has, so the entry
+# is left in place rather than removed. Tracked in todo.md.
+PENDING_FIELDSET_ENTRIES = frozenset({"nb_tenant_group"})
 
 
 def _iter_aci_bulk_edit_forms():
@@ -112,6 +119,57 @@ class ACIFieldsetDescriptionOrderTests(SimpleTestCase):
             offenders,
             {},
             f"`description` must follow aci_* fields in fieldsets: {offenders}",
+        )
+
+
+class ACIFieldsetTargetTests(SimpleTestCase):
+    """Guard that fieldset entries and HTMX swap containers resolve."""
+
+    maxDiff = None
+
+    def test_fieldset_items_name_real_fields(self) -> None:
+        """Test every field set entry names a field the form declares."""
+        unknown = {}
+        for form_class in _iter_aci_fieldset_forms():
+            names = {
+                name
+                for fieldset in getattr(form_class, "fieldsets", ())
+                for name in _fieldset_field_names(fieldset)
+            }
+            if gaps := sorted(
+                names
+                - set(form_class.base_fields)
+                - AUTO_RENDERED_FIELDS
+                - PENDING_FIELDSET_ENTRIES
+            ):
+                unknown[form_class.__name__] = gaps
+
+        self.assertEqual(
+            unknown,
+            {},
+            "A field set names a field the form does not declare. "
+            "render_fieldset skips it silently, so it renders as nothing.",
+        )
+
+    def test_generic_object_fields_have_a_swap_container(self) -> None:
+        """Test every HTMX swap target has a matching field set html_id."""
+        missing = {}
+        for form_class in _iter_aci_fieldset_forms():
+            html_ids = {
+                getattr(fieldset, "html_id", None)
+                for fieldset in getattr(form_class, "fieldsets", ())
+            }
+            for name, field in form_class.base_fields.items():
+                if not isinstance(field, GenericObjectChoiceField):
+                    continue
+                if field.hx_target_id and field.hx_target_id not in html_ids:
+                    missing[f"{form_class.__name__}.{name}"] = field.hx_target_id
+
+        self.assertEqual(
+            missing,
+            {},
+            "A generic object field targets an html_id no field set declares. "
+            "The HTMX partial swap fails silently.",
         )
 
 
