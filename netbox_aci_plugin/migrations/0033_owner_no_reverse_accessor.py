@@ -186,95 +186,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="acileafinterfacepolicygroup",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="acileafinterfaceprofile",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="acileafinterfaceselector",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="acileafnodeblock",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="acileafportblock",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="acileafselector",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="acileafswitchprofile",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
             model_name="acinode",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="acinodeinterface",
             name="owner",
             field=models.ForeignKey(
                 blank=True,
@@ -352,17 +264,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name="acivlanpool",
-            name="owner",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="+",
-                to="users.owner",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="acivpcprotectiongroup",
             name="owner",
             field=models.ForeignKey(
                 blank=True,
