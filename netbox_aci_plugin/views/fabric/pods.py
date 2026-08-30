@@ -6,6 +6,10 @@ from __future__ import annotations
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel, RelatedObjectsPanel
 from netbox.views import generic
 from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
 
@@ -19,6 +23,7 @@ from ...forms.fabric.pods import (
 from ...models.fabric.pods import ACIPod
 from ...object_actions import add_child_action
 from ...tables.fabric.pods import ACIPodTable
+from ...ui.panels.fabric.pods import ACIPodPanel
 from ..fabric.nodes import ACINodeChildrenView
 
 #
@@ -67,6 +72,26 @@ class ACIPodView(GetRelatedModelsMixin, generic.ObjectView):
     queryset = ACIPod.objects.select_related(
         "aci_fabric", "tep_pool", "nb_tenant", "owner"
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acipod_list", "aci_fabric_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIPodPanel(),
+            CustomFieldsPanel(),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+        right_panels=[
+            RelatedObjectsPanel(),
+        ],
+    )
 
     def get_extra_context(self, request, instance) -> dict:
         """Return related models as extra context."""

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -32,6 +32,7 @@ from ...validators import ACIPolicyDescriptionValidator
 if TYPE_CHECKING:
     from core.models import ObjectChange
 
+    from ..access_policies.leaf_interface_overrides import ACILeafInterfaceOverride
     from ..fabric.fabrics import ACIFabric
     from ..fabric.nodes import ACINode
 
@@ -194,3 +195,22 @@ class ACINodeInterface(OwnerMixin, NetBoxModel):
         if self.sub_port:
             return f"{token}/{self.sub_port}"
         return token
+
+    @property
+    def sub_port_display(self) -> int | None:
+        """Return the sub port, or None for the APIC 0 (none) sentinel."""
+        return self.sub_port or None
+
+    @property
+    def leaf_interface_override(self) -> ACILeafInterfaceOverride | None:
+        """Return the Leaf Interface Override, or None if there is none.
+
+        The reverse one-to-one descriptor raises rather than returning
+        None, an exception the Django template engine silenced but plain
+        attribute access does not. The descriptor reads its cache before
+        querying, so a warm select_related costs no extra query here.
+        """
+        try:
+            return self.aci_leaf_interface_override
+        except ObjectDoesNotExist:
+            return None

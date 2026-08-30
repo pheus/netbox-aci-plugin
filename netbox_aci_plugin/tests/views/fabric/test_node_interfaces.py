@@ -4,9 +4,10 @@
 
 """View tests for the fabric ACI Node Interface model."""
 
-import re
+from urllib.parse import parse_qs, urlparse
 
 from django.db import connection
+from django.test import RequestFactory
 from django.test.utils import CaptureQueriesContext
 
 from dcim.choices import InterfaceTypeChoices
@@ -24,6 +25,7 @@ from ....models.access_policies.leaf_interface_overrides import (
 from ....models.fabric.node_interfaces import ACINodeInterface
 from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
+from ....ui.panels.fabric.node_interfaces import ACINodeInterfaceOverridePanel
 from ....views.fabric.node_interfaces import ACINodeInterfaceChildrenView
 from ..base import ACIModelViewTestCase
 
@@ -186,31 +188,43 @@ class ACINodeInterfaceViewTestCase(
         """Node Interfaces tab is hidden for an APIC node."""
         self.assertIsNone(ACINodeInterfaceChildrenView.tab.render(self.aci_node_apic))
 
-    def test_acinodeinterface_detail_leaf_interface_override_panel_absent(self) -> None:
-        """The Override panel shows the placeholder when no Override exists."""
+    def _panel_context(self, obj):
+        """Return a (request, object) context for a panel action.
+
+        Deliberately minimal: ACIObjectLinkAction.render()/get_url()
+        only read context['request'].user and context['object'].
+        """
+        request = RequestFactory().get("/")
+        request.user = self.user
+        return {"request": request, "object": obj}
+
+    def _override_action(self, suffix: str):
+        """Return the Override triad action whose view name ends in suffix.
+
+        Selecting by declaration index would silently repoint every
+        assertion below if the triad were ever reordered.
+        """
+        actions = [
+            action
+            for action in ACINodeInterfaceOverridePanel().actions
+            if action.view_name.endswith(f"_{suffix}")
+        ]
+        self.assertEqual(len(actions), 1)
+        return actions[0]
+
+    def test_acinodeinterface_leaf_interface_override_attrs_absent(self) -> None:
+        """The Override attrs resolve to None when no Override exists."""
         instance = ACINodeInterface.objects.get(aci_node=self.aci_node, port=1)
-        self.add_permissions("netbox_aci_plugin.view_acinodeinterface")
-
-        response = self.client.get(instance.get_absolute_url())
-        self.assertHttpStatus(response, 200)
-        content = response.content.decode()
-        placeholder = '<span class="text-muted">&mdash;</span>'
-        # Anchored to each row's own header so an unrelated placeholder
-        # elsewhere on the page (e.g. the blank Description row) cannot
-        # satisfy this assertion in place of the Override panel's own.
-        self.assertRegex(
-            content,
-            r"Leaf Interface Override</th>\s*<td>\s*" + re.escape(placeholder),
+        panel = ACINodeInterfaceOverridePanel()
+        self.assertIsNone(
+            panel._attrs["aci_leaf_interface_override"].get_value(instance)
         )
-        self.assertRegex(
-            content,
-            r"Leaf Interface Policy Group</th>\s*<td>\s*" + re.escape(placeholder),
+        self.assertIsNone(
+            panel._attrs["aci_leaf_interface_policy_group"].get_value(instance)
         )
 
-    def test_acinodeinterface_detail_leaf_interface_override_panel_present(
-        self,
-    ) -> None:
-        """The Override panel links the Override and its Policy Group."""
+    def test_acinodeinterface_leaf_interface_override_attrs_present(self) -> None:
+        """The Override attrs resolve to the linked Override and its group."""
         policy_group = ACILeafInterfacePolicyGroup.objects.create(
             name="ACIViewTestNodeInterfaceOverridePolicyGroup",
             aci_fabric=self.aci_fabric,
@@ -223,78 +237,36 @@ class ACINodeInterfaceViewTestCase(
             aci_node_interface=instance,
             aci_leaf_interface_policy_group=policy_group,
         )
-        self.add_permissions("netbox_aci_plugin.view_acinodeinterface")
-
-        response = self.client.get(instance.get_absolute_url())
-        self.assertHttpStatus(response, 200)
-        content = response.content.decode()
-        override_link = f'<a href="{override.get_absolute_url()}">'
-        policy_group_link = f'<a href="{policy_group.get_absolute_url()}">'
-        self.assertRegex(
-            content,
-            r"Leaf Interface Override</th>\s*<td>\s*" + re.escape(override_link),
+        # Matches the view's queryset: the property reads this cache.
+        refetched = ACINodeInterface.objects.select_related(
+            "aci_leaf_interface_override",
+            "aci_leaf_interface_override__aci_leaf_interface_policy_group",
+        ).get(pk=instance.pk)
+        panel = ACINodeInterfaceOverridePanel()
+        self.assertEqual(
+            panel._attrs["aci_leaf_interface_override"].get_value(refetched),
+            override,
         )
-        self.assertRegex(
-            content,
-            r"Leaf Interface Policy Group</th>\s*<td>\s*"
-            + re.escape(policy_group_link),
+        self.assertEqual(
+            panel._attrs["aci_leaf_interface_policy_group"].get_value(refetched),
+            policy_group,
         )
 
-    def test_acinodeinterface_detail_add_override_button_present(self) -> None:
-        """The port offers a prefilled Add button while it has no Override."""
+    def test_add_override_action_visible_and_prefilled_when_absent(self) -> None:
+        """The Add action's condition holds and prefills all four ancestors."""
         instance = ACINodeInterface.objects.get(aci_node=self.aci_node, port=1)
-        self.add_permissions(
-            "netbox_aci_plugin.view_acinodeinterface",
-            "netbox_aci_plugin.add_acileafinterfaceoverride",
-        )
+        self.add_permissions("netbox_aci_plugin.add_acileafinterfaceoverride")
+        add_action = self._override_action("add")
+        context = self._panel_context(instance)
 
-        response = self.client.get(instance.get_absolute_url())
-        self.assertHttpStatus(response, 200)
-        content = response.content.decode()
-        self.assertIn("Add an Override", content)
-        self.assertIn(f"aci_node_interface={instance.pk}", content)
-        self.assertIn(f"aci_node={self.aci_node.pk}", content)
-        self.assertIn(f"aci_pod={self.aci_pod.pk}", content)
-        self.assertIn(f"aci_fabric={self.aci_fabric.pk}", content)
-
-    def test_acinodeinterface_detail_add_override_button_hidden_when_taken(
-        self,
-    ) -> None:
-        """A port that already has an Override offers no Add button."""
-        policy_group = ACILeafInterfacePolicyGroup.objects.create(
-            name="ACIViewTestNodeInterfaceOverrideButtonPolicyGroup",
-            aci_fabric=self.aci_fabric,
-            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
-        )
-        instance = ACINodeInterface.objects.create(
-            aci_node=self.aci_node, module=1, port=97
-        )
-        ACILeafInterfaceOverride.objects.create(
-            aci_node_interface=instance,
-            aci_leaf_interface_policy_group=policy_group,
-        )
-        self.add_permissions(
-            "netbox_aci_plugin.view_acinodeinterface",
-            "netbox_aci_plugin.add_acileafinterfaceoverride",
-        )
-
-        response = self.client.get(instance.get_absolute_url())
-        self.assertHttpStatus(response, 200)
-        self.assertNotIn("Add an Override", response.content.decode())
-
-    def test_acinodeinterface_detail_add_override_button_needs_permission(
-        self,
-    ) -> None:
-        """The Add button needs the Override add permission, not the port's."""
-        instance = ACINodeInterface.objects.get(aci_node=self.aci_node, port=1)
-        self.add_permissions(
-            "netbox_aci_plugin.view_acinodeinterface",
-            "netbox_aci_plugin.add_acinodeinterface",
-        )
-
-        response = self.client.get(instance.get_absolute_url())
-        self.assertHttpStatus(response, 200)
-        self.assertNotIn("Add an Override", response.content.decode())
+        self.assertTrue(add_action.condition(context))
+        self.assertNotEqual(add_action.render(context), "")
+        query = parse_qs(urlparse(add_action.get_url(context)).query)
+        self.assertEqual(query["aci_fabric"], [str(self.aci_fabric.pk)])
+        self.assertEqual(query["aci_pod"], [str(self.aci_pod.pk)])
+        self.assertEqual(query["aci_node"], [str(self.aci_node.pk)])
+        self.assertEqual(query["aci_node_interface"], [str(instance.pk)])
+        self.assertEqual(query["return_url"], [instance.get_absolute_url()])
 
     def _override_on_port(self, port: int) -> ACILeafInterfaceOverride:
         """Create and return an Override on a fresh port of the test Node."""
@@ -311,59 +283,86 @@ class ACINodeInterfaceViewTestCase(
             aci_leaf_interface_policy_group=policy_group,
         )
 
-    def test_acinodeinterface_detail_edit_delete_buttons_present_when_taken(
-        self,
-    ) -> None:
-        """A port with an Override offers Edit and Delete in the panel."""
+    def test_add_override_action_hidden_when_taken(self) -> None:
+        """The Add action's condition is False once an Override exists."""
+        override = self._override_on_port(97)
+        self.add_permissions("netbox_aci_plugin.add_acileafinterfaceoverride")
+        add_action = self._override_action("add")
+        context = self._panel_context(override.aci_node_interface)
+
+        self.assertFalse(add_action.condition(context))
+        self.assertEqual(add_action.render(context), "")
+
+    def test_add_override_action_needs_its_own_permission(self) -> None:
+        """The Add action needs the Override add permission, not the port's."""
+        instance = ACINodeInterface.objects.get(aci_node=self.aci_node, port=1)
+        self.add_permissions("netbox_aci_plugin.add_acinodeinterface")
+        add_action = self._override_action("add")
+        context = self._panel_context(instance)
+
+        # The condition holds (no Override yet), but render() still gates
+        # on the Override model's own add permission.
+        self.assertTrue(add_action.condition(context))
+        self.assertEqual(add_action.render(context), "")
+
+    def test_edit_delete_actions_visible_when_taken(self) -> None:
+        """Edit and Delete resolve to the Override's pk when permitted."""
         override = self._override_on_port(96)
         self.add_permissions(
-            "netbox_aci_plugin.view_acinodeinterface",
             "netbox_aci_plugin.change_acileafinterfaceoverride",
             "netbox_aci_plugin.delete_acileafinterfaceoverride",
         )
+        edit_action = self._override_action("edit")
+        delete_action = self._override_action("delete")
+        context = self._panel_context(override.aci_node_interface)
 
-        response = self.client.get(override.aci_node_interface.get_absolute_url())
-        self.assertHttpStatus(response, 200)
-        content = response.content.decode()
-        for action in ("edit", "delete"):
-            self.assertIn(
-                get_action_url(
-                    ACILeafInterfaceOverride,
-                    action=action,
-                    kwargs={"pk": override.pk},
-                ),
-                content,
+        for action, view_action in ((edit_action, "edit"), (delete_action, "delete")):
+            self.assertTrue(action.condition(context))
+            self.assertNotEqual(action.render(context), "")
+            expected_url = get_action_url(
+                ACILeafInterfaceOverride,
+                action=view_action,
+                kwargs={"pk": override.pk},
+            )
+            resolved_url = action.get_url(context)
+            self.assertTrue(resolved_url.startswith(expected_url))
+            # Edit and Delete carry no url_params of their own, so this
+            # is the only proof they still return to the port's page.
+            query = parse_qs(urlparse(resolved_url).query)
+            self.assertEqual(
+                query["return_url"],
+                [override.aci_node_interface.get_absolute_url()],
             )
 
-    def test_acinodeinterface_detail_edit_delete_buttons_absent_when_empty(
-        self,
-    ) -> None:
-        """A port without an Override offers neither Edit nor Delete."""
+    def test_edit_delete_actions_hidden_when_empty(self) -> None:
+        """Edit and Delete's condition is False without an Override."""
         instance = ACINodeInterface.objects.get(aci_node=self.aci_node, port=1)
         self.add_permissions(
-            "netbox_aci_plugin.view_acinodeinterface",
             "netbox_aci_plugin.change_acileafinterfaceoverride",
             "netbox_aci_plugin.delete_acileafinterfaceoverride",
         )
+        edit_action = self._override_action("edit")
+        delete_action = self._override_action("delete")
+        context = self._panel_context(instance)
 
-        response = self.client.get(instance.get_absolute_url())
-        self.assertHttpStatus(response, 200)
-        content = response.content.decode()
-        self.assertNotIn("mdi-pencil", content)
-        self.assertNotIn("mdi-trash-can-outline", content)
+        self.assertFalse(edit_action.condition(context))
+        self.assertFalse(delete_action.condition(context))
+        self.assertEqual(edit_action.render(context), "")
+        self.assertEqual(delete_action.render(context), "")
 
-    def test_acinodeinterface_detail_edit_delete_buttons_need_permission(
-        self,
-    ) -> None:
+    def test_edit_delete_actions_need_their_own_permission(self) -> None:
         """Edit and Delete each need their own Override permission."""
         override = self._override_on_port(95)
-        self.add_permissions("netbox_aci_plugin.view_acinodeinterface")
+        edit_action = self._override_action("edit")
+        delete_action = self._override_action("delete")
+        context = self._panel_context(override.aci_node_interface)
 
-        response = self.client.get(override.aci_node_interface.get_absolute_url())
-        self.assertHttpStatus(response, 200)
-        content = response.content.decode()
-        self.assertNotIn("mdi-pencil", content)
-        self.assertNotIn("mdi-trash-can-outline", content)
+        # The condition holds (an Override exists), but render() still
+        # gates on each action's own change/delete permission.
+        self.assertTrue(edit_action.condition(context))
+        self.assertTrue(delete_action.condition(context))
+        self.assertEqual(edit_action.render(context), "")
+        self.assertEqual(delete_action.render(context), "")
 
     def _detail_query_count(self, url) -> int:
         """Return the query count of a detail-page GET request to url."""

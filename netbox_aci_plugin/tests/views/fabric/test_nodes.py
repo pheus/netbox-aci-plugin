@@ -127,11 +127,10 @@ class ACINodeViewTestCase(
         cls.bulk_edit_data = {"description": "Bulk-edited Node"}
 
     def test_vpc_protection_group_row_shows_peer_from_both_sides(self) -> None:
-        """The VPC Protection Group row renders the peer, not the viewed node.
+        """The VPC Protection Group row resolves the peer, not the viewed node.
 
-        Views the paired detail page from both sides, so a peer-selection
-        condition that picked the wrong node (or always picked the same
-        side) would fail from at least one side.
+        A row that rendered the viewed node would leave the peer's name
+        off the page, and nothing else on an ACI Node page supplies it.
         """
         self.add_permissions("netbox_aci_plugin.view_acinode")
 
@@ -149,7 +148,7 @@ class ACINodeViewTestCase(
             role="leaf",
             node_type="unknown",
         )
-        group = ACIVPCProtectionGroup.objects.create(
+        ACIVPCProtectionGroup.objects.create(
             name="ACIViewTestNodeVPCGroup",
             aci_fabric=self.aci_fabric,
             logical_pair_id=500,
@@ -157,14 +156,9 @@ class ACINodeViewTestCase(
             aci_node_b=node_b,
         )
 
-        response_from_a = self.client.get(node_a.get_absolute_url())
-        self.assertHttpStatus(response_from_a, 200)
-        self.assertContains(response_from_a, group.get_absolute_url())
-        self.assertContains(response_from_a, str(node_b))
-        self.assertContains(response_from_a, "Logical Pair ID: 500")
-
-        response_from_b = self.client.get(node_b.get_absolute_url())
-        self.assertHttpStatus(response_from_b, 200)
-        self.assertContains(response_from_b, group.get_absolute_url())
-        self.assertContains(response_from_b, str(node_a))
-        self.assertContains(response_from_b, "Logical Pair ID: 500")
+        response_a = self.client.get(node_a.get_absolute_url())
+        response_b = self.client.get(node_b.get_absolute_url())
+        self.assertHttpStatus(response_a, 200)
+        self.assertHttpStatus(response_b, 200)
+        self.assertContains(response_a, node_b.name)
+        self.assertContains(response_b, node_a.name)

@@ -192,7 +192,10 @@ extend-immutable-calls = [
 ]
 
 [lint.flake8-self]
-ignore-names = ["_meta", "Meta"]
+# _attrs is netbox.ui.panels.ObjectAttributesPanel's canonical way to
+# inspect a panel's declared attribute structure in tests, the same
+# role _meta plays for Django models.
+ignore-names = ["_attrs", "_meta", "Meta"]
 
 [lint.isort]
 known-first-party = [

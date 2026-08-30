@@ -1,0 +1,8 @@
+{% load i18n %}
+<div>
+  {{ value|linkify }}
+  <div class="fs-5 text-muted">
+    {% trans "Peer" %}: {{ object.vpc_peer_node|linkify }}
+  </div>
+  <div class="fs-5 text-muted">{% trans "Logical Pair ID" %}: {{ value.logical_pair_id }}</div>
+</div>

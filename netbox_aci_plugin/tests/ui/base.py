@@ -54,3 +54,10 @@ def layout_views(module_prefix: str = ""):
             module_prefix
         ):
             yield view_class
+
+
+def layout_panels(view_class):
+    """Yield every panel instance in a view's layout, in render order."""
+    for row in view_class.layout:
+        for column in row:
+            yield from column

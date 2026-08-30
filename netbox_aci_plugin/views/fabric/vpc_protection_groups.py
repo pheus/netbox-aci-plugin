@@ -4,6 +4,10 @@
 
 from __future__ import annotations
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import register_model_view
 
@@ -16,6 +20,7 @@ from ...forms.fabric.vpc_protection_groups import (
 )
 from ...models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
 from ...tables.fabric.vpc_protection_groups import ACIVPCProtectionGroupTable
+from ...ui.panels.fabric.vpc_protection_groups import ACIVPCProtectionGroupPanel
 
 #
 # VPC Protection Group views
@@ -37,6 +42,26 @@ class ACIVPCProtectionGroupView(generic.ObjectView):
         "owner",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acivpcprotectiongroup_list",
+                    "aci_fabric_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIVPCProtectionGroupPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 

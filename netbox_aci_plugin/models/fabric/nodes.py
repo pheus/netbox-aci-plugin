@@ -449,6 +449,14 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
         except protection_group_model.DoesNotExist:
             return None
 
+    @property
+    def vpc_peer_node(self) -> ACINode | None:
+        """Return the other node in this node's VPC Protection Group."""
+        group = self.vpc_protection_group
+        if group is None:
+            return None
+        return group.aci_node_b if group.aci_node_a_id == self.pk else group.aci_node_a
+
     def get_role_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""
         return NodeRoleChoices.colors.get(self.role)

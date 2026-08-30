@@ -789,6 +789,24 @@ class ACINodeTestCase(ACIBaseTestCase):
         )
         self.assertIsNone(node.vpc_protection_group)
 
+    def test_aci_node_vpc_peer_node_from_node_a(self) -> None:
+        """Test vpc_peer_node returns the B side when viewed from A."""
+        self.assertEqual(self.aci_node.vpc_peer_node, self.aci_node_vpc_partner)
+
+    def test_aci_node_vpc_peer_node_from_node_b(self) -> None:
+        """Test vpc_peer_node returns the A side when viewed from B."""
+        self.assertEqual(self.aci_node_vpc_partner.vpc_peer_node, self.aci_node)
+
+    def test_aci_node_vpc_peer_node_none_when_unpaired(self) -> None:
+        """Test vpc_peer_node is None for a Node without a group."""
+        node = ACINode.objects.create(
+            name="ACINodeNoGroupPeer",
+            aci_pod=self.aci_pod,
+            node_id=163,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        self.assertIsNone(node.vpc_peer_node)
+
     def test_aci_node_vpc_protection_group_raises_on_double_membership(
         self,
     ) -> None:

@@ -8,6 +8,9 @@ from typing import TYPE_CHECKING
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.panels import CommentsPanel, RelatedObjectsPanel
 from netbox.views import generic
 from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
 
@@ -22,6 +25,7 @@ from ...models.fabric.fabrics import ACIFabric
 from ...models.fabric.nodes import ACINode
 from ...object_actions import add_child_action
 from ...tables.fabric.fabrics import ACIFabricTable
+from ...ui.panels.fabric.fabrics import ACIFabricPanel
 from ..fabric.nodes import ACINodeChildrenView
 from ..fabric.pods import ACIPodChildrenView
 from ..tenant.tenants import ACITenantChildrenView
@@ -42,6 +46,18 @@ class ACIFabricView(GetRelatedModelsMixin, generic.ObjectView):
     queryset = ACIFabric.objects.select_related(
         "nb_tenant", "owner", "infra_vlan", "gipo_pool"
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        left_panels=[
+            ACIFabricPanel(),
+            CustomFieldsPanel(),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+        right_panels=[
+            RelatedObjectsPanel(),
+        ],
+    )
 
     def get_extra_context(self, request, instance) -> dict:
         """Return related models as extra context."""

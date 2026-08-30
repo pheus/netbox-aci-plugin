@@ -108,6 +108,7 @@ from .fabric.fabrics import (
     ACIFabricBulkImportView,
     ACIFabricEditView,
     ACIFabricListView,
+    ACIFabricView,
 )
 from .fabric.node_interfaces import (
     ACINodeInterfaceBulkDeleteView,
@@ -123,6 +124,7 @@ from .fabric.nodes import (
     ACINodeBulkImportView,
     ACINodeEditView,
     ACINodeListView,
+    ACINodeView,
 )
 from .fabric.pods import (
     ACIPodBulkDeleteView,
@@ -130,6 +132,7 @@ from .fabric.pods import (
     ACIPodBulkImportView,
     ACIPodEditView,
     ACIPodListView,
+    ACIPodView,
 )
 from .fabric.vpc_protection_groups import (
     ACIVPCProtectionGroupBulkDeleteView,
@@ -408,6 +411,7 @@ __all__ = (
     "ACIFabricBulkImportView",
     "ACIFabricEditView",
     "ACIFabricListView",
+    "ACIFabricView",
     # ACIL3Out
     "ACIL3OutBulkDeleteView",
     "ACIL3OutBulkEditView",
@@ -490,6 +494,7 @@ __all__ = (
     "ACINodeBulkImportView",
     "ACINodeEditView",
     "ACINodeListView",
+    "ACINodeView",
     # ACIPhysicalDomain
     "ACIPhysicalDomainBulkDeleteView",
     "ACIPhysicalDomainBulkEditView",
@@ -503,6 +508,7 @@ __all__ = (
     "ACIPodBulkImportView",
     "ACIPodEditView",
     "ACIPodListView",
+    "ACIPodView",
     # ACIRoutedDomain
     "ACIRoutedDomainBulkDeleteView",
     "ACIRoutedDomainBulkEditView",
