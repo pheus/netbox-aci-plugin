@@ -188,6 +188,9 @@ class ACIL3OutAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
     def test_export_route_control_enforcement_read_only(self) -> None:
         """Test export route control enforcement is read-only in the API."""
@@ -333,6 +336,9 @@ class ACIExternalEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }
 
 
@@ -496,6 +502,9 @@ class ACIExternalSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }
 
 

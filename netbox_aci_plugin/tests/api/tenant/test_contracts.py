@@ -132,6 +132,9 @@ class ACIContractAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -455,6 +458,9 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "comments": "ACI comment bulk update",
         }
+        cls.bulk_update_invalid_data = {
+            "role": "invalid-role",
+        }
 
 
 class ACIContractSubjectAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -584,6 +590,9 @@ class ACIContractSubjectAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }
 
 
@@ -737,3 +746,4 @@ class ACIContractSubjectFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             },
         ]
         cls.bulk_update_data = {"priority": "level2"}
+        cls.bulk_update_invalid_data = {"action": "invalid-action"}

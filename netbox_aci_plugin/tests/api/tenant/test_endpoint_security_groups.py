@@ -156,6 +156,9 @@ class ACIEndpointSecurityGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACIEsgEndpointGroupSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -341,6 +344,9 @@ class ACIEsgEndpointGroupSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCas
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACIEsgEndpointSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -486,4 +492,7 @@ class ACIEsgEndpointSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }

@@ -120,3 +120,6 @@ class ACILeafInterfacePolicyGroupAPIViewTestCase(APIViewTestCases.APIViewTestCas
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }

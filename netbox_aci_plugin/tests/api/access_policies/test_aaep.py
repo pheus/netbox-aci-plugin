@@ -96,6 +96,9 @@ class ACIAttachableAccessEntityProfileAPIViewTestCase(APIViewTestCases.APIViewTe
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACIAAEPDomainBindingAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -192,4 +195,7 @@ class ACIAAEPDomainBindingAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "comments": "New comments",
+        }
+        cls.bulk_update_invalid_data = {
+            "aci_aaep": 99999999,
         }

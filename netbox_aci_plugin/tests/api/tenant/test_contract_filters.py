@@ -103,6 +103,9 @@ class ACIContractFilterAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACIContractFilterEntryAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -255,4 +258,7 @@ class ACIContractFilterEntryAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }

@@ -153,6 +153,9 @@ class ACINodeInterfaceAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
     def test_interface_token_ignores_create_input(self) -> None:
         """POST cannot set interface_token, it derives from coordinates."""

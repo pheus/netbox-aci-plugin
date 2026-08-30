@@ -93,6 +93,9 @@ class ACILeafInterfaceProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACILeafInterfaceSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -177,6 +180,9 @@ class ACILeafInterfaceSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }
 
 
@@ -281,4 +287,7 @@ class ACILeafPortBlockAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "comments": "New comments",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }
