@@ -246,3 +246,19 @@ class ACIUSegNetworkAttributeFormTestCase(ACIBaseFormTestCase):
         self.assertEqual(aci_useg_network_attr_form.errors.get("name_alias"), None)
         self.assertEqual(aci_useg_network_attr_form.errors.get("description"), None)
         self.assertNotIn("attr_object", aci_useg_network_attr_form.errors)
+
+    def test_invalid_aci_useg_network_attribute_epg_subnet_conflict(self) -> None:
+        """Test 'use EPG subnet' conflicting with an attribute object."""
+        aci_useg_network_attr_form = ACIUSegNetworkAttributeEditForm(
+            data={
+                "name": "ACIUSegNetworkAttribute1",
+                "aci_useg_endpoint_group": self.aci_useg_epg,
+                "use_epg_subnet": True,
+                "attr_object_content_type": ContentType.objects.get_for_model(
+                    self.ip_address._meta.model
+                ).id,
+                "attr_object_object_id": self.ip_address.pk,
+            }
+        )
+        self.assertFalse(aci_useg_network_attr_form.is_valid())
+        self.assertIn("attr_object", aci_useg_network_attr_form.errors)
