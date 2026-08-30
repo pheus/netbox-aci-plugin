@@ -235,6 +235,20 @@ class ACIEsgEndpointGroupSelectorViewTestCase(
 
         cls.bulk_edit_data = {"description": "Bulk-edited EPG Selector"}
 
+    def test_epg_assignment_row_shows_the_target_and_its_type(self) -> None:
+        """The EPG row renders the linked object and its content type.
+
+        The port moved the type from the row label to a muted sub-line,
+        which no label assertion can reach.
+        """
+        self.add_permissions("netbox_aci_plugin.view_aciesgendpointgroupselector")
+        instance = ACIEsgEndpointGroupSelector.objects.get(name="ACIViewTestEpgSel1")
+
+        response = self.client.get(instance.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+        self.assertContains(response, instance.aci_epg_object.name)
+        self.assertContains(response, str(self.epg_ct.name))
+
 
 class ACIEsgEndpointSelectorViewTestCase(
     ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTestCase

@@ -4,6 +4,10 @@
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -17,6 +21,7 @@ from ...forms.tenant.app_profiles import (
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...object_actions import add_child_action
 from ...tables.tenant.app_profiles import ACIAppProfileTable
+from ...ui.panels.tenant.app_profiles import ACIAppProfilePanel
 from .endpoint_groups import (
     ACIEndpointGroupChildrenView,
     ACIUSegEndpointGroupChildrenView,
@@ -71,6 +76,31 @@ class ACIAppProfileView(generic.ObjectView):
         "owner",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciappprofile_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciappprofile_list", "aci_tenant_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIAppProfilePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 

@@ -7,6 +7,10 @@ from __future__ import annotations
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -35,6 +39,10 @@ from ...object_actions import add_child_action
 from ...tables.tenant.endpoint_group_bindings import (
     ACIEndpointGroupAAEPBindingTable,
     ACIEndpointGroupDomainBindingTable,
+)
+from ...ui.panels.tenant.endpoint_group_bindings import (
+    ACIEndpointGroupAAEPBindingPanel,
+    ACIEndpointGroupDomainBindingPanel,
 )
 
 #
@@ -108,6 +116,33 @@ class ACIEndpointGroupDomainBindingView(generic.ObjectView):
         "aci_epg_object",
         "aci_domain_object",
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                lambda obj: obj.aci_epg_object.aci_fabric,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointgroupdomainbinding_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_epg_object",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointgroupdomainbinding_list",
+                    "aci_epg_object_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIEndpointGroupDomainBindingPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 
@@ -327,6 +362,33 @@ class ACIEndpointGroupAAEPBindingView(generic.ObjectView):
         "nb_vlan",
         "primary_nb_vlan",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                lambda obj: obj.aci_aaep.aci_fabric,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointgroupaaepbinding_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_aaep",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointgroupaaepbinding_list",
+                    "aci_aaep_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIEndpointGroupAAEPBindingPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIEndpointGroupAAEPBinding, "list", path="", detail=False)
