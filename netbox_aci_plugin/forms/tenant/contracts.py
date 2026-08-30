@@ -511,9 +511,12 @@ class ACIContractRelationEditForm(GenericObjectFormMixin, NetBoxModelForm):
             "aci_fabric",
             "aci_tenant",
             "aci_contract",
-            "aci_object",
             "tags",
             name=_("ACI Contract Relation"),
+        ),
+        FieldSet(
+            "aci_object",
+            name=_("ACI Object Assignment"),
             html_id="aci_object",
         ),
         FieldSet(

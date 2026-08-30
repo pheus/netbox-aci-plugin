@@ -151,6 +151,33 @@ class ACIFieldsetTargetTests(SimpleTestCase):
             "render_fieldset skips it silently, so it renders as nothing.",
         )
 
+    def test_swap_containers_hold_only_their_generic_object_field(self) -> None:
+        """Test an HTMX swap container carries nothing but its own field."""
+        crowded = {}
+        for form_class in _iter_aci_fieldset_forms():
+            targets = {
+                field.hx_target_id: name
+                for name, field in form_class.base_fields.items()
+                if isinstance(field, GenericObjectChoiceField) and field.hx_target_id
+            }
+            for fieldset in getattr(form_class, "fieldsets", ()):
+                html_id = getattr(fieldset, "html_id", None)
+                if html_id not in targets:
+                    continue
+                extra = sorted(
+                    set(_fieldset_field_names(fieldset)) - {targets[html_id]}
+                )
+                if extra:
+                    crowded[f"{form_class.__name__}.{html_id}"] = extra
+
+        self.assertEqual(
+            crowded,
+            {},
+            "An HTMX swap container holds fields besides its generic object "
+            "field. hx-swap replaces the container, so those are torn down and "
+            "reset on every content type change.",
+        )
+
     def test_generic_object_fields_have_a_swap_container(self) -> None:
         """Test every HTMX swap target has a matching field set html_id."""
         missing = {}

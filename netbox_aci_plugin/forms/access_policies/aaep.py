@@ -320,9 +320,12 @@ class ACIAAEPDomainBindingEditForm(GenericObjectFormMixin, NetBoxModelForm):
         FieldSet(
             "aci_fabric",
             "aci_aaep",
-            "aci_domain_object",
             "tags",
             name=_("ACI AAEP Domain Binding"),
+        ),
+        FieldSet(
+            "aci_domain_object",
+            name=_("Domain Assignment"),
             html_id="aci_domain_object",
         ),
     )

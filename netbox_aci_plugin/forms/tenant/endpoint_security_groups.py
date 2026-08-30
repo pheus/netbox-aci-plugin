@@ -600,8 +600,10 @@ class ACIEsgEndpointGroupSelectorEditForm(GenericObjectFormMixin, NetBoxModelFor
         ),
         FieldSet(
             "aci_epg_object_app_profile",
-            "aci_epg_object",
             name=_("Endpoint Group Assignment"),
+        ),
+        FieldSet(
+            "aci_epg_object",
             html_id="aci_epg_object",
         ),
         FieldSet(
