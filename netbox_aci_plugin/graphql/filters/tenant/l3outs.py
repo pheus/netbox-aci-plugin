@@ -12,12 +12,7 @@ from django.db.models import Q
 from netaddr.core import AddrFormatError
 from netaddr.ip import IPNetwork
 from strawberry.scalars import ID
-from strawberry_django import BaseFilterLookup, FilterLookup
-
-try:
-    from strawberry_django import StrFilterLookup
-except ImportError:  # pragma: no cover
-    from strawberry_django import FilterLookup as StrFilterLookup
+from strawberry_django import BaseFilterLookup, FilterLookup, StrFilterLookup
 
 from .... import models
 from ..mixins import ACIBaseFilterMixin

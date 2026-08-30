@@ -4,7 +4,6 @@
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
@@ -15,19 +14,17 @@ from netbox.forms import (
 )
 from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
-from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, get_field_value
+from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, GenericObjectFormMixin
 from utilities.forms.fields import (
     CommentField,
-    ContentTypeChoiceField,
     CSVContentTypeField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    GenericObjectChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
-from utilities.forms.widgets import HTMXSelect
-from utilities.templatetags.builtins.filters import bettertitle
 
 from ...constants import AAEP_DOMAIN_OBJECT_TYPES, ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
 from ...models.access_policies.aaep import (
@@ -296,7 +293,7 @@ class ACIAttachableAccessEntityProfileImportForm(NetBoxModelImportForm):
 #
 
 
-class ACIAAEPDomainBindingEditForm(NetBoxModelForm):
+class ACIAAEPDomainBindingEditForm(GenericObjectFormMixin, NetBoxModelForm):
     """NetBox edit form for the ACI AAEP Domain Binding model."""
 
     aci_fabric = DynamicModelChoiceField(
@@ -310,17 +307,12 @@ class ACIAAEPDomainBindingEditForm(NetBoxModelForm):
         query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI AAEP"),
     )
-    aci_domain_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(AAEP_DOMAIN_OBJECT_TYPES),
-        widget=HTMXSelect(),
-        label=_("ACI domain object type"),
-    )
-    aci_domain_object = DynamicModelChoiceField(
-        queryset=ACIPhysicalDomain.objects.none(),
+    aci_domain_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(AAEP_DOMAIN_OBJECT_TYPES),
         query_params={"aci_fabric_id": "$aci_fabric"},
         selector=True,
-        label=_("ACI domain object"),
-        disabled=True,
+        hx_target_id="aci_domain_object",
+        label=_("ACI Domain Object"),
     )
     comments = CommentField()
 
@@ -328,10 +320,13 @@ class ACIAAEPDomainBindingEditForm(NetBoxModelForm):
         FieldSet(
             "aci_fabric",
             "aci_aaep",
-            "aci_domain_object_type",
-            "aci_domain_object",
             "tags",
             name=_("ACI AAEP Domain Binding"),
+        ),
+        FieldSet(
+            "aci_domain_object",
+            name=_("Domain Assignment"),
+            html_id="aci_domain_object",
         ),
     )
 
@@ -339,65 +334,26 @@ class ACIAAEPDomainBindingEditForm(NetBoxModelForm):
         model = ACIAAEPDomainBinding
         fields: tuple = (
             "aci_aaep",
-            "aci_domain_object_type",
             "comments",
             "tags",
         )
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialize the ACI AAEP Domain Binding form."""
-        # Initialize fields with initial values
         instance = kwargs.get("instance")
         initial = kwargs.get("initial", {}).copy()
 
+        # Seed the helper aci_fabric dropdown from the bound domain, which
+        # the generic object field knows nothing about.
         if instance is not None and instance.aci_domain_object:
-            # Initialize ACI domain object field
-            initial["aci_domain_object"] = instance.aci_domain_object
-            # Seed helper aci_fabric from the bound domain's fabric
             initial["aci_fabric"] = instance.aci_domain_object.aci_fabric
 
         kwargs["initial"] = initial
 
         super().__init__(*args, **kwargs)
 
-        if aci_domain_object_type_id := get_field_value(self, "aci_domain_object_type"):
-            try:
-                # Retrieve the ContentType model class based on the ACI domain
-                # object type
-                aci_domain_object_type = ContentType.objects.get(
-                    pk=aci_domain_object_type_id
-                )
-                aci_model = aci_domain_object_type.model_class()
 
-                # Configure queryset and label for the aci_domain_object field
-                self.fields["aci_domain_object"].queryset = aci_model.objects.all()
-                self.fields["aci_domain_object"].widget.attrs["selector"] = (
-                    aci_model._meta.label_lower
-                )
-                self.fields["aci_domain_object"].disabled = False
-                self.fields["aci_domain_object"].label = _(
-                    bettertitle(aci_model._meta.verbose_name)
-                )
-            except ObjectDoesNotExist:  # pragma: no cover
-                pass
-
-            # Clear the aci_domain_object field if the selected type changes
-            if (
-                self.instance
-                and self.instance.pk
-                and aci_domain_object_type_id != self.instance.aci_domain_object_type_id
-            ):
-                self.initial["aci_domain_object"] = None
-
-    def clean(self) -> None:
-        """Validate form fields for the ACI AAEP Domain Binding form."""
-        super().clean()
-
-        # Ensure the selected ACI domain object gets assigned
-        self.instance.aci_domain_object = self.cleaned_data.get("aci_domain_object")
-
-
-class ACIAAEPDomainBindingBulkEditForm(NetBoxModelBulkEditForm):
+class ACIAAEPDomainBindingBulkEditForm(GenericObjectFormMixin, NetBoxModelBulkEditForm):
     """NetBox bulk edit form for the ACI AAEP Domain Binding model."""
 
     aci_fabric = DynamicModelChoiceField(
@@ -411,19 +367,13 @@ class ACIAAEPDomainBindingBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI AAEP"),
     )
-    aci_domain_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(AAEP_DOMAIN_OBJECT_TYPES),
-        required=False,
-        widget=HTMXSelect(method="post", attrs={"hx-select": "#form_fields"}),
-        label=_("ACI domain object type"),
-    )
-    aci_domain_object = DynamicModelChoiceField(
-        queryset=ACIPhysicalDomain.objects.none(),
+    aci_domain_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(AAEP_DOMAIN_OBJECT_TYPES),
         query_params={"aci_fabric_id": "$aci_fabric"},
         selector=True,
         required=False,
-        label=_("ACI domain object"),
-        disabled=True,
+        hx_method="post",
+        label=_("ACI Domain Object"),
     )
     comments = CommentField()
 
@@ -432,37 +382,11 @@ class ACIAAEPDomainBindingBulkEditForm(NetBoxModelBulkEditForm):
         FieldSet(
             "aci_fabric",
             "aci_aaep",
-            "aci_domain_object_type",
             "aci_domain_object",
             name=_("ACI AAEP Domain Binding"),
         ),
     )
     nullable_fields: tuple = ("comments",)
-
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize the ACI AAEP Domain Binding bulk edit form."""
-        super().__init__(*args, **kwargs)
-
-        if aci_domain_object_type_id := get_field_value(self, "aci_domain_object_type"):
-            try:
-                # Retrieve the ContentType model class based on the ACI domain
-                # object type
-                aci_domain_object_type = ContentType.objects.get(
-                    pk=aci_domain_object_type_id
-                )
-                aci_model = aci_domain_object_type.model_class()
-
-                # Configure queryset and label for the aci_domain_object field
-                self.fields["aci_domain_object"].queryset = aci_model.objects.all()
-                self.fields["aci_domain_object"].widget.attrs["selector"] = (
-                    aci_model._meta.label_lower
-                )
-                self.fields["aci_domain_object"].disabled = False
-                self.fields["aci_domain_object"].label = _(
-                    bettertitle(aci_model._meta.verbose_name)
-                )
-            except ObjectDoesNotExist:  # pragma: no cover
-                pass
 
 
 class ACIAAEPDomainBindingFilterForm(NetBoxModelFilterSetForm):

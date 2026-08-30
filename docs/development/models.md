@@ -28,7 +28,7 @@ This is the longest layer doc. Use the table of contents to jump:
 - [Generic Foreign Key pattern](#generic-foreign-key-pattern)
 - [`OwnerMixin` coverage](#ownermixin-coverage)
 - [Relation / Binding models](#relation--binding-models)
-- [`ACICachedScopeMixin`](#acicachedscopemixin)
+- [`CachedScopeMixin`](#cachedscopemixin)
 - [Choices](#choices)
 - [ACI concept casing in prose](#aci-concept-casing-in-prose)
 - [Model field kwarg ordering](#model-field-kwarg-ordering)
@@ -413,11 +413,11 @@ is the wrong default there.
 
 This section covers public foreign keys. The `_`-prefixed fields in
 [Denormalized FK caching](#denormalized-fk-caching) are a different
-mechanism and are uniformly `CASCADE`, and
-[`ACICachedScopeMixin`](#acicachedscopemixin) pins its `_region` and
-`_site_group` cache fields to `SET_NULL` to adopt an upstream fix ahead
-of its release. Both stay consistent with the four patterns once cache
-fields are read as sitting outside them.
+mechanism and are uniformly `CASCADE`, and the `_region` and
+`_site_group` fields contributed by
+[`CachedScopeMixin`](#cachedscopemixin) are `SET_NULL` by NetBox's own
+design. Both stay consistent with the four patterns once cache fields
+are read as sitting outside them.
 
 ### Nullability is a separate decision
 
@@ -558,6 +558,10 @@ class ACIContractRelation(NetBoxModel, UniqueGenericForeignKeyMixin):
 The mixin raises a `ValidationError` with the verbose names of the
 conflicting target model + the additional unique fields.
 
+On the form side the same `Q` object bounds a single
+`GenericObjectChoiceField` rather than a content-type plus object pair.
+See [Forms - Generic foreign keys](forms.md#generic-foreign-keys).
+
 ## `OwnerMixin` coverage
 
 `OwnerMixin` is the user-attribution mixin from `users.models`. It's
@@ -645,26 +649,21 @@ the ACI-policy text fields don't apply. See [`OwnerMixin`
 coverage](#ownermixin-coverage) for the matching skip at serializer +
 GraphQL-type layers.
 
-## `ACICachedScopeMixin`
+## `CachedScopeMixin`
 
-Fabric-scoped models (`ACIFabric`, `ACIPod`) inherit
-`ACICachedScopeMixin` from `models/mixins.py`, which adds
+Fabric-scoped models (`ACIFabric`, `ACIPod`) inherit NetBox's
+`dcim.models.mixins.CachedScopeMixin`, which adds
 `scope_type` / `scope_id` / `scope` for assignment to a Site / Region /
-SiteGroup / Location. The plugin mixin subclasses NetBox's
-`dcim.models.mixins.CachedScopeMixin` and pins the `_region` and
-`_site_group` cache fields to `on_delete=SET_NULL`, adopting the
-upstream fix for cache fields cascading on ancestor deletion (NetBox
-issue #22682) ahead of its release. The explicit declarations keep the
-plugin's migration state identical on every supported NetBox version;
-drop the overrides and inherit the NetBox mixin directly once the
-minimum supported NetBox release ships that fix. Include the scope
-fields in `clone_fields`:
+SiteGroup / Location. Its `_region` and `_site_group` cache fields are
+`on_delete=SET_NULL`: both may cache an ancestor of the actual scope,
+so deleting that ancestor must not delete the scoped object. Include
+the scope fields in `clone_fields`:
 
 ```python
-from ..mixins import ACICachedScopeMixin
+from dcim.models.mixins import CachedScopeMixin
 
 
-class ACIFabric(ACICachedScopeMixin, OwnerMixin, NetBoxModel):
+class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
     # ...
     clone_fields: tuple = (
         "description",
@@ -698,9 +697,19 @@ class BDMultiDestinationFloodingChoices(ChoiceSet):
     FLOOD_DROP = "drop"
 
     CHOICES = (
-        (FLOOD_BD, _("bd-flood"), "blue"),
-        (FLOOD_ENCAP, _("encap-flood"), "yellow"),
-        (FLOOD_DROP, _("drop"), "red"),
+        Choice(
+            FLOOD_BD,
+            _("bd-flood"),
+            color="blue",
+            description=_("Flood in the Bridge Domain"),
+        ),
+        Choice(
+            FLOOD_ENCAP,
+            _("encap-flood"),
+            color="yellow",
+            description=_("Flood only in the ingress encapsulation"),
+        ),
+        Choice(FLOOD_DROP, _("drop"), color="red", description=_("Drop the traffic")),
     )
 ```
 
@@ -711,9 +720,27 @@ Conventions:
   (`FLOOD_BD`, `UNKNOWN_MULTI_FLOOD`).
 - Add a `# default "<value>"` comment so contributors see the model's
   field default at a glance.
-- The third tuple element is the badge color (NetBox table/template
-  helpers consume it via `get_<field>_color()`, see [Choice color
-  helpers](#choice-color-helpers)).
+- Every member is a `Choice`, never a plain tuple. `color` feeds the badge
+  helpers (see [Choice color helpers](#choice-color-helpers)) and
+  `description` renders as a subtitle under the option label in form
+  dropdowns.
+- Write a `description` only where it says something the label does not.
+  `level1` labelled "level 1" needs none. ACI semantics like `bd-flood`,
+  `pre-provision` or a named filter port do.
+
+### Descriptions need the right form field
+
+A `description` reaches the browser only through NetBox's own
+`ChoiceField` / `MultipleChoiceField` from `utilities.forms.fields`.
+Django's `forms.ChoiceField` silently drops it, and the option renders
+with no subtitle. Import the NetBox classes, and use
+`utilities.forms.widgets.SelectMultiple` when a field needs a custom
+widget. `add_blank_choice()` preserves `Choice` objects, so bulk edit and
+filter forms keep their subtitles.
+
+CSV import fields are the exception: `CSVChoiceField` extends Django's
+field directly, because an import form renders no dropdown.
+`tests/forms/test_choice_field_conventions.py` enforces all of this.
 
 ### `add_custom_choice()`
 

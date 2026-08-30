@@ -16,11 +16,13 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
@@ -115,7 +117,7 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "IP learning is limited to the Bridge Domain's subnets. Default is enabled."
         ),
     )
-    multi_destination_flooding = forms.ChoiceField(
+    multi_destination_flooding = ChoiceField(
         choices=BDMultiDestinationFloodingChoices,
         label=_("Multi destination flooding"),
         help_text=_(
@@ -145,21 +147,21 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
             "Default is enabled."
         ),
     )
-    unknown_ipv4_multicast = forms.ChoiceField(
+    unknown_ipv4_multicast = ChoiceField(
         choices=BDUnknownMulticastChoices,
         label=_("Unknown IPv4 multicast"),
         help_text=_(
             "Defines the IPv4 unknown multicast forwarding method. Default is 'flood'."
         ),
     )
-    unknown_ipv6_multicast = forms.ChoiceField(
+    unknown_ipv6_multicast = ChoiceField(
         choices=BDUnknownMulticastChoices,
         label=_("Unknown IPv6 multicast"),
         help_text=_(
             "Defines the IPv6 unknown multicast forwarding method. Default is 'flood'."
         ),
     )
-    unknown_unicast = forms.ChoiceField(
+    unknown_unicast = ChoiceField(
         choices=BDUnknownUnicastChoices,
         label=_("Unknown unicast"),
         help_text=_(
@@ -362,7 +364,7 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("MAC address"),
     )
-    multi_destination_flooding = forms.ChoiceField(
+    multi_destination_flooding = ChoiceField(
         choices=add_blank_choice(BDMultiDestinationFloodingChoices),
         required=False,
         label=_("Multi destination flooding"),
@@ -396,17 +398,17 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Unicast routing enabled"),
     )
-    unknown_ipv4_multicast = forms.ChoiceField(
+    unknown_ipv4_multicast = ChoiceField(
         choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv4 multicast"),
     )
-    unknown_ipv6_multicast = forms.ChoiceField(
+    unknown_ipv6_multicast = ChoiceField(
         choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv6 multicast"),
     )
-    unknown_unicast = forms.ChoiceField(
+    unknown_unicast = ChoiceField(
         choices=add_blank_choice(BDUnknownUnicastChoices),
         required=False,
         label=_("Unknown unicast"),
@@ -430,7 +432,6 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIBridgeDomain
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "aci_vrf",
@@ -622,7 +623,7 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Limit IP learning to subnet enabled"),
     )
-    multi_destination_flooding = forms.MultipleChoiceField(
+    multi_destination_flooding = MultipleChoiceField(
         choices=add_blank_choice(BDMultiDestinationFloodingChoices),
         required=False,
         label=_("Multi destination flooding"),
@@ -648,17 +649,17 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Unicast routing enabled"),
     )
-    unknown_ipv4_multicast = forms.MultipleChoiceField(
+    unknown_ipv4_multicast = MultipleChoiceField(
         choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv4 multicast"),
     )
-    unknown_ipv6_multicast = forms.MultipleChoiceField(
+    unknown_ipv6_multicast = MultipleChoiceField(
         choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv6 multicast"),
     )
-    unknown_unicast = forms.MultipleChoiceField(
+    unknown_unicast = MultipleChoiceField(
         choices=add_blank_choice(BDUnknownUnicastChoices),
         required=False,
         label=_("Unknown unicast"),
@@ -1122,10 +1123,8 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIBridgeDomainSubnet
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_bridge_domain",
-            "gateway_ip_address",
             "description",
             "preferred_ip_address_enabled",
             "virtual_ip_enabled",

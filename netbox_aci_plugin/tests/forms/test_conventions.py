@@ -6,6 +6,7 @@ from django.test import SimpleTestCase
 
 import netbox_aci_plugin.forms  # noqa: F401  ensure every form module is imported
 from netbox.forms import NetBoxModelBulkEditForm, NetBoxModelForm
+from utilities.forms.fields import GenericObjectChoiceField
 from utilities.forms.rendering import InlineFields, TabbedGroups
 
 # Fields NetBox auto-renders on bulk-edit forms (Ownership / Tags /
@@ -13,6 +14,12 @@ from utilities.forms.rendering import InlineFields, TabbedGroups
 # `render_fieldset` silently drops a fieldset item the form has no field
 # for, so listing these here is dead code.
 AUTO_RENDERED_FIELDS = frozenset({"tags", "comments", "owner", "owner_group"})
+
+# Bulk-edit field sets that name `nb_tenant_group` without declaring it. The
+# entry renders as nothing today, but the open question is whether bulk edit
+# should instead gain the tenant-group cascade its edit form has, so the entry
+# is left in place rather than removed. Tracked in todo.md.
+PENDING_FIELDSET_ENTRIES = frozenset({"nb_tenant_group"})
 
 
 def _iter_aci_bulk_edit_forms():
@@ -113,3 +120,139 @@ class ACIFieldsetDescriptionOrderTests(SimpleTestCase):
             {},
             f"`description` must follow aci_* fields in fieldsets: {offenders}",
         )
+
+
+class ACIFieldsetTargetTests(SimpleTestCase):
+    """Guard that fieldset entries and HTMX swap containers resolve."""
+
+    maxDiff = None
+
+    def test_fieldset_items_name_real_fields(self) -> None:
+        """Test every field set entry names a field the form declares."""
+        unknown = {}
+        for form_class in _iter_aci_fieldset_forms():
+            names = {
+                name
+                for fieldset in getattr(form_class, "fieldsets", ())
+                for name in _fieldset_field_names(fieldset)
+            }
+            if gaps := sorted(
+                names
+                - set(form_class.base_fields)
+                - AUTO_RENDERED_FIELDS
+                - PENDING_FIELDSET_ENTRIES
+            ):
+                unknown[form_class.__name__] = gaps
+
+        self.assertEqual(
+            unknown,
+            {},
+            "A field set names a field the form does not declare. "
+            "render_fieldset skips it silently, so it renders as nothing.",
+        )
+
+    def test_swap_containers_hold_only_their_generic_object_field(self) -> None:
+        """Test an HTMX swap container carries nothing but its own field."""
+        crowded = {}
+        for form_class in _iter_aci_fieldset_forms():
+            targets = {
+                field.hx_target_id: name
+                for name, field in form_class.base_fields.items()
+                if isinstance(field, GenericObjectChoiceField) and field.hx_target_id
+            }
+            for fieldset in getattr(form_class, "fieldsets", ()):
+                html_id = getattr(fieldset, "html_id", None)
+                if html_id not in targets:
+                    continue
+                extra = sorted(
+                    set(_fieldset_field_names(fieldset)) - {targets[html_id]}
+                )
+                if extra:
+                    crowded[f"{form_class.__name__}.{html_id}"] = extra
+
+        self.assertEqual(
+            crowded,
+            {},
+            "An HTMX swap container holds fields besides its generic object "
+            "field. hx-swap replaces the container, so those are torn down and "
+            "reset on every content type change.",
+        )
+
+    def test_generic_object_fields_have_a_swap_container(self) -> None:
+        """Test every HTMX swap target has a matching field set html_id."""
+        missing = {}
+        for form_class in _iter_aci_fieldset_forms():
+            html_ids = {
+                getattr(fieldset, "html_id", None)
+                for fieldset in getattr(form_class, "fieldsets", ())
+            }
+            for name, field in form_class.base_fields.items():
+                if not isinstance(field, GenericObjectChoiceField):
+                    continue
+                if field.hx_target_id and field.hx_target_id not in html_ids:
+                    missing[f"{form_class.__name__}.{name}"] = field.hx_target_id
+
+        self.assertEqual(
+            missing,
+            {},
+            "A generic object field targets an html_id no field set declares. "
+            "The HTMX partial swap fails silently.",
+        )
+
+
+class ACIRangePairInlineTests(SimpleTestCase):
+    """Guard that `<field>_from` / `<field>_to` pairs render inline."""
+
+    def test_range_pairs_are_inlined(self):
+        """A from/to pair in an edit fieldset must be an InlineFields row."""
+        offenders = {}
+        for form_cls in _iter_aci_fieldset_forms():
+            for fieldset in getattr(form_cls, "fieldsets", None) or ():
+                bare = {
+                    item
+                    for item in getattr(fieldset, "items", ())
+                    if isinstance(item, str)
+                }
+                stacked = sorted(
+                    name
+                    for name in bare
+                    if name.endswith("_from") and f"{name[:-5]}_to" in bare
+                )
+                if stacked:
+                    offenders[form_cls.__name__] = stacked
+        self.assertEqual(
+            offenders,
+            {},
+            "A from/to pair stacked as two rows reads as two unrelated "
+            "inputs. Wrap it in InlineFields with a shared label and "
+            f"help text: {offenders}",
+        )
+
+    def test_inlined_range_pairs_carry_help_text(self):
+        """Every InlineFields row must explain what the pair means."""
+        offenders = {}
+        for form_cls in _iter_aci_fieldset_forms():
+            for fieldset in getattr(form_cls, "fieldsets", None) or ():
+                for item in getattr(fieldset, "items", ()):
+                    if not isinstance(item, InlineFields):
+                        continue
+                    if not (item.label and item.help_text):
+                        offenders.setdefault(form_cls.__name__, []).append(
+                            ", ".join(item.fields)
+                        )
+        self.assertEqual(
+            offenders,
+            {},
+            f"InlineFields needs both a label and help text: {offenders}",
+        )
+
+    def test_range_pairs_are_collected(self):
+        """Test the check actually finds the inlined pairs."""
+        inlined = [
+            item
+            for form_cls in _iter_aci_fieldset_forms()
+            for fieldset in getattr(form_cls, "fieldsets", None) or ()
+            for item in getattr(fieldset, "items", ())
+            if isinstance(item, InlineFields)
+        ]
+        self.assertEqual(len(inlined), 4)

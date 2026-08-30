@@ -1106,7 +1106,7 @@ class ACIUSegNetworkAttributeTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError) as cm:
             useg_network_attr.full_clean()
-        self.assertIn("attr_object_type", cm.exception.error_dict)
+        self.assertIn("attr_object", cm.exception.error_dict)
 
     def test_invalid_aci_useg_network_attr_without_object_or_epg_subnet(
         self,

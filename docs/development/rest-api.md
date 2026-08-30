@@ -57,7 +57,16 @@ class ACIBridgeDomainListViewSet(NetBoxModelViewSet):
 
     queryset = ACIBridgeDomain.objects.select_related(
         "aci_tenant",
+        "aci_tenant__aci_fabric",
+        "aci_tenant__aci_fabric__nb_tenant",
+        "aci_tenant__nb_tenant",
         "aci_vrf",
+        "aci_vrf__aci_tenant",
+        "aci_vrf__aci_tenant__aci_fabric",
+        "aci_vrf__aci_tenant__aci_fabric__nb_tenant",
+        "aci_vrf__aci_tenant__nb_tenant",
+        "aci_vrf__nb_tenant",
+        "aci_vrf__nb_vrf",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -70,9 +79,14 @@ class ACIBridgeDomainListViewSet(NetBoxModelViewSet):
 Three attributes are mandatory on every viewset:
 
 1. **`queryset`**: explicit `select_related` + `prefetch_related("tags")`
-   chain. Mirror the chain from the corresponding UI view (see
-   [Views - QuerySet optimization](views.md#queryset-optimization)) so
-   the API and UI hit the same query shape.
+   chain. Derive it from the **serializer**, not from the UI view. A
+   nested serializer renders its `brief_fields`, which carry its own
+   parent reference and `nb_tenant`, so the chain has to be walked to
+   the end of that graph. Anything NetBox would otherwise resolve with
+   a separate prefetch query belongs in `select_related`, and
+   `tests/api/test_conventions.py` asserts exactly that. Generic
+   foreign keys and tags cannot be joined and stay in
+   `prefetch_related`.
 2. **`serializer_class`**: the model's serializer.
 3. **`filterset_class`**: the model's FilterSet, so `?field=value`
    query params work the same way the UI list-view filter sidebar

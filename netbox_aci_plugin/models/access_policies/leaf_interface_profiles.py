@@ -162,8 +162,8 @@ class ACILeafInterfaceSelector(ACIFabricBaseModel):
         if (
             self.aci_leaf_interface_profile_id
             and self.aci_leaf_interface_policy_group_id
-            and self.aci_leaf_interface_policy_group.aci_fabric
-            != self.aci_leaf_interface_profile.aci_fabric
+            and self.aci_leaf_interface_policy_group.aci_fabric_id
+            != self.aci_leaf_interface_profile.aci_fabric_id
         ):
             errors.setdefault("aci_leaf_interface_policy_group", []).append(
                 _(

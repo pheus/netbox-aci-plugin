@@ -48,21 +48,25 @@ class ACIEndpointGroupFormCoverageTestCase(ACIBaseFormTestCase):
 
     def test_useg_attr_edit_form_object_type_unknown(self) -> None:
         """Test the uSeg attribute edit form tolerates an unknown type."""
-        form = ACIUSegNetworkAttributeEditForm(data={"attr_object_type": 99999999})
-        self.assertIn("attr_object", form.fields)
+        form = ACIUSegNetworkAttributeEditForm(
+            data={"attr_object_content_type": 99999999}
+        )
+        self.assertIsNone(form.fields["attr_object"].selected_model)
 
     def test_useg_attr_bulk_edit_form_configures_field(self) -> None:
         """Test the uSeg attribute bulk edit form configures attr_object."""
         attr_object_type = ContentType.objects.get_for_model(IPAddress)
         form = ACIUSegNetworkAttributeBulkEditForm(
-            data={"attr_object_type": attr_object_type.pk}
+            data={"attr_object_content_type": attr_object_type.pk}
         )
-        self.assertEqual(form.fields["attr_object"].queryset.model, IPAddress)
+        self.assertIs(form.fields["attr_object"].selected_model, IPAddress)
 
     def test_useg_attr_bulk_edit_form_object_type_unknown(self) -> None:
         """Test the uSeg attribute bulk edit form tolerates an unknown type."""
-        form = ACIUSegNetworkAttributeBulkEditForm(data={"attr_object_type": 99999999})
-        self.assertIn("attr_object", form.fields)
+        form = ACIUSegNetworkAttributeBulkEditForm(
+            data={"attr_object_content_type": 99999999}
+        )
+        self.assertIsNone(form.fields["attr_object"].selected_model)
 
     def test_epg_filter_form_qos_class_accepts_multiple(self) -> None:
         """Test the EPG filter form accepts multiple QoS class values."""
@@ -202,10 +206,10 @@ class ACIUSegNetworkAttributeFormTestCase(ACIBaseFormTestCase):
                 "name_alias": "ACI Test Alias 1",
                 "description": "Invalid Description: ö",
                 "aci_useg_endpoint_group": self.aci_useg_epg,
-                "attr_object_type": ContentType.objects.get_for_model(
+                "attr_object_content_type": ContentType.objects.get_for_model(
                     self.aci_bd._meta.model
                 ).id,
-                "attr_object": self.aci_bd,
+                "attr_object_object_id": self.aci_bd.pk,
             }
         )
         self.assertFalse(aci_useg_network_attr_form.is_valid())
@@ -221,7 +225,7 @@ class ACIUSegNetworkAttributeFormTestCase(ACIBaseFormTestCase):
             aci_useg_network_attr_form.errors["description"],
             [self.description_error_message],
         )
-        self.assertIn("attr_object_type", aci_useg_network_attr_form.errors)
+        self.assertIn("attr_object", aci_useg_network_attr_form.errors)
 
     def test_valid_aci_useg_network_attribute_field_values(self) -> None:
         """Test validation of valid ACI uSeg Network Attribute field values."""
@@ -231,14 +235,30 @@ class ACIUSegNetworkAttributeFormTestCase(ACIBaseFormTestCase):
                 "name_alias": "Testing",
                 "description": "uSeg Network Attribute for NetBox ACI Plugin",
                 "aci_useg_endpoint_group": self.aci_useg_epg,
-                "attr_object_type": ContentType.objects.get_for_model(
+                "attr_object_content_type": ContentType.objects.get_for_model(
                     self.ip_address._meta.model
                 ).id,
-                "attr_object": self.ip_address,
+                "attr_object_object_id": self.ip_address.pk,
             }
         )
         self.assertTrue(aci_useg_network_attr_form.is_valid())
         self.assertEqual(aci_useg_network_attr_form.errors.get("name"), None)
         self.assertEqual(aci_useg_network_attr_form.errors.get("name_alias"), None)
         self.assertEqual(aci_useg_network_attr_form.errors.get("description"), None)
-        self.assertNotIn("attr_object_type", aci_useg_network_attr_form.errors)
+        self.assertNotIn("attr_object", aci_useg_network_attr_form.errors)
+
+    def test_invalid_aci_useg_network_attribute_epg_subnet_conflict(self) -> None:
+        """Test 'use EPG subnet' conflicting with an attribute object."""
+        aci_useg_network_attr_form = ACIUSegNetworkAttributeEditForm(
+            data={
+                "name": "ACIUSegNetworkAttribute1",
+                "aci_useg_endpoint_group": self.aci_useg_epg,
+                "use_epg_subnet": True,
+                "attr_object_content_type": ContentType.objects.get_for_model(
+                    self.ip_address._meta.model
+                ).id,
+                "attr_object_object_id": self.ip_address.pk,
+            }
+        )
+        self.assertFalse(aci_useg_network_attr_form.is_valid())
+        self.assertIn("attr_object", aci_useg_network_attr_form.errors)

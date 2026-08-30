@@ -286,8 +286,8 @@ class ACIExternalEndpointGroupViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_tenant={instance.aci_tenant.pk}&amp;'
-            f"aci_object={instance.pk}&amp;"
-            f"aci_object_type={content_type.pk}",
+            f"aci_object_object_id={instance.pk}&amp;"
+            f"aci_object_content_type={content_type.pk}",
         )
         # The old partial used the wrong field name aci_object_id.
         self.assertNotContains(response, "aci_object_id=")

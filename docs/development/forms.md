@@ -126,16 +126,21 @@ current example.
 above by walking every edit form at runtime, so a new form cannot
 reintroduce either mistake.
 
+`ChoiceField` and `MultipleChoiceField` come from
+`utilities.forms.fields`, not from `django.forms`. Only the NetBox
+classes render the description a `Choice` carries as an option subtitle
+(see [Models - Choices](models.md#choices)).
+
 ```python
 # EditForm - required, no blank entry
-target_dscp = forms.ChoiceField(
+target_dscp = ChoiceField(
     choices=QualityOfServiceDSCPChoices,
     initial=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
     label=_("Target DSCP"),
 )
 
 # BulkEditForm - optional, blank means "leave unchanged"
-target_dscp = forms.ChoiceField(
+target_dscp = ChoiceField(
     choices=add_blank_choice(QualityOfServiceDSCPChoices),
     required=False,
     label=_("Target DSCP"),
@@ -207,10 +212,44 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
     )
 ```
 
-The fieldset names are user-facing; wrap them with `_()`. Order
+The fieldset names are user-facing. Wrap them with `_()`. Order
 fieldsets by logical importance (identity, behavior, scoping,
 tags/comments). The last fieldset is usually `NetBox Tenancy` (or
 `Tags` / `Comments` for narrow forms).
+
+### Range pairs render inline
+
+A `<field>_from` / `<field>_to` pair listed as two positional names
+renders as two stacked rows, which reads as two unrelated inputs. Wrap
+the pair in `InlineFields` so it renders side by side under one label,
+and give it `help_text` explaining what the range covers. Derive the
+bounds from the same constants the model validators use, so the text
+cannot drift:
+
+```python
+from utilities.forms.rendering import FieldSet, InlineFields
+
+FieldSet(
+    InlineFields(
+        "vlan_id_from",
+        "vlan_id_to",
+        label=_("VLAN IDs"),
+        help_text=_(
+            "First and last VLAN ID of the range, from {min} to {max}."
+        ).format(min=VLAN_VID_MIN, max=VLAN_VID_MAX),
+    ),
+    "allocation_mode",
+    "role",
+    name=_("Encapsulation Block"),
+)
+```
+
+**This applies to edit forms only.** On a FilterForm the same two names
+are independent exact-match filters over each column, not the ends of
+one range, so presenting them as a range would misrepresent what they
+do. `tests/forms/test_conventions.py` enforces both halves: no stacked
+pair on an edit form, and no `InlineFields` without a label and help
+text.
 
 ## Cascading dropdowns
 
@@ -310,15 +349,18 @@ All `initial_params` use the same key (`aci_bridge_domains` /
 `aci_tenants__aci_bridge_domains`); they all derive from the BD side,
 not the L3Out side.
 
-## Custom `__init__`: only for runtime queryset/widget swap
+## Custom `__init__`: only for initial values nothing else supplies
 
 The declarative `initial_params` / `query_params` pattern handles
-almost everything. Reach for a custom `__init__` only when the
-**queryset or widget itself** must change at runtime based on another
-field's value.
+almost everything, and `GenericObjectChoiceField` handles the runtime
+queryset swap for a generic foreign key (see
+[Generic foreign keys](#generic-foreign-keys) below). Reach for a
+custom `__init__` only to seed an initial value that neither can
+derive.
 
-Reference example: `ACIContractRelationEditForm.__init__` swaps
-`aci_object.queryset` based on the chosen `aci_object_type`:
+Reference example: `ACIContractRelationEditForm.__init__` pre-fills the
+helper `aci_fabric` and `aci_tenant` dropdowns from the bound object,
+which the generic object field knows nothing about:
 
 ```python
 def __init__(self, *args, **kwargs) -> None:
@@ -326,26 +368,66 @@ def __init__(self, *args, **kwargs) -> None:
     instance = kwargs.get("instance")
     initial = kwargs.get("initial", {}).copy()
 
+    # Seed the helper dropdowns from the OBJECT tenant, not the contract
+    # tenant. A contract held in "common" must still filter the object
+    # dropdown by its own tenant, and the contract dropdown must offer
+    # both the object's tenant and common.
     if instance is not None and instance.aci_object:
-        initial["aci_object"] = instance.aci_object
         initial["aci_tenant"] = instance.aci_object_tenant
         initial["aci_fabric"] = instance.aci_object_tenant.aci_fabric
 
     kwargs["initial"] = initial
     super().__init__(*args, **kwargs)
-
-    if aci_object_type_id := get_field_value(self, "aci_object_type"):
-        aci_object_type = ContentType.objects.get(pk=aci_object_type_id)
-        aci_model = aci_object_type.model_class()
-        self.fields["aci_object"].queryset = aci_model.objects.all()
-        self.fields["aci_object"].widget.attrs["selector"] = (
-            aci_model._meta.label_lower
-        )
-        # ...
 ```
 
 Don't override `__init__` to do cascade work that `query_params` can
-already express.
+already express, and don't re-implement the content-type-to-queryset
+dance that `GenericObjectChoiceField` performs.
+
+## Generic foreign keys
+
+A model with a `GenericForeignKey` gets **one** form field, not a
+content-type plus object pair. Combine `GenericObjectFormMixin` with
+`GenericObjectChoiceField`, and feed the field the same `Q` object from
+`constants.py` that bounds the model side:
+
+```python
+class ACIContractRelationEditForm(GenericObjectFormMixin, NetBoxModelForm):
+    aci_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(
+            CONTRACT_RELATION_OBJECT_TYPES
+        ),
+        query_params={
+            "aci_fabric_id": "$aci_fabric",
+            "aci_tenant_id": "$aci_tenant",
+        },
+        selector=True,
+        hx_target_id="aci_object",
+        label=_("ACI Object"),
+    )
+```
+
+The mixin seeds the field from the GFK descriptor and assigns the
+cleaned object back to it, so neither a custom `__init__` nor a
+`clean()` is needed for the assignment.
+
+Three rules that are easy to miss:
+
+- **`hx_target_id` needs a matching `FieldSet(html_id=...)`.** Without
+  it the partial swap has no container and silently does nothing. NetBox
+  warns about this under `DEBUG`. A form with two generic object fields
+  therefore needs two field sets, one per field.
+- **Bulk edit forms take `hx_method="post"` and no `hx_target_id`**,
+  which re-renders the whole form. This mirrors NetBox's own
+  `ScopedBulkEditForm`.
+- **The rendered input names are `<field>_content_type` and
+  `<field>_object_id`**, not the field name. Form tests, view test
+  `form_data`, and any `url_params` that pre-fill the field through a
+  parent object's Add button all use those names.
+
+Filter forms and import forms are unaffected: they keep a plain
+`ContentTypeChoiceField` or `CSVContentTypeField` alongside an object
+ID, because neither renders the paired selector.
 
 ## CSV `ImportForm` queryset narrowing
 

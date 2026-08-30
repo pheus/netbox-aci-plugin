@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django import forms
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
 from ipam.models import VLANGroup
@@ -16,21 +17,28 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import add_blank_choice
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
-from utilities.forms.rendering import FieldSet
+from utilities.forms.rendering import FieldSet, InlineFields
 
 from ...choices import (
     VLANAllocationModeChoices,
     VLANPoolRangeAllocationModeChoices,
     VLANPoolRangeRoleChoices,
 )
-from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...constants import (
+    ACI_DESC_MAX_LEN,
+    ACI_NAME_MAX_LEN,
+    VLAN_VID_MAX,
+    VLAN_VID_MIN,
+)
 from ...models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ...models.fabric.fabrics import ACIFabric
 from ...validators import (
@@ -45,6 +53,14 @@ class ACIVLANPoolEditForm(NetBoxModelForm):
     aci_fabric = DynamicModelChoiceField(
         queryset=ACIFabric.objects.all(),
         label=_("ACI Fabric"),
+    )
+    allocation_mode = ChoiceField(
+        choices=VLANAllocationModeChoices,
+        label=_("Allocation mode"),
+        help_text=_(
+            "Dynamic pools let the APIC assign VLANs automatically (typically "
+            "for VMM domains). Static pools use manually defined ranges."
+        ),
     )
     nb_vlan_group = DynamicModelChoiceField(
         queryset=VLANGroup.objects.all(),
@@ -132,7 +148,7 @@ class ACIVLANPoolBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI Fabric"),
     )
-    allocation_mode = forms.ChoiceField(
+    allocation_mode = ChoiceField(
         choices=add_blank_choice(VLANAllocationModeChoices),
         required=False,
         label=_("Allocation mode"),
@@ -220,7 +236,7 @@ class ACIVLANPoolFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Fabric"),
     )
-    allocation_mode = forms.MultipleChoiceField(
+    allocation_mode = MultipleChoiceField(
         choices=add_blank_choice(VLANAllocationModeChoices),
         required=False,
         label=_("Allocation mode"),
@@ -327,6 +343,18 @@ class ACIVLANPoolRangeEditForm(NetBoxModelForm):
         query_params={"aci_fabric_id": "$aci_fabric"},
         label=_("ACI VLAN Pool"),
     )
+    allocation_mode = ChoiceField(
+        choices=VLANPoolRangeAllocationModeChoices,
+        label=_("Allocation mode"),
+        help_text=_(
+            "Overrides the pool allocation mode for this block. 'inherit' uses "
+            "the pool setting."
+        ),
+    )
+    role = ChoiceField(
+        choices=VLANPoolRangeRoleChoices,
+        label=_("Role"),
+    )
     comments = CommentField()
 
     fieldsets: tuple = (
@@ -337,8 +365,16 @@ class ACIVLANPoolRangeEditForm(NetBoxModelForm):
             name=_("ACI VLAN Pool"),
         ),
         FieldSet(
-            "vlan_id_from",
-            "vlan_id_to",
+            InlineFields(
+                "vlan_id_from",
+                "vlan_id_to",
+                label=_("VLAN IDs"),
+                help_text=format_lazy(
+                    _("First and last VLAN ID of the range, from {min} to {max}."),
+                    min=VLAN_VID_MIN,
+                    max=VLAN_VID_MAX,
+                ),
+            ),
             "allocation_mode",
             "role",
             name=_("Encapsulation Block"),
@@ -366,12 +402,12 @@ class ACIVLANPoolRangeBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI VLAN Pool"),
     )
-    allocation_mode = forms.ChoiceField(
+    allocation_mode = ChoiceField(
         choices=add_blank_choice(VLANPoolRangeAllocationModeChoices),
         required=False,
         label=_("Allocation mode"),
     )
-    role = forms.ChoiceField(
+    role = ChoiceField(
         choices=add_blank_choice(VLANPoolRangeRoleChoices),
         required=False,
         label=_("Role"),
@@ -430,12 +466,12 @@ class ACIVLANPoolRangeFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("VLAN ID (to)"),
     )
-    allocation_mode = forms.MultipleChoiceField(
+    allocation_mode = MultipleChoiceField(
         choices=add_blank_choice(VLANPoolRangeAllocationModeChoices),
         required=False,
         label=_("Allocation mode"),
     )
-    role = forms.MultipleChoiceField(
+    role = MultipleChoiceField(
         choices=add_blank_choice(VLANPoolRangeRoleChoices),
         required=False,
         label=_("Role"),
@@ -457,7 +493,7 @@ class ACIVLANPoolRangeImportForm(NetBoxModelImportForm):
         choices=VLANPoolRangeAllocationModeChoices,
         required=False,
         label=_("Allocation mode"),
-        help_text=_("Block allocation mode; inherit uses the pool setting."),
+        help_text=_("Block allocation mode. Inherit uses the pool setting."),
     )
     role = CSVChoiceField(
         choices=VLANPoolRangeRoleChoices,

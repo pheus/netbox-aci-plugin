@@ -4,7 +4,7 @@
 
 """Filterset tests for the ACI VPC Protection Group model."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import NodeRoleChoices
 from ....filtersets.fabric.vpc_protection_groups import ACIVPCProtectionGroupFilterSet
@@ -14,7 +14,7 @@ from ...models.base import ACIBaseTestCase
 
 
 class ACIVPCProtectionGroupFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIVPCProtectionGroupFilterSet."""
 

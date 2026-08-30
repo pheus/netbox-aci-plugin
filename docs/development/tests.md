@@ -229,7 +229,8 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
 !!! tip "NetBox test mixins"
     Prefer NetBox's testing mixins whenever they fit: use
     `utilities.testing.ViewTestCases.*` for UI view permission checks,
-    `ChangeLoggedFilterSetTests` / `BaseFilterSetTests` for filtersets,
+    `ChangeLoggedFilterSetTestMixin` / `BaseFilterSetTestMixin` for
+    filtersets,
     and `TableTestCases.StandardTableTestCase` for table smoke tests.
     The plugin already uses these patterns in several layers; new tests
     should extend that coverage rather than adding hand-rolled helpers.

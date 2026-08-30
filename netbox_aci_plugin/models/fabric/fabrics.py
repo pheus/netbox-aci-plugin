@@ -11,6 +11,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from dcim.models.mixins import CachedScopeMixin
 from netbox.models import NetBoxModel
 from netbox.models.mixins import OwnerMixin
 
@@ -23,10 +24,9 @@ from ...constants import (
     VLAN_VID_MIN,
 )
 from ...validators import ACIPolicyDescriptionValidator, ACIPolicyNameRequiredValidator
-from ..mixins import ACICachedScopeMixin
 
 
-class ACIFabric(ACICachedScopeMixin, OwnerMixin, NetBoxModel):
+class ACIFabric(CachedScopeMixin, OwnerMixin, NetBoxModel):
     """Top-level ACI fabric that all other ACI objects belong to.
 
     Represents one APIC-managed fabric, identified by a fabric ID

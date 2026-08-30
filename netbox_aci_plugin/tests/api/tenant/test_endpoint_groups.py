@@ -182,6 +182,9 @@ class ACIEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACIUSegEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -343,6 +346,9 @@ class ACIUSegEndpointGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }
 
 
@@ -535,4 +541,7 @@ class ACIUSegNetworkAttributeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }

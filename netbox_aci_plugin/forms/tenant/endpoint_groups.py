@@ -4,7 +4,6 @@
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import gettext_lazy as _
 
 from dcim.models import MACAddress
@@ -19,22 +18,22 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import (
     BOOLEAN_WITH_BLANK_CHOICES,
+    GenericObjectFormMixin,
     add_blank_choice,
-    get_field_value,
 )
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
-    ContentTypeChoiceField,
     CSVChoiceField,
     CSVContentTypeField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    GenericObjectChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
-from utilities.forms.widgets import HTMXSelect
-from utilities.templatetags.builtins.filters import bettertitle
 
 from ...choices import QualityOfServiceClassChoices
 from ...constants import (
@@ -125,7 +124,7 @@ class ACIEndpointGroupEditForm(NetBoxModelForm):
             "enabled. Default is disabled."
         ),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=QualityOfServiceClassChoices,
         label=_("QoS class"),
         help_text=_(
@@ -275,7 +274,7 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Intra-EPG isolation enabled"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
@@ -313,7 +312,6 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIEndpointGroup
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_app_profile",
             "aci_bridge_domain",
@@ -457,7 +455,7 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Intra-EPG isolation enabled"),
     )
-    qos_class = forms.MultipleChoiceField(
+    qos_class = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
@@ -694,7 +692,7 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
             "enabled. Default is disabled."
         ),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=QualityOfServiceClassChoices,
         label=_("QoS class"),
         help_text=_(
@@ -837,7 +835,7 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Intra-EPG isolation enabled"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
@@ -868,7 +866,6 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIUSegEndpointGroup
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_app_profile",
             "aci_bridge_domain",
@@ -1010,7 +1007,7 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Intra-EPG isolation enabled"),
     )
-    qos_class = forms.MultipleChoiceField(
+    qos_class = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("Quality of Service (QoS) class"),
@@ -1173,7 +1170,7 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
 #
 
 
-class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
+class ACIUSegNetworkAttributeEditForm(GenericObjectFormMixin, NetBoxModelForm):
     """NetBox edit form for the ACI uSeg Network Attribute model."""
 
     aci_fabric = DynamicModelChoiceField(
@@ -1214,18 +1211,14 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
         },
         label=_("ACI uSeg Endpoint Group"),
     )
-    attr_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(USEG_NETWORK_ATTRIBUTES_MODELS),
-        required=False,
-        widget=HTMXSelect(),
-        label=_("Attribute Object Type"),
-    )
-    attr_object = DynamicModelChoiceField(
-        queryset=IPAddress.objects.none(),  # Initial queryset
+    attr_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(
+            USEG_NETWORK_ATTRIBUTES_MODELS
+        ),
         selector=True,
         required=False,
+        hx_target_id="attr_object",
         label=_("Attribute Object"),
-        disabled=True,
     )
     use_epg_subnet = forms.BooleanField(
         required=False,
@@ -1278,9 +1271,9 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
             name=_("EPG Subnet Settings"),
         ),
         FieldSet(
-            "attr_object_type",
             "attr_object",
             name=_("Attribute Assignment"),
+            html_id="attr_object",
         ),
         FieldSet(
             "nb_tenant_group",
@@ -1296,7 +1289,6 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
             "name_alias",
             "description",
             "aci_useg_endpoint_group",
-            "attr_object_type",
             "use_epg_subnet",
             "nb_tenant",
             "owner",
@@ -1304,56 +1296,10 @@ class ACIUSegNetworkAttributeEditForm(NetBoxModelForm):
             "tags",
         )
 
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize the ACI uSeg Network Attribute form."""
-        # Initialize fields with initial values
-        instance = kwargs.get("instance")
-        initial = kwargs.get("initial", {}).copy()
 
-        if instance is not None and instance.attr_object:
-            # Initialize Attribute object field
-            initial["attr_object"] = instance.attr_object
-
-        kwargs["initial"] = initial
-
-        super().__init__(*args, **kwargs)
-
-        if attr_object_type_id := get_field_value(self, "attr_object_type"):
-            try:
-                # Retrieve the ContentType model class based on the Attribute
-                # object type
-                attr_object_type = ContentType.objects.get(pk=attr_object_type_id)
-                attr_model = attr_object_type.model_class()
-
-                # Configure the queryset and label for the attr_object field
-                self.fields["attr_object"].queryset = attr_model.objects.all()
-                self.fields["attr_object"].widget.attrs["selector"] = (
-                    attr_model._meta.label_lower
-                )
-                self.fields["attr_object"].disabled = False
-                self.fields["attr_object"].label = _(
-                    bettertitle(attr_model._meta.verbose_name)
-                )
-            except ObjectDoesNotExist:  # pragma: no cover
-                pass
-
-            # Clears the attr_object field if the selected type changes
-            if (
-                self.instance
-                and self.instance.pk
-                and attr_object_type_id != self.instance.attr_object_type_id
-            ):
-                self.initial["attr_object"] = None
-
-    def clean(self) -> None:
-        """Validate form fields for the ACI uSeg Network Attribute form."""
-        super().clean()
-
-        # Ensure the selected Attribute object gets assigned
-        self.instance.attr_object = self.cleaned_data.get("attr_object")
-
-
-class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
+class ACIUSegNetworkAttributeBulkEditForm(
+    GenericObjectFormMixin, NetBoxModelBulkEditForm
+):
     """NetBox bulk edit form for the ACI uSeg Network Attribute model."""
 
     name_alias = forms.CharField(
@@ -1383,19 +1329,15 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI uSeg Endpoint Group"),
     )
-    attr_object_type = ContentTypeChoiceField(
-        queryset=ContentType.objects.filter(USEG_NETWORK_ATTRIBUTES_MODELS),
-        required=False,
-        widget=HTMXSelect(method="post", attrs={"hx-select": "#form_fields"}),
-        label=_("Attribute Object Type"),
-    )
-    attr_object = DynamicModelChoiceField(
-        queryset=IPAddress.objects.none(),  # Initial queryset
+    attr_object = GenericObjectChoiceField(
+        content_type_queryset=ContentType.objects.filter(
+            USEG_NETWORK_ATTRIBUTES_MODELS
+        ),
         query_params={"aci_tenant_id": "$aci_tenant"},
         selector=True,
         required=False,
+        hx_method="post",
         label=_("Attribute Object"),
-        disabled=True,
     )
     use_epg_subnet = forms.NullBooleanField(
         required=False,
@@ -1419,7 +1361,6 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIUSegNetworkAttribute
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "aci_app_profile",
@@ -1432,7 +1373,6 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
             name=_("EPG Subnet Settings"),
         ),
         FieldSet(
-            "attr_object_type",
             "attr_object",
             name=_("Attribute Assignment"),
         ),
@@ -1448,29 +1388,6 @@ class ACIUSegNetworkAttributeBulkEditForm(NetBoxModelBulkEditForm):
         "nb_tenant",
         "comments",
     )
-
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize the ACI uSeg Network Attribute bulk edit form."""
-        super().__init__(*args, **kwargs)
-
-        if attr_object_type_id := get_field_value(self, "attr_object_type"):
-            try:
-                # Retrieve the ContentType model class based on the Attribute
-                # object type
-                attr_object_type = ContentType.objects.get(pk=attr_object_type_id)
-                attr_model = attr_object_type.model_class()
-
-                # Configure the queryset and label for the attr_object field
-                self.fields["attr_object"].queryset = attr_model.objects.all()
-                self.fields["attr_object"].widget.attrs["selector"] = (
-                    attr_model._meta.label_lower
-                )
-                self.fields["attr_object"].disabled = False
-                self.fields["attr_object"].label = _(
-                    bettertitle(attr_model._meta.verbose_name)
-                )
-            except ObjectDoesNotExist:  # pragma: no cover
-                pass
 
 
 class ACIUSegNetworkAttributeFilterForm(NetBoxModelFilterSetForm):

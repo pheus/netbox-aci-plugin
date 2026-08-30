@@ -178,24 +178,6 @@ Import `StringArrayLookup` inside `TYPE_CHECKING` to satisfy ruff's
 F821 check. The runtime uses `strawberry.lazy(...)` for the actual
 resolution.
 
-### `StrFilterLookup` compat shim
-
-The filter mixin imports `StrFilterLookup` with a fallback:
-
-```python
-try:
-    from strawberry_django import StrFilterLookup
-except ImportError:
-    from strawberry_django import FilterLookup as StrFilterLookup
-```
-
-!!! note "Remove once NetBox floor is 4.6.0+"
-    `StrFilterLookup` was introduced in `strawberry-django` shipped
-    with NetBox 4.6. While the plugin supports NetBox 4.5.0 through
-    4.5.10, the fallback to `FilterLookup` is required. Once the
-    `PluginConfig.min_version` is raised to `4.6.0`, drop the
-    `try/except` and import `StrFilterLookup` directly.
-
 ## Enums
 
 `graphql/enums.py` re-exports every `ChoiceSet` from `choices.py` as a

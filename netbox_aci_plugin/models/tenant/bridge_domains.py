@@ -564,7 +564,10 @@ class ACIBridgeDomainL3OutBinding(NetBoxModel):
         errors = {}
 
         if self.aci_bridge_domain_id and self.aci_l3out_id:
-            if self.aci_bridge_domain.aci_fabric != self.aci_l3out.aci_fabric:
+            if (
+                self.aci_bridge_domain.aci_tenant.aci_fabric_id
+                != self.aci_l3out.aci_tenant.aci_fabric_id
+            ):
                 errors.setdefault("aci_l3out", []).append(
                     _(
                         "The assigned ACI L3Out must belong to the same "

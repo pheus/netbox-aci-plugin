@@ -4,7 +4,7 @@
 
 """Filterset tests for tenant Contract models."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import ContractRelationRoleChoices
 from ....filtersets.tenant.contracts import (
@@ -26,7 +26,7 @@ from ....models.tenant.tenants import ACITenant
 from ...models.base import ACIBaseTestCase
 
 
-class ACIContractFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIContractFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIContractFilterSet."""
 
     queryset = ACIContract.objects.all()
@@ -61,7 +61,9 @@ class ACIContractFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
         self.assertEqual(result.count(), qs.count())
 
 
-class ACIContractRelationFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIContractRelationFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACIContractRelationFilterSet."""
 
     queryset = ACIContractRelation.objects.all()
@@ -124,7 +126,9 @@ class ACIContractRelationFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSe
         self.assertEqual(result.count(), qs.count())
 
 
-class ACIContractSubjectFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIContractSubjectFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACIContractSubjectFilterSet."""
 
     queryset = ACIContractSubject.objects.all()
@@ -163,7 +167,7 @@ class ACIContractSubjectFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSet
 
 
 class ACIContractSubjectFilterFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIContractSubjectFilterFilterSet."""
 

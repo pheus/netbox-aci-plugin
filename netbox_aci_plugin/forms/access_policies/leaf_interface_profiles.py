@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django import forms
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
@@ -21,10 +22,17 @@ from utilities.forms.fields import (
     DynamicModelMultipleChoiceField,
     TagFilterField,
 )
-from utilities.forms.rendering import FieldSet
+from utilities.forms.rendering import FieldSet, InlineFields
 
 from ...choices import LeafInterfacePolicyGroupTypeChoices
-from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...constants import (
+    ACI_DESC_MAX_LEN,
+    ACI_NAME_MAX_LEN,
+    LEAF_PORT_BLOCK_MODULE_MAX,
+    LEAF_PORT_BLOCK_MODULE_MIN,
+    NODE_INTERFACE_PORT_MAX,
+    NODE_INTERFACE_PORT_MIN,
+)
 from ...models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
@@ -662,10 +670,26 @@ class ACILeafPortBlockEditForm(NetBoxModelForm):
             name=_("ACI Leaf Port Block"),
         ),
         FieldSet(
-            "module_from",
-            "module_to",
-            "port_from",
-            "port_to",
+            InlineFields(
+                "module_from",
+                "module_to",
+                label=_("Modules"),
+                help_text=format_lazy(
+                    _("First and last module of the block, from {min} to {max}."),
+                    min=LEAF_PORT_BLOCK_MODULE_MIN,
+                    max=LEAF_PORT_BLOCK_MODULE_MAX,
+                ),
+            ),
+            InlineFields(
+                "port_from",
+                "port_to",
+                label=_("Ports"),
+                help_text=format_lazy(
+                    _("First and last port of the block, from {min} to {max}."),
+                    min=NODE_INTERFACE_PORT_MIN,
+                    max=NODE_INTERFACE_PORT_MAX,
+                ),
+            ),
             name=_("Module and Port Ranges"),
         ),
         FieldSet(

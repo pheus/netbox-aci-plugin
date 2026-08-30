@@ -6,7 +6,7 @@
 
 from dcim.models import MACAddress
 from ipam.models import IPAddress, Prefix
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.tenant.endpoint_groups import (
     ACIEndpointGroupFilterSet,
@@ -22,7 +22,9 @@ from ....models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ...models.base import ACIBaseTestCase
 
 
-class ACIEndpointGroupFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIEndpointGroupFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACIEndpointGroupFilterSet."""
 
     queryset = ACIEndpointGroup.objects.all()
@@ -81,7 +83,7 @@ class ACIEndpointGroupFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTe
 
 
 class ACIUSegEndpointGroupFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIUSegEndpointGroupFilterSet."""
 
@@ -142,7 +144,7 @@ class ACIUSegEndpointGroupFilterSetTestCase(
 
 
 class ACIUSegNetworkAttributeFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIUSegNetworkAttributeFilterSet."""
 

@@ -92,6 +92,9 @@ class ACILeafSwitchProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACILeafSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -167,6 +170,9 @@ class ACILeafSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "description": "New description",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }
 
 
@@ -259,6 +265,9 @@ class ACILeafNodeBlockAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         ]
         cls.bulk_update_data = {
             "comments": "New comments",
+        }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
         }
 
 
@@ -384,4 +393,7 @@ class ACILeafSwitchProfileInterfaceBindingAPIViewTestCase(
         ]
         cls.bulk_update_data = {
             "comments": "# Updated ACI Test",
+        }
+        cls.bulk_update_invalid_data = {
+            "aci_leaf_switch_profile": 99999999,
         }

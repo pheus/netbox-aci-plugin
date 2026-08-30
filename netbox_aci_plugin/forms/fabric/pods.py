@@ -97,9 +97,9 @@ class ACIPodEditForm(ScopedForm, NetBoxModelForm):
             name=_("Infrastructure"),
         ),
         FieldSet(
-            "scope_type",
             "scope",
             name=_("Scope"),
+            html_id="scope",
         ),
         FieldSet(
             "nb_tenant_group",
@@ -117,7 +117,6 @@ class ACIPodEditForm(ScopedForm, NetBoxModelForm):
             "aci_fabric",
             "pod_id",
             "tep_pool",
-            "scope_type",
             "nb_tenant",
             "owner",
             "comments",
@@ -184,7 +183,6 @@ class ACIPodBulkEditForm(ScopedBulkEditForm, NetBoxModelBulkEditForm):
             name=_("Infrastructure"),
         ),
         FieldSet(
-            "scope_type",
             "scope",
             name=_("Scope"),
         ),

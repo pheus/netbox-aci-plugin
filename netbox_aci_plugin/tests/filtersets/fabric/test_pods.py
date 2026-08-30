@@ -5,14 +5,14 @@
 """Filterset tests for the ACI Pod model."""
 
 from ipam.models import Prefix
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.fabric.pods import ACIPodFilterSet
 from ....models.fabric.pods import ACIPod
 from ...models.base import ACIBaseTestCase
 
 
-class ACIPodFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIPodFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIPodFilterSet."""
 
     queryset = ACIPod.objects.all()

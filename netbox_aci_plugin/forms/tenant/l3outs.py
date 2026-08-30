@@ -19,11 +19,13 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
@@ -70,7 +72,7 @@ class ACIL3OutEditForm(NetBoxModelForm):
         },
         label=_("ACI Routed Domain"),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = ChoiceField(
         choices=QualityOfServiceDSCPChoices,
         initial=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
         label=_("Target DSCP"),
@@ -325,7 +327,7 @@ class ACIL3OutBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("Description"),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = ChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
@@ -470,7 +472,7 @@ class ACIL3OutFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Routed Domain"),
     )
-    target_dscp = forms.MultipleChoiceField(
+    target_dscp = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
@@ -679,12 +681,12 @@ class ACIExternalEndpointGroupEditForm(NetBoxModelForm):
         query_params={"aci_tenant_id": "$aci_tenant", "aci_vrf_id": "$aci_vrf"},
         label=_("ACI L3Out"),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = ChoiceField(
         choices=QualityOfServiceDSCPChoices,
         initial=QualityOfServiceDSCPChoices.DSCP_UNSPECIFIED,
         label=_("Target DSCP"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=QualityOfServiceClassChoices,
         initial=QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
         label=_("QoS class"),
@@ -780,12 +782,12 @@ class ACIExternalEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         widget=forms.Select(choices=BOOLEAN_WITH_BLANK_CHOICES),
         label=_("Preferred group member enabled"),
     )
-    target_dscp = forms.ChoiceField(
+    target_dscp = ChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
     )
-    qos_class = forms.ChoiceField(
+    qos_class = ChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class"),
@@ -878,12 +880,12 @@ class ACIExternalEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         widget=forms.Select(choices=BOOLEAN_WITH_BLANK_CHOICES),
         label=_("Preferred group member enabled"),
     )
-    target_dscp = forms.MultipleChoiceField(
+    target_dscp = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Target DSCP"),
     )
-    qos_class = forms.MultipleChoiceField(
+    qos_class = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceClassChoices),
         required=False,
         label=_("QoS class"),

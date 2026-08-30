@@ -15,15 +15,18 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVModelChoiceField,
     CSVMultipleChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet, TabbedGroups
+from utilities.forms.widgets import SelectMultiple
 
 from ...choices import (
     ContractFilterARPOpenPeripheralCodesChoices,
@@ -159,7 +162,6 @@ class ACIContractFilterBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIContractFilter
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "description",
@@ -344,14 +346,14 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
         },
         label=_("ACI Contract Filter"),
     )
-    arp_opc = forms.ChoiceField(
+    arp_opc = ChoiceField(
         choices=ContractFilterARPOpenPeripheralCodesChoices,
         label=_("ARP open peripheral codes"),
         help_text=_(
             "Specifies the ARP flag (for ether type 'ARP'). Default is 'unspecified'."
         ),
     )
-    destination_from_port = forms.ChoiceField(
+    destination_from_port = ChoiceField(
         choices=add_custom_choice(ContractFilterPortChoices),
         required=False,
         label=_("Destination from-port"),
@@ -371,7 +373,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             "(Valid values 1-65535). Default is 'unspecified'."
         ),
     )
-    destination_to_port = forms.ChoiceField(
+    destination_to_port = ChoiceField(
         choices=add_custom_choice(ContractFilterPortChoices),
         required=False,
         label=_("Destination to-port"),
@@ -391,14 +393,14 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             "(Valid values 1-65535). Default is 'unspecified'."
         ),
     )
-    ether_type = forms.ChoiceField(
+    ether_type = ChoiceField(
         choices=ContractFilterEtherTypeChoices,
         label=_("Ether type"),
         help_text=_(
             "Specify the Ethernet type for the filter entry. Default is 'unspecified'."
         ),
     )
-    icmp_v4_type = forms.ChoiceField(
+    icmp_v4_type = ChoiceField(
         choices=ContractFilterICMPv4TypesChoices,
         label=_("ICMPv4 type"),
         help_text=_(
@@ -406,7 +408,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             "'ICMPv4'). Default is 'unspecified'."
         ),
     )
-    icmp_v6_type = forms.ChoiceField(
+    icmp_v6_type = ChoiceField(
         choices=ContractFilterICMPv6TypesChoices,
         label=_("ICMPv6 type"),
         help_text=_(
@@ -414,7 +416,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             "'ICMPv6'). Default is 'unspecified'."
         ),
     )
-    ip_protocol = forms.ChoiceField(
+    ip_protocol = ChoiceField(
         choices=add_custom_choice(ContractFilterIPProtocolChoices),
         required=False,
         label=_("IP protocol"),
@@ -433,7 +435,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             "(Valid values 1-255). Default is 'unspecified'."
         ),
     )
-    match_dscp = forms.ChoiceField(
+    match_dscp = ChoiceField(
         choices=QualityOfServiceDSCPChoices,
         label=_("Match DSCP"),
         help_text=_(
@@ -449,7 +451,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             "fragments except the first one). Default is disabled."
         ),
     )
-    source_from_port = forms.ChoiceField(
+    source_from_port = ChoiceField(
         choices=add_custom_choice(ContractFilterPortChoices),
         required=False,
         label=_("Source from-port"),
@@ -469,7 +471,7 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             "(Valid values 1-65535). Default is 'unspecified'."
         ),
     )
-    source_to_port = forms.ChoiceField(
+    source_to_port = ChoiceField(
         choices=add_custom_choice(ContractFilterPortChoices),
         required=False,
         label=_("Source to-port"),
@@ -497,10 +499,10 @@ class ACIContractFilterEntryEditForm(NetBoxModelForm):
             "flag ACK is set. Default is disabled."
         ),
     )
-    tcp_rules = forms.MultipleChoiceField(
+    tcp_rules = MultipleChoiceField(
         choices=ContractFilterTCPRulesChoices,
         required=False,
-        widget=forms.SelectMultiple(
+        widget=SelectMultiple(
             attrs={
                 "size": 6,
             }
@@ -730,7 +732,7 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("ACI Contract Filter"),
     )
-    arp_opc = forms.ChoiceField(
+    arp_opc = ChoiceField(
         choices=add_blank_choice(ContractFilterARPOpenPeripheralCodesChoices),
         required=False,
         label=_("ARP open peripheral codes"),
@@ -759,17 +761,17 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
             options=ContractFilterPortChoices,
         ),
     )
-    ether_type = forms.ChoiceField(
+    ether_type = ChoiceField(
         choices=add_blank_choice(ContractFilterEtherTypeChoices),
         required=False,
         label=_("Ether type"),
     )
-    icmp_v4_type = forms.ChoiceField(
+    icmp_v4_type = ChoiceField(
         choices=add_blank_choice(ContractFilterICMPv4TypesChoices),
         required=False,
         label=_("ICMPv4 type"),
     )
-    icmp_v6_type = forms.ChoiceField(
+    icmp_v6_type = ChoiceField(
         choices=add_blank_choice(ContractFilterICMPv6TypesChoices),
         required=False,
         label=_("ICMPv6 type"),
@@ -784,7 +786,7 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
             options=ContractFilterIPProtocolChoices,
         ),
     )
-    match_dscp = forms.ChoiceField(
+    match_dscp = ChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Match DSCP"),
@@ -827,10 +829,10 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Stateful enabled"),
     )
-    tcp_rules = forms.MultipleChoiceField(
+    tcp_rules = MultipleChoiceField(
         choices=ContractFilterTCPRulesChoices,
         required=False,
-        widget=forms.SelectMultiple(
+        widget=SelectMultiple(
             attrs={
                 "size": 6,
             }
@@ -852,7 +854,6 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIContractFilterEntry
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "aci_contract_filter",
@@ -995,12 +996,12 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Contract Filter"),
     )
-    arp_opc = forms.MultipleChoiceField(
+    arp_opc = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterARPOpenPeripheralCodesChoices),
         required=False,
         label=_("ARP open peripheral codes"),
     )
-    destination_from_port = forms.MultipleChoiceField(
+    destination_from_port = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterPortChoices),
         required=False,
         label=_("Destination from-port"),
@@ -1009,7 +1010,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Destination from-port (custom)"),
     )
-    destination_to_port = forms.MultipleChoiceField(
+    destination_to_port = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterPortChoices),
         required=False,
         label=_("Destination to-port"),
@@ -1018,22 +1019,22 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Destination to-port (custom)"),
     )
-    ether_type = forms.MultipleChoiceField(
+    ether_type = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterEtherTypeChoices),
         required=False,
         label=_("Ether type"),
     )
-    icmp_v4_type = forms.MultipleChoiceField(
+    icmp_v4_type = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterICMPv4TypesChoices),
         required=False,
         label=_("ICMPv4 type"),
     )
-    icmp_v6_type = forms.MultipleChoiceField(
+    icmp_v6_type = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterICMPv6TypesChoices),
         required=False,
         label=_("ICMPv6 type"),
     )
-    ip_protocol = forms.MultipleChoiceField(
+    ip_protocol = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterIPProtocolChoices),
         required=False,
         label=_("IP protocol"),
@@ -1042,7 +1043,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("IP protocol (custom)"),
     )
-    match_dscp = forms.MultipleChoiceField(
+    match_dscp = MultipleChoiceField(
         choices=add_blank_choice(QualityOfServiceDSCPChoices),
         required=False,
         label=_("Match DSCP"),
@@ -1054,7 +1055,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Match only fragments enabled"),
     )
-    source_from_port = forms.MultipleChoiceField(
+    source_from_port = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterPortChoices),
         required=False,
         label=_("Source from-port"),
@@ -1063,7 +1064,7 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("Source from-port (custom)"),
     )
-    source_to_port = forms.MultipleChoiceField(
+    source_to_port = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterPortChoices),
         required=False,
         label=_("Source to-port"),
@@ -1079,10 +1080,10 @@ class ACIContractFilterEntryFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Stateful enabled"),
     )
-    tcp_rules = forms.MultipleChoiceField(
+    tcp_rules = MultipleChoiceField(
         choices=add_blank_choice(ContractFilterTCPRulesChoices),
         required=False,
-        widget=forms.SelectMultiple(
+        widget=SelectMultiple(
             attrs={
                 "size": 7,
             }

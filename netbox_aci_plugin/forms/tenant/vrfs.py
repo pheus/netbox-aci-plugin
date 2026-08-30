@@ -16,11 +16,13 @@ from tenancy.models import Tenant, TenantGroup
 from users.models import Owner, OwnerGroup
 from utilities.forms import BOOLEAN_WITH_BLANK_CHOICES, add_blank_choice
 from utilities.forms.fields import (
+    ChoiceField,
     CommentField,
     CSVChoiceField,
     CSVModelChoiceField,
     DynamicModelChoiceField,
     DynamicModelMultipleChoiceField,
+    MultipleChoiceField,
     TagFilterField,
 )
 from utilities.forms.rendering import FieldSet
@@ -74,14 +76,14 @@ class ACIVRFEditForm(NetBoxModelForm):
             "Whether IP data plane learning is enabled for VRF. Default is enabled."
         ),
     )
-    pc_enforcement_direction = forms.ChoiceField(
+    pc_enforcement_direction = ChoiceField(
         choices=VRFPCEnforcementDirectionChoices,
         label=_("Enforcement direction"),
         help_text=_(
             "Controls policy enforcement direction for VRF. Default is 'ingress'."
         ),
     )
-    pc_enforcement_preference = forms.ChoiceField(
+    pc_enforcement_preference = ChoiceField(
         choices=VRFPCEnforcementPreferenceChoices,
         label=_("Enforcement preference"),
         help_text=_(
@@ -238,12 +240,12 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
         ),
         label=_("Enabled IP data plane learning"),
     )
-    pc_enforcement_direction = forms.ChoiceField(
+    pc_enforcement_direction = ChoiceField(
         choices=add_blank_choice(VRFPCEnforcementDirectionChoices),
         required=False,
         label=_("Policy control enforcement direction"),
     )
-    pc_enforcement_preference = forms.ChoiceField(
+    pc_enforcement_preference = ChoiceField(
         choices=add_blank_choice(VRFPCEnforcementPreferenceChoices),
         required=False,
         label=_("Policy control enforcement preference"),
@@ -284,7 +286,6 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIVRF
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "description",
@@ -427,12 +428,12 @@ class ACIVRFFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Enabled IP data plane learning"),
     )
-    pc_enforcement_direction = forms.MultipleChoiceField(
+    pc_enforcement_direction = MultipleChoiceField(
         choices=add_blank_choice(VRFPCEnforcementDirectionChoices),
         required=False,
         label=_("Policy control enforcement direction"),
     )
-    pc_enforcement_preference = forms.MultipleChoiceField(
+    pc_enforcement_preference = MultipleChoiceField(
         choices=add_blank_choice(VRFPCEnforcementPreferenceChoices),
         required=False,
         label=_("Policy control enforcement preference"),

@@ -185,8 +185,8 @@ class ACIContractRelationViewTestCase(
 
         cls.form_data = {
             "aci_contract": cls.aci_contract.pk,
-            "aci_object_type": cls.vrf_ct.pk,
-            "aci_object": vrfs[3].pk,
+            "aci_object_content_type": cls.vrf_ct.pk,
+            "aci_object_object_id": vrfs[3].pk,
             "role": "prov",
             "comments": "Form-data relation",
             "tags": [t.pk for t in tags],

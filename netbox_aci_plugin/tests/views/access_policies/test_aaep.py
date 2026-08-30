@@ -182,8 +182,8 @@ class ACIAAEPDomainBindingViewTestCase(
         phys_ct = ContentType.objects.get_for_model(ACIPhysicalDomain)
         cls.form_data = {
             "aci_aaep": cls.aci_aaep.pk,
-            "aci_domain_object_type": phys_ct.pk,
-            "aci_domain_object": cls.aci_physical_domain.pk,
+            "aci_domain_object_content_type": phys_ct.pk,
+            "aci_domain_object_object_id": cls.aci_physical_domain.pk,
             "comments": "Form-data domain binding",
             "tags": [t.pk for t in tags],
         }
@@ -252,8 +252,8 @@ class ACIAAEPDomainBindingViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_fabric={self.aci_fabric.pk}&amp;'
-            f"aci_domain_object={self.aci_routed_domain1.pk}&amp;"
-            f"aci_domain_object_type={routed_ct.pk}",
+            f"aci_domain_object_object_id={self.aci_routed_domain1.pk}&amp;"
+            f"aci_domain_object_content_type={routed_ct.pk}",
         )
 
     def test_aciphysicaldomain_aaep_bindings_tab(self) -> None:
@@ -275,6 +275,6 @@ class ACIAAEPDomainBindingViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_fabric={self.aci_fabric.pk}&amp;'
-            f"aci_domain_object={self.aci_physical_domain.pk}&amp;"
-            f"aci_domain_object_type={phys_ct.pk}",
+            f"aci_domain_object_object_id={self.aci_physical_domain.pk}&amp;"
+            f"aci_domain_object_content_type={phys_ct.pk}",
         )

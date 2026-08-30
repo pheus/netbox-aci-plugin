@@ -148,6 +148,9 @@ class ACIEndpointGroupDomainBindingAPIViewTestCase(APIViewTestCases.APIViewTestC
         cls.bulk_update_data = {
             "comments": "New comments",
         }
+        cls.bulk_update_invalid_data = {
+            "deployment_immediacy": "invalid-immediacy",
+        }
 
 
 class ACIEndpointGroupAAEPBindingAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -299,4 +302,7 @@ class ACIEndpointGroupAAEPBindingAPIViewTestCase(APIViewTestCases.APIViewTestCas
         ]
         cls.bulk_update_data = {
             "comments": "New comments",
+        }
+        cls.bulk_update_invalid_data = {
+            "aci_endpoint_group": 99999999,
         }

@@ -191,10 +191,11 @@ class ACIFabricListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Fabric instances."""
 
     queryset = ACIFabric.objects.select_related(
-        "infra_vlan",
         "gipo_pool",
+        "infra_vlan",
         "nb_tenant",
         "owner",
+        "scope_type",
     ).prefetch_related(
         "tags",
     )
@@ -207,9 +208,11 @@ class ACIPodListViewSet(NetBoxModelViewSet):
 
     queryset = ACIPod.objects.select_related(
         "aci_fabric",
-        "tep_pool",
+        "aci_fabric__nb_tenant",
         "nb_tenant",
         "owner",
+        "scope_type",
+        "tep_pool",
     ).prefetch_related(
         "tags",
     )
@@ -222,10 +225,13 @@ class ACINodeListViewSet(NetBoxModelViewSet):
 
     queryset = ACINode.objects.select_related(
         "aci_pod",
-        "node_object_type",
-        "tep_ip_address",
+        "aci_pod__aci_fabric",
+        "aci_pod__aci_fabric__nb_tenant",
+        "aci_pod__nb_tenant",
         "nb_tenant",
+        "node_object_type",
         "owner",
+        "tep_ip_address",
     ).prefetch_related(
         "node_object",
         "tags",
@@ -240,9 +246,10 @@ class ACINodeInterfaceListViewSet(NetBoxModelViewSet):
     queryset = ACINodeInterface.objects.select_related(
         "aci_node",
         "aci_node__aci_pod",
-        "aci_node__aci_pod__aci_fabric",
-        "aci_node___aci_fabric",
+        "aci_node__nb_tenant",
         "nb_interface",
+        "nb_interface__cable",
+        "nb_interface__device",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -255,20 +262,13 @@ class ACINodeInterfaceListViewSet(NetBoxModelViewSet):
 class ACIVPCProtectionGroupListViewSet(NetBoxModelViewSet):
     """API view for listing ACI VPC Protection Group instances."""
 
-    # Both nested Node serializers render their Pod, and the nested Pod
-    # renders its Fabric, so the graph has to be walked on both sides
     queryset = ACIVPCProtectionGroup.objects.select_related(
         "aci_fabric",
+        "aci_fabric__nb_tenant",
         "aci_node_a",
         "aci_node_a__aci_pod",
-        "aci_node_a__aci_pod__aci_fabric",
-        "aci_node_a__aci_pod__nb_tenant",
         "aci_node_a__nb_tenant",
         "aci_node_b",
-        "aci_node_b__aci_pod",
-        "aci_node_b__aci_pod__aci_fabric",
-        "aci_node_b__aci_pod__nb_tenant",
-        "aci_node_b__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -283,6 +283,7 @@ class ACIAttachableAccessEntityProfileListViewSet(NetBoxModelViewSet):
 
     queryset = ACIAttachableAccessEntityProfile.objects.select_related(
         "aci_fabric",
+        "aci_fabric__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -297,6 +298,9 @@ class ACIAAEPDomainBindingListViewSet(NetBoxModelViewSet):
 
     queryset = ACIAAEPDomainBinding.objects.select_related(
         "aci_aaep",
+        "aci_aaep__aci_fabric",
+        "aci_aaep__aci_fabric__nb_tenant",
+        "aci_aaep__nb_tenant",
         "aci_domain_object_type",
     ).prefetch_related(
         "aci_domain_object",
@@ -310,8 +314,12 @@ class ACILeafInterfacePolicyGroupListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Leaf Interface Policy Group instances."""
 
     queryset = ACILeafInterfacePolicyGroup.objects.select_related(
-        "aci_fabric",
         "aci_aaep",
+        "aci_aaep__aci_fabric",
+        "aci_aaep__aci_fabric__nb_tenant",
+        "aci_aaep__nb_tenant",
+        "aci_fabric",
+        "aci_fabric__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -326,6 +334,7 @@ class ACILeafInterfaceProfileListViewSet(NetBoxModelViewSet):
 
     queryset = ACILeafInterfaceProfile.objects.select_related(
         "aci_fabric",
+        "aci_fabric__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -339,10 +348,12 @@ class ACILeafInterfaceSelectorListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Leaf Interface Selector instances."""
 
     queryset = ACILeafInterfaceSelector.objects.select_related(
-        "aci_leaf_interface_profile",
-        "aci_leaf_interface_profile__aci_fabric",
         "aci_leaf_interface_policy_group",
         "aci_leaf_interface_policy_group__aci_fabric",
+        "aci_leaf_interface_policy_group__nb_tenant",
+        "aci_leaf_interface_profile",
+        "aci_leaf_interface_profile__aci_fabric",
+        "aci_leaf_interface_profile__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -359,6 +370,9 @@ class ACILeafPortBlockListViewSet(NetBoxModelViewSet):
         "aci_leaf_interface_selector",
         "aci_leaf_interface_selector__aci_leaf_interface_profile",
         "aci_leaf_interface_selector__aci_leaf_interface_profile__aci_fabric",
+        "aci_leaf_interface_selector__aci_leaf_interface_profile__aci_fabric__nb_tenant",
+        "aci_leaf_interface_selector__aci_leaf_interface_profile__nb_tenant",
+        "aci_leaf_interface_selector__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -373,6 +387,7 @@ class ACILeafSwitchProfileListViewSet(NetBoxModelViewSet):
 
     queryset = ACILeafSwitchProfile.objects.select_related(
         "aci_fabric",
+        "aci_fabric__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -388,6 +403,8 @@ class ACILeafSelectorListViewSet(NetBoxModelViewSet):
     queryset = ACILeafSelector.objects.select_related(
         "aci_leaf_switch_profile",
         "aci_leaf_switch_profile__aci_fabric",
+        "aci_leaf_switch_profile__aci_fabric__nb_tenant",
+        "aci_leaf_switch_profile__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -404,6 +421,9 @@ class ACILeafNodeBlockListViewSet(NetBoxModelViewSet):
         "aci_leaf_selector",
         "aci_leaf_selector__aci_leaf_switch_profile",
         "aci_leaf_selector__aci_leaf_switch_profile__aci_fabric",
+        "aci_leaf_selector__aci_leaf_switch_profile__aci_fabric__nb_tenant",
+        "aci_leaf_selector__aci_leaf_switch_profile__nb_tenant",
+        "aci_leaf_selector__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -416,15 +436,15 @@ class ACILeafNodeBlockListViewSet(NetBoxModelViewSet):
 class ACILeafSwitchProfileInterfaceBindingListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Profile Binding instances."""
 
-    # Every nested brief representation renders its nb_tenant, so the
-    # tenant is joined at each walked level, not just the parents
     queryset = ACILeafSwitchProfileInterfaceBinding.objects.select_related(
-        "aci_leaf_switch_profile",
-        "aci_leaf_switch_profile__aci_fabric",
-        "aci_leaf_switch_profile__nb_tenant",
         "aci_leaf_interface_profile",
         "aci_leaf_interface_profile__aci_fabric",
+        "aci_leaf_interface_profile__aci_fabric__nb_tenant",
         "aci_leaf_interface_profile__nb_tenant",
+        "aci_leaf_switch_profile",
+        "aci_leaf_switch_profile__aci_fabric",
+        "aci_leaf_switch_profile__aci_fabric__nb_tenant",
+        "aci_leaf_switch_profile__nb_tenant",
     ).prefetch_related(
         "tags",
     )
@@ -435,19 +455,15 @@ class ACILeafSwitchProfileInterfaceBindingListViewSet(NetBoxModelViewSet):
 class ACILeafInterfaceOverrideListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Leaf Interface Override instances."""
 
-    # Every nested brief representation renders its nb_tenant, so the
-    # tenant is joined at each walked level, not just the parents
     queryset = ACILeafInterfaceOverride.objects.select_related(
+        "aci_leaf_interface_policy_group",
+        "aci_leaf_interface_policy_group__aci_fabric",
+        "aci_leaf_interface_policy_group__aci_fabric__nb_tenant",
+        "aci_leaf_interface_policy_group__nb_tenant",
         "aci_node_interface",
         "aci_node_interface__aci_node",
         "aci_node_interface__aci_node__aci_pod",
-        "aci_node_interface__aci_node__aci_pod__aci_fabric",
-        "aci_node_interface__aci_node__aci_pod__nb_tenant",
-        "aci_node_interface__aci_node__nb_tenant",
         "aci_node_interface__nb_tenant",
-        "aci_leaf_interface_policy_group",
-        "aci_leaf_interface_policy_group__aci_fabric",
-        "aci_leaf_interface_policy_group__nb_tenant",
     ).prefetch_related(
         "tags",
     )
@@ -460,9 +476,13 @@ class ACIPhysicalDomainListViewSet(NetBoxModelViewSet):
 
     queryset = ACIPhysicalDomain.objects.select_related(
         "aci_fabric",
+        "aci_fabric__nb_tenant",
+        "aci_vlan_pool",
+        "aci_vlan_pool__aci_fabric",
+        "aci_vlan_pool__aci_fabric__nb_tenant",
+        "aci_vlan_pool__nb_tenant",
         "nb_tenant",
         "owner",
-        "aci_vlan_pool",
     ).prefetch_related(
         "tags",
     )
@@ -475,9 +495,13 @@ class ACIRoutedDomainListViewSet(NetBoxModelViewSet):
 
     queryset = ACIRoutedDomain.objects.select_related(
         "aci_fabric",
+        "aci_fabric__nb_tenant",
+        "aci_vlan_pool",
+        "aci_vlan_pool__aci_fabric",
+        "aci_vlan_pool__aci_fabric__nb_tenant",
+        "aci_vlan_pool__nb_tenant",
         "nb_tenant",
         "owner",
-        "aci_vlan_pool",
     ).prefetch_related(
         "tags",
     )
@@ -490,8 +514,9 @@ class ACIVLANPoolListViewSet(NetBoxModelViewSet):
 
     queryset = ACIVLANPool.objects.select_related(
         "aci_fabric",
-        "nb_vlan_group",
+        "aci_fabric__nb_tenant",
         "nb_tenant",
+        "nb_vlan_group",
         "owner",
     ).prefetch_related(
         "tags",
@@ -506,6 +531,8 @@ class ACIVLANPoolRangeListViewSet(NetBoxModelViewSet):
     queryset = ACIVLANPoolRange.objects.select_related(
         "aci_vlan_pool",
         "aci_vlan_pool__aci_fabric",
+        "aci_vlan_pool__aci_fabric__nb_tenant",
+        "aci_vlan_pool__nb_tenant",
     ).prefetch_related(
         "tags",
     )
@@ -517,6 +544,8 @@ class ACITenantListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Tenant instances."""
 
     queryset = ACITenant.objects.select_related(
+        "aci_fabric",
+        "aci_fabric__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -531,6 +560,9 @@ class ACIAppProfileListViewSet(NetBoxModelViewSet):
 
     queryset = ACIAppProfile.objects.select_related(
         "aci_tenant",
+        "aci_tenant__aci_fabric",
+        "aci_tenant__aci_fabric__nb_tenant",
+        "aci_tenant__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -545,9 +577,12 @@ class ACIVRFListViewSet(NetBoxModelViewSet):
 
     queryset = ACIVRF.objects.select_related(
         "aci_tenant",
+        "aci_tenant__aci_fabric",
+        "aci_tenant__aci_fabric__nb_tenant",
+        "aci_tenant__nb_tenant",
         "nb_tenant",
-        "owner",
         "nb_vrf",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -560,7 +595,11 @@ class ACIBridgeDomainListViewSet(NetBoxModelViewSet):
 
     queryset = ACIBridgeDomain.objects.select_related(
         "aci_tenant",
+        "aci_tenant__aci_fabric",
+        "aci_tenant__nb_tenant",
         "aci_vrf",
+        "aci_vrf__aci_tenant",
+        "aci_vrf__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -575,6 +614,10 @@ class ACIBridgeDomainSubnetListViewSet(NetBoxModelViewSet):
 
     queryset = ACIBridgeDomainSubnet.objects.select_related(
         "aci_bridge_domain",
+        "aci_bridge_domain__aci_tenant",
+        "aci_bridge_domain__aci_tenant__aci_fabric",
+        "aci_bridge_domain__aci_vrf",
+        "aci_bridge_domain__nb_tenant",
         "gateway_ip_address",
         "nb_tenant",
         "owner",
@@ -589,9 +632,12 @@ class ACIL3OutListViewSet(NetBoxModelViewSet):
     """API view for listing ACI L3Out instances."""
 
     queryset = ACIL3Out.objects.select_related(
-        "aci_tenant",
-        "aci_vrf",
         "aci_routed_domain",
+        "aci_routed_domain__aci_fabric",
+        "aci_routed_domain__nb_tenant",
+        "aci_tenant",
+        "aci_tenant__aci_fabric",
+        "aci_vrf",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -607,7 +653,10 @@ class ACIExternalEndpointGroupListViewSet(NetBoxModelViewSet):
     queryset = ACIExternalEndpointGroup.objects.select_related(
         "aci_l3out",
         "aci_l3out__aci_tenant",
+        "aci_l3out__aci_tenant__aci_fabric",
+        "aci_l3out__aci_tenant__nb_tenant",
         "aci_l3out__aci_vrf",
+        "aci_l3out__aci_vrf__aci_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -623,6 +672,9 @@ class ACIExternalSubnetListViewSet(NetBoxModelViewSet):
     queryset = ACIExternalSubnet.objects.select_related(
         "aci_external_endpoint_group",
         "aci_external_endpoint_group__aci_l3out",
+        "aci_external_endpoint_group__aci_l3out__aci_tenant",
+        "aci_external_endpoint_group__aci_l3out__aci_tenant__aci_fabric",
+        "aci_external_endpoint_group__aci_l3out__aci_vrf",
         "nb_prefix",
         "nb_tenant",
         "owner",
@@ -638,7 +690,13 @@ class ACIBridgeDomainL3OutBindingListViewSet(NetBoxModelViewSet):
 
     queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
         "aci_bridge_domain",
+        "aci_bridge_domain__aci_tenant",
+        "aci_bridge_domain__aci_tenant__aci_fabric",
+        "aci_bridge_domain__aci_vrf",
+        "aci_bridge_domain__nb_tenant",
         "aci_l3out",
+        "aci_l3out__aci_tenant",
+        "aci_l3out__aci_vrf",
     ).prefetch_related("tags")
     serializer_class = ACIBridgeDomainL3OutBindingSerializer
     filterset_class = ACIBridgeDomainL3OutBindingFilterSet
@@ -649,7 +707,11 @@ class ACIEndpointGroupListViewSet(NetBoxModelViewSet):
 
     queryset = ACIEndpointGroup.objects.select_related(
         "aci_app_profile",
+        "aci_app_profile__aci_tenant",
+        "aci_app_profile__nb_tenant",
         "aci_bridge_domain",
+        "aci_bridge_domain__aci_tenant",
+        "aci_bridge_domain__aci_vrf",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -664,7 +726,11 @@ class ACIUSegEndpointGroupListViewSet(NetBoxModelViewSet):
 
     queryset = ACIUSegEndpointGroup.objects.select_related(
         "aci_app_profile",
+        "aci_app_profile__aci_tenant",
+        "aci_app_profile__nb_tenant",
         "aci_bridge_domain",
+        "aci_bridge_domain__aci_tenant",
+        "aci_bridge_domain__aci_vrf",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -679,6 +745,10 @@ class ACIUSegNetworkAttributeListViewSet(NetBoxModelViewSet):
 
     queryset = ACIUSegNetworkAttribute.objects.select_related(
         "aci_useg_endpoint_group",
+        "aci_useg_endpoint_group__aci_app_profile",
+        "aci_useg_endpoint_group__aci_app_profile__aci_tenant",
+        "aci_useg_endpoint_group__aci_bridge_domain",
+        "aci_useg_endpoint_group__nb_tenant",
         "attr_object_type",
         "nb_tenant",
         "owner",
@@ -694,8 +764,8 @@ class ACIEndpointGroupDomainBindingListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Endpoint Group Domain Binding instances."""
 
     queryset = ACIEndpointGroupDomainBinding.objects.select_related(
-        "aci_epg_object_type",
         "aci_domain_object_type",
+        "aci_epg_object_type",
     ).prefetch_related(
         "aci_epg_object",
         "aci_domain_object",
@@ -709,8 +779,12 @@ class ACIEndpointGroupAAEPBindingListViewSet(NetBoxModelViewSet):
     """API view for listing ACI Endpoint Group AAEP Binding instances."""
 
     queryset = ACIEndpointGroupAAEPBinding.objects.select_related(
-        "aci_endpoint_group__aci_app_profile__aci_tenant__aci_fabric",
+        "aci_aaep",
         "aci_aaep__aci_fabric",
+        "aci_aaep__nb_tenant",
+        "aci_endpoint_group",
+        "aci_endpoint_group__aci_app_profile",
+        "aci_endpoint_group__aci_bridge_domain",
         "nb_vlan",
         "primary_nb_vlan",
     ).prefetch_related("tags")
@@ -723,7 +797,11 @@ class ACIEndpointSecurityGroupListViewSet(NetBoxModelViewSet):
 
     queryset = ACIEndpointSecurityGroup.objects.select_related(
         "aci_app_profile",
+        "aci_app_profile__aci_tenant",
+        "aci_app_profile__nb_tenant",
         "aci_vrf",
+        "aci_vrf__aci_tenant",
+        "aci_vrf__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -738,6 +816,10 @@ class ACIEsgEndpointGroupSelectorListViewSet(NetBoxModelViewSet):
 
     queryset = ACIEsgEndpointGroupSelector.objects.select_related(
         "aci_endpoint_security_group",
+        "aci_endpoint_security_group__aci_app_profile",
+        "aci_endpoint_security_group__aci_app_profile__aci_tenant",
+        "aci_endpoint_security_group__aci_vrf",
+        "aci_endpoint_security_group__nb_tenant",
         "aci_epg_object_type",
         "nb_tenant",
         "owner",
@@ -754,6 +836,10 @@ class ACIEsgEndpointSelectorListViewSet(NetBoxModelViewSet):
 
     queryset = ACIEsgEndpointSelector.objects.select_related(
         "aci_endpoint_security_group",
+        "aci_endpoint_security_group__aci_app_profile",
+        "aci_endpoint_security_group__aci_app_profile__aci_tenant",
+        "aci_endpoint_security_group__aci_vrf",
+        "aci_endpoint_security_group__nb_tenant",
         "ep_object_type",
         "nb_tenant",
         "owner",
@@ -770,6 +856,9 @@ class ACIContractFilterListViewSet(NetBoxModelViewSet):
 
     queryset = ACIContractFilter.objects.select_related(
         "aci_tenant",
+        "aci_tenant__aci_fabric",
+        "aci_tenant__aci_fabric__nb_tenant",
+        "aci_tenant__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -784,6 +873,13 @@ class ACIContractFilterEntryListViewSet(NetBoxModelViewSet):
 
     queryset = ACIContractFilterEntry.objects.select_related(
         "aci_contract_filter",
+        "aci_contract_filter__aci_tenant",
+        "aci_contract_filter__aci_tenant__aci_fabric",
+        "aci_contract_filter__aci_tenant__aci_fabric__nb_tenant",
+        "aci_contract_filter__aci_tenant__nb_tenant",
+        "aci_contract_filter__nb_tenant",
+        "nb_tenant",
+        "owner",
     ).prefetch_related(
         "tags",
     )
@@ -796,6 +892,9 @@ class ACIContractListViewSet(NetBoxModelViewSet):
 
     queryset = ACIContract.objects.select_related(
         "aci_tenant",
+        "aci_tenant__aci_fabric",
+        "aci_tenant__aci_fabric__nb_tenant",
+        "aci_tenant__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -810,6 +909,11 @@ class ACIContractRelationListViewSet(NetBoxModelViewSet):
 
     queryset = ACIContractRelation.objects.select_related(
         "aci_contract",
+        "aci_contract__aci_tenant",
+        "aci_contract__aci_tenant__aci_fabric",
+        "aci_contract__aci_tenant__aci_fabric__nb_tenant",
+        "aci_contract__aci_tenant__nb_tenant",
+        "aci_contract__nb_tenant",
         "aci_object_type",
     ).prefetch_related(
         "aci_object",
@@ -824,6 +928,11 @@ class ACIContractSubjectListViewSet(NetBoxModelViewSet):
 
     queryset = ACIContractSubject.objects.select_related(
         "aci_contract",
+        "aci_contract__aci_tenant",
+        "aci_contract__aci_tenant__aci_fabric",
+        "aci_contract__aci_tenant__aci_fabric__nb_tenant",
+        "aci_contract__aci_tenant__nb_tenant",
+        "aci_contract__nb_tenant",
         "nb_tenant",
         "owner",
     ).prefetch_related(
@@ -838,7 +947,13 @@ class ACIContractSubjectFilterListViewSet(NetBoxModelViewSet):
 
     queryset = ACIContractSubjectFilter.objects.select_related(
         "aci_contract_filter",
+        "aci_contract_filter__aci_tenant",
+        "aci_contract_filter__aci_tenant__aci_fabric",
+        "aci_contract_filter__aci_tenant__nb_tenant",
+        "aci_contract_filter__nb_tenant",
         "aci_contract_subject",
+        "aci_contract_subject__aci_contract",
+        "aci_contract_subject__nb_tenant",
     ).prefetch_related(
         "tags",
     )

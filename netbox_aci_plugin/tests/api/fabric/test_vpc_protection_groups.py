@@ -135,3 +135,6 @@ class ACIVPCProtectionGroupAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }

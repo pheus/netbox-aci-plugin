@@ -7,15 +7,10 @@ from typing import TYPE_CHECKING, Annotated
 import strawberry
 import strawberry_django
 from strawberry.scalars import ID
-from strawberry_django import ComparisonFilterLookup
+from strawberry_django import ComparisonFilterLookup, StrFilterLookup
 
 from dcim.graphql.filter_mixins import ScopedFilterMixin
 from netbox.graphql.filters import NetBoxModelFilter
-
-try:
-    from strawberry_django import StrFilterLookup
-except ImportError:  # pragma: no cover
-    from strawberry_django import FilterLookup as StrFilterLookup
 
 from .... import models
 

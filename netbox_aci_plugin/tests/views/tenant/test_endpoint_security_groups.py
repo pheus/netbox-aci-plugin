@@ -101,8 +101,8 @@ class ACIEndpointSecurityGroupViewTestCase(
         self.assertContains(
             response,
             f'href="{add_url}?aci_tenant={self.aci_esg.aci_tenant.pk}&amp;'
-            f"aci_object={self.aci_esg.pk}&amp;"
-            f"aci_object_type={content_type.pk}",
+            f"aci_object_object_id={self.aci_esg.pk}&amp;"
+            f"aci_object_content_type={content_type.pk}",
         )
 
     def test_aciendpointsecuritygroup_epg_selectors_tab(self) -> None:
@@ -204,8 +204,8 @@ class ACIEsgEndpointGroupSelectorViewTestCase(
             "name_alias": "EpgSelXAlias",
             "description": "Form-data EPG Selector",
             "aci_endpoint_security_group": cls.aci_esg.pk,
-            "aci_epg_object_type": cls.epg_ct.pk,
-            "aci_epg_object": epgs[3].pk,
+            "aci_epg_object_content_type": cls.epg_ct.pk,
+            "aci_epg_object_object_id": epgs[3].pk,
             "tags": [t.pk for t in tags],
         }
 
@@ -283,8 +283,8 @@ class ACIEsgEndpointSelectorViewTestCase(
             "name_alias": "EpSelXAlias",
             "description": "Form-data Endpoint Selector",
             "aci_endpoint_security_group": cls.aci_esg.pk,
-            "ep_object_type": cls.ip_ct.pk,
-            "ep_object": ips[3].pk,
+            "ep_object_content_type": cls.ip_ct.pk,
+            "ep_object_object_id": ips[3].pk,
             "tags": [t.pk for t in tags],
         }
 

@@ -207,6 +207,9 @@ class ACIBridgeDomainAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACIBridgeDomainSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -374,6 +377,9 @@ class ACIBridgeDomainSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
 
 class ACIBridgeDomainL3OutBindingAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -505,4 +511,7 @@ class ACIBridgeDomainL3OutBindingAPIViewTestCase(APIViewTestCases.APIViewTestCas
         ]
         cls.bulk_update_data = {
             "comments": "# Updated ACI Test",
+        }
+        cls.bulk_update_invalid_data = {
+            "aci_bridge_domain": 99999999,
         }

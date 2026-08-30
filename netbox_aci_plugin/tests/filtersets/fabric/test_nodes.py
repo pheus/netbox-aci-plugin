@@ -6,7 +6,7 @@
 
 from dcim.models import Device
 from ipam.models import IPAddress
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....choices import NodeRoleChoices
 from ....filtersets.fabric.nodes import ACINodeFilterSet
@@ -14,7 +14,7 @@ from ....models.fabric.nodes import ACINode
 from ...models.base import ACIBaseTestCase
 
 
-class ACINodeFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACINodeFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACINodeFilterSet."""
 
     queryset = ACINode.objects.all()

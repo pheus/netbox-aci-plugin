@@ -4,7 +4,7 @@
 
 """Filterset tests for tenant L3Out models."""
 
-from utilities.testing import ChangeLoggedFilterSetTests
+from utilities.testing import ChangeLoggedFilterSetTestMixin
 
 from ....filtersets.tenant.l3outs import (
     ACIExternalEndpointGroupFilterSet,
@@ -20,7 +20,7 @@ from ....models.tenant.l3outs import (
 from ...models.base import ACIBaseTestCase
 
 
-class ACIL3OutFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIL3OutFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):
     """Test case for ACIL3OutFilterSet."""
 
     queryset = ACIL3Out.objects.all()
@@ -91,7 +91,7 @@ class ACIL3OutFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
 
 
 class ACIExternalEndpointGroupFilterSetTestCase(
-    ACIBaseTestCase, ChangeLoggedFilterSetTests
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
 ):
     """Test case for ACIExternalEndpointGroupFilterSet."""
 
@@ -146,7 +146,9 @@ class ACIExternalEndpointGroupFilterSetTestCase(
         self.assertEqual(result.count(), qs.count())
 
 
-class ACIExternalSubnetFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTests):
+class ACIExternalSubnetFilterSetTestCase(
+    ACIBaseTestCase, ChangeLoggedFilterSetTestMixin
+):
     """Test case for ACIExternalSubnetFilterSet."""
 
     queryset = ACIExternalSubnet.objects.all()

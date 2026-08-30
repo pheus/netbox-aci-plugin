@@ -224,6 +224,9 @@ class ACINodeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_data = {
             "description": "New description",
         }
+        cls.bulk_update_invalid_data = {
+            "description": "Invalid description: ö",
+        }
 
     def test_create_duplicate_node_id_returns_400(self) -> None:
         """POSTing a Node ID already used in the ACI Fabric returns 400.
