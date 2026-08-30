@@ -113,3 +113,61 @@ class ACIFieldsetDescriptionOrderTests(SimpleTestCase):
             {},
             f"`description` must follow aci_* fields in fieldsets: {offenders}",
         )
+
+
+class ACIRangePairInlineTests(SimpleTestCase):
+    """Guard that `<field>_from` / `<field>_to` pairs render inline."""
+
+    def test_range_pairs_are_inlined(self):
+        """A from/to pair in an edit fieldset must be an InlineFields row."""
+        offenders = {}
+        for form_cls in _iter_aci_fieldset_forms():
+            for fieldset in getattr(form_cls, "fieldsets", None) or ():
+                bare = {
+                    item
+                    for item in getattr(fieldset, "items", ())
+                    if isinstance(item, str)
+                }
+                stacked = sorted(
+                    name
+                    for name in bare
+                    if name.endswith("_from") and f"{name[:-5]}_to" in bare
+                )
+                if stacked:
+                    offenders[form_cls.__name__] = stacked
+        self.assertEqual(
+            offenders,
+            {},
+            "A from/to pair stacked as two rows reads as two unrelated "
+            "inputs. Wrap it in InlineFields with a shared label and "
+            f"help text: {offenders}",
+        )
+
+    def test_inlined_range_pairs_carry_help_text(self):
+        """Every InlineFields row must explain what the pair means."""
+        offenders = {}
+        for form_cls in _iter_aci_fieldset_forms():
+            for fieldset in getattr(form_cls, "fieldsets", None) or ():
+                for item in getattr(fieldset, "items", ()):
+                    if not isinstance(item, InlineFields):
+                        continue
+                    if not (item.label and item.help_text):
+                        offenders.setdefault(form_cls.__name__, []).append(
+                            ", ".join(item.fields)
+                        )
+        self.assertEqual(
+            offenders,
+            {},
+            f"InlineFields needs both a label and help text: {offenders}",
+        )
+
+    def test_range_pairs_are_collected(self):
+        """Test the check actually finds the inlined pairs."""
+        inlined = [
+            item
+            for form_cls in _iter_aci_fieldset_forms()
+            for fieldset in getattr(form_cls, "fieldsets", None) or ()
+            for item in getattr(fieldset, "items", ())
+            if isinstance(item, InlineFields)
+        ]
+        self.assertEqual(len(inlined), 4)

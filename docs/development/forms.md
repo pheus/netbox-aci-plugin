@@ -212,10 +212,44 @@ class ACIBridgeDomainEditForm(NetBoxModelForm):
     )
 ```
 
-The fieldset names are user-facing; wrap them with `_()`. Order
+The fieldset names are user-facing. Wrap them with `_()`. Order
 fieldsets by logical importance (identity, behavior, scoping,
 tags/comments). The last fieldset is usually `NetBox Tenancy` (or
 `Tags` / `Comments` for narrow forms).
+
+### Range pairs render inline
+
+A `<field>_from` / `<field>_to` pair listed as two positional names
+renders as two stacked rows, which reads as two unrelated inputs. Wrap
+the pair in `InlineFields` so it renders side by side under one label,
+and give it `help_text` explaining what the range covers. Derive the
+bounds from the same constants the model validators use, so the text
+cannot drift:
+
+```python
+from utilities.forms.rendering import FieldSet, InlineFields
+
+FieldSet(
+    InlineFields(
+        "vlan_id_from",
+        "vlan_id_to",
+        label=_("VLAN IDs"),
+        help_text=_(
+            "First and last VLAN ID of the range, from {min} to {max}."
+        ).format(min=VLAN_VID_MIN, max=VLAN_VID_MAX),
+    ),
+    "allocation_mode",
+    "role",
+    name=_("Encapsulation Block"),
+)
+```
+
+**This applies to edit forms only.** On a FilterForm the same two names
+are independent exact-match filters over each column, not the ends of
+one range, so presenting them as a range would misrepresent what they
+do. `tests/forms/test_conventions.py` enforces both halves: no stacked
+pair on an edit form, and no `InlineFields` without a label and help
+text.
 
 ## Cascading dropdowns
 

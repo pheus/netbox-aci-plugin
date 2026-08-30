@@ -20,9 +20,14 @@ from utilities.forms.fields import (
     DynamicModelMultipleChoiceField,
     TagFilterField,
 )
-from utilities.forms.rendering import FieldSet
+from utilities.forms.rendering import FieldSet, InlineFields
 
-from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...constants import (
+    ACI_DESC_MAX_LEN,
+    ACI_NAME_MAX_LEN,
+    LEAF_NODE_ID_MIN,
+    NODE_ID_MAX,
+)
 from ...models.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfile,
 )
@@ -602,8 +607,14 @@ class ACILeafNodeBlockEditForm(NetBoxModelForm):
             name=_("ACI Leaf Node Block"),
         ),
         FieldSet(
-            "node_id_from",
-            "node_id_to",
+            InlineFields(
+                "node_id_from",
+                "node_id_to",
+                label=_("Node IDs"),
+                help_text=_(
+                    "First and last Node ID of the block, from {min} to {max}."
+                ).format(min=LEAF_NODE_ID_MIN, max=NODE_ID_MAX),
+            ),
             name=_("Node ID Range"),
         ),
         FieldSet(

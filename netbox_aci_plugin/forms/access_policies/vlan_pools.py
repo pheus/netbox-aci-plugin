@@ -25,14 +25,19 @@ from utilities.forms.fields import (
     MultipleChoiceField,
     TagFilterField,
 )
-from utilities.forms.rendering import FieldSet
+from utilities.forms.rendering import FieldSet, InlineFields
 
 from ...choices import (
     VLANAllocationModeChoices,
     VLANPoolRangeAllocationModeChoices,
     VLANPoolRangeRoleChoices,
 )
-from ...constants import ACI_DESC_MAX_LEN, ACI_NAME_MAX_LEN
+from ...constants import (
+    ACI_DESC_MAX_LEN,
+    ACI_NAME_MAX_LEN,
+    VLAN_VID_MAX,
+    VLAN_VID_MIN,
+)
 from ...models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ...models.fabric.fabrics import ACIFabric
 from ...validators import (
@@ -359,8 +364,14 @@ class ACIVLANPoolRangeEditForm(NetBoxModelForm):
             name=_("ACI VLAN Pool"),
         ),
         FieldSet(
-            "vlan_id_from",
-            "vlan_id_to",
+            InlineFields(
+                "vlan_id_from",
+                "vlan_id_to",
+                label=_("VLAN IDs"),
+                help_text=_(
+                    "First and last VLAN ID of the range, from {min} to {max}."
+                ).format(min=VLAN_VID_MIN, max=VLAN_VID_MAX),
+            ),
             "allocation_mode",
             "role",
             name=_("Encapsulation Block"),
