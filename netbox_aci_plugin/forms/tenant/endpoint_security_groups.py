@@ -240,7 +240,6 @@ class ACIEndpointSecurityGroupBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIEndpointSecurityGroup
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_app_profile",
             "aci_vrf",
@@ -695,7 +694,6 @@ class ACIEsgEndpointGroupSelectorBulkEditForm(
     model = ACIEsgEndpointGroupSelector
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "aci_app_profile",
@@ -1123,7 +1121,6 @@ class ACIEsgEndpointSelectorBulkEditForm(
     model = ACIEsgEndpointSelector
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "aci_app_profile",

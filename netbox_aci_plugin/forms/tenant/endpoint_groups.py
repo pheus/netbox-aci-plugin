@@ -312,7 +312,6 @@ class ACIEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIEndpointGroup
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_app_profile",
             "aci_bridge_domain",
@@ -867,7 +866,6 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIUSegEndpointGroup
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_app_profile",
             "aci_bridge_domain",
@@ -1363,7 +1361,6 @@ class ACIUSegNetworkAttributeBulkEditForm(
     model = ACIUSegNetworkAttribute
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "aci_app_profile",

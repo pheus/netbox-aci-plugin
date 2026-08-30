@@ -162,7 +162,6 @@ class ACIContractFilterBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIContractFilter
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "description",
@@ -855,7 +854,6 @@ class ACIContractFilterEntryBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIContractFilterEntry
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "aci_contract_filter",

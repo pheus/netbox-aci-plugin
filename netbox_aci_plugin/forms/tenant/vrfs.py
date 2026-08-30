@@ -286,7 +286,6 @@ class ACIVRFBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIVRF
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "description",

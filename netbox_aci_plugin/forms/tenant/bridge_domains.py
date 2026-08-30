@@ -432,7 +432,6 @@ class ACIBridgeDomainBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIBridgeDomain
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_tenant",
             "aci_vrf",
@@ -1124,10 +1123,8 @@ class ACIBridgeDomainSubnetBulkEditForm(NetBoxModelBulkEditForm):
     model = ACIBridgeDomainSubnet
     fieldsets: tuple = (
         FieldSet(
-            "name",
             "name_alias",
             "aci_bridge_domain",
-            "gateway_ip_address",
             "description",
             "preferred_ip_address_enabled",
             "virtual_ip_enabled",
