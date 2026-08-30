@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django import forms
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
@@ -611,9 +612,11 @@ class ACILeafNodeBlockEditForm(NetBoxModelForm):
                 "node_id_from",
                 "node_id_to",
                 label=_("Node IDs"),
-                help_text=_(
-                    "First and last Node ID of the block, from {min} to {max}."
-                ).format(min=LEAF_NODE_ID_MIN, max=NODE_ID_MAX),
+                help_text=format_lazy(
+                    _("First and last Node ID of the block, from {min} to {max}."),
+                    min=LEAF_NODE_ID_MIN,
+                    max=NODE_ID_MAX,
+                ),
             ),
             name=_("Node ID Range"),
         ),

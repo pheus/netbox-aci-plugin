@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django import forms
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
 from netbox.forms import (
@@ -673,19 +674,21 @@ class ACILeafPortBlockEditForm(NetBoxModelForm):
                 "module_from",
                 "module_to",
                 label=_("Modules"),
-                help_text=_(
-                    "First and last module of the block, from {min} to {max}."
-                ).format(
-                    min=LEAF_PORT_BLOCK_MODULE_MIN, max=LEAF_PORT_BLOCK_MODULE_MAX
+                help_text=format_lazy(
+                    _("First and last module of the block, from {min} to {max}."),
+                    min=LEAF_PORT_BLOCK_MODULE_MIN,
+                    max=LEAF_PORT_BLOCK_MODULE_MAX,
                 ),
             ),
             InlineFields(
                 "port_from",
                 "port_to",
                 label=_("Ports"),
-                help_text=_(
-                    "First and last port of the block, from {min} to {max}."
-                ).format(min=NODE_INTERFACE_PORT_MIN, max=NODE_INTERFACE_PORT_MAX),
+                help_text=format_lazy(
+                    _("First and last port of the block, from {min} to {max}."),
+                    min=NODE_INTERFACE_PORT_MIN,
+                    max=NODE_INTERFACE_PORT_MAX,
+                ),
             ),
             name=_("Module and Port Ranges"),
         ),

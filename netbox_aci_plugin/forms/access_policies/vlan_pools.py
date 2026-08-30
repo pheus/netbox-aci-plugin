@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from django import forms
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
 from ipam.models import VLANGroup
@@ -368,9 +369,11 @@ class ACIVLANPoolRangeEditForm(NetBoxModelForm):
                 "vlan_id_from",
                 "vlan_id_to",
                 label=_("VLAN IDs"),
-                help_text=_(
-                    "First and last VLAN ID of the range, from {min} to {max}."
-                ).format(min=VLAN_VID_MIN, max=VLAN_VID_MAX),
+                help_text=format_lazy(
+                    _("First and last VLAN ID of the range, from {min} to {max}."),
+                    min=VLAN_VID_MIN,
+                    max=VLAN_VID_MAX,
+                ),
             ),
             "allocation_mode",
             "role",
