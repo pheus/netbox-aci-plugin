@@ -655,7 +655,10 @@ class ACIEndpointGroupAAEPBinding(ACIEndpointGroupVLANBindingBase):
         if self.aci_aaep_id and self.aci_endpoint_group_id:
             # The AAEP must belong to the same ACI Fabric as the
             # endpoint group
-            if self.aci_aaep.aci_fabric != self.aci_endpoint_group.aci_fabric:
+            if (
+                self.aci_aaep.aci_fabric_id
+                != self.aci_endpoint_group.aci_app_profile.aci_tenant.aci_fabric_id
+            ):
                 errors.setdefault("aci_aaep", []).append(
                     _(
                         "The assigned ACI AAEP must belong to the same "
