@@ -35,6 +35,7 @@ class ACIContractFilterSerializer(OwnerMixin, NetBoxModelSerializer):
             "description",
             "aci_tenant",
             "nb_tenant",
+            "owner",
             "comments",
             "tags",
             "custom_fields",
