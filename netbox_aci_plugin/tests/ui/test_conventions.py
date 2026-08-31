@@ -4,20 +4,31 @@
 
 """Convention tests for the declarative UI layer.
 
-Vacuously green until a view declares a layout. Arms itself as each
-domain is ported: once a view exports through views/__init__.py and
-sets layout, these tests hold it to the branch's conventions.
+Arms itself as each domain is ported: once a view exports through
+views/__init__.py and sets layout, these tests hold it to the
+branch's conventions. The completeness tests close the branch: every
+registered detail view now declares a layout, and the template
+directory holds only the surviving partials.
 """
 
 from __future__ import annotations
 
+from pathlib import Path
+
+from django.apps import apps
 from django.template import TemplateDoesNotExist
 from django.template.loader import get_template
 from django.test import TestCase
 
 from netbox.ui.layout import SimpleLayout
 
-from .base import layout_views
+from .base import all_object_views, layout_views
+
+
+def _template_root() -> Path:
+    """Return the plugin's netbox_aci_plugin template directory."""
+    app_path = Path(apps.get_app_config("netbox_aci_plugin").path)
+    return app_path / "templates" / "netbox_aci_plugin"
 
 
 class UIConventionTestCase(TestCase):
@@ -45,3 +56,18 @@ class UIConventionTestCase(TestCase):
                 self.assertRaises(TemplateDoesNotExist),
             ):
                 get_template(fallback_name)
+
+
+class UIConventionCompletenessTestCase(TestCase):
+    """The port is complete: nothing was left on the old template path."""
+
+    def test_every_registered_object_view_declares_a_layout(self) -> None:
+        """No registered ObjectView still relies on a per-model template."""
+        for view_class in all_object_views():
+            with self.subTest(view=view_class.__name__):
+                self.assertIsNotNone(view_class.layout)
+
+    def test_template_directory_holds_only_surviving_partials(self) -> None:
+        """The template directory holds only the three surviving partials."""
+        entries = {entry.name for entry in _template_root().iterdir()}
+        self.assertEqual(entries, {"attrs", "buttons", "widgets"})

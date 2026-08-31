@@ -7,6 +7,10 @@ from __future__ import annotations
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -30,6 +34,10 @@ from ...object_actions import add_child_action
 from ...tables.access_policies.domains import (
     ACIPhysicalDomainTable,
     ACIRoutedDomainTable,
+)
+from ...ui.panels.access_policies.domains import (
+    ACIPhysicalDomainPanel,
+    ACIRoutedDomainPanel,
 )
 from .aaep import ACIAAEPDomainBindingChildrenView
 
@@ -107,6 +115,25 @@ class ACIRoutedDomainView(generic.ObjectView):
         "owner",
         "aci_vlan_pool",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acirouteddomain_list", "aci_fabric_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIRoutedDomainPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIRoutedDomain, "list", path="", detail=False)
@@ -260,6 +287,25 @@ class ACIPhysicalDomainView(generic.ObjectView):
         "owner",
         "aci_vlan_pool",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciphysicaldomain_list", "aci_fabric_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIPhysicalDomainPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIPhysicalDomain, "list", path="", detail=False)

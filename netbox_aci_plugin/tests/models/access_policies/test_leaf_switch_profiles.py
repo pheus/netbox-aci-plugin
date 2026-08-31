@@ -227,6 +227,22 @@ class ACILeafSwitchProfileTestCase(ACIBaseTestCase):
         self.aci_leaf_switch_profile.aci_fabric = other_fabric
         self.aci_leaf_switch_profile.full_clean()
 
+    def test_aci_leaf_switch_profile_selector_count_zero(self) -> None:
+        """Test selector_count is 0 for a profile with no Selectors."""
+        self.assertEqual(self.aci_leaf_switch_profile.selector_count, 0)
+
+    def test_aci_leaf_switch_profile_selector_count_nonzero(self) -> None:
+        """Test selector_count counts the profile's Selectors."""
+        ACILeafSelector.objects.create(
+            name="ACILSPSelectorCount1",
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+        )
+        ACILeafSelector.objects.create(
+            name="ACILSPSelectorCount2",
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+        )
+        self.assertEqual(self.aci_leaf_switch_profile.selector_count, 2)
+
 
 class ACILeafSelectorTestCase(ACIBaseTestCase):
     """Test case for the ACILeafSelector model."""
@@ -465,6 +481,14 @@ class ACILeafSelectorTestCase(ACIBaseTestCase):
             aci_leaf_switch_profile=other_profile,
         )
         self.assertEqual(selector.name, self.aci_leaf_selector_name)
+
+    def test_aci_leaf_selector_node_block_count_zero(self) -> None:
+        """Test node_block_count is 0 for a selector with no Node Blocks."""
+        self.assertEqual(self.aci_leaf_selector_empty.node_block_count, 0)
+
+    def test_aci_leaf_selector_node_block_count_nonzero(self) -> None:
+        """Test node_block_count counts the selector's Node Blocks."""
+        self.assertEqual(self.aci_leaf_selector.node_block_count, 1)
 
 
 class ACILeafNodeBlockTestCase(ACIBaseTestCase):

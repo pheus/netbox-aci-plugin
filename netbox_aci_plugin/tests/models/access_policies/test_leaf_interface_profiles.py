@@ -294,6 +294,22 @@ class ACILeafInterfaceProfileTestCase(ACIBaseTestCase):
         self.aci_leaf_interface_profile.aci_fabric = other_fabric
         self.aci_leaf_interface_profile.full_clean()
 
+    def test_aci_leaf_interface_profile_selector_count_zero(self) -> None:
+        """Test selector_count is 0 for a profile with no Selectors."""
+        self.assertEqual(self.aci_leaf_interface_profile.selector_count, 0)
+
+    def test_aci_leaf_interface_profile_selector_count_nonzero(self) -> None:
+        """Test selector_count counts the profile's Selectors."""
+        ACILeafInterfaceSelector.objects.create(
+            name="ACILIPSelectorCount1",
+            aci_leaf_interface_profile=self.aci_leaf_interface_profile,
+        )
+        ACILeafInterfaceSelector.objects.create(
+            name="ACILIPSelectorCount2",
+            aci_leaf_interface_profile=self.aci_leaf_interface_profile,
+        )
+        self.assertEqual(self.aci_leaf_interface_profile.selector_count, 2)
+
 
 class ACILeafInterfaceSelectorTestCase(ACIBaseTestCase):
     """Test case for the ACILeafInterfaceSelector model."""
@@ -543,6 +559,30 @@ class ACILeafInterfaceSelectorTestCase(ACIBaseTestCase):
             aci_leaf_interface_profile=other_profile,
         )
         self.assertEqual(selector.name, self.aci_leaf_interface_selector_name)
+
+    def test_aci_leaf_interface_selector_port_block_count_zero(self) -> None:
+        """Test port_block_count is 0 for a selector with no Port Blocks."""
+        self.assertEqual(self.aci_leaf_interface_selector.port_block_count, 0)
+
+    def test_aci_leaf_interface_selector_port_block_count_nonzero(self) -> None:
+        """Test port_block_count counts the selector's Port Blocks."""
+        ACILeafPortBlock.objects.create(
+            name="ACILISPortBlockCount1",
+            aci_leaf_interface_selector=self.aci_leaf_interface_selector,
+            module_from=1,
+            module_to=1,
+            port_from=1,
+            port_to=1,
+        )
+        ACILeafPortBlock.objects.create(
+            name="ACILISPortBlockCount2",
+            aci_leaf_interface_selector=self.aci_leaf_interface_selector,
+            module_from=2,
+            module_to=2,
+            port_from=1,
+            port_to=1,
+        )
+        self.assertEqual(self.aci_leaf_interface_selector.port_block_count, 2)
 
 
 class ACILeafPortBlockTestCase(ACIBaseTestCase):

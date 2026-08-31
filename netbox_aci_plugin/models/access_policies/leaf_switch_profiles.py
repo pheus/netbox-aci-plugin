@@ -87,6 +87,11 @@ class ACILeafSwitchProfile(ACIFabricBaseModel):
         """Return the parent object of the instance."""
         return self.aci_fabric
 
+    @property
+    def selector_count(self) -> int:
+        """Return the number of ACI Leaf Selectors in the profile."""
+        return self.aci_leaf_selectors.count()
+
 
 class ACILeafSelector(ACIFabricBaseModel):
     """ACI Leaf Selector (infraLeafS) within a leaf switch profile.
@@ -131,6 +136,11 @@ class ACILeafSelector(ACIFabricBaseModel):
     def parent_object(self) -> ACILeafSwitchProfile:
         """Return the parent object of the instance."""
         return self.aci_leaf_switch_profile
+
+    @property
+    def node_block_count(self) -> int:
+        """Return the number of ACI Leaf Node Blocks in the selector."""
+        return self.aci_leaf_node_blocks.count()
 
     @property
     def aci_nodes(self) -> QuerySet[ACINode]:

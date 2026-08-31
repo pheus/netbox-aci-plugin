@@ -112,6 +112,11 @@ class ACILeafInterfaceProfile(ACIFabricBaseModel):
         """Return the parent object of the instance."""
         return self.aci_fabric
 
+    @property
+    def selector_count(self) -> int:
+        """Return the number of ACI Leaf Interface Selectors in the profile."""
+        return self.aci_leaf_interface_selectors.count()
+
 
 class ACILeafInterfaceSelector(ACIFabricBaseModel):
     """ACI Leaf Interface Selector (infraHPortS) within an interface profile.
@@ -190,6 +195,11 @@ class ACILeafInterfaceSelector(ACIFabricBaseModel):
     def parent_object(self) -> ACILeafInterfaceProfile:
         """Return the parent object of the instance."""
         return self.aci_leaf_interface_profile
+
+    @property
+    def port_block_count(self) -> int:
+        """Return the number of ACI Leaf Port Blocks in the selector."""
+        return self.aci_leaf_port_blocks.count()
 
 
 class ACILeafPortBlock(ACIFabricBaseModel):
