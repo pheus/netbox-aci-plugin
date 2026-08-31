@@ -309,9 +309,9 @@ def get_qos_class_color(self) -> str:
     return QualityOfServiceClassChoices.colors.get(self.qos_class)
 ```
 
-Tables and templates consume `get_<field>_color()` to render colored
-badges (see [Tables - `ChoiceFieldColumn`](tables.md#column-type-catalog)
-and [Templates - Cell helpers](templates.md#cell-helpers)).
+Tables and detail-page panels consume `get_<field>_color()` to render
+colored badges (see [Tables - `ChoiceFieldColumn`](tables.md#column-type-catalog)
+and [UI - Attribute mapping](ui.md#attribute-mapping)).
 
 ## `clean()`
 

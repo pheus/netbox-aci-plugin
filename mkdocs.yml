@@ -24,7 +24,7 @@ nav:
       - Contributing: development/contributing.md
       - Models: development/models.md
       - Validators & Constants: development/validators.md
-      - Templates: development/templates.md
+      - UI: development/ui.md
       - Views: development/views.md
       - Tables: development/tables.md
       - Forms: development/forms.md

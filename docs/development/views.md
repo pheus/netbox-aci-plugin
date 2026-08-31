@@ -88,35 +88,29 @@ view).
 
 ## Detail-view extra context
 
-For an object detail page that should render related-object panels
-inline (a child reduced table, a related-objects card from
-`GetRelatedModelsMixin`), implement `get_extra_context()`:
+For an object detail page that needs to render a computed table no list
+filter can express (a related-objects card from `GetRelatedModelsMixin`
+is the other case, covered next), implement `get_extra_context()`:
 
 ```python
-@register_model_view(ACIBridgeDomain)
-class ACIBridgeDomainView(generic.ObjectView):
-    queryset = ACIBridgeDomain.objects.select_related(...).prefetch_related("tags")
+@register_model_view(ACILeafSelector)
+class ACILeafSelectorView(generic.ObjectView):
+    queryset = ACILeafSelector.objects.select_related(...).prefetch_related("tags")
 
     def get_extra_context(self, request, instance) -> dict:
-        """Return related Bridge Domain Subnets as extra context."""
-        subnets_table = ACIBridgeDomainSubnetReducedTable(
-            instance.aci_bridge_domain_subnets.all()
+        """Return the resolved ACI Nodes as extra context."""
+        aci_nodes_table = ACINodeReducedTable(
+            instance.aci_nodes.restrict(request.user, "view").order_by("node_id")
         )
-        subnets_table.configure(request=request)
-        return {"subnets_table": subnets_table}
+        aci_nodes_table.configure(request=request)
+        return {"aci_nodes_table": aci_nodes_table}
 ```
 
-The template reads `subnets_table` directly:
-
-```django
-<div class="table-responsive">
-  {% render_table subnets_table %}
-</div>
-```
-
-Use a `*ReducedTable` (see [Tables - Reduced
-tables](tables.md#reduced-tables)); the parent FK column is redundant
-when you're on the parent's detail page.
+The view's `layout` renders it through a `ContextTablePanel`, reading
+the same `aci_nodes_table` context key (see [UI - Embedded child
+tables](ui.md#embedded-child-tables)). Use a `*ReducedTable` (see
+[Tables - Reduced tables](tables.md#reduced-tables)); the parent FK
+column is redundant when you're on the parent's detail page.
 
 ### `GetRelatedModelsMixin` for cross-cutting counts
 
@@ -151,10 +145,9 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
 ```
 
 The mixin auto-discovers direct FK references to the instance; pass
-`extra=` for indirect relationships (via grandparent traversal).
-Templates render the result via `inc/panels/related_objects.html`
-(see [Templates - Required panel
-includes](templates.md#required-panel-includes)).
+`extra=` for indirect relationships (via grandparent traversal). The
+view's `layout` renders the result through a `RelatedObjectsPanel()`
+(see [UI - Panels](ui.md#panels)).
 
 ## Children views (tabs)
 
