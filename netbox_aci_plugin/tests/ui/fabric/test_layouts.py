@@ -57,6 +57,7 @@ EXPECTED_LAYOUTS = {
         [
             "ACINodePanel",
             "ACINodeInfrastructurePanel",
+            "ACINodeSwitchProfilesPanel",
             "CustomFieldsPanel",
             "PluginContentPanel",
         ],

@@ -183,10 +183,19 @@ class ACILeafSwitchProfileView(generic.ObjectView):
             CustomFieldsPanel(),
         ],
         right_panels=[
+            ContextTablePanel("aci_nodes_table", title=_("Resolved ACI Nodes")),
             TagsPanel(),
             CommentsPanel(),
         ],
     )
+
+    def get_extra_context(self, request, instance) -> dict:
+        """Return the profile's resolved ACI Nodes as extra context."""
+        aci_nodes_table = ACINodeReducedTable(
+            instance.aci_nodes.restrict(request.user, "view").order_by("node_id")
+        )
+        aci_nodes_table.configure(request=request)
+        return {"aci_nodes_table": aci_nodes_table}
 
 
 @register_model_view(ACILeafSwitchProfile, "list", path="", detail=False)

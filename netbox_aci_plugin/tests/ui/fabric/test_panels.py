@@ -18,13 +18,22 @@ from __future__ import annotations
 from dcim.models import Location, Region, Site
 from netbox.ui import attrs
 
+from ....choices import NodeRoleChoices
+from ....models.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlock,
+    ACILeafSelector,
+    ACILeafSwitchProfile,
+)
 from ....models.fabric.fabrics import ACIFabric
 from ....models.fabric.node_interfaces import ACINodeInterface
 from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
 from ....ui.panels.fabric.fabrics import ACIFabricPanel
 from ....ui.panels.fabric.node_interfaces import ACINodeInterfacePanel
-from ....ui.panels.fabric.nodes import ACINodeInfrastructurePanel
+from ....ui.panels.fabric.nodes import (
+    ACINodeInfrastructurePanel,
+    ACINodeSwitchProfilesPanel,
+)
 from ....ui.panels.fabric.pods import ACIPodPanel
 from ..base import ACIBaseUITestCase
 
@@ -173,3 +182,68 @@ class NodeInterfacePanelSubPortTestCase(ACIBaseUITestCase):
         )
         attr = ACINodeInterfacePanel._attrs["sub_port"]
         self.assertEqual(attr.get_value(iface), 2)
+
+
+class NodeSwitchProfilesPanelTestCase(ACIBaseUITestCase):
+    """Unit tests for the covering ACI Leaf Switch Profiles card."""
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        """Set up test data for ACINodeSwitchProfilesPanel tests."""
+        aci_fabric = ACIFabric.objects.create(
+            name="ACIUINodeSwitchProfilesFabric", fabric_id=1, infra_vlan_vid=100
+        )
+        aci_pod = ACIPod.objects.create(
+            name="ACIUINodeSwitchProfilesPod", aci_fabric=aci_fabric, pod_id=1
+        )
+        cls.aci_node_uncovered = ACINode.objects.create(
+            name="ACIUINodeSwitchProfilesUncovered",
+            aci_pod=aci_pod,
+            node_id=101,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        cls.aci_node_covered = ACINode.objects.create(
+            name="ACIUINodeSwitchProfilesCovered",
+            aci_pod=aci_pod,
+            node_id=102,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        cls.aci_node_spine = ACINode.objects.create(
+            name="ACIUINodeSwitchProfilesSpine",
+            aci_pod=aci_pod,
+            node_id=201,
+            role=NodeRoleChoices.ROLE_SPINE,
+        )
+        cls.aci_leaf_switch_profile = ACILeafSwitchProfile.objects.create(
+            name="ACIUINodeSwitchProfilesProfile", aci_fabric=aci_fabric
+        )
+        aci_leaf_selector = ACILeafSelector.objects.create(
+            name="ACIUINodeSwitchProfilesSelector",
+            aci_leaf_switch_profile=cls.aci_leaf_switch_profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACIUINodeSwitchProfilesBlock",
+            aci_leaf_selector=aci_leaf_selector,
+            node_id_from=102,
+            node_id_to=102,
+        )
+
+    def test_panel_renders_for_a_leaf(self) -> None:
+        """The card renders on a Leaf, whose role a Profile can cover."""
+        self.add_permissions("netbox_aci_plugin.view_acileafswitchprofile")
+        context = self.get_context(self.aci_node_covered)
+        panel = ACINodeSwitchProfilesPanel()
+        self.assertTrue(panel.should_render(panel.get_context(context)))
+
+    def test_panel_hidden_for_a_non_leaf_role(self) -> None:
+        """The card is hidden on a Spine, which no Profile can cover."""
+        self.add_permissions("netbox_aci_plugin.view_acileafswitchprofile")
+        context = self.get_context(self.aci_node_spine)
+        panel = ACINodeSwitchProfilesPanel()
+        self.assertFalse(panel.should_render(panel.get_context(context)))
+
+    def test_panel_hidden_without_profile_permission(self) -> None:
+        """The card is hidden from a user with no Profile view rights."""
+        context = self.get_context(self.aci_node_covered)
+        panel = ACINodeSwitchProfilesPanel()
+        self.assertFalse(panel.should_render(panel.get_context(context)))

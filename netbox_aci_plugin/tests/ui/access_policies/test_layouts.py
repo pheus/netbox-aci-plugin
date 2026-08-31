@@ -122,7 +122,12 @@ EXPECTED_LAYOUTS = {
     ),
     ACILeafSwitchProfileView: (
         ["ACILeafSwitchProfilePanel", "CustomFieldsPanel", "PluginContentPanel"],
-        ["TagsPanel", "CommentsPanel", "PluginContentPanel"],
+        [
+            "ContextTablePanel",
+            "TagsPanel",
+            "CommentsPanel",
+            "PluginContentPanel",
+        ],
         ["PluginContentPanel"],
         1,
     ),

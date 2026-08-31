@@ -10,7 +10,13 @@ from django.utils.translation import gettext_lazy as _
 
 from netbox.ui import attrs, panels
 
-__all__ = ("ACINodeInfrastructurePanel", "ACINodePanel")
+from ....choices import NodeRoleChoices
+
+__all__ = (
+    "ACINodeInfrastructurePanel",
+    "ACINodePanel",
+    "ACINodeSwitchProfilesPanel",
+)
 
 
 class ACINodePanel(panels.ObjectAttributesPanel):
@@ -48,3 +54,31 @@ class ACINodeInfrastructurePanel(panels.ObjectAttributesPanel):
         template_name="netbox_aci_plugin/attrs/vpc_protection_group.html",
         label=_("ACI VPC Protection Group"),
     )
+
+
+class ACINodeSwitchProfilesPanel(panels.ObjectsTablePanel):
+    """Covering ACI Leaf Switch Profiles card for the ACI Node detail view.
+
+    Routes through the Profile list view so the rows honour object
+    permissions, which an attribute row cannot.
+
+    The card carries no Add action: coverage is resolved from node
+    blocks, so the object a user would create here is a block.
+    """
+
+    title = _("ACI Leaf Switch Profiles")
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(
+            "netbox_aci_plugin.ACILeafSwitchProfile",
+            filters={"covering_aci_node_id": lambda ctx: ctx["object"].pk},
+            exclude_columns=["aci_fabric", "name_alias", "nb_tenant"],
+            **kwargs,
+        )
+
+    def should_render(self, context) -> bool:
+        """Hide the card on Nodes whose role no Profile can cover."""
+        return (
+            super().should_render(context)
+            and context["object"].role == NodeRoleChoices.ROLE_LEAF
+        )

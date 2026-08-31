@@ -23,7 +23,11 @@ from ...forms.fabric.nodes import (
 from ...models.fabric.nodes import ACINode
 from ...object_actions import add_child_action
 from ...tables.fabric.nodes import ACINodeTable
-from ...ui.panels.fabric.nodes import ACINodeInfrastructurePanel, ACINodePanel
+from ...ui.panels.fabric.nodes import (
+    ACINodeInfrastructurePanel,
+    ACINodePanel,
+    ACINodeSwitchProfilesPanel,
+)
 from ..fabric.node_interfaces import ACINodeInterfaceChildrenView
 
 #
@@ -93,6 +97,7 @@ class ACINodeView(generic.ObjectView):
         left_panels=[
             ACINodePanel(),
             ACINodeInfrastructurePanel(),
+            ACINodeSwitchProfilesPanel(),
             CustomFieldsPanel(),
         ],
         right_panels=[

@@ -22,7 +22,10 @@ from ....ui.panels.fabric.node_interfaces import (
     ACINodeInterfaceOverridePanel,
     ACINodeInterfacePanel,
 )
-from ....ui.panels.fabric.nodes import ACINodeInfrastructurePanel, ACINodePanel
+from ....ui.panels.fabric.nodes import (
+    ACINodeInfrastructurePanel,
+    ACINodePanel,
+)
 from ....ui.panels.fabric.pods import ACIPodPanel
 from ....ui.panels.fabric.vpc_protection_groups import ACIVPCProtectionGroupPanel
 from ..base import layout_panels, layout_views
