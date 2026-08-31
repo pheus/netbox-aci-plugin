@@ -92,6 +92,28 @@ class ACILeafSwitchProfile(ACIFabricBaseModel):
         """Return the number of ACI Leaf Selectors in the profile."""
         return self.aci_leaf_selectors.count()
 
+    @property
+    def aci_nodes(self) -> QuerySet[ACINode]:
+        """Return the leaf ACI Nodes covered by every selector's blocks.
+
+        Queries every ACILeafNodeBlock under the profile in one shot,
+        rather than looping through selectors and querying each one's
+        blocks separately, which would cost a query per selector.
+        """
+        blocks = ACILeafNodeBlock.objects.filter(
+            aci_leaf_selector__aci_leaf_switch_profile=self
+        )
+        if not blocks:
+            return ACINode.objects.none()
+        node_id_q = models.Q()
+        for block in blocks:
+            node_id_q |= block.node_id_query
+        return ACINode.objects.filter(
+            node_id_q,
+            _aci_fabric_id=self.aci_fabric_id,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+
 
 class ACILeafSelector(ACIFabricBaseModel):
     """ACI Leaf Selector (infraLeafS) within a leaf switch profile.
