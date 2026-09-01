@@ -88,6 +88,14 @@ class ACIEndpointGroupAAEPBindingTable(NetBoxTable):
         verbose_name=_("Effective Encap VLAN ID"),
         orderable=False,
     )
+    primary_nb_vlan = tables.Column(
+        verbose_name=_("Primary NetBox VLAN"),
+        linkify=True,
+    )
+    effective_primary_encap_vlan_id = tables.Column(
+        verbose_name=_("Effective Primary Encap VLAN ID"),
+        orderable=False,
+    )
     mode = columns.ChoiceFieldColumn()
     deployment_immediacy = columns.ChoiceFieldColumn()
     tags = columns.TagColumn()
@@ -103,6 +111,9 @@ class ACIEndpointGroupAAEPBindingTable(NetBoxTable):
             "nb_vlan",
             "encap_vlan_id",
             "effective_encap_vlan_id",
+            "primary_nb_vlan",
+            "primary_encap_vlan_id",
+            "effective_primary_encap_vlan_id",
             "mode",
             "deployment_immediacy",
             "tags",
