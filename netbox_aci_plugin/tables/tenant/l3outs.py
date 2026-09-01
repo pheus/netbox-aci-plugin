@@ -173,30 +173,6 @@ class ACIExternalEndpointGroupTable(NetBoxTable):
         )
 
 
-class ACIExternalEndpointGroupReducedTable(NetBoxTable):
-    """Reduced table for ACIExternalEndpointGroup model."""
-
-    name = tables.Column(
-        verbose_name=_("External EPG"),
-        linkify=True,
-    )
-    preferred_group_member_enabled = columns.BooleanColumn(
-        verbose_name=_("Preferred member"),
-    )
-    qos_class = columns.ChoiceFieldColumn()
-
-    class Meta(NetBoxTable.Meta):
-        model = ACIExternalEndpointGroup
-        fields: tuple = (
-            "pk",
-            "id",
-            "name",
-            "preferred_group_member_enabled",
-            "qos_class",
-        )
-        default_columns: tuple = ("name", "preferred_group_member_enabled", "qos_class")
-
-
 class ACIExternalSubnetTable(NetBoxTable):
     """Table for ACIExternalSubnet model."""
 
@@ -298,37 +274,6 @@ class ACIExternalSubnetTable(NetBoxTable):
             "aci_l3out",
             "aci_external_endpoint_group",
             "matched_prefix",
-            "export_route_control_enabled",
-            "shared_security_enabled",
-        )
-
-
-class ACIExternalSubnetReducedTable(NetBoxTable):
-    """Reduced table for ACIExternalSubnet model."""
-
-    name = tables.Column(
-        verbose_name=_("External Subnet"),
-        linkify=True,
-    )
-    matched_prefix = tables.Column(linkify=True)
-    import_route_control_enabled = columns.BooleanColumn(verbose_name=_("Import RC"))
-    export_route_control_enabled = columns.BooleanColumn(verbose_name=_("Export RC"))
-    shared_security_enabled = columns.BooleanColumn(verbose_name=_("Shared security"))
-
-    class Meta(NetBoxTable.Meta):
-        model = ACIExternalSubnet
-        fields: tuple = (
-            "pk",
-            "id",
-            "name",
-            "matched_prefix",
-            "import_route_control_enabled",
-            "export_route_control_enabled",
-            "shared_security_enabled",
-        )
-        default_columns: tuple = (
-            "matched_prefix",
-            "import_route_control_enabled",
             "export_route_control_enabled",
             "shared_security_enabled",
         )

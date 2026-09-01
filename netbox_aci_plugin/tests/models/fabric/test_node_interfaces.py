@@ -11,7 +11,13 @@ from dcim.choices import InterfaceTypeChoices
 from dcim.models import Device, Interface
 from tenancy.models import Tenant
 
-from ....choices import NodeRoleChoices
+from ....choices import LeafInterfacePolicyGroupTypeChoices, NodeRoleChoices
+from ....models.access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroup,
+)
+from ....models.access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverride,
+)
 from ....models.fabric.node_interfaces import ACINodeInterface
 from ....models.fabric.nodes import ACINode
 from ..base import ACIBaseTestCase
@@ -154,6 +160,53 @@ class ACINodeInterfaceTestCase(ACIBaseTestCase):
             sub_port=1,
         )
         self.assertNotEqual(other.pk, self.aci_node_interface.pk)
+
+    def test_aci_node_interface_sub_port_display_zero_is_none(self) -> None:
+        """Test sub_port_display is None for the APIC 0 (none) sentinel."""
+        self.assertIsNone(self.aci_node_interface.sub_port_display)
+
+    def test_aci_node_interface_sub_port_display_nonzero(self) -> None:
+        """Test sub_port_display returns a non-zero sub port unchanged."""
+        iface = ACINodeInterface.objects.create(
+            aci_node=self.aci_node, module=1, port=11, sub_port=3
+        )
+        self.assertEqual(iface.sub_port_display, 3)
+
+    def test_aci_node_interface_leaf_interface_override_absent(self) -> None:
+        """Test leaf_interface_override is None without an Override."""
+        self.assertIsNone(self.aci_node_interface.leaf_interface_override)
+
+    def test_aci_node_interface_leaf_interface_override_present(self) -> None:
+        """Test leaf_interface_override returns the linked Override."""
+        policy_group = ACILeafInterfacePolicyGroup.objects.create(
+            name="ACINodeInterfaceOverridePolicyGroup",
+            aci_fabric=self.aci_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+        )
+        override = ACILeafInterfaceOverride.objects.create(
+            aci_node_interface=self.aci_node_interface,
+            aci_leaf_interface_policy_group=policy_group,
+        )
+        refetched = ACINodeInterface.objects.select_related(
+            "aci_leaf_interface_override"
+        ).get(pk=self.aci_node_interface.pk)
+        self.assertEqual(refetched.leaf_interface_override, override)
+
+    def test_aci_node_interface_leaf_interface_override_without_select_related(
+        self,
+    ) -> None:
+        """Test leaf_interface_override resolves on an unwarmed instance."""
+        policy_group = ACILeafInterfacePolicyGroup.objects.create(
+            name="ACINodeInterfaceOverrideColdCachePolicyGroup",
+            aci_fabric=self.aci_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+        )
+        override = ACILeafInterfaceOverride.objects.create(
+            aci_node_interface=self.aci_node_interface,
+            aci_leaf_interface_policy_group=policy_group,
+        )
+        refetched = ACINodeInterface.objects.get(pk=self.aci_node_interface.pk)
+        self.assertEqual(refetched.leaf_interface_override, override)
 
     def test_constraint_unique_aci_node_interface_coordinates(self) -> None:
         """Test unique constraint of ACI Node Interface coordinates."""

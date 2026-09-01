@@ -303,8 +303,8 @@ When a relation/binding model links two equal-looking parents (e.g.
 parent as the form's mental model**. All scope helpers (`aci_fabric`,
 `aci_tenant`, `aci_vrf`) derive from that side via single-key
 `initial_params`. The other side is reached via URL-param injection
-from its detail page button (see [Templates - Secondary-side
-parent-scope injection](templates.md#secondary-side-parent-scope-injection)).
+from its detail page button (see [UI - Secondary-side
+parent-scope injection](ui.md#secondary-side-parent-scope-injection)).
 
 Reference example: `ACIBridgeDomainL3OutBindingEditForm` chooses
 **BD** as the mental model:

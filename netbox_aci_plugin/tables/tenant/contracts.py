@@ -268,31 +268,6 @@ class ACIContractSubjectTable(NetBoxTable):
         )
 
 
-class ACIContractSubjectReducedTable(NetBoxTable):
-    """Reduced NetBox table for the ACI Contract Subject model."""
-
-    name = tables.Column(
-        verbose_name=_("Subject"),
-        linkify=True,
-    )
-    apply_both_directions_enabled = columns.BooleanColumn(
-        verbose_name=_("Apply both directions"),
-    )
-
-    class Meta(NetBoxTable.Meta):
-        model = ACIContractSubject
-        fields: tuple = (
-            "pk",
-            "id",
-            "name",
-            "apply_both_directions_enabled",
-        )
-        default_columns: tuple = (
-            "name",
-            "apply_both_directions_enabled",
-        )
-
-
 class ACIContractSubjectFilterTable(NetBoxTable):
     """NetBox table for the ACI Contract Subject Filter model."""
 
@@ -370,35 +345,4 @@ class ACIContractSubjectFilterTable(NetBoxTable):
             "log_enabled",
             "policy_compression_enabled",
             "tags",
-        )
-
-
-class ACIContractSubjectFilterReducedTable(NetBoxTable):
-    """Reduced NetBox table for the ACI Contract Subject Filter model."""
-
-    aci_contract_filter_tenant = tables.Column(
-        verbose_name=_("ACI Tenant (Filter)"),
-        orderable=False,
-        linkify=True,
-    )
-    aci_contract_filter = tables.Column(
-        verbose_name=_("Filter"),
-        linkify=True,
-    )
-    action = columns.ChoiceFieldColumn(
-        verbose_name=_("Action"),
-    )
-
-    class Meta(NetBoxTable.Meta):
-        model = ACIContractSubjectFilter
-        fields: tuple = (
-            "pk",
-            "id",
-            "aci_contract_filter_tenant",
-            "aci_contract_filter",
-            "action",
-        )
-        default_columns: tuple = (
-            "aci_contract_filter",
-            "action",
         )

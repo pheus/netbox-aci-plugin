@@ -5,6 +5,10 @@
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -18,6 +22,13 @@ from ...forms.tenant.vrfs import (
 from ...models.tenant.vrfs import ACIVRF
 from ...object_actions import add_child_action
 from ...tables.tenant.vrfs import ACIVRFTable
+from ...ui.panels.tenant.vrfs import (
+    ACIVRFAdditionalSettingsPanel,
+    ACIVRFEndpointLearningPanel,
+    ACIVRFMulticastPanel,
+    ACIVRFPanel,
+    ACIVRFPolicyControlPanel,
+)
 from .bridge_domains import ACIBridgeDomainChildrenView
 from .contracts import ACIContractRelationChildrenView
 
@@ -69,6 +80,35 @@ class ACIVRFView(generic.ObjectView):
         "owner",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acivrf_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acivrf_list", "aci_tenant_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIVRFPanel(),
+            ACIVRFPolicyControlPanel(),
+            ACIVRFEndpointLearningPanel(),
+            ACIVRFMulticastPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ACIVRFAdditionalSettingsPanel(),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 

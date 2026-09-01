@@ -170,30 +170,53 @@ Both tuples annotated `: tuple`.
 
 ## Reduced tables
 
-When a detail view renders a child list inline (via
-`get_extra_context()`, see [Views - Detail-view extra
-context](views.md#detail-view-extra-context)), use a `*ReducedTable`
-variant rather than the full table. The reduced version drops the
-parent FK column (you're already on the parent's page) and shows only
-the few columns that matter in context:
+A reduced table is a trimmed variant of a full table, used where a
+detail page embeds a child list and the full column set would be too
+wide for the card.
+
+**Reach for one only when no list view can produce the rows.** Since the
+declarative UI port, an embedded child list that a filter can express is
+rendered by `ObjectsTablePanel`, which reuses the child's own list table
+and trims it with `exclude_columns` (see [UI - Embedded child
+tables](ui.md#embedded-child-tables)). That path gets pagination,
+sorting, column preferences and permission scoping for free, so it is
+the default.
+
+What is left for a reduced table is the case `ObjectsTablePanel` cannot
+serve: a computed set of rows with no corresponding list filter. The
+plugin has exactly one, `ACINodeReducedTable`, which backs the resolved
+node cards on the Leaf Selector, Leaf Node Block and Leaf Switch Profile
+pages. Those rows come from range membership, which no filter expresses,
+so the view builds the table in `get_extra_context()` and a
+`ContextTablePanel` renders it.
 
 ```python
-class ACIBridgeDomainSubnetReducedTable(NetBoxTable):
-    """Reduced NetBox table for the ACI Bridge Domain Subnet model."""
+class ACINodeReducedTable(NetBoxTable):
+    """Reduced NetBox table for the ACI Node model."""
 
-    name = tables.Column(verbose_name=_("Subnet Name"), linkify=True)
-    gateway_ip_address = tables.Column(
-        verbose_name=_("Gateway IP"), linkify=True,
+    name = tables.Column(
+        verbose_name=_("Node"),
+        linkify=True,
+    )
+    node_id = tables.Column(
+        verbose_name=_("Node ID"),
+        linkify=True,
+    )
+    role = columns.ChoiceFieldColumn(
+        verbose_name=_("Role"),
     )
 
     class Meta(NetBoxTable.Meta):
-        model = ACIBridgeDomainSubnet
-        fields: tuple = ("pk", "id", "name", "gateway_ip_address")
-        default_columns: tuple = ("name", "gateway_ip_address")
+        model = ACINode
+        fields: tuple = ("pk", "id", "name", "node_id", "role")
+        default_columns: tuple = ("name", "node_id", "role")
 ```
 
-Naming: append `Reduced` before `Table`. Place the reduced table in
-the same file as the full table.
+Drop the parent FK column, since the reader is already on the parent's
+page, and keep only the columns that carry meaning in that context.
+
+Naming: append `Reduced` before `Table`. Place the reduced table in the
+same file as the full table.
 
 ## Table column kwarg ordering
 

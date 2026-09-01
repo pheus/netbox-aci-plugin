@@ -5,6 +5,8 @@
 import django_filters
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 
 from netbox.filtersets import NetBoxModelFilterSet
 from users.filterset_mixins import OwnerFilterMixin
@@ -20,6 +22,7 @@ from ...models.access_policies.leaf_switch_profiles import (
     ACILeafSwitchProfileInterfaceBinding,
 )
 from ...models.fabric.fabrics import ACIFabric
+from ...models.fabric.nodes import ACINode
 from ..mixins import ACIFabricFilterSetMixin, NBTenantFilterSetMixin
 
 
@@ -31,6 +34,12 @@ class ACILeafSwitchProfileFilterSet(
     NetBoxModelFilterSet,
 ):
     """Filter set for the ACI Leaf Switch Profile model."""
+
+    covering_aci_node_id = django_filters.ModelChoiceFilter(
+        queryset=ACINode.objects.all(),
+        method="filter_covering_aci_node_id",
+        label=_("ACI Node (ID)"),
+    )
 
     class Meta:
         model = ACILeafSwitchProfile
@@ -53,6 +62,17 @@ class ACILeafSwitchProfileFilterSet(
             | Q(description__icontains=value)
         )
         return queryset.filter(queryset_filter)
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_covering_aci_node_id(self, queryset, name, aci_node):
+        """Return a QuerySet of Profiles whose blocks cover the ACI Node.
+
+        Delegates to the Node so the leaf-role rule and the Fabric
+        scoping stay in one place.
+        """
+        if aci_node is None:
+            return queryset.none()
+        return queryset.filter(pk__in=aci_node.aci_leaf_switch_profiles.values("pk"))
 
 
 @register_filterset

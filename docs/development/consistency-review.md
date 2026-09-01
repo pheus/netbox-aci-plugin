@@ -57,6 +57,8 @@ For every concrete model, verify the matching layer objects exist:
 - **FilterSet:** `<Model>FilterSet`.
 - **Forms:** `<Model>EditForm`, `<Model>BulkEditForm`,
   `<Model>FilterForm`, and `<Model>ImportForm`.
+- **UI panels:** `<Model>Panel`, declared
+  on the detail view's `layout`, plus a `Breadcrumb` per ancestor level.
 - **Views:** detail, list, edit, delete, bulk import, and bulk
   edit/delete where applicable.
 - **URLs:** UI routes via `get_model_urls()` and an API router route.
@@ -99,6 +101,10 @@ only the cross-layer quick check.
 - **Forms:** field declarations, `fieldsets`, `Meta` / `model`, then
   helper methods. The exact form-type order lives in
   [Forms](forms.md#field-declaration-order).
+- **UI panels:** `title` / `actions` class attributes before declared
+  attribute fields. Every panel subclasses `ObjectAttributesPanel`
+  directly, never a shared base, because the metaclass walks base
+  classes first and gives no way to reorder inherited rows.
 - **FilterSets:** `id`, `name` / `slug`, parent FK name/ID pairs,
   feature filters, `Meta`, then `search()`.
 - **Tables:** identity columns, parent/scope columns, feature columns,

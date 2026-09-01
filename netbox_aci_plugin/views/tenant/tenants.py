@@ -8,6 +8,10 @@ from typing import TYPE_CHECKING
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel, RelatedObjectsPanel
 from netbox.views import generic
 from utilities.views import GetRelatedModelsMixin, ViewTab, register_model_view
 
@@ -23,6 +27,7 @@ from ...models.tenant.endpoint_security_groups import ACIEndpointSecurityGroup
 from ...models.tenant.tenants import ACITenant
 from ...object_actions import add_child_action
 from ...tables.tenant.tenants import ACITenantTable
+from ...ui.panels.tenant.tenants import ACITenantPanel
 from .app_profiles import ACIAppProfileChildrenView
 from .bridge_domains import ACIBridgeDomainChildrenView
 from .contracts import ACIContractChildrenView
@@ -82,6 +87,26 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
         "owner",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acitenant_list", "aci_fabric_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACITenantPanel(),
+            CustomFieldsPanel(),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+        right_panels=[
+            RelatedObjectsPanel(),
+        ],
     )
 
     def get_extra_context(self, request, instance) -> dict:

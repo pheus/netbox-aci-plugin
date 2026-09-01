@@ -5,7 +5,8 @@
 """Tests for the ACI Leaf Switch Profile models."""
 
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connection, transaction
+from django.test.utils import CaptureQueriesContext
 
 from core.choices import ObjectChangeActionChoices
 from tenancy.models import Tenant
@@ -226,6 +227,136 @@ class ACILeafSwitchProfileTestCase(ACIBaseTestCase):
         )
         self.aci_leaf_switch_profile.aci_fabric = other_fabric
         self.aci_leaf_switch_profile.full_clean()
+
+    def test_aci_leaf_switch_profile_selector_count_zero(self) -> None:
+        """Test selector_count is 0 for a profile with no Selectors."""
+        self.assertEqual(self.aci_leaf_switch_profile.selector_count, 0)
+
+    def test_aci_leaf_switch_profile_selector_count_nonzero(self) -> None:
+        """Test selector_count counts the profile's Selectors."""
+        ACILeafSelector.objects.create(
+            name="ACILSPSelectorCount1",
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+        )
+        ACILeafSelector.objects.create(
+            name="ACILSPSelectorCount2",
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+        )
+        self.assertEqual(self.aci_leaf_switch_profile.selector_count, 2)
+
+    def test_aci_nodes_empty_for_profile_without_selectors(self) -> None:
+        """Test aci_nodes is empty for a profile without Selectors."""
+        self.assertFalse(self.aci_leaf_switch_profile.aci_nodes.exists())
+
+    def test_aci_nodes_unions_blocks_across_selectors(self) -> None:
+        """Test aci_nodes unions Node Blocks contributed by every Selector."""
+        leaf_102 = ACINode.objects.create(
+            name="ACILSPAciNodesLeaf102",
+            aci_pod=self.aci_pod,
+            node_id=102,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        selector1 = ACILeafSelector.objects.create(
+            name="ACILSPAciNodesSelector1",
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACILSPAciNodesBlock1",
+            aci_leaf_selector=selector1,
+            node_id_from=101,
+            node_id_to=101,
+        )
+        selector2 = ACILeafSelector.objects.create(
+            name="ACILSPAciNodesSelector2",
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACILSPAciNodesBlock2",
+            aci_leaf_selector=selector2,
+            node_id_from=102,
+            node_id_to=102,
+        )
+        self.assertQuerySetEqual(
+            self.aci_leaf_switch_profile.aci_nodes.order_by("node_id"),
+            [self.aci_node, leaf_102],
+        )
+
+    def test_aci_nodes_excludes_other_fabrics(self) -> None:
+        """Test aci_nodes excludes a same-ID Node in another Fabric."""
+        other_fabric = ACIFabric.objects.create(
+            name="ACILSPAciNodesOtherFabric",
+            fabric_id=154,
+            infra_vlan_vid=3924,
+        )
+        other_pod = ACIPod.objects.create(
+            name="ACILSPAciNodesOtherPod", aci_fabric=other_fabric, pod_id=1
+        )
+        other_leaf = ACINode.objects.create(
+            name="ACILSPAciNodesOtherLeaf",
+            aci_pod=other_pod,
+            node_id=self.aci_node.node_id,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        selector = ACILeafSelector.objects.create(
+            name="ACILSPAciNodesOtherFabricSelector",
+            aci_leaf_switch_profile=self.aci_leaf_switch_profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACILSPAciNodesOtherFabricBlock",
+            aci_leaf_selector=selector,
+            node_id_from=other_leaf.node_id,
+            node_id_to=other_leaf.node_id,
+        )
+        self.assertQuerySetEqual(
+            self.aci_leaf_switch_profile.aci_nodes, [self.aci_node]
+        )
+
+    def test_aci_nodes_query_count_constant_across_selector_count(self) -> None:
+        """Query count for aci_nodes must not scale with Selector count.
+
+        Both aci_nodes properties this one aggregates build a fresh
+        queryset per call, so a naive loop over Selectors would cost a
+        query per Selector. Pins the single-query collapse instead.
+        """
+        single_profile = ACILeafSwitchProfile.objects.create(
+            name="ACILSPAciNodesSingleProfile", aci_fabric=self.aci_fabric
+        )
+        single_selector = ACILeafSelector.objects.create(
+            name="ACILSPAciNodesSingleSelector",
+            aci_leaf_switch_profile=single_profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACILSPAciNodesSingleBlock",
+            aci_leaf_selector=single_selector,
+            node_id_from=101,
+            node_id_to=101,
+        )
+
+        multi_profile = ACILeafSwitchProfile.objects.create(
+            name="ACILSPAciNodesMultiProfile", aci_fabric=self.aci_fabric
+        )
+        for index in range(3):
+            selector = ACILeafSelector.objects.create(
+                name=f"ACILSPAciNodesMultiSelector{index}",
+                aci_leaf_switch_profile=multi_profile,
+            )
+            ACILeafNodeBlock.objects.create(
+                name=f"ACILSPAciNodesMultiBlock{index}",
+                aci_leaf_selector=selector,
+                node_id_from=101,
+                node_id_to=101,
+            )
+
+        with CaptureQueriesContext(connection) as single_ctx:
+            list(single_profile.aci_nodes)
+        with CaptureQueriesContext(connection) as multi_ctx:
+            list(multi_profile.aci_nodes)
+
+        self.assertEqual(
+            len(single_ctx.captured_queries),
+            len(multi_ctx.captured_queries),
+            "Query count for aci_nodes grew with the profile's Selector count.",
+        )
 
 
 class ACILeafSelectorTestCase(ACIBaseTestCase):
@@ -465,6 +596,14 @@ class ACILeafSelectorTestCase(ACIBaseTestCase):
             aci_leaf_switch_profile=other_profile,
         )
         self.assertEqual(selector.name, self.aci_leaf_selector_name)
+
+    def test_aci_leaf_selector_node_block_count_zero(self) -> None:
+        """Test node_block_count is 0 for a selector with no Node Blocks."""
+        self.assertEqual(self.aci_leaf_selector_empty.node_block_count, 0)
+
+    def test_aci_leaf_selector_node_block_count_nonzero(self) -> None:
+        """Test node_block_count counts the selector's Node Blocks."""
+        self.assertEqual(self.aci_leaf_selector.node_block_count, 1)
 
 
 class ACILeafNodeBlockTestCase(ACIBaseTestCase):

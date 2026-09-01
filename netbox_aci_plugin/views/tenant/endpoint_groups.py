@@ -5,6 +5,10 @@
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -37,6 +41,19 @@ from ...tables.tenant.endpoint_groups import (
     ACIEndpointGroupTable,
     ACIUSegEndpointGroupTable,
     ACIUSegNetworkAttributeTable,
+)
+from ...ui.panels.tenant.endpoint_groups import (
+    ACIEndpointGroupForwardingPanel,
+    ACIEndpointGroupPanel,
+    ACIEndpointGroupPolicyEnforcementPanel,
+    ACIEndpointGroupQoSPanel,
+    ACIUSegEndpointGroupForwardingPanel,
+    ACIUSegEndpointGroupPanel,
+    ACIUSegEndpointGroupPolicyEnforcementPanel,
+    ACIUSegEndpointGroupQoSPanel,
+    ACIUSegNetworkAttributeAssignmentPanel,
+    ACIUSegNetworkAttributeEPGSubnetPanel,
+    ACIUSegNetworkAttributePanel,
 )
 from .contracts import ACIContractRelationChildrenView
 
@@ -148,6 +165,50 @@ class ACIEndpointGroupView(generic.ObjectView):
         "nb_tenant",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointgroup_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointgroup_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_app_profile",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointgroup_list",
+                    "aci_app_profile_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_bridge_domain",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointgroup_list",
+                    "aci_bridge_domain_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIEndpointGroupPanel(),
+            ACIEndpointGroupPolicyEnforcementPanel(),
+            ACIEndpointGroupForwardingPanel(),
+            ACIEndpointGroupQoSPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 
@@ -280,6 +341,50 @@ class ACIUSegEndpointGroupView(generic.ObjectView):
         "owner",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciusegendpointgroup_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciusegendpointgroup_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_app_profile",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciusegendpointgroup_list",
+                    "aci_app_profile_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_bridge_domain",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciusegendpointgroup_list",
+                    "aci_bridge_domain_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIUSegEndpointGroupPanel(),
+            ACIUSegEndpointGroupPolicyEnforcementPanel(),
+            ACIUSegEndpointGroupForwardingPanel(),
+            ACIUSegEndpointGroupQoSPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 
@@ -456,6 +561,49 @@ class ACIUSegNetworkAttributeView(generic.ObjectView):
     ).prefetch_related(
         "attr_object",
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciusegnetworkattribute_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciusegnetworkattribute_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_app_profile",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciusegnetworkattribute_list",
+                    "aci_app_profile_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_useg_endpoint_group",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciusegnetworkattribute_list",
+                    "aci_useg_endpoint_group_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIUSegNetworkAttributePanel(),
+            ACIUSegNetworkAttributeEPGSubnetPanel(),
+            ACIUSegNetworkAttributeAssignmentPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 

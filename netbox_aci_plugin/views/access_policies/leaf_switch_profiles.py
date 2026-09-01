@@ -6,6 +6,10 @@ from __future__ import annotations
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel, ContextTablePanel
 from netbox.views import generic
 from utilities.query import count_related
 from utilities.views import ViewTab, register_model_view
@@ -48,6 +52,13 @@ from ...tables.access_policies.leaf_switch_profiles import (
     ACILeafSwitchProfileTable,
 )
 from ...tables.fabric.nodes import ACINodeReducedTable
+from ...ui.panels.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlockPanel,
+    ACILeafNodeBlockRangePanel,
+    ACILeafSelectorPanel,
+    ACILeafSwitchProfileInterfaceBindingPanel,
+    ACILeafSwitchProfilePanel,
+)
 
 #
 # Base children views
@@ -156,6 +167,35 @@ class ACILeafSwitchProfileView(generic.ObjectView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafswitchprofile_list",
+                    "aci_fabric_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafSwitchProfilePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ContextTablePanel("aci_nodes_table", title=_("Resolved ACI Nodes")),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
+
+    def get_extra_context(self, request, instance) -> dict:
+        """Return the profile's resolved ACI Nodes as extra context."""
+        aci_nodes_table = ACINodeReducedTable(
+            instance.aci_nodes.restrict(request.user, "view").order_by("node_id")
+        )
+        aci_nodes_table.configure(request=request)
+        return {"aci_nodes_table": aci_nodes_table}
 
 
 @register_model_view(ACILeafSwitchProfile, "list", path="", detail=False)
@@ -304,6 +344,33 @@ class ACILeafSelectorView(generic.ObjectView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafselector_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_leaf_switch_profile",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafselector_list",
+                    "aci_leaf_switch_profile_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafSelectorPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ContextTablePanel("aci_nodes_table", title=_("Resolved ACI Nodes")),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
     def get_extra_context(self, request, instance) -> dict:
         """Return the resolved ACI Nodes as extra context."""
@@ -450,6 +517,41 @@ class ACILeafNodeBlockView(generic.ObjectView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafnodeblock_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                lambda obj: obj.aci_leaf_selector.aci_leaf_switch_profile,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafnodeblock_list",
+                    "aci_leaf_switch_profile_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_leaf_selector",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafnodeblock_list",
+                    "aci_leaf_selector_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafNodeBlockPanel(),
+            ACILeafNodeBlockRangePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ContextTablePanel("aci_nodes_table", title=_("Covered ACI Nodes")),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
     def get_extra_context(self, request, instance) -> dict:
         """Return the covered ACI Nodes as extra context."""
@@ -558,6 +660,26 @@ class ACILeafSwitchProfileInterfaceBindingView(generic.ObjectView):
         "aci_leaf_interface_profile",
         "aci_leaf_interface_profile__aci_fabric",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafswitchprofileinterfacebinding_list",
+                    "aci_fabric_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafSwitchProfileInterfaceBindingPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(

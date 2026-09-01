@@ -12,6 +12,8 @@ tests/
   api/         <domain>/test_<model>.py
   graphql/     base.py + test_<topic>.py
   search/      <domain>/test_<model>.py
+  ui/          base.py + test_actions.py + test_conventions.py
+               + <domain>/test_<concern>.py
 ```
 
 Run the suite with NetBox's Django test runner (the plugin must be
@@ -42,8 +44,8 @@ def setUpTestData(cls):
 
 ## Per-layer base classes
 
-Four base classes hold the shared fixtures and helpers for their layer.
-Each test module subclasses the layer's base.
+Each layer has a base class holding its shared fixtures and helpers.
+Every test module subclasses the base for its layer.
 
 ### `tests/models/base.py:ACIBaseTestCase`
 
@@ -127,6 +129,34 @@ def query(self, query_str: str) -> dict:
     self.assertEqual(response.status_code, 200, response.content)
     return response.json()
 ```
+
+### `tests/ui/base.py:ACIBaseUITestCase`
+
+Builds a `{request, object, perms}` context dict through
+`get_context()`, so a panel or action can be rendered without a full
+view round trip. It also exports the registry walks the per-domain
+pinning tests assert completeness against, `all_object_views()`,
+`layout_views()` and `layout_panels()`.
+
+Each domain reproduces the same module shape under `tests/ui/<domain>/`:
+
+| Module | Pins |
+|---|---|
+| `test_layouts.py` | which panels a view renders, in which column and order |
+| `test_panel_order.py` | each panel's attribute rows, by name and accessor |
+| `test_panels.py` | the non-trivial attrs, such as GFK rows and `should_render` |
+| `test_breadcrumbs.py` | the list view and filter parameter each crumb links to |
+| `test_child_tables.py` | `ObjectsTablePanel` model, title and filter keys |
+| `test_context_tables.py` | `ContextTablePanel` context key and heading |
+
+The last two are per-domain by construction: a domain declares only the
+table panel kind its detail pages use. Every pinning dictionary carries
+a completeness test deriving the live set, because a dictionary that
+iterates its own keys cannot notice something it never listed.
+
+`tests/ui/test_actions.py` and `test_conventions.py` sit above the
+domains, covering `ACIObjectLinkAction` and the rules that hold for
+every ported view.
 
 `tests/tables/base.py` aliases `TableTestCases.StandardTableTestCase`
 for use as a smoke-test base.

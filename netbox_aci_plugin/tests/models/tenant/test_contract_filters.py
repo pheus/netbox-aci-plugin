@@ -260,6 +260,23 @@ class ACIContractFilterEntryTestCase(ACIBaseTestCase):
             self.aci_contract_filter_entry_description,
         )
 
+    def test_aci_contract_filter_entry_tcp_rules_display(self) -> None:
+        """Test tcp_rules_display joins the ChoiceSet labels with a comma."""
+        expected = ", ".join(
+            str(label)
+            for label in self.aci_contract_filter_entry.get_tcp_rules_display()
+        )
+        self.assertEqual(self.aci_contract_filter_entry.tcp_rules_display, expected)
+
+    def test_aci_contract_filter_entry_tcp_rules_display_empty_is_none(self) -> None:
+        """Test tcp_rules_display is None for an empty TCP rules list."""
+        entry = ACIContractFilterEntry.objects.create(
+            name="ACIContractFilterEntryEmptyTCPRules",
+            aci_contract_filter=self.aci_contract_filter,
+            tcp_rules=[],
+        )
+        self.assertIsNone(entry.tcp_rules_display)
+
     def test_aci_contract_filter_entry_aci_contract_filter_instance(
         self,
     ) -> None:

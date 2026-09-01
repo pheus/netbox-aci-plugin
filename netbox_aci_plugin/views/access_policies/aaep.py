@@ -6,6 +6,10 @@ from __future__ import annotations
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -32,6 +36,10 @@ from ...object_actions import add_child_action
 from ...tables.access_policies.aaep import (
     ACIAAEPDomainBindingTable,
     ACIAttachableAccessEntityProfileTable,
+)
+from ...ui.panels.access_policies.aaep import (
+    ACIAAEPDomainBindingPanel,
+    ACIAttachableAccessEntityProfilePanel,
 )
 from .interface_policy_groups import ACILeafInterfacePolicyGroupChildrenView
 
@@ -109,6 +117,26 @@ class ACIAttachableAccessEntityProfileView(generic.ObjectView):
         "owner",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciattachableaccessentityprofile_list",
+                    "aci_fabric_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIAttachableAccessEntityProfilePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 
@@ -304,6 +332,33 @@ class ACIAAEPDomainBindingView(generic.ObjectView):
     ).prefetch_related(
         "aci_domain_object",
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciaaepdomainbinding_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_aaep",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciaaepdomainbinding_list",
+                    "aci_aaep_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIAAEPDomainBindingPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 

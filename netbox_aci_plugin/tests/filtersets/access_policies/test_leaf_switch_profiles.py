@@ -6,6 +6,7 @@
 
 from utilities.testing import ChangeLoggedFilterSetTestMixin
 
+from ....choices import NodeRoleChoices
 from ....filtersets.access_policies.leaf_switch_profiles import (
     ACILeafNodeBlockFilterSet,
     ACILeafSelectorFilterSet,
@@ -22,6 +23,8 @@ from ....models.access_policies.leaf_switch_profiles import (
     ACILeafSwitchProfileInterfaceBinding,
 )
 from ....models.fabric.fabrics import ACIFabric
+from ....models.fabric.nodes import ACINode
+from ....models.fabric.pods import ACIPod
 from ...models.base import ACIBaseTestCase
 
 
@@ -83,6 +86,81 @@ class ACILeafSwitchProfileFilterSetTestCase(
         qs = self.filterset(params, self.queryset).qs
         self.assertIn(self.aci_leaf_switch_profile1, qs)
         self.assertNotIn(self.aci_leaf_switch_profile3, qs)
+
+    def _cover(self, profile, node_id_from, node_id_to, tag) -> None:
+        """Give a Profile a Selector whose Node Block covers an ID range."""
+        selector = ACILeafSelector.objects.create(
+            name=f"LSPFilterSetSelector{tag}",
+            aci_leaf_switch_profile=profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name=f"LSPFilterSetBlock{tag}",
+            aci_leaf_selector=selector,
+            node_id_from=node_id_from,
+            node_id_to=node_id_to,
+        )
+
+    def test_filter_covering_aci_node(self) -> None:
+        """Test filtering by an ACI Node the Profile's blocks cover."""
+        self._cover(self.aci_leaf_switch_profile1, 101, 101, "Cover1")
+        params = {"covering_aci_node_id": self.aci_node.pk}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_leaf_switch_profile1, qs)
+        self.assertNotIn(self.aci_leaf_switch_profile2, qs)
+
+    def test_filter_covering_aci_node_returns_every_covering_profile(self) -> None:
+        """Test the filter returns every Profile covering the ACI Node."""
+        self._cover(self.aci_leaf_switch_profile1, 101, 101, "Multi1")
+        self._cover(self.aci_leaf_switch_profile2, 100, 105, "Multi2")
+        params = {"covering_aci_node_id": self.aci_node.pk}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_leaf_switch_profile1, qs)
+        self.assertIn(self.aci_leaf_switch_profile2, qs)
+
+    def test_filter_covering_aci_node_empty_without_coverage(self) -> None:
+        """Test the filter matches nothing for an uncovered ACI Node."""
+        params = {"covering_aci_node_id": self.aci_node.pk}
+        self.assertFalse(self.filterset(params, self.queryset).qs.exists())
+
+    def test_filter_covering_aci_node_excludes_non_leaf_role(self) -> None:
+        """Test an in-range Spine matches no Profile."""
+        spine = ACINode.objects.create(
+            name="LSPFilterSetSpine",
+            aci_pod=self.aci_pod,
+            node_id=120,
+            role=NodeRoleChoices.ROLE_SPINE,
+        )
+        self._cover(self.aci_leaf_switch_profile1, 120, 120, "Spine")
+        params = {"covering_aci_node_id": spine.pk}
+        self.assertFalse(self.filterset(params, self.queryset).qs.exists())
+
+    def test_filter_covering_aci_node_excludes_other_fabrics(self) -> None:
+        """Test a same-ID ACI Node in another Fabric matches no Profile."""
+        other_pod = ACIPod.objects.create(
+            name="LSPFilterSetOtherPod", aci_fabric=self.other_fabric, pod_id=1
+        )
+        other_leaf = ACINode.objects.create(
+            name="LSPFilterSetOtherLeaf",
+            aci_pod=other_pod,
+            node_id=self.aci_node.node_id,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        self._cover(
+            self.aci_leaf_switch_profile1,
+            other_leaf.node_id,
+            other_leaf.node_id,
+            "OtherFabric",
+        )
+        params = {"covering_aci_node_id": other_leaf.pk}
+        self.assertFalse(self.filterset(params, self.queryset).qs.exists())
+
+    def test_filter_covering_aci_node_none(self) -> None:
+        """Test the covering filter returns none for no ACI Node."""
+        fs = self.filterset(queryset=self.queryset)
+        result = fs.filter_covering_aci_node_id(
+            self.queryset, "covering_aci_node_id", None
+        )
+        self.assertEqual(result.count(), 0)
 
 
 class ACILeafSelectorFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin):

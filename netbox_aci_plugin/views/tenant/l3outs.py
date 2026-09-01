@@ -7,6 +7,10 @@
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import actions, layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel, ObjectsTablePanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -37,11 +41,20 @@ from ...models.tenant.l3outs import (
 )
 from ...object_actions import add_child_action
 from ...tables.tenant.l3outs import (
-    ACIExternalEndpointGroupReducedTable,
     ACIExternalEndpointGroupTable,
-    ACIExternalSubnetReducedTable,
     ACIExternalSubnetTable,
     ACIL3OutTable,
+)
+from ...ui.panels.tenant.l3outs import (
+    ACIExternalEndpointGroupPanel,
+    ACIExternalEndpointGroupPolicyPanel,
+    ACIExternalSubnetPanel,
+    ACIExternalSubnetRouteSummarizationPanel,
+    ACIExternalSubnetScopePanel,
+    ACIL3OutPanel,
+    ACIL3OutPolicyPanel,
+    ACIL3OutPolicyReferencesPanel,
+    ACIL3OutProtocolsPanel,
 )
 from .bridge_domains import ACIBridgeDomainL3OutBindingChildrenView
 from .contracts import ACIContractRelationChildrenView
@@ -148,16 +161,62 @@ class ACIL3OutView(generic.ObjectView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return related External EPGs as extra context."""
-        external_endpoint_groups_table = ACIExternalEndpointGroupReducedTable(
-            instance.aci_external_endpoint_groups.all()
-        )
-        external_endpoint_groups_table.configure(request=request)
-        return {
-            "external_endpoint_groups_table": external_endpoint_groups_table,
-        }
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acil3out_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acil3out_list", "aci_tenant_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_vrf",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acil3out_list", "aci_vrf_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIL3OutPanel(),
+            ACIL3OutPolicyPanel(),
+            ACIL3OutProtocolsPanel(),
+            ACIL3OutPolicyReferencesPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ObjectsTablePanel(
+                "netbox_aci_plugin.ACIExternalEndpointGroup",
+                title=_("External EPGs"),
+                filters={"aci_l3out_id": lambda ctx: ctx["object"].pk},
+                exclude_columns=[
+                    "name_alias",
+                    "aci_fabric",
+                    "aci_tenant",
+                    "aci_vrf",
+                    "aci_l3out",
+                ],
+                actions=[
+                    actions.AddObject(
+                        "netbox_aci_plugin.ACIExternalEndpointGroup",
+                        label=_("Add an External EPG"),
+                        url_params={
+                            "aci_l3out": lambda ctx: ctx["object"].pk,
+                            "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+                        },
+                    ),
+                ],
+            ),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIL3Out, "list", path="", detail=False)
@@ -332,16 +391,71 @@ class ACIExternalEndpointGroupView(generic.ObjectView):
     queryset = ACIExternalEndpointGroup.objects.select_related(
         "aci_l3out", "aci_l3out__aci_tenant", "aci_l3out__aci_vrf", "nb_tenant", "owner"
     ).prefetch_related("tags")
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return related subnets as extra context."""
-        subnets_table = ACIExternalSubnetReducedTable(
-            instance.aci_external_subnets.all()
-        )
-        subnets_table.configure(request=request)
-        return {
-            "subnets_table": subnets_table,
-        }
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciexternalendpointgroup_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciexternalendpointgroup_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_l3out",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciexternalendpointgroup_list",
+                    "aci_l3out_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIExternalEndpointGroupPanel(),
+            ACIExternalEndpointGroupPolicyPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ObjectsTablePanel(
+                "netbox_aci_plugin.ACIExternalSubnet",
+                title=_("External Subnets"),
+                filters={
+                    "aci_external_endpoint_group_id": lambda ctx: ctx["object"].pk,
+                },
+                include_columns=[
+                    "import_route_control_enabled",
+                ],
+                exclude_columns=[
+                    "name",
+                    "name_alias",
+                    "aci_fabric",
+                    "aci_tenant",
+                    "aci_l3out",
+                    "aci_external_endpoint_group",
+                ],
+                actions=[
+                    actions.AddObject(
+                        "netbox_aci_plugin.ACIExternalSubnet",
+                        label=_("Add a Subnet"),
+                        url_params={
+                            "aci_external_endpoint_group": (
+                                lambda ctx: ctx["object"].pk
+                            ),
+                            "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+                        },
+                    ),
+                ],
+            ),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIExternalEndpointGroup, "list", path="", detail=False)
@@ -491,6 +605,49 @@ class ACIExternalSubnetView(generic.ObjectView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciexternalsubnet_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciexternalsubnet_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_l3out",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciexternalsubnet_list",
+                    "aci_l3out_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_external_endpoint_group",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciexternalsubnet_list",
+                    "aci_external_endpoint_group_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIExternalSubnetPanel(),
+            ACIExternalSubnetScopePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ACIExternalSubnetRouteSummarizationPanel(),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIExternalSubnet, "list", path="", detail=False)

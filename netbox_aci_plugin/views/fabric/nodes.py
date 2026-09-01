@@ -6,6 +6,10 @@ from __future__ import annotations
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -19,6 +23,11 @@ from ...forms.fabric.nodes import (
 from ...models.fabric.nodes import ACINode
 from ...object_actions import add_child_action
 from ...tables.fabric.nodes import ACINodeTable
+from ...ui.panels.fabric.nodes import (
+    ACINodeInfrastructurePanel,
+    ACINodePanel,
+    ACINodeSwitchProfilesPanel,
+)
 from ..fabric.node_interfaces import ACINodeInterfaceChildrenView
 
 #
@@ -69,6 +78,33 @@ class ACINodeView(generic.ObjectView):
     queryset = ACINode.objects.select_related(
         "aci_pod", "node_object_type", "tep_ip_address", "nb_tenant", "owner"
     ).prefetch_related("node_object", "tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acinode_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_pod",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acinode_list", "aci_pod_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACINodePanel(),
+            ACINodeInfrastructurePanel(),
+            ACINodeSwitchProfilesPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACINode, "list", path="", detail=False)

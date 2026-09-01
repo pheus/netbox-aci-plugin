@@ -14,6 +14,11 @@ from tenancy.models import Tenant
 from virtualization.models import Cluster, ClusterType, VirtualMachine
 
 from ....choices import NodeRoleChoices, NodeTypeChoices
+from ....models.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlock,
+    ACILeafSelector,
+    ACILeafSwitchProfile,
+)
 from ....models.fabric.fabrics import ACIFabric
 from ....models.fabric.node_interfaces import ACINodeInterface
 from ....models.fabric.nodes import ACINode
@@ -788,6 +793,172 @@ class ACINodeTestCase(ACIBaseTestCase):
             role=NodeRoleChoices.ROLE_LEAF,
         )
         self.assertIsNone(node.vpc_protection_group)
+
+    def test_aci_node_vpc_peer_node_from_node_a(self) -> None:
+        """Test vpc_peer_node returns the B side when viewed from A."""
+        self.assertEqual(self.aci_node.vpc_peer_node, self.aci_node_vpc_partner)
+
+    def test_aci_node_vpc_peer_node_from_node_b(self) -> None:
+        """Test vpc_peer_node returns the A side when viewed from B."""
+        self.assertEqual(self.aci_node_vpc_partner.vpc_peer_node, self.aci_node)
+
+    def test_aci_node_vpc_peer_node_none_when_unpaired(self) -> None:
+        """Test vpc_peer_node is None for a Node without a group."""
+        node = ACINode.objects.create(
+            name="ACINodeNoGroupPeer",
+            aci_pod=self.aci_pod,
+            node_id=163,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        self.assertIsNone(node.vpc_peer_node)
+
+    def test_aci_leaf_switch_profiles_empty_without_coverage(self) -> None:
+        """Test aci_leaf_switch_profiles is empty for an uncovered Leaf."""
+        self.assertFalse(self.aci_node.aci_leaf_switch_profiles.exists())
+
+    def test_aci_leaf_switch_profiles_empty_for_non_leaf_role(self) -> None:
+        """Test aci_leaf_switch_profiles is empty for an in-range Spine."""
+        spine = ACINode.objects.create(
+            name="ACINodeSwitchProfileSpine",
+            aci_pod=self.aci_pod,
+            node_id=180,
+            role=NodeRoleChoices.ROLE_SPINE,
+        )
+        profile = ACILeafSwitchProfile.objects.create(
+            name="ACINodeSwitchProfileForSpine", aci_fabric=self.aci_fabric
+        )
+        selector = ACILeafSelector.objects.create(
+            name="ACINodeSwitchProfileSpineSelector",
+            aci_leaf_switch_profile=profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACINodeSwitchProfileSpineBlock",
+            aci_leaf_selector=selector,
+            node_id_from=180,
+            node_id_to=180,
+        )
+        self.assertFalse(spine.aci_leaf_switch_profiles.exists())
+
+    def test_aci_leaf_switch_profiles_returns_covering_profile(self) -> None:
+        """Test aci_leaf_switch_profiles returns the covering Profile."""
+        leaf = ACINode.objects.create(
+            name="ACINodeSwitchProfileLeaf",
+            aci_pod=self.aci_pod,
+            node_id=181,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        profile = ACILeafSwitchProfile.objects.create(
+            name="ACINodeSwitchProfileSingle", aci_fabric=self.aci_fabric
+        )
+        selector = ACILeafSelector.objects.create(
+            name="ACINodeSwitchProfileSingleSelector",
+            aci_leaf_switch_profile=profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACINodeSwitchProfileSingleBlock",
+            aci_leaf_selector=selector,
+            node_id_from=181,
+            node_id_to=181,
+        )
+        self.assertQuerySetEqual(leaf.aci_leaf_switch_profiles, [profile])
+
+    def test_aci_leaf_switch_profiles_returns_every_covering_profile(self) -> None:
+        """Test aci_leaf_switch_profiles lists every covering Profile.
+
+        A Leaf legitimately sits in more than one Profile at once, for
+        example a per-node profile and a per-VPC-pair profile, so this
+        is a queryset rather than a single object.
+        """
+        leaf = ACINode.objects.create(
+            name="ACINodeSwitchProfileMultiLeaf",
+            aci_pod=self.aci_pod,
+            node_id=182,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        profile1 = ACILeafSwitchProfile.objects.create(
+            name="ACINodeSwitchProfileMulti1", aci_fabric=self.aci_fabric
+        )
+        selector1 = ACILeafSelector.objects.create(
+            name="ACINodeSwitchProfileMultiSelector1",
+            aci_leaf_switch_profile=profile1,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACINodeSwitchProfileMultiBlock1",
+            aci_leaf_selector=selector1,
+            node_id_from=182,
+            node_id_to=182,
+        )
+        profile2 = ACILeafSwitchProfile.objects.create(
+            name="ACINodeSwitchProfileMulti2", aci_fabric=self.aci_fabric
+        )
+        selector2 = ACILeafSelector.objects.create(
+            name="ACINodeSwitchProfileMultiSelector2",
+            aci_leaf_switch_profile=profile2,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACINodeSwitchProfileMultiBlock2",
+            aci_leaf_selector=selector2,
+            node_id_from=180,
+            node_id_to=185,
+        )
+        self.assertCountEqual(leaf.aci_leaf_switch_profiles, [profile1, profile2])
+
+    def test_aci_leaf_switch_profiles_excludes_other_fabrics(self) -> None:
+        """Test aci_leaf_switch_profiles excludes another Fabric's Profile."""
+        other_fabric = ACIFabric.objects.create(
+            name="ACINodeSwitchProfileOtherFabric",
+            fabric_id=200,
+            infra_vlan_vid=3910,
+        )
+        other_pod = ACIPod.objects.create(
+            name="ACINodeSwitchProfileOtherPod", aci_fabric=other_fabric, pod_id=1
+        )
+        other_leaf = ACINode.objects.create(
+            name="ACINodeSwitchProfileOtherLeaf",
+            aci_pod=other_pod,
+            node_id=183,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        profile = ACILeafSwitchProfile.objects.create(
+            name="ACINodeSwitchProfileOwnFabric", aci_fabric=self.aci_fabric
+        )
+        selector = ACILeafSelector.objects.create(
+            name="ACINodeSwitchProfileOwnFabricSelector",
+            aci_leaf_switch_profile=profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACINodeSwitchProfileOwnFabricBlock",
+            aci_leaf_selector=selector,
+            node_id_from=183,
+            node_id_to=183,
+        )
+        self.assertFalse(other_leaf.aci_leaf_switch_profiles.exists())
+
+    def test_aci_leaf_switch_profiles_query_count(self) -> None:
+        """Test aci_leaf_switch_profiles resolves in a single query."""
+        leaf = ACINode.objects.create(
+            name="ACINodeSwitchProfileQueryCountLeaf",
+            aci_pod=self.aci_pod,
+            node_id=184,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        profile = ACILeafSwitchProfile.objects.create(
+            name="ACINodeSwitchProfileQueryCount", aci_fabric=self.aci_fabric
+        )
+        selector = ACILeafSelector.objects.create(
+            name="ACINodeSwitchProfileQueryCountSelector",
+            aci_leaf_switch_profile=profile,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACINodeSwitchProfileQueryCountBlock",
+            aci_leaf_selector=selector,
+            node_id_from=184,
+            node_id_to=184,
+        )
+        with CaptureQueriesContext(connection) as ctx:
+            resolved = list(leaf.aci_leaf_switch_profiles)
+        self.assertEqual(resolved, [profile])
+        self.assertEqual(len(ctx.captured_queries), 1)
 
     def test_aci_node_vpc_protection_group_raises_on_double_membership(
         self,

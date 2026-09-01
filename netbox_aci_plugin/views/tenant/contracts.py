@@ -4,6 +4,10 @@
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import actions, layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel, ObjectsTablePanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -40,11 +44,23 @@ from ...models.tenant.contracts import (
 from ...object_actions import add_child_action
 from ...tables.tenant.contracts import (
     ACIContractRelationTable,
-    ACIContractSubjectFilterReducedTable,
     ACIContractSubjectFilterTable,
-    ACIContractSubjectReducedTable,
     ACIContractSubjectTable,
     ACIContractTable,
+)
+from ...ui.panels.tenant.contracts import (
+    ACIContractPanel,
+    ACIContractPriorityPanel,
+    ACIContractRelationPanel,
+    ACIContractScopePanel,
+    ACIContractSubjectDirectionPanel,
+    ACIContractSubjectFilterDirectionPanel,
+    ACIContractSubjectFilterDirectivesPanel,
+    ACIContractSubjectFilterPanel,
+    ACIContractSubjectFilterPriorityPanel,
+    ACIContractSubjectPanel,
+    ACIContractSubjectPriorityPanel,
+    ACIContractSubjectServiceGraphPanel,
 )
 
 #
@@ -179,17 +195,59 @@ class ACIContractView(generic.ObjectView):
     ).prefetch_related(
         "tags",
     )
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return related Contract Subjects as extra context."""
-        contract_subjects_table = ACIContractSubjectReducedTable(
-            instance.aci_contract_subjects.all()
-        )
-        contract_subjects_table.configure(request=request)
-
-        return {
-            "contract_subjects_table": contract_subjects_table,
-        }
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontract_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontract_list", "aci_tenant_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIContractPanel(),
+            ACIContractScopePanel(),
+            ACIContractPriorityPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ObjectsTablePanel(
+                "netbox_aci_plugin.ACIContractSubject",
+                title=_("Subjects"),
+                filters={"aci_contract_id": lambda ctx: ctx["object"].pk},
+                exclude_columns=[
+                    "name_alias",
+                    "aci_tenant",
+                    "aci_contract",
+                    "reverse_filter_ports_enabled",
+                    "service_graph_name",
+                    "qos_class",
+                    "target_dscp",
+                    "description",
+                    "tags",
+                ],
+                actions=[
+                    actions.AddObject(
+                        "netbox_aci_plugin.ACIContractSubject",
+                        label=_("Add a Subject"),
+                        url_params={
+                            "aci_contract": lambda ctx: ctx["object"].pk,
+                            "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+                        },
+                    ),
+                ],
+            ),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIContract, "list", path="", detail=False)
@@ -350,6 +408,40 @@ class ACIContractRelationView(generic.ObjectView):
         "aci_object",
         "tags",
     )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                lambda obj: obj.aci_contract.aci_fabric,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractrelation_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                lambda obj: obj.aci_contract.aci_tenant,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractrelation_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_contract",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractrelation_list",
+                    "aci_contract_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIContractRelationPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIContractRelation, "list", path="", detail=False)
@@ -439,17 +531,65 @@ class ACIContractSubjectView(generic.ObjectView):
     ).prefetch_related(
         "tags",
     )
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return related Contract Subject Filters as extra context."""
-        contract_subject_filters_table = ACIContractSubjectFilterReducedTable(
-            instance.aci_contract_subject_filters.all()
-        )
-        contract_subject_filters_table.configure(request=request)
-
-        return {
-            "contract_subject_filters_table": contract_subject_filters_table,
-        }
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractsubject_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractsubject_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_contract",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractsubject_list",
+                    "aci_contract_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIContractSubjectPanel(),
+            ACIContractSubjectDirectionPanel(),
+            ACIContractSubjectServiceGraphPanel(),
+            ACIContractSubjectPriorityPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ObjectsTablePanel(
+                "netbox_aci_plugin.ACIContractSubjectFilter",
+                title=_("Filters"),
+                filters={"aci_contract_subject_id": lambda ctx: ctx["object"].pk},
+                exclude_columns=[
+                    "aci_contract_subject",
+                    "aci_contract_subject_tenant",
+                    "aci_contract",
+                    "log_enabled",
+                    "policy_compression_enabled",
+                    "tags",
+                ],
+                actions=[
+                    actions.AddObject(
+                        "netbox_aci_plugin.ACIContractSubjectFilter",
+                        label=_("Assign a Filter"),
+                        url_params={
+                            "aci_contract_subject": lambda ctx: ctx["object"].pk,
+                        },
+                    ),
+                ],
+            ),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIContractSubject, "list", path="", detail=False)
@@ -570,6 +710,50 @@ class ACIContractSubjectFilterView(generic.ObjectView):
         "aci_contract_subject",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractsubjectfilter_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractsubjectfilter_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_contract",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractsubjectfilter_list",
+                    "aci_contract_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_contract_subject",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acicontractsubjectfilter_list",
+                    "aci_contract_subject_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIContractSubjectFilterPanel(),
+            ACIContractSubjectFilterDirectionPanel(),
+            ACIContractSubjectFilterDirectivesPanel(),
+            ACIContractSubjectFilterPriorityPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 

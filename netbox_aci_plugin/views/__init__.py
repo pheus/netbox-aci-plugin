@@ -108,6 +108,7 @@ from .fabric.fabrics import (
     ACIFabricBulkImportView,
     ACIFabricEditView,
     ACIFabricListView,
+    ACIFabricView,
 )
 from .fabric.node_interfaces import (
     ACINodeInterfaceBulkDeleteView,
@@ -123,6 +124,7 @@ from .fabric.nodes import (
     ACINodeBulkImportView,
     ACINodeEditView,
     ACINodeListView,
+    ACINodeView,
 )
 from .fabric.pods import (
     ACIPodBulkDeleteView,
@@ -130,6 +132,7 @@ from .fabric.pods import (
     ACIPodBulkImportView,
     ACIPodEditView,
     ACIPodListView,
+    ACIPodView,
 )
 from .fabric.vpc_protection_groups import (
     ACIVPCProtectionGroupBulkDeleteView,
@@ -145,6 +148,7 @@ from .tenant.app_profiles import (
     ACIAppProfileBulkImportView,
     ACIAppProfileEditView,
     ACIAppProfileListView,
+    ACIAppProfileView,
 )
 from .tenant.bridge_domains import (
     ACIBridgeDomainBulkDeleteView,
@@ -156,12 +160,15 @@ from .tenant.bridge_domains import (
     ACIBridgeDomainL3OutBindingBulkImportView,
     ACIBridgeDomainL3OutBindingEditView,
     ACIBridgeDomainL3OutBindingListView,
+    ACIBridgeDomainL3OutBindingView,
     ACIBridgeDomainListView,
     ACIBridgeDomainSubnetBulkDeleteView,
     ACIBridgeDomainSubnetBulkEditView,
     ACIBridgeDomainSubnetBulkImportView,
     ACIBridgeDomainSubnetEditView,
     ACIBridgeDomainSubnetListView,
+    ACIBridgeDomainSubnetView,
+    ACIBridgeDomainView,
 )
 from .tenant.contract_filters import (
     ACIContractFilterBulkDeleteView,
@@ -173,7 +180,9 @@ from .tenant.contract_filters import (
     ACIContractFilterEntryBulkImportView,
     ACIContractFilterEntryEditView,
     ACIContractFilterEntryListView,
+    ACIContractFilterEntryView,
     ACIContractFilterListView,
+    ACIContractFilterView,
 )
 from .tenant.contracts import (
     ACIContractBulkDeleteView,
@@ -186,6 +195,7 @@ from .tenant.contracts import (
     ACIContractRelationBulkImportView,
     ACIContractRelationEditView,
     ACIContractRelationListView,
+    ACIContractRelationView,
     ACIContractSubjectBulkDeleteView,
     ACIContractSubjectBulkEditView,
     ACIContractSubjectBulkImportView,
@@ -195,7 +205,10 @@ from .tenant.contracts import (
     ACIContractSubjectFilterBulkImportView,
     ACIContractSubjectFilterEditView,
     ACIContractSubjectFilterListView,
+    ACIContractSubjectFilterView,
     ACIContractSubjectListView,
+    ACIContractSubjectView,
+    ACIContractView,
 )
 from .tenant.endpoint_group_bindings import (
     ACIEndpointGroupAAEPBindingBulkDeleteView,
@@ -217,16 +230,19 @@ from .tenant.endpoint_groups import (
     ACIEndpointGroupBulkImportView,
     ACIEndpointGroupEditView,
     ACIEndpointGroupListView,
+    ACIEndpointGroupView,
     ACIUSegEndpointGroupBulkDeleteView,
     ACIUSegEndpointGroupBulkEditView,
     ACIUSegEndpointGroupBulkImportView,
     ACIUSegEndpointGroupEditView,
     ACIUSegEndpointGroupListView,
+    ACIUSegEndpointGroupView,
     ACIUSegNetworkAttributeBulkDeleteView,
     ACIUSegNetworkAttributeBulkEditView,
     ACIUSegNetworkAttributeBulkImportView,
     ACIUSegNetworkAttributeEditView,
     ACIUSegNetworkAttributeListView,
+    ACIUSegNetworkAttributeView,
 )
 from .tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupBulkDeleteView,
@@ -234,16 +250,19 @@ from .tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupBulkImportView,
     ACIEndpointSecurityGroupEditView,
     ACIEndpointSecurityGroupListView,
+    ACIEndpointSecurityGroupView,
     ACIEsgEndpointGroupSelectorBulkDeleteView,
     ACIEsgEndpointGroupSelectorBulkEditView,
     ACIEsgEndpointGroupSelectorBulkImportView,
     ACIEsgEndpointGroupSelectorEditView,
     ACIEsgEndpointGroupSelectorListView,
+    ACIEsgEndpointGroupSelectorView,
     ACIEsgEndpointSelectorBulkDeleteView,
     ACIEsgEndpointSelectorBulkEditView,
     ACIEsgEndpointSelectorBulkImportView,
     ACIEsgEndpointSelectorEditView,
     ACIEsgEndpointSelectorListView,
+    ACIEsgEndpointSelectorView,
 )
 from .tenant.l3outs import (
     ACIExternalEndpointGroupBulkDeleteView,
@@ -251,16 +270,19 @@ from .tenant.l3outs import (
     ACIExternalEndpointGroupBulkImportView,
     ACIExternalEndpointGroupEditView,
     ACIExternalEndpointGroupListView,
+    ACIExternalEndpointGroupView,
     ACIExternalSubnetBulkDeleteView,
     ACIExternalSubnetBulkEditView,
     ACIExternalSubnetBulkImportView,
     ACIExternalSubnetEditView,
     ACIExternalSubnetListView,
+    ACIExternalSubnetView,
     ACIL3OutBulkDeleteView,
     ACIL3OutBulkEditView,
     ACIL3OutBulkImportView,
     ACIL3OutEditView,
     ACIL3OutListView,
+    ACIL3OutView,
 )
 from .tenant.tenants import (
     ACITenantBulkDeleteView,
@@ -268,6 +290,7 @@ from .tenant.tenants import (
     ACITenantBulkImportView,
     ACITenantEditView,
     ACITenantListView,
+    ACITenantView,
 )
 from .tenant.vrfs import (
     ACIVRFBulkDeleteView,
@@ -275,6 +298,7 @@ from .tenant.vrfs import (
     ACIVRFBulkImportView,
     ACIVRFEditView,
     ACIVRFListView,
+    ACIVRFView,
 )
 
 __all__ = (
@@ -291,6 +315,7 @@ __all__ = (
     "ACIAppProfileBulkImportView",
     "ACIAppProfileEditView",
     "ACIAppProfileListView",
+    "ACIAppProfileView",
     # ACIAttachableAccessEntityProfile
     "ACIAttachableAccessEntityProfileBulkDeleteView",
     "ACIAttachableAccessEntityProfileBulkEditView",
@@ -304,60 +329,70 @@ __all__ = (
     "ACIBridgeDomainBulkImportView",
     "ACIBridgeDomainEditView",
     "ACIBridgeDomainListView",
+    "ACIBridgeDomainView",
     # ACIBridgeDomainL3OutBinding
     "ACIBridgeDomainL3OutBindingBulkDeleteView",
     "ACIBridgeDomainL3OutBindingBulkEditView",
     "ACIBridgeDomainL3OutBindingBulkImportView",
     "ACIBridgeDomainL3OutBindingEditView",
     "ACIBridgeDomainL3OutBindingListView",
+    "ACIBridgeDomainL3OutBindingView",
     # ACIBridgeDomainSubnet
     "ACIBridgeDomainSubnetBulkDeleteView",
     "ACIBridgeDomainSubnetBulkEditView",
     "ACIBridgeDomainSubnetBulkImportView",
     "ACIBridgeDomainSubnetEditView",
     "ACIBridgeDomainSubnetListView",
+    "ACIBridgeDomainSubnetView",
     # ACIContract
     "ACIContractBulkDeleteView",
     "ACIContractBulkEditView",
     "ACIContractBulkImportView",
     "ACIContractEditView",
     "ACIContractListView",
+    "ACIContractView",
     # ACIContractFilter
     "ACIContractFilterBulkDeleteView",
     "ACIContractFilterBulkEditView",
     "ACIContractFilterBulkImportView",
     "ACIContractFilterEditView",
     "ACIContractFilterListView",
+    "ACIContractFilterView",
     # ACIContractFilterEntry
     "ACIContractFilterEntryBulkDeleteView",
     "ACIContractFilterEntryBulkEditView",
     "ACIContractFilterEntryBulkImportView",
     "ACIContractFilterEntryEditView",
     "ACIContractFilterEntryListView",
+    "ACIContractFilterEntryView",
     # ACIContractRelation
     "ACIContractRelationBulkDeleteView",
     "ACIContractRelationBulkEditView",
     "ACIContractRelationBulkImportView",
     "ACIContractRelationEditView",
     "ACIContractRelationListView",
+    "ACIContractRelationView",
     # ACIContractSubject
     "ACIContractSubjectBulkDeleteView",
     "ACIContractSubjectBulkEditView",
     "ACIContractSubjectBulkImportView",
     "ACIContractSubjectEditView",
     "ACIContractSubjectListView",
+    "ACIContractSubjectView",
     # ACIContractSubjectFilter
     "ACIContractSubjectFilterBulkDeleteView",
     "ACIContractSubjectFilterBulkEditView",
     "ACIContractSubjectFilterBulkImportView",
     "ACIContractSubjectFilterEditView",
     "ACIContractSubjectFilterListView",
+    "ACIContractSubjectFilterView",
     # ACIEndpointGroup
     "ACIEndpointGroupBulkDeleteView",
     "ACIEndpointGroupBulkEditView",
     "ACIEndpointGroupBulkImportView",
     "ACIEndpointGroupEditView",
     "ACIEndpointGroupListView",
+    "ACIEndpointGroupView",
     # ACIEndpointGroupAAEPBinding
     "ACIEndpointGroupAAEPBindingBulkDeleteView",
     "ACIEndpointGroupAAEPBindingBulkEditView",
@@ -378,42 +413,49 @@ __all__ = (
     "ACIEndpointSecurityGroupBulkImportView",
     "ACIEndpointSecurityGroupEditView",
     "ACIEndpointSecurityGroupListView",
+    "ACIEndpointSecurityGroupView",
     # ACIEsgEndpointGroupSelector
     "ACIEsgEndpointGroupSelectorBulkDeleteView",
     "ACIEsgEndpointGroupSelectorBulkEditView",
     "ACIEsgEndpointGroupSelectorBulkImportView",
     "ACIEsgEndpointGroupSelectorEditView",
     "ACIEsgEndpointGroupSelectorListView",
+    "ACIEsgEndpointGroupSelectorView",
     # ACIEsgEndpointSelector
     "ACIEsgEndpointSelectorBulkDeleteView",
     "ACIEsgEndpointSelectorBulkEditView",
     "ACIEsgEndpointSelectorBulkImportView",
     "ACIEsgEndpointSelectorEditView",
     "ACIEsgEndpointSelectorListView",
+    "ACIEsgEndpointSelectorView",
     # ACIExternalEndpointGroup
     "ACIExternalEndpointGroupBulkDeleteView",
     "ACIExternalEndpointGroupBulkEditView",
     "ACIExternalEndpointGroupBulkImportView",
     "ACIExternalEndpointGroupEditView",
     "ACIExternalEndpointGroupListView",
+    "ACIExternalEndpointGroupView",
     # ACIExternalSubnet
     "ACIExternalSubnetBulkDeleteView",
     "ACIExternalSubnetBulkEditView",
     "ACIExternalSubnetBulkImportView",
     "ACIExternalSubnetEditView",
     "ACIExternalSubnetListView",
+    "ACIExternalSubnetView",
     # ACIFabric
     "ACIFabricBulkDeleteView",
     "ACIFabricBulkEditView",
     "ACIFabricBulkImportView",
     "ACIFabricEditView",
     "ACIFabricListView",
+    "ACIFabricView",
     # ACIL3Out
     "ACIL3OutBulkDeleteView",
     "ACIL3OutBulkEditView",
     "ACIL3OutBulkImportView",
     "ACIL3OutEditView",
     "ACIL3OutListView",
+    "ACIL3OutView",
     # ACILeafInterfaceOverride
     "ACILeafInterfaceOverrideBulkDeleteView",
     "ACILeafInterfaceOverrideBulkEditView",
@@ -490,6 +532,7 @@ __all__ = (
     "ACINodeBulkImportView",
     "ACINodeEditView",
     "ACINodeListView",
+    "ACINodeView",
     # ACIPhysicalDomain
     "ACIPhysicalDomainBulkDeleteView",
     "ACIPhysicalDomainBulkEditView",
@@ -503,6 +546,7 @@ __all__ = (
     "ACIPodBulkImportView",
     "ACIPodEditView",
     "ACIPodListView",
+    "ACIPodView",
     # ACIRoutedDomain
     "ACIRoutedDomainBulkDeleteView",
     "ACIRoutedDomainBulkEditView",
@@ -516,18 +560,21 @@ __all__ = (
     "ACITenantBulkImportView",
     "ACITenantEditView",
     "ACITenantListView",
+    "ACITenantView",
     # ACIUSegEndpointGroup
     "ACIUSegEndpointGroupBulkDeleteView",
     "ACIUSegEndpointGroupBulkEditView",
     "ACIUSegEndpointGroupBulkImportView",
     "ACIUSegEndpointGroupEditView",
     "ACIUSegEndpointGroupListView",
+    "ACIUSegEndpointGroupView",
     # ACIUSegNetworkAttribute
     "ACIUSegNetworkAttributeBulkDeleteView",
     "ACIUSegNetworkAttributeBulkEditView",
     "ACIUSegNetworkAttributeBulkImportView",
     "ACIUSegNetworkAttributeEditView",
     "ACIUSegNetworkAttributeListView",
+    "ACIUSegNetworkAttributeView",
     # ACIVLANPool
     "ACIVLANPoolBulkDeleteView",
     "ACIVLANPoolBulkEditView",
@@ -555,4 +602,5 @@ __all__ = (
     "ACIVRFBulkImportView",
     "ACIVRFEditView",
     "ACIVRFListView",
+    "ACIVRFView",
 )

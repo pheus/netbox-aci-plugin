@@ -6,6 +6,10 @@ from __future__ import annotations
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -29,6 +33,10 @@ from ...object_actions import add_child_action
 from ...tables.access_policies.vlan_pools import (
     ACIVLANPoolRangeTable,
     ACIVLANPoolTable,
+)
+from ...ui.panels.access_policies.vlan_pools import (
+    ACIVLANPoolPanel,
+    ACIVLANPoolRangePanel,
 )
 
 #
@@ -95,6 +103,25 @@ class ACIVLANPoolView(generic.ObjectView):
         "nb_vlan_group",
         "owner",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acivlanpool_list", "aci_fabric_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIVLANPoolPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIVLANPool, "list", path="", detail=False)
@@ -205,6 +232,32 @@ class ACIVLANPoolRangeView(generic.ObjectView):
         "aci_vlan_pool",
         "aci_vlan_pool__aci_fabric",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                lambda obj: obj.aci_vlan_pool.aci_fabric,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acivlanpoolrange_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_vlan_pool",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acivlanpoolrange_list",
+                    "aci_vlan_pool_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIVLANPoolRangePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIVLANPoolRange, "list", path="", detail=False)

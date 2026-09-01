@@ -29,6 +29,9 @@ from ..base import ACIFabricBaseModel
 from ..mixins import UniqueGenericForeignKeyMixin
 
 if TYPE_CHECKING:
+    from django.db.models import QuerySet
+
+    from ..access_policies.leaf_switch_profiles import ACILeafSwitchProfile
     from ..fabric.fabrics import ACIFabric
     from .vpc_protection_groups import ACIVPCProtectionGroup
 
@@ -448,6 +451,32 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
             ).get(models.Q(aci_node_a=self) | models.Q(aci_node_b=self))
         except protection_group_model.DoesNotExist:
             return None
+
+    @property
+    def vpc_peer_node(self) -> ACINode | None:
+        """Return the other node in this node's VPC Protection Group."""
+        group = self.vpc_protection_group
+        if group is None:
+            return None
+        return group.aci_node_b if group.aci_node_a_id == self.pk else group.aci_node_a
+
+    @property
+    def aci_leaf_switch_profiles(self) -> QuerySet[ACILeafSwitchProfile]:
+        """Return every ACI Leaf Switch Profile whose blocks cover this Node.
+
+        Walks node blocks up through their selector to the profile in
+        one query. A Node's ID can fall within more than one profile's
+        coverage, so this returns a queryset rather than a single
+        object, and stays lazy so a caller can restrict it.
+        """
+        profile_model = apps.get_model("netbox_aci_plugin", "ACILeafSwitchProfile")
+        if self.role != NodeRoleChoices.ROLE_LEAF:
+            return profile_model.objects.none()
+        return profile_model.objects.filter(
+            aci_fabric_id=self._aci_fabric_id,
+            aci_leaf_selectors__aci_leaf_node_blocks__node_id_from__lte=self.node_id,
+            aci_leaf_selectors__aci_leaf_node_blocks__node_id_to__gte=self.node_id,
+        ).distinct()
 
     def get_role_color(self) -> str:
         """Return the associated color of choice from the ChoiceSet."""

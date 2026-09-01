@@ -145,6 +145,51 @@ class ACILeafSwitchProfileViewTestCase(
             response.context["table"].columns["aci_leaf_switch_profile"].visible
         )
 
+    def test_acileafswitchprofile_detail_restricts_aci_nodes(self) -> None:
+        """The detail page hides ACI Nodes the user cannot view."""
+        aci_pod = ACIPod.objects.create(
+            name="ACIViewTestProfileAggregatePod",
+            aci_fabric=self.aci_fabric,
+            pod_id=2,
+        )
+        visible_node = ACINode.objects.create(
+            name="ACIViewTestProfileAggregateVisibleNode",
+            aci_pod=aci_pod,
+            node_id=111,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        hidden_node = ACINode.objects.create(
+            name="ACIViewTestProfileAggregateHiddenNode",
+            aci_pod=aci_pod,
+            node_id=112,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        instance = ACILeafSwitchProfile.objects.get(name="ACIViewTestProfile1")
+        selector = ACILeafSelector.objects.create(
+            name="ACIViewTestProfileAggregateSelector",
+            aci_leaf_switch_profile=instance,
+        )
+        ACILeafNodeBlock.objects.create(
+            name="ACIViewTestProfileAggregateBlock",
+            aci_leaf_selector=selector,
+            node_id_from=111,
+            node_id_to=112,
+        )
+        self.add_permissions("netbox_aci_plugin.view_acileafswitchprofile")
+        obj_perm = ObjectPermission(
+            name="Test view ACINode 111",
+            actions=["view"],
+            constraints={"node_id": 111},
+        )
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ObjectType.objects.get_for_model(ACINode))
+
+        response = self.client.get(instance.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+        self.assertContains(response, visible_node.name)
+        self.assertNotContains(response, hidden_node.name)
+
 
 class ACILeafSelectorViewTestCase(
     ACIModelViewTestCase, ViewTestCases.PrimaryObjectViewTestCase

@@ -4,6 +4,10 @@
 
 from __future__ import annotations
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import register_model_view
 
@@ -19,6 +23,9 @@ from ...forms.access_policies.leaf_interface_overrides import (
 from ...models.access_policies.leaf_interface_overrides import ACILeafInterfaceOverride
 from ...tables.access_policies.leaf_interface_overrides import (
     ACILeafInterfaceOverrideTable,
+)
+from ...ui.panels.access_policies.leaf_interface_overrides import (
+    ACILeafInterfaceOverridePanel,
 )
 
 #
@@ -38,6 +45,47 @@ class ACILeafInterfaceOverrideView(generic.ObjectView):
         "aci_node_interface__aci_node___aci_fabric",
         "aci_leaf_interface_policy_group",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafinterfaceoverride_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                lambda obj: obj.aci_node_interface.aci_node.aci_pod,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafinterfaceoverride_list",
+                    "aci_pod_id",
+                ),
+            ),
+            Breadcrumb(
+                lambda obj: obj.aci_node_interface.aci_node,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafinterfaceoverride_list",
+                    "aci_node_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_node_interface",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafinterfaceoverride_list",
+                    "aci_node_interface_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafInterfaceOverridePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACILeafInterfaceOverride, "list", path="", detail=False)

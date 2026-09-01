@@ -6,6 +6,10 @@ from __future__ import annotations
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.query import count_related
 from utilities.views import ViewTab, register_model_view
@@ -39,6 +43,12 @@ from ...tables.access_policies.leaf_interface_profiles import (
     ACILeafInterfaceProfileTable,
     ACILeafInterfaceSelectorTable,
     ACILeafPortBlockTable,
+)
+from ...ui.panels.access_policies.leaf_interface_profiles import (
+    ACILeafInterfaceProfilePanel,
+    ACILeafInterfaceSelectorPanel,
+    ACILeafPortBlockPanel,
+    ACILeafPortBlockRangePanel,
 )
 from .leaf_switch_profiles import ACILeafSwitchProfileInterfaceBindingChildrenView
 
@@ -122,6 +132,26 @@ class ACILeafInterfaceProfileView(generic.ObjectView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafinterfaceprofile_list",
+                    "aci_fabric_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafInterfaceProfilePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACILeafInterfaceProfile, "list", path="", detail=False)
@@ -285,6 +315,33 @@ class ACILeafInterfaceSelectorView(generic.ObjectView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafinterfaceselector_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_leaf_interface_profile",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafinterfaceselector_list",
+                    "aci_leaf_interface_profile_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafInterfaceSelectorPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACILeafInterfaceSelector, "list", path="", detail=False)
@@ -438,6 +495,41 @@ class ACILeafPortBlockView(generic.ObjectView):
         "nb_tenant",
         "owner",
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafportblock_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                lambda obj: obj.aci_leaf_interface_selector.aci_leaf_interface_profile,
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafportblock_list",
+                    "aci_leaf_interface_profile_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_leaf_interface_selector",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafportblock_list",
+                    "aci_leaf_interface_selector_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafPortBlockPanel(),
+            ACILeafPortBlockRangePanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACILeafPortBlock, "list", path="", detail=False)

@@ -4,6 +4,10 @@
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import actions, layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel, ObjectsTablePanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -34,9 +38,22 @@ from ...models.tenant.bridge_domains import (
 from ...object_actions import add_child_action
 from ...tables.tenant.bridge_domains import (
     ACIBridgeDomainL3OutBindingTable,
-    ACIBridgeDomainSubnetReducedTable,
     ACIBridgeDomainSubnetTable,
     ACIBridgeDomainTable,
+)
+from ...ui.panels.tenant.bridge_domains import (
+    ACIBridgeDomainAdditionalSettingsPanel,
+    ACIBridgeDomainEndpointLearningPanel,
+    ACIBridgeDomainForwardingMethodPanel,
+    ACIBridgeDomainL3OutBindingPanel,
+    ACIBridgeDomainMulticastPanel,
+    ACIBridgeDomainPanel,
+    ACIBridgeDomainRoutingPanel,
+    ACIBridgeDomainSubnetControlPanel,
+    ACIBridgeDomainSubnetEndpointLearningPanel,
+    ACIBridgeDomainSubnetIPv6Panel,
+    ACIBridgeDomainSubnetPanel,
+    ACIBridgeDomainSubnetScopePanel,
 )
 from .endpoint_groups import ACIEndpointGroupChildrenView
 
@@ -142,17 +159,70 @@ class ACIBridgeDomainView(generic.ObjectView):
     ).prefetch_related(
         "tags",
     )
-
-    def get_extra_context(self, request, instance) -> dict:
-        """Return related Bridge Domain Subnets as extra context."""
-        subnets_table = ACIBridgeDomainSubnetReducedTable(
-            instance.aci_bridge_domain_subnets.all()
-        )
-        subnets_table.configure(request=request)
-
-        return {
-            "subnets_table": subnets_table,
-        }
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomain_list", "aci_fabric_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomain_list", "aci_tenant_id"
+                ),
+            ),
+            Breadcrumb(
+                "aci_vrf",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomain_list", "aci_vrf_id"
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIBridgeDomainPanel(),
+            ACIBridgeDomainRoutingPanel(),
+            ACIBridgeDomainForwardingMethodPanel(),
+            ACIBridgeDomainEndpointLearningPanel(),
+            ACIBridgeDomainMulticastPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            ObjectsTablePanel(
+                "netbox_aci_plugin.ACIBridgeDomainSubnet",
+                title=_("Subnets"),
+                filters={"aci_bridge_domain_id": lambda ctx: ctx["object"].pk},
+                exclude_columns=[
+                    "name_alias",
+                    "aci_tenant",
+                    "aci_bridge_domain",
+                    "nb_tenant",
+                    "description",
+                    "advertised_externally_enabled",
+                    "preferred_ip_address_enabled",
+                    "shared_enabled",
+                    "tags",
+                ],
+                actions=[
+                    actions.AddObject(
+                        "netbox_aci_plugin.ACIBridgeDomainSubnet",
+                        label=_("Add a Subnet"),
+                        url_params={
+                            "aci_bridge_domain": lambda ctx: ctx["object"].pk,
+                            "aci_vrf": lambda ctx: ctx["object"].aci_vrf_id,
+                            "nb_vrf": (lambda ctx: ctx["object"].aci_vrf.nb_vrf_id),
+                            "nb_tenant": lambda ctx: ctx["object"].nb_tenant_id,
+                        },
+                    ),
+                ],
+            ),
+            ACIBridgeDomainAdditionalSettingsPanel(),
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIBridgeDomain, "list", path="", detail=False)
@@ -310,6 +380,51 @@ class ACIBridgeDomainSubnetView(generic.ObjectView):
     ).prefetch_related(
         "tags",
     )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomainsubnet_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomainsubnet_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_vrf",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomainsubnet_list",
+                    "aci_vrf_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_bridge_domain",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomainsubnet_list",
+                    "aci_bridge_domain_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIBridgeDomainSubnetPanel(),
+            ACIBridgeDomainSubnetScopePanel(),
+            ACIBridgeDomainSubnetControlPanel(),
+            ACIBridgeDomainSubnetEndpointLearningPanel(),
+            ACIBridgeDomainSubnetIPv6Panel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIBridgeDomainSubnet, "list", path="", detail=False)
@@ -396,6 +511,40 @@ class ACIBridgeDomainL3OutBindingView(generic.ObjectView):
     queryset = ACIBridgeDomainL3OutBinding.objects.select_related(
         "aci_bridge_domain", "aci_l3out"
     ).prefetch_related("tags")
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomainl3outbinding_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomainl3outbinding_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_bridge_domain",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acibridgedomainl3outbinding_list",
+                    "aci_bridge_domain_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIBridgeDomainL3OutBindingPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIBridgeDomainL3OutBinding, "list", path="", detail=False)

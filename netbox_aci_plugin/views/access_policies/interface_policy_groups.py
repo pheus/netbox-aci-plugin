@@ -6,6 +6,10 @@ from __future__ import annotations
 
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -23,6 +27,9 @@ from ...models.access_policies.interface_policy_groups import (
 )
 from ...tables.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroupTable,
+)
+from ...ui.panels.access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroupPanel,
 )
 from .leaf_interface_profiles import ACILeafInterfaceSelectorChildrenView
 
@@ -76,6 +83,26 @@ class ACILeafInterfacePolicyGroupView(generic.ObjectView):
         "owner",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:acileafinterfacepolicygroup_list",
+                    "aci_fabric_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACILeafInterfacePolicyGroupPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 

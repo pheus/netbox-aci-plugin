@@ -5,10 +5,19 @@
 """View tests for the fabric ACI Node model."""
 
 from django.contrib.contenttypes.models import ContentType
+from django.urls import reverse
 
+from core.models import ObjectType
 from dcim.models import Device, DeviceRole, DeviceType, Manufacturer, Site
+from users.models import ObjectPermission
 from utilities.testing import ViewTestCases, create_tags
 
+from ....choices import NodeRoleChoices
+from ....models.access_policies.leaf_switch_profiles import (
+    ACILeafNodeBlock,
+    ACILeafSelector,
+    ACILeafSwitchProfile,
+)
 from ....models.fabric.nodes import ACINode
 from ....models.fabric.pods import ACIPod
 from ....models.fabric.vpc_protection_groups import ACIVPCProtectionGroup
@@ -126,12 +135,58 @@ class ACINodeViewTestCase(
 
         cls.bulk_edit_data = {"description": "Bulk-edited Node"}
 
-    def test_vpc_protection_group_row_shows_peer_from_both_sides(self) -> None:
-        """The VPC Protection Group row renders the peer, not the viewed node.
+    def test_switch_profiles_card_restricts_profiles(self) -> None:
+        """The Switch Profiles card hides Profiles the user cannot view.
 
-        Views the paired detail page from both sides, so a peer-selection
-        condition that picked the wrong node (or always picked the same
-        side) would fail from at least one side.
+        The card loads over htmx from the Profile list view, so this
+        follows that request rather than the detail response, which
+        carries only the placeholder.
+        """
+        leaf = ACINode.objects.create(
+            name="ACIViewTestNodeCardLeaf",
+            aci_pod=self.aci_pod,
+            node_id=211,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        visible = ACILeafSwitchProfile.objects.create(
+            name="ACIViewTestNodeCardVisible", aci_fabric=self.aci_fabric
+        )
+        hidden = ACILeafSwitchProfile.objects.create(
+            name="ACIViewTestNodeCardHidden", aci_fabric=self.aci_fabric
+        )
+        for profile, tag in ((visible, "Visible"), (hidden, "Hidden")):
+            selector = ACILeafSelector.objects.create(
+                name=f"ACIViewTestNodeCard{tag}Selector",
+                aci_leaf_switch_profile=profile,
+            )
+            ACILeafNodeBlock.objects.create(
+                name=f"ACIViewTestNodeCard{tag}Block",
+                aci_leaf_selector=selector,
+                node_id_from=leaf.node_id,
+                node_id_to=leaf.node_id,
+            )
+        obj_perm = ObjectPermission(
+            name="Test view one ACILeafSwitchProfile",
+            actions=["view"],
+            constraints={"name": visible.name},
+        )
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(
+            ObjectType.objects.get_for_model(ACILeafSwitchProfile)
+        )
+
+        url = reverse("plugins:netbox_aci_plugin:acileafswitchprofile_list")
+        response = self.client.get(f"{url}?covering_aci_node_id={leaf.pk}")
+        self.assertHttpStatus(response, 200)
+        self.assertContains(response, visible.name)
+        self.assertNotContains(response, hidden.name)
+
+    def test_vpc_protection_group_row_shows_peer_from_both_sides(self) -> None:
+        """The VPC Protection Group row resolves the peer, not the viewed node.
+
+        A row that rendered the viewed node would leave the peer's name
+        off the page, and nothing else on an ACI Node page supplies it.
         """
         self.add_permissions("netbox_aci_plugin.view_acinode")
 
@@ -149,7 +204,7 @@ class ACINodeViewTestCase(
             role="leaf",
             node_type="unknown",
         )
-        group = ACIVPCProtectionGroup.objects.create(
+        ACIVPCProtectionGroup.objects.create(
             name="ACIViewTestNodeVPCGroup",
             aci_fabric=self.aci_fabric,
             logical_pair_id=500,
@@ -157,14 +212,9 @@ class ACINodeViewTestCase(
             aci_node_b=node_b,
         )
 
-        response_from_a = self.client.get(node_a.get_absolute_url())
-        self.assertHttpStatus(response_from_a, 200)
-        self.assertContains(response_from_a, group.get_absolute_url())
-        self.assertContains(response_from_a, str(node_b))
-        self.assertContains(response_from_a, "Logical Pair ID: 500")
-
-        response_from_b = self.client.get(node_b.get_absolute_url())
-        self.assertHttpStatus(response_from_b, 200)
-        self.assertContains(response_from_b, group.get_absolute_url())
-        self.assertContains(response_from_b, str(node_a))
-        self.assertContains(response_from_b, "Logical Pair ID: 500")
+        response_a = self.client.get(node_a.get_absolute_url())
+        response_b = self.client.get(node_b.get_absolute_url())
+        self.assertHttpStatus(response_a, 200)
+        self.assertHttpStatus(response_b, 200)
+        self.assertContains(response_a, node_b.name)
+        self.assertContains(response_b, node_a.name)

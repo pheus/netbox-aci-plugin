@@ -5,6 +5,10 @@
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
+from extras.ui.panels import CustomFieldsPanel, TagsPanel
+from netbox.ui import layout
+from netbox.ui.breadcrumbs import Breadcrumb, filtered_list_url
+from netbox.ui.panels import CommentsPanel
 from netbox.views import generic
 from utilities.views import ViewTab, register_model_view
 
@@ -37,6 +41,14 @@ from ...tables.tenant.endpoint_security_groups import (
     ACIEndpointSecurityGroupTable,
     ACIEsgEndpointGroupSelectorTable,
     ACIEsgEndpointSelectorTable,
+)
+from ...ui.panels.tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroupPanel,
+    ACIEndpointSecurityGroupPolicyEnforcementPanel,
+    ACIEsgEndpointGroupSelectorAssignmentPanel,
+    ACIEsgEndpointGroupSelectorPanel,
+    ACIEsgEndpointSelectorAssignmentPanel,
+    ACIEsgEndpointSelectorPanel,
 )
 from .contracts import ACIContractRelationChildrenView
 
@@ -150,6 +162,48 @@ class ACIEndpointSecurityGroupView(generic.ObjectView):
         "owner",
     ).prefetch_related(
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointsecuritygroup_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointsecuritygroup_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_app_profile",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointsecuritygroup_list",
+                    "aci_app_profile_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_vrf",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciendpointsecuritygroup_list",
+                    "aci_vrf_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIEndpointSecurityGroupPanel(),
+            ACIEndpointSecurityGroupPolicyEnforcementPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 
@@ -374,6 +428,48 @@ class ACIEsgEndpointGroupSelectorView(generic.ObjectView):
         "aci_epg_object",
         "tags",
     )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciesgendpointgroupselector_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciesgendpointgroupselector_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_app_profile",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciesgendpointgroupselector_list",
+                    "aci_app_profile_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_endpoint_security_group",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciesgendpointgroupselector_list",
+                    "aci_endpoint_security_group_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIEsgEndpointGroupSelectorPanel(),
+            ACIEsgEndpointGroupSelectorAssignmentPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(ACIEsgEndpointGroupSelector, "list", path="", detail=False)
@@ -476,6 +572,48 @@ class ACIEsgEndpointSelectorView(generic.ObjectView):
     ).prefetch_related(
         "ep_object",
         "tags",
+    )
+    template_name = "generic/object.html"
+    layout = layout.SimpleLayout(
+        breadcrumbs=[
+            Breadcrumb(
+                "aci_fabric",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciesgendpointselector_list",
+                    "aci_fabric_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_tenant",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciesgendpointselector_list",
+                    "aci_tenant_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_app_profile",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciesgendpointselector_list",
+                    "aci_app_profile_id",
+                ),
+            ),
+            Breadcrumb(
+                "aci_endpoint_security_group",
+                url=filtered_list_url(
+                    "plugins:netbox_aci_plugin:aciesgendpointselector_list",
+                    "aci_endpoint_security_group_id",
+                ),
+            ),
+        ],
+        left_panels=[
+            ACIEsgEndpointSelectorPanel(),
+            ACIEsgEndpointSelectorAssignmentPanel(),
+            CustomFieldsPanel(),
+        ],
+        right_panels=[
+            TagsPanel(),
+            CommentsPanel(),
+        ],
     )
 
 
