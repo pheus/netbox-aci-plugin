@@ -105,6 +105,7 @@ class ACIUSegEndpointGroupPanel(panels.ObjectAttributesPanel):
     )
     name_alias = attrs.TextAttr("name_alias", label=_("Name Alias"))
     description = attrs.TextAttr("description", label=_("Description"))
+    match_operator = attrs.ChoiceAttr("match_operator", label=_("Match Operator"))
     nb_tenant = attrs.RelatedObjectAttr(
         "nb_tenant", linkify=True, grouped_by="group", label=_("NetBox Tenant")
     )

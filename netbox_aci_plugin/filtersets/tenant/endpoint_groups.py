@@ -19,7 +19,11 @@ from utilities.filters import (
 )
 from utilities.filtersets import register_filterset
 
-from ...choices import QualityOfServiceClassChoices, USegAttributeTypeChoices
+from ...choices import (
+    QualityOfServiceClassChoices,
+    USegAttributeMatchOperatorChoices,
+    USegAttributeTypeChoices,
+)
 from ...models.fabric.fabrics import ACIFabric
 from ...models.tenant.app_profiles import ACIAppProfile
 from ...models.tenant.bridge_domains import ACIBridgeDomain
@@ -220,6 +224,10 @@ class ACIUSegEndpointGroupFilterSet(
         choices=QualityOfServiceClassChoices,
         null_value=None,
     )
+    match_operator = django_filters.MultipleChoiceFilter(
+        choices=USegAttributeMatchOperatorChoices,
+        null_value=None,
+    )
 
     # Filters extended with a custom filter method
     shares_aci_vrf_with_aci_esg_id = django_filters.ModelChoiceFilter(
@@ -244,6 +252,7 @@ class ACIUSegEndpointGroupFilterSet(
             "intra_epg_isolation_enabled",
             "qos_class",
             "preferred_group_member_enabled",
+            "match_operator",
         )
 
     def search(self, queryset, name, value):

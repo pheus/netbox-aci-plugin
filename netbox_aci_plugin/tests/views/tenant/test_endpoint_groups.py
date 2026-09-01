@@ -10,7 +10,10 @@ from ipam.models import IPAddress
 from utilities.testing import ViewTestCases, create_tags
 from utilities.views import get_action_url
 
-from ....choices import QualityOfServiceClassChoices
+from ....choices import (
+    QualityOfServiceClassChoices,
+    USegAttributeMatchOperatorChoices,
+)
 from ....models.tenant.contracts import ACIContractRelation
 from ....models.tenant.endpoint_groups import (
     ACIEndpointGroup,
@@ -144,6 +147,7 @@ class ACIUSegEndpointGroupViewTestCase(
         cls.form_data = {
             "name": "ACIViewTestUSegEPGX",
             "name_alias": "USegEPGXAlias",
+            "match_operator": USegAttributeMatchOperatorChoices.MATCH_ALL,
             "qos_class": QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
             "description": "Form-data uSeg Endpoint Group",
             "aci_app_profile": cls.aci_app_profile.pk,
@@ -159,11 +163,11 @@ class ACIUSegEndpointGroupViewTestCase(
         cls.csv_data = (
             (
                 "name,aci_fabric,aci_tenant,aci_app_profile,"
-                "aci_bridge_domain,is_aci_bd_in_common,qos_class"
+                "aci_bridge_domain,is_aci_bd_in_common,qos_class,match_operator"
             ),
-            f"ACIViewTestUSegEPG4,{fabric},{tenant},{app},{bd},,unspecified",
-            f"ACIViewTestUSegEPG5,{fabric},{tenant},{app},{bd},,unspecified",
-            f"ACIViewTestUSegEPG6,{fabric},{tenant},{app},{bd},,unspecified",
+            f"ACIViewTestUSegEPG4,{fabric},{tenant},{app},{bd},,unspecified,all",
+            f"ACIViewTestUSegEPG5,{fabric},{tenant},{app},{bd},,unspecified,any",
+            f"ACIViewTestUSegEPG6,{fabric},{tenant},{app},{bd},,unspecified,",
         )
 
         epgs = list(ACIUSegEndpointGroup.objects.order_by("pk"))
@@ -174,7 +178,10 @@ class ACIUSegEndpointGroupViewTestCase(
             f"{epgs[2].pk},Updated uSeg EPG 3",
         )
 
-        cls.bulk_edit_data = {"description": "Bulk-edited uSeg Endpoint Group"}
+        cls.bulk_edit_data = {
+            "description": "Bulk-edited uSeg Endpoint Group",
+            "match_operator": USegAttributeMatchOperatorChoices.MATCH_ALL,
+        }
 
     def test_aciusegendpointgroup_contract_relations_tab(self) -> None:
         """uSeg Contract Relations tab renders the registered Assign button."""

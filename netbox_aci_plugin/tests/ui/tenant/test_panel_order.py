@@ -347,6 +347,7 @@ EXPECTED_ORDER = {
         ("aci_bridge_domain", "aci_bridge_domain"),
         ("name_alias", "name_alias"),
         ("description", "description"),
+        ("match_operator", "match_operator"),
         ("nb_tenant", "nb_tenant"),
     ],
     ACIUSegEndpointGroupPolicyEnforcementPanel: [

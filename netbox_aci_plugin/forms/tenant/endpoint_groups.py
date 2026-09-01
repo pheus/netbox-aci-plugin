@@ -35,7 +35,10 @@ from utilities.forms.fields import (
 )
 from utilities.forms.rendering import FieldSet
 
-from ...choices import QualityOfServiceClassChoices
+from ...choices import (
+    QualityOfServiceClassChoices,
+    USegAttributeMatchOperatorChoices,
+)
 from ...constants import (
     ACI_DESC_MAX_LEN,
     ACI_NAME_MAX_LEN,
@@ -700,6 +703,13 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
             "traffic sourced in the uSeg EPG. Default is 'unspecified'."
         ),
     )
+    match_operator = ChoiceField(
+        choices=USegAttributeMatchOperatorChoices,
+        label=_("Match operator"),
+        help_text=_(
+            "Operator matching the related uSeg network attributes. Default is 'any'."
+        ),
+    )
     preferred_group_member_enabled = forms.BooleanField(
         required=False,
         label=_("Preferred group member enabled"),
@@ -747,6 +757,7 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
             "description",
             "tags",
             "admin_shutdown",
+            "match_operator",
             name=_("ACI uSeg Endpoint Group"),
         ),
         FieldSet(
@@ -784,6 +795,7 @@ class ACIUSegEndpointGroupEditForm(NetBoxModelForm):
             "intra_epg_isolation_enabled",
             "qos_class",
             "preferred_group_member_enabled",
+            "match_operator",
             "nb_tenant",
             "owner",
             "comments",
@@ -840,6 +852,11 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
         required=False,
         label=_("Quality of Service (QoS) class"),
     )
+    match_operator = ChoiceField(
+        choices=add_blank_choice(USegAttributeMatchOperatorChoices),
+        required=False,
+        label=_("Match operator"),
+    )
     custom_qos_policy_name = forms.CharField(
         required=False,
         label=_("Custom QoS policy name"),
@@ -871,6 +888,7 @@ class ACIUSegEndpointGroupBulkEditForm(NetBoxModelBulkEditForm):
             "aci_bridge_domain",
             "description",
             "admin_shutdown",
+            "match_operator",
             name=_("ACI uSeg Endpoint Group"),
         ),
         FieldSet(
@@ -921,6 +939,7 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
             "aci_vrf_id",
             "aci_bridge_domain_id",
             "admin_shutdown",
+            "match_operator",
             name=_("Attributes"),
         ),
         FieldSet(
@@ -1019,6 +1038,11 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Preferred group member enabled"),
     )
+    match_operator = MultipleChoiceField(
+        choices=add_blank_choice(USegAttributeMatchOperatorChoices),
+        required=False,
+        label=_("Match operator"),
+    )
     nb_tenant_group_id = DynamicModelMultipleChoiceField(
         queryset=TenantGroup.objects.all(),
         null_option="None",
@@ -1093,6 +1117,12 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
             "traffic sourced in the uSeg EPG."
         ),
     )
+    match_operator = CSVChoiceField(
+        choices=USegAttributeMatchOperatorChoices,
+        required=False,
+        label=_("Match operator"),
+        help_text=_("Operator matching the related uSeg network attributes."),
+    )
     nb_tenant = CSVModelChoiceField(
         queryset=Tenant.objects.all(),
         to_field_name="name",
@@ -1124,6 +1154,7 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
             "intra_epg_isolation_enabled",
             "qos_class",
             "preferred_group_member_enabled",
+            "match_operator",
             "nb_tenant",
             "owner",
             "comments",

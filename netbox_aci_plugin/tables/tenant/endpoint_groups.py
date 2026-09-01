@@ -126,6 +126,9 @@ class ACIUSegEndpointGroupTable(NetBoxTable):
     qos_class = columns.ChoiceFieldColumn(
         verbose_name=_("QoS class"),
     )
+    match_operator = columns.ChoiceFieldColumn(
+        verbose_name=_("Match operator"),
+    )
     owner_group = tables.Column(
         verbose_name=_("Owner Group"),
         accessor="owner__group",
@@ -156,6 +159,7 @@ class ACIUSegEndpointGroupTable(NetBoxTable):
             "intra_epg_isolation_enabled",
             "qos_class",
             "preferred_group_member_enabled",
+            "match_operator",
             "owner",
             "tags",
             "comments",

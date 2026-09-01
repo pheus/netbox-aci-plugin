@@ -8,6 +8,7 @@ from dcim.models import MACAddress
 from ipam.models import IPAddress, Prefix
 from utilities.testing import ChangeLoggedFilterSetTestMixin
 
+from ....choices import USegAttributeMatchOperatorChoices
 from ....filtersets.tenant.endpoint_groups import (
     ACIEndpointGroupFilterSet,
     ACIUSegEndpointGroupFilterSet,
@@ -89,7 +90,6 @@ class ACIUSegEndpointGroupFilterSetTestCase(
 
     queryset = ACIUSegEndpointGroup.objects.all()
     filterset = ACIUSegEndpointGroupFilterSet
-    ignore_fields = ("match_operator",)
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -109,6 +109,7 @@ class ACIUSegEndpointGroupFilterSetTestCase(
             name="ACIFSTestUSegEPG3",
             aci_app_profile=cls.aci_app_profile,
             aci_bridge_domain=cls.aci_bd,
+            match_operator=USegAttributeMatchOperatorChoices.MATCH_ALL,
         )
 
     def test_q(self) -> None:
@@ -124,6 +125,21 @@ class ACIUSegEndpointGroupFilterSetTestCase(
         fs = self.filterset(queryset=qs)
         result = fs.search(qs, "q", "   ")
         self.assertEqual(result.count(), qs.count())
+
+    def test_match_operator(self) -> None:
+        """Test filtering by the uSeg attribute match operator."""
+        params = {"match_operator": [USegAttributeMatchOperatorChoices.MATCH_ALL]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_useg_epg_3, qs)
+        self.assertNotIn(self.aci_useg_epg, qs)
+
+    def test_match_operator_default(self) -> None:
+        """Test filtering by the default match operator matches the rest."""
+        params = {"match_operator": [USegAttributeMatchOperatorChoices.MATCH_ANY]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.aci_useg_epg, qs)
+        self.assertIn(self.aci_useg_epg_2, qs)
+        self.assertNotIn(self.aci_useg_epg_3, qs)
 
     def test_filter_shares_aci_vrf_with_aci_esg(self) -> None:
         """Test filtering uSeg EPGs sharing an ACI VRF with a given ESG."""
