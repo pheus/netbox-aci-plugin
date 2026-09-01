@@ -13,6 +13,7 @@ from ....filtersets.tenant.contracts import (
     ACIContractSubjectFilterFilterSet,
     ACIContractSubjectFilterSet,
 )
+from ....models.access_policies.domains import ACIRoutedDomain
 from ....models.fabric.fabrics import ACIFabric
 from ....models.tenant.contract_filters import ACIContractFilter
 from ....models.tenant.contracts import (
@@ -21,7 +22,14 @@ from ....models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ....models.tenant.endpoint_groups import ACIEndpointGroup
+from ....models.tenant.endpoint_groups import (
+    ACIEndpointGroup,
+    ACIUSegEndpointGroup,
+)
+from ....models.tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroup,
+)
+from ....models.tenant.l3outs import ACIExternalEndpointGroup, ACIL3Out
 from ....models.tenant.tenants import ACITenant
 from ...models.base import ACIBaseTestCase
 
@@ -68,12 +76,6 @@ class ACIContractRelationFilterSetTestCase(
 
     queryset = ACIContractRelation.objects.all()
     filterset = ACIContractRelationFilterSet
-    # Cached GFK-target FKs the filterset does not expose (only EPG + VRF).
-    ignore_fields = (
-        "aci_endpoint_security_group",
-        "aci_external_endpoint_group",
-        "aci_useg_endpoint_group",
-    )
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -97,6 +99,30 @@ class ACIContractRelationFilterSetTestCase(
             aci_app_profile=cls.aci_app_profile,
             aci_bridge_domain=cls.aci_bd,
         )
+        cls.aci_esg = ACIEndpointSecurityGroup.objects.create(
+            name="ACIFSRelESG",
+            aci_app_profile=cls.aci_app_profile,
+            aci_vrf=cls.aci_vrf,
+        )
+        cls.aci_useg_epg = ACIUSegEndpointGroup.objects.create(
+            name="ACIFSRelUSegEPG",
+            aci_app_profile=cls.aci_app_profile,
+            aci_bridge_domain=cls.aci_bd,
+        )
+        cls.aci_routed_domain = ACIRoutedDomain.objects.create(
+            name="ACIFSRelRoutedDomain",
+            aci_fabric=cls.aci_fabric,
+        )
+        cls.aci_l3out = ACIL3Out.objects.create(
+            name="ACIFSRelL3Out",
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
+            aci_routed_domain=cls.aci_routed_domain,
+        )
+        cls.aci_ext_epg = ACIExternalEndpointGroup.objects.create(
+            name="ACIFSRelExtEPG",
+            aci_l3out=cls.aci_l3out,
+        )
         cls.relation_1 = ACIContractRelation.objects.create(
             aci_contract=cls.aci_contract,
             aci_object=cls.aci_epg_1,
@@ -112,11 +138,150 @@ class ACIContractRelationFilterSetTestCase(
             aci_object=cls.aci_epg_3,
             role=ContractRelationRoleChoices.ROLE_CONSUMER,
         )
+        cls.relation_esg = ACIContractRelation.objects.create(
+            aci_contract=cls.aci_contract,
+            aci_object=cls.aci_esg,
+            role=ContractRelationRoleChoices.ROLE_PROVIDER,
+        )
+        cls.relation_useg = ACIContractRelation.objects.create(
+            aci_contract=cls.aci_contract,
+            aci_object=cls.aci_useg_epg,
+            role=ContractRelationRoleChoices.ROLE_PROVIDER,
+        )
+        cls.relation_ext = ACIContractRelation.objects.create(
+            aci_contract=cls.aci_contract,
+            aci_object=cls.aci_ext_epg,
+            role=ContractRelationRoleChoices.ROLE_PROVIDER,
+        )
+
+    def test_aci_endpoint_security_group(self) -> None:
+        """Test filtering relations by ACI Endpoint Security Group name."""
+        params = {"aci_endpoint_security_group": [self.aci_esg.name]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_esg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_endpoint_security_group_id(self) -> None:
+        """Test filtering relations by ACI Endpoint Security Group ID."""
+        params = {"aci_endpoint_security_group_id": [self.aci_esg.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_esg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_endpoint_security_group_tenant(self) -> None:
+        """Test filtering by the Endpoint Security Group's ACI Tenant name."""
+        params = {"aci_endpoint_security_group_tenant": [self.aci_tenant.name]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_esg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_endpoint_security_group_tenant_id(self) -> None:
+        """Test filtering by the Endpoint Security Group's ACI Tenant ID."""
+        params = {"aci_endpoint_security_group_tenant_id": [self.aci_tenant.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_esg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_useg_endpoint_group(self) -> None:
+        """Test filtering relations by ACI uSeg Endpoint Group name."""
+        params = {"aci_useg_endpoint_group": [self.aci_useg_epg.name]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_useg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_useg_endpoint_group_id(self) -> None:
+        """Test filtering relations by ACI uSeg Endpoint Group ID."""
+        params = {"aci_useg_endpoint_group_id": [self.aci_useg_epg.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_useg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_useg_endpoint_group_tenant(self) -> None:
+        """Test filtering by the uSeg Endpoint Group's ACI Tenant name."""
+        params = {"aci_useg_endpoint_group_tenant": [self.aci_tenant.name]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_useg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_useg_endpoint_group_tenant_id(self) -> None:
+        """Test filtering by the uSeg Endpoint Group's ACI Tenant ID."""
+        params = {"aci_useg_endpoint_group_tenant_id": [self.aci_tenant.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_useg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_external_endpoint_group(self) -> None:
+        """Test filtering relations by ACI External Endpoint Group name."""
+        params = {"aci_external_endpoint_group": [self.aci_ext_epg.name]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_ext, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_external_endpoint_group_id(self) -> None:
+        """Test filtering relations by ACI External Endpoint Group ID."""
+        params = {"aci_external_endpoint_group_id": [self.aci_ext_epg.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_ext, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_external_endpoint_group_tenant(self) -> None:
+        """Test filtering by the External Endpoint Group's ACI Tenant name."""
+        params = {"aci_external_endpoint_group_tenant": [self.aci_tenant.name]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_ext, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_aci_external_endpoint_group_tenant_id(self) -> None:
+        """Test filtering by the External Endpoint Group's ACI Tenant ID."""
+        params = {"aci_external_endpoint_group_tenant_id": [self.aci_tenant.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_ext, qs)
+        self.assertNotIn(self.relation_1, qs)
 
     def test_q(self) -> None:
         """Test search() by the related ACI Contract name."""
         params = {"q": "ACIFSRelContract"}
         self.assertIn(self.relation_1, self.filterset(params, self.queryset).qs)
+
+    def test_q_endpoint_group_name(self) -> None:
+        """Test search() by the related ACI Endpoint Group name."""
+        params = {"q": self.aci_epg_1.name}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_1, qs)
+        self.assertNotIn(self.relation_esg, qs)
+
+    def test_q_endpoint_security_group_name(self) -> None:
+        """Test search() by the related ACI Endpoint Security Group name."""
+        params = {"q": self.aci_esg.name}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_esg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_q_useg_endpoint_group_name(self) -> None:
+        """Test search() by the related ACI uSeg Endpoint Group name."""
+        params = {"q": self.aci_useg_epg.name}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_useg, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_q_external_endpoint_group_name(self) -> None:
+        """Test search() by the related ACI External Endpoint Group name."""
+        params = {"q": self.aci_ext_epg.name}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.relation_ext, qs)
+        self.assertNotIn(self.relation_1, qs)
+
+    def test_q_vrf_name(self) -> None:
+        """Test search() by the related ACI VRF name."""
+        relation_vrf = ACIContractRelation.objects.create(
+            aci_contract=self.aci_contract,
+            aci_object=self.aci_vrf,
+            role=ContractRelationRoleChoices.ROLE_PROVIDER,
+        )
+        params = {"q": self.aci_vrf.name}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(relation_vrf, qs)
+        self.assertNotIn(self.relation_1, qs)
 
     def test_search_with_whitespace_only_returns_all(self) -> None:
         """Test search() with whitespace-only returns the full queryset."""

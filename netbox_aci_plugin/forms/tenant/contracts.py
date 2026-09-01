@@ -55,7 +55,14 @@ from ...models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ...models.tenant.endpoint_groups import ACIEndpointGroup
+from ...models.tenant.endpoint_groups import (
+    ACIEndpointGroup,
+    ACIUSegEndpointGroup,
+)
+from ...models.tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroup,
+)
+from ...models.tenant.l3outs import ACIExternalEndpointGroup
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
 
@@ -618,6 +625,12 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
         FieldSet(
             "aci_endpoint_group_tenant_id",
             "aci_endpoint_group_id",
+            "aci_endpoint_security_group_tenant_id",
+            "aci_endpoint_security_group_id",
+            "aci_useg_endpoint_group_tenant_id",
+            "aci_useg_endpoint_group_id",
+            "aci_external_endpoint_group_tenant_id",
+            "aci_external_endpoint_group_id",
             "aci_vrf_tenant_id",
             "aci_vrf_id",
             name=_("ACI Object Assignment"),
@@ -651,6 +664,36 @@ class ACIContractRelationFilterForm(NetBoxModelFilterSetForm):
         queryset=ACIEndpointGroup.objects.all(),
         required=False,
         label=_("ACI Endpoint Group"),
+    )
+    aci_endpoint_security_group_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant of Endpoint Security Group"),
+    )
+    aci_endpoint_security_group_id = DynamicModelMultipleChoiceField(
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        required=False,
+        label=_("ACI Endpoint Security Group"),
+    )
+    aci_useg_endpoint_group_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant of uSeg Endpoint Group"),
+    )
+    aci_useg_endpoint_group_id = DynamicModelMultipleChoiceField(
+        queryset=ACIUSegEndpointGroup.objects.all(),
+        required=False,
+        label=_("ACI uSeg Endpoint Group"),
+    )
+    aci_external_endpoint_group_tenant_id = DynamicModelMultipleChoiceField(
+        queryset=ACITenant.objects.all(),
+        required=False,
+        label=_("ACI Tenant of External Endpoint Group"),
+    )
+    aci_external_endpoint_group_id = DynamicModelMultipleChoiceField(
+        queryset=ACIExternalEndpointGroup.objects.all(),
+        required=False,
+        label=_("ACI External Endpoint Group"),
     )
     aci_vrf_tenant_id = DynamicModelMultipleChoiceField(
         queryset=ACITenant.objects.all(),

@@ -29,7 +29,14 @@ from ...models.tenant.contracts import (
     ACIContractSubject,
     ACIContractSubjectFilter,
 )
-from ...models.tenant.endpoint_groups import ACIEndpointGroup
+from ...models.tenant.endpoint_groups import (
+    ACIEndpointGroup,
+    ACIUSegEndpointGroup,
+)
+from ...models.tenant.endpoint_security_groups import (
+    ACIEndpointSecurityGroup,
+)
+from ...models.tenant.l3outs import ACIExternalEndpointGroup
 from ...models.tenant.tenants import ACITenant
 from ...models.tenant.vrfs import ACIVRF
 from ..mixins import (
@@ -176,6 +183,78 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("ACI Endpoint Group (ID)"),
     )
+    aci_endpoint_security_group_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_security_group__aci_app_profile__aci_tenant__name",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant of Endpoint Security Group (name)"),
+    )
+    aci_endpoint_security_group_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_security_group__aci_app_profile__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant of Endpoint Security Group (ID)"),
+    )
+    aci_endpoint_security_group = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_security_group__name",
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        to_field_name="name",
+        label=_("ACI Endpoint Security Group (name)"),
+    )
+    aci_endpoint_security_group_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_endpoint_security_group",
+        queryset=ACIEndpointSecurityGroup.objects.all(),
+        to_field_name="id",
+        label=_("ACI Endpoint Security Group (ID)"),
+    )
+    aci_useg_endpoint_group_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_useg_endpoint_group__aci_app_profile__aci_tenant__name",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant of uSeg Endpoint Group (name)"),
+    )
+    aci_useg_endpoint_group_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_useg_endpoint_group__aci_app_profile__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant of uSeg Endpoint Group (ID)"),
+    )
+    aci_useg_endpoint_group = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_useg_endpoint_group__name",
+        queryset=ACIUSegEndpointGroup.objects.all(),
+        to_field_name="name",
+        label=_("ACI uSeg Endpoint Group (name)"),
+    )
+    aci_useg_endpoint_group_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_useg_endpoint_group",
+        queryset=ACIUSegEndpointGroup.objects.all(),
+        to_field_name="id",
+        label=_("ACI uSeg Endpoint Group (ID)"),
+    )
+    aci_external_endpoint_group_tenant = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_external_endpoint_group__aci_l3out__aci_tenant__name",
+        queryset=ACITenant.objects.all(),
+        to_field_name="name",
+        label=_("ACI Tenant of External Endpoint Group (name)"),
+    )
+    aci_external_endpoint_group_tenant_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_external_endpoint_group__aci_l3out__aci_tenant",
+        queryset=ACITenant.objects.all(),
+        to_field_name="id",
+        label=_("ACI Tenant of External Endpoint Group (ID)"),
+    )
+    aci_external_endpoint_group = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_external_endpoint_group__name",
+        queryset=ACIExternalEndpointGroup.objects.all(),
+        to_field_name="name",
+        label=_("ACI External Endpoint Group (name)"),
+    )
+    aci_external_endpoint_group_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="_aci_external_endpoint_group",
+        queryset=ACIExternalEndpointGroup.objects.all(),
+        to_field_name="id",
+        label=_("ACI External Endpoint Group (ID)"),
+    )
     aci_vrf_tenant = django_filters.ModelMultipleChoiceFilter(
         field_name="_aci_vrf__aci_tenant__name",
         queryset=ACITenant.objects.all(),
@@ -218,6 +297,9 @@ class ACIContractRelationFilterSet(NetBoxModelFilterSet):
         queryset_filter: Q = (
             Q(aci_contract__name__icontains=value)
             | Q(aci_endpoint_group__name__icontains=value)
+            | Q(aci_endpoint_security_group__name__icontains=value)
+            | Q(aci_useg_endpoint_group__name__icontains=value)
+            | Q(aci_external_endpoint_group__name__icontains=value)
             | Q(aci_vrf__name__icontains=value)
         )
         return queryset.filter(queryset_filter)
