@@ -67,9 +67,6 @@ class ACIL3OutFilter(ACIBaseFilterMixin):
     eigrp_interface_policy_name: StrFilterLookup | None = (
         strawberry_django.filter_field()
     )
-    export_route_control_enforcement_enabled: FilterLookup[bool] | None = (
-        strawberry_django.filter_field()
-    )
     igmp_interface_policy_name: StrFilterLookup | None = (
         strawberry_django.filter_field()
     )

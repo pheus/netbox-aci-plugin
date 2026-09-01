@@ -25,8 +25,9 @@ class ACIL3OutFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin)
 
     queryset = ACIL3Out.objects.all()
     filterset = ACIL3OutFilterSet
-    # Scalar policy fields the filterset does not expose, plus the
-    # currently-unfiltered export_route_control_enforcement_enabled field.
+    # Scalar policy fields the filterset does not expose. The export
+    # enforcement flag is pinned True by a CheckConstraint, so a filter on
+    # it cannot discriminate between rows.
     ignore_fields = (
         "bfd_policy_name",
         "custom_qos_policy_name",
