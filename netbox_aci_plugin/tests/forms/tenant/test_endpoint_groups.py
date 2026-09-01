@@ -46,6 +46,41 @@ class ACIEndpointGroupFormCoverageTestCase(ACIBaseFormTestCase):
         )
         self.assertIn("aci_bridge_domain", form.fields)
 
+    def test_epg_import_form_omitted_qos_class_uses_the_default(self) -> None:
+        """Test an EPG import without a QoS class falls back to the default."""
+        form = ACIEndpointGroupImportForm(
+            data={
+                "name": "ACIFormTestEPGNoQoS",
+                "aci_fabric": self.aci_fabric.name,
+                "aci_tenant": self.aci_tenant.name,
+                "aci_app_profile": self.aci_app_profile.name,
+                "aci_bridge_domain": self.aci_bd.name,
+            }
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(
+            form.save().qos_class,
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
+        )
+
+    def test_useg_epg_import_form_blank_qos_class_uses_the_default(self) -> None:
+        """Test a blank QoS class cell falls back to the model default."""
+        form = ACIUSegEndpointGroupImportForm(
+            data={
+                "name": "ACIFormTestUSegEPGNoQoS",
+                "aci_fabric": self.aci_fabric.name,
+                "aci_tenant": self.aci_tenant.name,
+                "aci_app_profile": self.aci_app_profile.name,
+                "aci_bridge_domain": self.aci_bd.name,
+                "qos_class": "",
+            }
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(
+            form.save().qos_class,
+            QualityOfServiceClassChoices.CLASS_UNSPECIFIED,
+        )
+
     def test_useg_attr_edit_form_object_type_unknown(self) -> None:
         """Test the uSeg attribute edit form tolerates an unknown type."""
         form = ACIUSegNetworkAttributeEditForm(

@@ -544,7 +544,7 @@ class ACIEndpointGroupImportForm(NetBoxModelImportForm):
     )
     qos_class = CSVChoiceField(
         choices=QualityOfServiceClassChoices,
-        required=True,
+        required=False,
         label=_("QoS class"),
         help_text=_(
             "Assignment of the ACI Quality-of-Service level for "
@@ -1110,7 +1110,7 @@ class ACIUSegEndpointGroupImportForm(NetBoxModelImportForm):
     )
     qos_class = CSVChoiceField(
         choices=QualityOfServiceClassChoices,
-        required=True,
+        required=False,
         label=_("QoS class"),
         help_text=_(
             "Assignment of the ACI Quality-of-Service level for "

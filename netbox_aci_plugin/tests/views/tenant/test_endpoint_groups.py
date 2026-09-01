@@ -72,11 +72,11 @@ class ACIEndpointGroupViewTestCase(
         cls.csv_data = (
             (
                 "name,aci_fabric,aci_tenant,aci_app_profile,"
-                "aci_bridge_domain,is_aci_bd_in_common,qos_class"
+                "aci_bridge_domain,is_aci_bd_in_common"
             ),
-            f"ACIViewTestEPG4,{fabric},{tenant},{app},{bd},,unspecified",
-            f"ACIViewTestEPG5,{fabric},{tenant},{app},{bd},,unspecified",
-            f"ACIViewTestEPG6,{fabric},{tenant},{app},{bd},,unspecified",
+            f"ACIViewTestEPG4,{fabric},{tenant},{app},{bd},",
+            f"ACIViewTestEPG5,{fabric},{tenant},{app},{bd},",
+            f"ACIViewTestEPG6,{fabric},{tenant},{app},{bd},",
         )
 
         epgs = list(ACIEndpointGroup.objects.order_by("pk"))
@@ -167,7 +167,7 @@ class ACIUSegEndpointGroupViewTestCase(
             ),
             f"ACIViewTestUSegEPG4,{fabric},{tenant},{app},{bd},,unspecified,all",
             f"ACIViewTestUSegEPG5,{fabric},{tenant},{app},{bd},,unspecified,any",
-            f"ACIViewTestUSegEPG6,{fabric},{tenant},{app},{bd},,unspecified,",
+            f"ACIViewTestUSegEPG6,{fabric},{tenant},{app},{bd},,,",
         )
 
         epgs = list(ACIUSegEndpointGroup.objects.order_by("pk"))
