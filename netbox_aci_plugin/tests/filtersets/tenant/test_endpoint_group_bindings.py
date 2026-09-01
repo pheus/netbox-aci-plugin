@@ -478,16 +478,13 @@ class ACIEndpointGroupAAEPBindingFilterSetTestCase(
 
     def test_effective_encap_vlan_id_live_wins_over_stale_snapshot(self) -> None:
         """Test effective_encap_vlan_id ignores a stale snapshot VLAN ID."""
-        # binding_1 snapshotted encap_vlan_id=150 from nb_vlan; move the
-        # live VLAN to 151 without re-saving so the snapshot goes stale.
+        # save() snapshotted encap_vlan_id=150 from the live VLAN.
         self.nb_vlan.vid = 151
         self.nb_vlan.save(update_fields=("vid",))
 
-        # The stale snapshot (150) must NOT match; the live VLAN wins.
         params = {"effective_encap_vlan_id": 150}
         self.assertNotIn(self.binding_1, self.filterset(params, self.queryset).qs)
 
-        # The live vid (151) matches.
         params = {"effective_encap_vlan_id": 151}
         self.assertIn(self.binding_1, self.filterset(params, self.queryset).qs)
 
