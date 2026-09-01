@@ -23,9 +23,9 @@ __all__ = ("ACIBaseFilterMixin",)
 class ACIBaseFilterMixin(NetBoxModelFilter):
     """Base GraphQL filter mixin for ACI models."""
 
-    name: StrFilterLookup[str] | None = strawberry_django.filter_field()
-    name_alias: StrFilterLookup[str] | None = strawberry_django.filter_field()
-    description: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    name: StrFilterLookup | None = strawberry_django.filter_field()
+    name_alias: StrFilterLookup | None = strawberry_django.filter_field()
+    description: StrFilterLookup | None = strawberry_django.filter_field()
 
     nb_tenant: (
         Annotated["TenantFilter", strawberry.lazy("tenancy.graphql.filters")] | None

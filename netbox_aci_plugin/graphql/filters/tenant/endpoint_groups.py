@@ -53,9 +53,7 @@ class ACIEndpointGroupBaseFilterMixin(ACIBaseFilterMixin):
     ) = strawberry_django.filter_field()
     aci_bridge_domain_id: ID | None = strawberry_django.filter_field()
     admin_shutdown: FilterLookup[bool] | None = strawberry_django.filter_field()
-    custom_qos_policy_name: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
+    custom_qos_policy_name: StrFilterLookup | None = strawberry_django.filter_field()
     flood_in_encap_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     intra_epg_isolation_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()

@@ -27,8 +27,8 @@ __all__ = ("ACIFabricFilter",)
 class ACIFabricFilter(ScopedFilterMixin, NetBoxModelFilter):
     """GraphQL filter definition for the ACIFabric model."""
 
-    name: StrFilterLookup[str] | None = strawberry_django.filter_field()
-    description: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    name: StrFilterLookup | None = strawberry_django.filter_field()
+    description: StrFilterLookup | None = strawberry_django.filter_field()
     fabric_id: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
     infra_vlan_vid: ComparisonFilterLookup[int] | None = (
         strawberry_django.filter_field()

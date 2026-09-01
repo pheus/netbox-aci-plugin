@@ -66,10 +66,8 @@ class ACIContractFilterEntryFilter(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
-    destination_from_port: StrFilterLookup[str] | None = (
-        strawberry_django.filter_field()
-    )
-    destination_to_port: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    destination_from_port: StrFilterLookup | None = strawberry_django.filter_field()
+    destination_to_port: StrFilterLookup | None = strawberry_django.filter_field()
     ether_type: (
         BaseFilterLookup[
             Annotated[
@@ -118,8 +116,8 @@ class ACIContractFilterEntryFilter(ACIBaseFilterMixin):
     match_only_fragments_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    source_from_port: StrFilterLookup[str] | None = strawberry_django.filter_field()
-    source_to_port: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    source_from_port: StrFilterLookup | None = strawberry_django.filter_field()
+    source_to_port: StrFilterLookup | None = strawberry_django.filter_field()
     stateful_enabled: FilterLookup[bool] | None = strawberry_django.filter_field()
     tcp_rules: (
         Annotated[

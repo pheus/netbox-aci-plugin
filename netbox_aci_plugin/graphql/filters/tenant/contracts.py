@@ -150,11 +150,11 @@ class ACIContractSubjectFilter(ACIBaseFilterMixin):
     reverse_filter_ports_enabled: FilterLookup[bool] | None = (
         strawberry_django.filter_field()
     )
-    service_graph_name: StrFilterLookup[str] | None = strawberry_django.filter_field()
-    service_graph_name_cons_to_prov: StrFilterLookup[str] | None = (
+    service_graph_name: StrFilterLookup | None = strawberry_django.filter_field()
+    service_graph_name_cons_to_prov: StrFilterLookup | None = (
         strawberry_django.filter_field()
     )
-    service_graph_name_prov_to_cons: StrFilterLookup[str] | None = (
+    service_graph_name_prov_to_cons: StrFilterLookup | None = (
         strawberry_django.filter_field()
     )
     target_dscp: (

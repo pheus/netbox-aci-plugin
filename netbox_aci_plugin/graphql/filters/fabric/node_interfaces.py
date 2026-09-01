@@ -40,7 +40,7 @@ class ACINodeInterfaceFilter(NetBoxModelFilter):
     module: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
     port: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
     sub_port: ComparisonFilterLookup[int] | None = strawberry_django.filter_field()
-    description: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    description: StrFilterLookup | None = strawberry_django.filter_field()
 
     nb_tenant: (
         Annotated["TenantFilter", strawberry.lazy("tenancy.graphql.filters")] | None

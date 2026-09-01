@@ -41,4 +41,4 @@ class ACILeafInterfaceOverrideFilter(NetBoxModelFilter):
         | None
     ) = strawberry_django.filter_field()
     aci_leaf_interface_policy_group_id: ID | None = strawberry_django.filter_field()
-    description: StrFilterLookup[str] | None = strawberry_django.filter_field()
+    description: StrFilterLookup | None = strawberry_django.filter_field()
