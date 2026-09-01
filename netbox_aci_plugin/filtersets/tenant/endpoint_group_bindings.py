@@ -194,6 +194,17 @@ class ACIEndpointGroupAAEPBindingFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
         label=_("NetBox VLAN (ID)"),
     )
+    primary_nb_vlan = django_filters.ModelMultipleChoiceFilter(
+        field_name="primary_nb_vlan__vid",
+        queryset=VLAN.objects.all(),
+        to_field_name="vid",
+        label=_("Primary NetBox VLAN (VID)"),
+    )
+    primary_nb_vlan_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=VLAN.objects.all(),
+        to_field_name="id",
+        label=_("Primary NetBox VLAN (ID)"),
+    )
     mode = django_filters.MultipleChoiceFilter(
         choices=PortModeChoices,
         null_value=None,
@@ -206,6 +217,10 @@ class ACIEndpointGroupAAEPBindingFilterSet(NetBoxModelFilterSet):
         method="filter_effective_encap_vlan_id",
         label=_("Effective Encap VLAN ID"),
     )
+    effective_primary_encap_vlan_id = django_filters.NumberFilter(
+        method="filter_effective_primary_encap_vlan_id",
+        label=_("Effective Primary Encap VLAN ID"),
+    )
 
     class Meta:
         model = ACIEndpointGroupAAEPBinding
@@ -214,6 +229,7 @@ class ACIEndpointGroupAAEPBindingFilterSet(NetBoxModelFilterSet):
             "aci_endpoint_group",
             "aci_aaep",
             "encap_vlan_id",
+            "primary_encap_vlan_id",
             "mode",
             "deployment_immediacy",
         )
@@ -227,6 +243,17 @@ class ACIEndpointGroupAAEPBindingFilterSet(NetBoxModelFilterSet):
         """
         return queryset.filter(
             Q(nb_vlan__vid=value) | Q(nb_vlan__isnull=True, encap_vlan_id=value)
+        )
+
+    def filter_effective_primary_encap_vlan_id(self, queryset, name, value):
+        """Return a QuerySet filtered by the effective primary VLAN ID.
+
+        The snapshot is consulted only when no primary NetBox VLAN is
+        assigned, matching the ``effective_primary_encap_vlan_id`` property.
+        """
+        return queryset.filter(
+            Q(primary_nb_vlan__vid=value)
+            | Q(primary_nb_vlan__isnull=True, primary_encap_vlan_id=value)
         )
 
     def search(self, queryset, name, value):

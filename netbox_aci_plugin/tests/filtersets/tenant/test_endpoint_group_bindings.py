@@ -232,11 +232,6 @@ class ACIEndpointGroupAAEPBindingFilterSetTestCase(
 
     queryset = ACIEndpointGroupAAEPBinding.objects.all()
     filterset = ACIEndpointGroupAAEPBindingFilterSet
-    # Primary VLAN scalars the filterset does not expose.
-    ignore_fields = (
-        "primary_encap_vlan_id",
-        "primary_nb_vlan",
-    )
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -280,16 +275,19 @@ class ACIEndpointGroupAAEPBindingFilterSetTestCase(
             aci_aaep=cls.aci_aaep_b, aci_domain_object=cls.physical_domain
         )
         cls.nb_vlan = VLAN.objects.create(vid=150, name="VLANABFSTest")
+        cls.primary_nb_vlan = VLAN.objects.create(vid=160, name="VLANABFSTestPrimary")
         cls.binding_1 = ACIEndpointGroupAAEPBinding.objects.create(
             aci_endpoint_group=cls.aci_epg_a,
             aci_aaep=cls.aci_aaep_a,
             nb_vlan=cls.nb_vlan,
+            primary_nb_vlan=cls.primary_nb_vlan,
             deployment_immediacy=DeploymentImmediacyChoices.IMMEDIACY_IMMEDIATE,
         )
         cls.binding_2 = ACIEndpointGroupAAEPBinding.objects.create(
             aci_endpoint_group=cls.aci_epg_b,
             aci_aaep=cls.aci_aaep_b,
             encap_vlan_id=180,
+            primary_encap_vlan_id=190,
             mode=PortModeChoices.MODE_NATIVE,
         )
         cls.binding_3 = ACIEndpointGroupAAEPBinding.objects.create(
@@ -491,6 +489,53 @@ class ACIEndpointGroupAAEPBindingFilterSetTestCase(
 
         # The live vid (151) matches.
         params = {"effective_encap_vlan_id": 151}
+        self.assertIn(self.binding_1, self.filterset(params, self.queryset).qs)
+
+    def test_primary_nb_vlan(self) -> None:
+        """Test filtering bindings by the primary NetBox VLAN's VID."""
+        params = {"primary_nb_vlan": [self.primary_nb_vlan.vid]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.binding_1, qs)
+        self.assertNotIn(self.binding_2, qs)
+
+    def test_primary_nb_vlan_id(self) -> None:
+        """Test filtering bindings by the primary NetBox VLAN's ID."""
+        params = {"primary_nb_vlan_id": [self.primary_nb_vlan.pk]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.binding_1, qs)
+        self.assertNotIn(self.binding_2, qs)
+
+    def test_primary_encap_vlan_id(self) -> None:
+        """Test filtering bindings by the stored primary encap VLAN ID."""
+        params = {"primary_encap_vlan_id": [190]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.binding_2, qs)
+        self.assertNotIn(self.binding_1, qs)
+
+    def test_effective_primary_encap_vlan_id_live_vid(self) -> None:
+        """Test the effective primary matches the live NetBox VLAN's vid."""
+        params = {"effective_primary_encap_vlan_id": 160}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.binding_1, qs)
+        self.assertNotIn(self.binding_2, qs)
+
+    def test_effective_primary_encap_vlan_id_snapshot(self) -> None:
+        """Test the effective primary matches a snapshot-only encap ID."""
+        params = {"effective_primary_encap_vlan_id": 190}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.binding_2, qs)
+        self.assertNotIn(self.binding_1, qs)
+
+    def test_effective_primary_encap_vlan_id_live_wins_over_stale(self) -> None:
+        """Test the effective primary ignores a stale snapshot VLAN ID."""
+        # save() snapshotted primary_encap_vlan_id=160 from the live VLAN.
+        self.primary_nb_vlan.vid = 161
+        self.primary_nb_vlan.save(update_fields=("vid",))
+
+        params = {"effective_primary_encap_vlan_id": 160}
+        self.assertNotIn(self.binding_1, self.filterset(params, self.queryset).qs)
+
+        params = {"effective_primary_encap_vlan_id": 161}
         self.assertIn(self.binding_1, self.filterset(params, self.queryset).qs)
 
     def test_search_with_whitespace_only_returns_all(self) -> None:

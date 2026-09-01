@@ -461,6 +461,9 @@ class ACIEndpointGroupAAEPBindingFilterForm(NetBoxModelFilterSetForm):
             "nb_vlan_id",
             "encap_vlan_id",
             "effective_encap_vlan_id",
+            "primary_nb_vlan_id",
+            "primary_encap_vlan_id",
+            "effective_primary_encap_vlan_id",
             name=_("VLAN Encapsulation"),
         ),
     )
@@ -502,6 +505,19 @@ class ACIEndpointGroupAAEPBindingFilterForm(NetBoxModelFilterSetForm):
     effective_encap_vlan_id = forms.IntegerField(
         required=False,
         label=_("Effective Encap VLAN ID"),
+    )
+    primary_nb_vlan_id = DynamicModelMultipleChoiceField(
+        queryset=VLAN.objects.all(),
+        required=False,
+        label=_("Primary NetBox VLAN"),
+    )
+    primary_encap_vlan_id = forms.IntegerField(
+        required=False,
+        label=_("Primary Encap VLAN ID"),
+    )
+    effective_primary_encap_vlan_id = forms.IntegerField(
+        required=False,
+        label=_("Effective Primary Encap VLAN ID"),
     )
     mode = MultipleChoiceField(
         choices=add_blank_choice(PortModeChoices),
