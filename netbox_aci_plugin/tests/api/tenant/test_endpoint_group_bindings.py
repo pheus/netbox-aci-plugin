@@ -6,7 +6,7 @@
 
 from ipam.models import VRF
 from tenancy.models import Tenant
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLQueryTest
 
 from ....api.urls import app_name
 from ....models.access_policies.aaep import (
@@ -129,6 +129,19 @@ class ACIEndpointGroupDomainBindingAPIViewTestCase(APIViewTestCases.APIViewTestC
             aci_domain_object=aci_physical_domain2,
         )
 
+        # A union, which the generated query cannot express
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="aci_epg_object_union",
+                query=(
+                    "{ aci_endpoint_group_domain_binding_list { aci_epg_object "
+                    "{ ... on ACIEndpointGroupType { name } "
+                    "... on ACIUSegEndpointGroupType { name } } } }"
+                ),
+                assert_result=cls.assert_epg_object_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "aci_epg_object_id": aci_epg.id,
@@ -151,6 +164,20 @@ class ACIEndpointGroupDomainBindingAPIViewTestCase(APIViewTestCases.APIViewTestC
         cls.bulk_update_invalid_data = {
             "deployment_immediacy": "invalid-immediacy",
         }
+
+    def assert_epg_object_resolves(self, data) -> None:
+        """The endpoint group union resolves a regular and a uSeg group."""
+        names = {
+            row["aci_epg_object"]["name"]
+            for row in data["aci_endpoint_group_domain_binding_list"]
+        }
+        self.assertEqual(
+            names,
+            {
+                ACIEndpointGroup.objects.first().name,
+                ACIUSegEndpointGroup.objects.first().name,
+            },
+        )
 
 
 class ACIEndpointGroupAAEPBindingAPIViewTestCase(APIViewTestCases.APIViewTestCase):

@@ -4,7 +4,7 @@
 
 """API tests for access-policy AAEP models."""
 
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLQueryTest
 
 from ....api.urls import app_name
 from ....models.access_policies.aaep import (
@@ -179,6 +179,28 @@ class ACIAAEPDomainBindingAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         ACIAAEPDomainBinding.objects.bulk_create(aci_aaep_domain_bindings)
 
+        # A union, which the generated query cannot express
+        aci_physical_domain_bound = ACIPhysicalDomain.objects.create(
+            name="ACIPhysicalDomainTestAPIBound",
+            aci_fabric=aci_fabric,
+            aci_vlan_pool=aci_vlan_pool,
+        )
+        ACIAAEPDomainBinding.objects.create(
+            aci_aaep=aci_aaep,
+            aci_domain_object=aci_physical_domain_bound,
+        )
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="aci_domain_object_union",
+                query=(
+                    "{ aci_aaep_domain_binding_list { aci_domain_object "
+                    "{ ... on ACIPhysicalDomainType { name } "
+                    "... on ACIRoutedDomainType { name } } } }"
+                ),
+                assert_result=cls.assert_domain_object_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "aci_aaep": aci_aaep.id,
@@ -199,3 +221,12 @@ class ACIAAEPDomainBindingAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_invalid_data = {
             "aci_aaep": 99999999,
         }
+
+    def assert_domain_object_resolves(self, data) -> None:
+        """The domain union resolves both a physical and a routed domain."""
+        names = {
+            row["aci_domain_object"]["name"]
+            for row in data["aci_aaep_domain_binding_list"]
+        }
+        self.assertIn("ACIPhysicalDomainTestAPIBound", names)
+        self.assertIn("ACIRoutedDomainTestAPI1", names)

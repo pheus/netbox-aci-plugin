@@ -4,9 +4,10 @@
 
 """API tests for fabric Fabric models."""
 
+from dcim.models import Site
 from ipam.models import VLAN, Prefix
 from tenancy.models import Tenant
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLQueryTest
 
 from ....api.urls import app_name
 from ....models.fabric.fabrics import ACIFabric
@@ -77,6 +78,22 @@ class ACIFabricAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         ACIFabric.objects.bulk_create(aci_fabrics)
 
+        # A union, which the generated query cannot express
+        cls.scope_site = Site.objects.create(
+            name="ACIFabricTestAPISite", slug="acifabrictestapisite"
+        )
+        scoped_fabric = ACIFabric.objects.get(name="ACIFabricTestAPI1")
+        scoped_fabric.scope = cls.scope_site
+        scoped_fabric.save()
+
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="scope_union",
+                query="{ aci_fabric_list { scope { ... on SiteType { name } } } }",
+                assert_result=cls.assert_scope_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "name": "ACIFabricTestAPI4",
@@ -105,3 +122,8 @@ class ACIFabricAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_invalid_data = {
             "description": "Invalid description: ö",
         }
+
+    def assert_scope_resolves(self, data) -> None:
+        """The scope union resolves to the assigned NetBox Site."""
+        scopes = [row["scope"] for row in data["aci_fabric_list"] if row["scope"]]
+        self.assertEqual(scopes, [{"name": self.scope_site.name}])

@@ -6,7 +6,7 @@
 
 from ipam.models import VRF, IPAddress, Prefix
 from tenancy.models import Tenant
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLQueryTest
 
 from ....api.urls import app_name
 from ....models.fabric.fabrics import ACIFabric
@@ -319,6 +319,18 @@ class ACIEsgEndpointGroupSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCas
         )
         ACIEsgEndpointGroupSelector.objects.bulk_create(aci_esg_epg_selectors)
 
+        # A union, which the generated query cannot express
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="aci_epg_object_union",
+                query=(
+                    "{ aci_esg_endpoint_group_selector_list { aci_epg_object "
+                    "{ __typename } } }"
+                ),
+                assert_result=cls.assert_epg_object_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "name": "ACIEsgEndpointGroupSelectorTestAPI4",
@@ -347,6 +359,14 @@ class ACIEsgEndpointGroupSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCas
         cls.bulk_update_invalid_data = {
             "description": "Invalid description: ö",
         }
+
+    def assert_epg_object_resolves(self, data) -> None:
+        """The selector union resolves a regular and a uSeg group."""
+        rows = data["aci_esg_endpoint_group_selector_list"]
+        self.assertEqual(
+            {row["aci_epg_object"]["__typename"] for row in rows},
+            {"ACIEndpointGroupType", "ACIUSegEndpointGroupType"},
+        )
 
 
 class ACIEsgEndpointSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
@@ -468,6 +488,17 @@ class ACIEsgEndpointSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         ACIEsgEndpointSelector.objects.bulk_create(aci_esg_ep_selectors)
 
+        # A union, which the generated query cannot express
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="ep_object_union",
+                query=(
+                    "{ aci_esg_endpoint_selector_list { ep_object { __typename } } }"
+                ),
+                assert_result=cls.assert_ep_object_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "name": "ACIEsgEndpointSelectorTestAPI4",
@@ -496,3 +527,11 @@ class ACIEsgEndpointSelectorAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_invalid_data = {
             "description": "Invalid description: ö",
         }
+
+    def assert_ep_object_resolves(self, data) -> None:
+        """The endpoint union resolves an IP address and a prefix."""
+        rows = data["aci_esg_endpoint_selector_list"]
+        self.assertEqual(
+            {row["ep_object"]["__typename"] for row in rows},
+            {"IPAddressType", "PrefixType"},
+        )

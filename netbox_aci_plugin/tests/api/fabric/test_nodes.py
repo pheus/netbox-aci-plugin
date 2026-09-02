@@ -9,7 +9,7 @@ from rest_framework import status
 from dcim.models import Device, DeviceRole, DeviceType, Manufacturer, Site
 from ipam.models import IPAddress, Prefix
 from tenancy.models import Tenant
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLQueryTest
 
 from ....api.urls import app_name
 from ....models.fabric.fabrics import ACIFabric
@@ -191,6 +191,17 @@ class ACINodeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             aci_node.full_clean()
             aci_node.save()
 
+        # A union, which the generated query cannot express
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="node_object_union",
+                query=(
+                    "{ aci_node_list { node_object { ... on DeviceType { name } } } }"
+                ),
+                assert_result=cls.assert_node_object_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "name": "ACINodeTestAPI4",
@@ -283,3 +294,18 @@ class ACINodeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
         self.assertIn("aci_pod", response.data)
+
+    def assert_node_object_resolves(self, data) -> None:
+        """The node object union resolves to the linked NetBox devices."""
+        resolved = {
+            row["node_object"]["name"]
+            for row in data["aci_node_list"]
+            if row["node_object"]
+        }
+        expected = {
+            node.node_object.name
+            for node in ACINode.objects.all()
+            if node.node_object is not None
+        }
+        self.assertTrue(expected)
+        self.assertEqual(resolved, expected)

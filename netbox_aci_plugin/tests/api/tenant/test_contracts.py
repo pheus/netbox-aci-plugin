@@ -5,7 +5,7 @@
 """API tests for tenant Contract models."""
 
 from tenancy.models import Tenant
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLQueryTest
 
 from ....api.urls import app_name
 from ....models.access_policies.domains import ACIRoutedDomain
@@ -390,6 +390,25 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         ACIContractRelation.objects.bulk_create(aci_contract_relations)
 
+        # A union, which the generated query cannot express. The
+        # external endpoint group is the one member no fixture carries.
+        ACIContractRelation.objects.bulk_create(
+            [
+                ACIContractRelation(
+                    aci_contract=aci_contract_epg1,
+                    aci_object=aci_ext_epg,
+                    role="cons",
+                )
+            ]
+        )
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="aci_object_union",
+                query=("{ aci_contract_relation_list { aci_object { __typename } } }"),
+                assert_result=cls.assert_aci_object_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "aci_contract": aci_contract_epg2.id,
@@ -461,6 +480,20 @@ class ACIContractRelationAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_invalid_data = {
             "role": "invalid-role",
         }
+
+    def assert_aci_object_resolves(self, data) -> None:
+        """The relation union resolves all five member types."""
+        rows = data["aci_contract_relation_list"]
+        self.assertEqual(
+            {row["aci_object"]["__typename"] for row in rows},
+            {
+                "ACIEndpointGroupType",
+                "ACIUSegEndpointGroupType",
+                "ACIEndpointSecurityGroupType",
+                "ACIExternalEndpointGroupType",
+                "ACIVRFType",
+            },
+        )
 
 
 class ACIContractSubjectAPIViewTestCase(APIViewTestCases.APIViewTestCase):

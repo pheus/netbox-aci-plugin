@@ -4,9 +4,10 @@
 
 """API tests for fabric Pod models."""
 
+from dcim.models import Site
 from ipam.models import Prefix
 from tenancy.models import Tenant
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLQueryTest
 
 from ....api.urls import app_name
 from ....models.fabric.fabrics import ACIFabric
@@ -95,6 +96,22 @@ class ACIPodAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         ACIPod.objects.bulk_create(aci_pods)
 
+        # A union, which the generated query cannot express
+        cls.scope_site = Site.objects.create(
+            name="ACIPodTestAPISite", slug="acipodtestapisite"
+        )
+        scoped_pod = ACIPod.objects.first()
+        scoped_pod.scope = cls.scope_site
+        scoped_pod.save()
+
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="scope_union",
+                query="{ aci_pod_list { scope { ... on SiteType { name } } } }",
+                assert_result=cls.assert_scope_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "name": "ACIPodTestAPI4",
@@ -123,3 +140,8 @@ class ACIPodAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_invalid_data = {
             "description": "Invalid description: ö",
         }
+
+    def assert_scope_resolves(self, data) -> None:
+        """The scope union resolves to the assigned NetBox Site."""
+        scopes = [row["scope"] for row in data["aci_pod_list"] if row["scope"]]
+        self.assertEqual(scopes, [{"name": self.scope_site.name}])

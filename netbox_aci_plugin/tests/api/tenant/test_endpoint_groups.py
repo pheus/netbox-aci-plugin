@@ -7,7 +7,7 @@
 from dcim.models import MACAddress
 from ipam.models import VRF, IPAddress, Prefix
 from tenancy.models import Tenant
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLQueryTest
 
 from ....api.urls import app_name
 from ....models.fabric.fabrics import ACIFabric
@@ -506,6 +506,17 @@ class ACIUSegNetworkAttributeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         )
         ACIUSegNetworkAttribute.objects.bulk_create(aci_useg_network_attributes)
 
+        # A union, which the generated query cannot express
+        cls.graphql_query_tests = (
+            GraphQLQueryTest(
+                name="attr_object_union",
+                query=(
+                    "{ aci_useg_network_attribute_list { attr_object { __typename } } }"
+                ),
+                assert_result=cls.assert_attr_object_resolves,
+            ),
+        )
+
         cls.create_data: list[dict] = [
             {
                 "name": "ACIUSegNetworkAttributeTestAPI5",
@@ -545,3 +556,12 @@ class ACIUSegNetworkAttributeAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         cls.bulk_update_invalid_data = {
             "description": "Invalid description: ö",
         }
+
+    def assert_attr_object_resolves(self, data) -> None:
+        """The attribute union resolves all three members and an unset one."""
+        rows = data["aci_useg_network_attribute_list"]
+        self.assertEqual(
+            {row["attr_object"]["__typename"] for row in rows if row["attr_object"]},
+            {"IPAddressType", "MACAddressType", "PrefixType"},
+        )
+        self.assertTrue(any(row["attr_object"] is None for row in rows))
