@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from django.apps import apps
@@ -34,6 +35,8 @@ if TYPE_CHECKING:
     from ..access_policies.leaf_switch_profiles import ACILeafSwitchProfile
     from ..fabric.fabrics import ACIFabric
     from .vpc_protection_groups import ACIVPCProtectionGroup
+
+logger = logging.getLogger(__name__)
 
 
 class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
@@ -461,7 +464,12 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
 
     @cached_property
     def vpc_protection_group(self) -> ACIVPCProtectionGroup | None:
-        """Return the VPC protection group this node is a member of."""
+        """Return the VPC protection group this node is a member of.
+
+        Returns ``None`` for a corrupt double membership too, because
+        naming one of the groups would make ``vpc_peer_node`` render a
+        node that is not this node's peer.
+        """
         protection_group_model = apps.get_model(
             "netbox_aci_plugin", "ACIVPCProtectionGroup"
         )
@@ -470,6 +478,12 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                 "aci_node_a", "aci_node_b"
             ).get(models.Q(aci_node_a=self) | models.Q(aci_node_b=self))
         except protection_group_model.DoesNotExist:
+            return None
+        except protection_group_model.MultipleObjectsReturned:
+            logger.error(
+                "ACI Node pk=%s belongs to multiple VPC Protection Groups.",
+                self.pk,
+            )
             return None
 
     @property
@@ -514,8 +528,8 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
         Empty when the node is not a member of a VPC protection group.
         Callers must only invoke this when ``self.pk`` is set. Uses an
         existence query rather than the ``vpc_protection_group``
-        property, which raises on a corrupt double membership and would
-        turn a routine edit into a server error.
+        property, so a corrupt double membership still counts as paired
+        even though that property returns ``None``.
 
         ``check_pod`` and ``check_role`` narrow the check to the fields
         a partial update persists. Full validation leaves both enabled.

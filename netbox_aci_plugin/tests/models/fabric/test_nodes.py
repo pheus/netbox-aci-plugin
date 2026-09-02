@@ -1005,10 +1005,15 @@ class ACINodeTestCase(ACIBaseTestCase):
         self.assertEqual(resolved, [profile])
         self.assertEqual(len(ctx.captured_queries), 1)
 
-    def test_aci_node_vpc_protection_group_raises_on_double_membership(
+    def test_aci_node_vpc_protection_group_none_on_double_membership(
         self,
     ) -> None:
-        """Test vpc_protection_group raises loudly on a corrupt double pair."""
+        """Test vpc_protection_group fails closed on a corrupt double pair.
+
+        The one-to-one slots reject reusing a node in the same slot, so
+        the only reachable double membership is cross-slot: node A of one
+        group and node B of another.
+        """
         node_x = ACINode.objects.create(
             name="ACINodeDoubleX",
             aci_pod=self.aci_pod,
@@ -1040,11 +1045,12 @@ class ACINodeTestCase(ACIBaseTestCase):
             name="ACINodeDoubleGroup2",
             aci_fabric=self.aci_fabric,
             logical_pair_id=164,
-            aci_node_a=node_x,
-            aci_node_b=node_z,
+            aci_node_a=node_z,
+            aci_node_b=node_x,
         )
-        with self.assertRaises(ACIVPCProtectionGroup.MultipleObjectsReturned):
-            _ = node_x.vpc_protection_group
+        with self.assertLogs("netbox_aci_plugin.models.fabric.nodes", level="ERROR"):
+            self.assertIsNone(node_x.vpc_protection_group)
+        self.assertIsNone(node_x.vpc_peer_node)
 
     # The cache never needs priming by the caller, and no other field's
     # validation depends on it

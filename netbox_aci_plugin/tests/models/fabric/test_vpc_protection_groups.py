@@ -438,6 +438,68 @@ class ACIVPCProtectionGroupTestCase(ACIBaseTestCase):
             group.full_clean()
         self.assertIn("aci_node_b", cm.exception.error_dict)
 
+    def test_constraint_unique_aci_vpc_protection_group_node_a_slot(
+        self,
+    ) -> None:
+        """Test the node A slot uniqueness via a direct ORM write."""
+        group = ACIVPCProtectionGroup(
+            name="ACIVPCGroupSlotReuseA",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=102,
+            aci_node_a=self.aci_node,
+            aci_node_b=self.aci_node_unpaired_1,
+        )
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            group.save()
+
+    def test_constraint_unique_aci_vpc_protection_group_node_b_slot(
+        self,
+    ) -> None:
+        """Test the node B slot uniqueness via a direct ORM write."""
+        group = ACIVPCProtectionGroup(
+            name="ACIVPCGroupSlotReuseB",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=103,
+            aci_node_a=self.aci_node_unpaired_1,
+            aci_node_b=self.aci_node_b,
+        )
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            group.save()
+
+    def test_invalid_aci_vpc_protection_group_node_a_reused_as_node_b(
+        self,
+    ) -> None:
+        """Test clean rejects a node paired as node A reused as node B.
+
+        The slot constraints cannot see this, since each slot holds the
+        node only once. Only the membership guard rejects it.
+        """
+        group = ACIVPCProtectionGroup(
+            name="ACIVPCGroupCrossSlotAtoB",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=104,
+            aci_node_a=self.aci_node_unpaired_1,
+            aci_node_b=self.aci_node,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            group.full_clean()
+        self.assertIn("aci_node_b", cm.exception.error_dict)
+
+    def test_invalid_aci_vpc_protection_group_node_b_reused_as_node_a(
+        self,
+    ) -> None:
+        """Test clean rejects a node paired as node B reused as node A."""
+        group = ACIVPCProtectionGroup(
+            name="ACIVPCGroupCrossSlotBtoA",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=105,
+            aci_node_a=self.aci_node_b,
+            aci_node_b=self.aci_node_unpaired_2,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            group.full_clean()
+        self.assertIn("aci_node_a", cm.exception.error_dict)
+
     def test_constraint_unique_aci_vpc_protection_group_name(self) -> None:
         """Test unique constraint of ACI VPC Protection Group name."""
         duplicate = ACIVPCProtectionGroup(

@@ -54,14 +54,14 @@ class ACIVPCProtectionGroup(ACIFabricBaseModel):
             "the node pair (1-1000)."
         ),
     )
-    aci_node_a = models.ForeignKey(
+    aci_node_a = models.OneToOneField(
         to="netbox_aci_plugin.ACINode",
         on_delete=models.PROTECT,
         related_name="+",
         verbose_name=_("ACI Node A"),
         help_text=_("First ACI Leaf Node of the Protection Group."),
     )
-    aci_node_b = models.ForeignKey(
+    aci_node_b = models.OneToOneField(
         to="netbox_aci_plugin.ACINode",
         on_delete=models.PROTECT,
         related_name="+",
@@ -182,8 +182,7 @@ class ACIVPCProtectionGroup(ACIFabricBaseModel):
                 _("ACI Node A and ACI Node B must belong to the same ACI Pod.")
             )
 
-        # Node membership exclusivity has no database equivalent: it spans
-        # an unordered pair across two foreign key columns
+        # Only same-slot reuse has a database constraint. Cross-slot has none.
         if self.aci_node_a_id:
             conflict = (
                 ACIVPCProtectionGroup.objects.filter(

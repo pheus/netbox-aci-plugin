@@ -218,3 +218,63 @@ class ACINodeViewTestCase(
         self.assertHttpStatus(response_b, 200)
         self.assertContains(response_a, node_b.name)
         self.assertContains(response_b, node_a.name)
+
+    def test_vpc_protection_group_row_omits_a_corrupt_double_membership(
+        self,
+    ) -> None:
+        """A node in two Protection Groups names neither, and still loads.
+
+        Cross-slot reuse is the combination the one-to-one fields cannot
+        reject, and the page returned a server error before the property
+        began failing closed.
+        """
+        self.add_permissions("netbox_aci_plugin.view_acinode")
+
+        node_x = ACINode.objects.create(
+            name="ACIViewTestNodeVPCCorruptX",
+            aci_pod=self.aci_pod,
+            node_id=203,
+            role="leaf",
+            node_type="unknown",
+        )
+        node_y = ACINode.objects.create(
+            name="ACIViewTestNodeVPCCorruptY",
+            aci_pod=self.aci_pod,
+            node_id=204,
+            role="leaf",
+            node_type="unknown",
+        )
+        node_z = ACINode.objects.create(
+            name="ACIViewTestNodeVPCCorruptZ",
+            aci_pod=self.aci_pod,
+            node_id=205,
+            role="leaf",
+            node_type="unknown",
+        )
+        # Bypass clean(): only a direct write reaches the cross-slot state
+        group_1 = ACIVPCProtectionGroup.objects.create(
+            name="ACIViewTestNodeVPCCorruptGroup1",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=501,
+            aci_node_a=node_x,
+            aci_node_b=node_y,
+        )
+        group_2 = ACIVPCProtectionGroup.objects.create(
+            name="ACIViewTestNodeVPCCorruptGroup2",
+            aci_fabric=self.aci_fabric,
+            logical_pair_id=502,
+            aci_node_a=node_z,
+            aci_node_b=node_x,
+        )
+
+        with self.assertLogs(
+            "netbox_aci_plugin.models.fabric.nodes",
+            level="ERROR",
+        ):
+            response = self.client.get(node_x.get_absolute_url())
+
+        self.assertHttpStatus(response, 200)
+        self.assertNotContains(response, group_1.name)
+        self.assertNotContains(response, group_2.name)
+        self.assertNotContains(response, node_y.name)
+        self.assertNotContains(response, node_z.name)

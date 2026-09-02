@@ -375,7 +375,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "aci_node_a",
-                    models.ForeignKey(
+                    models.OneToOneField(
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="+",
                         to="netbox_aci_plugin.acinode",
@@ -383,7 +383,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "aci_node_b",
-                    models.ForeignKey(
+                    models.OneToOneField(
                         on_delete=django.db.models.deletion.PROTECT,
                         related_name="+",
                         to="netbox_aci_plugin.acinode",
