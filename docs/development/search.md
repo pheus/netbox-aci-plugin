@@ -71,6 +71,7 @@ fields: tuple = (
 # Bad: traversal
 fields: tuple = (
     ("aci_bridge_domain__name", 100),
+    ("aci_l3out__name", 300),
 )
 ```
 

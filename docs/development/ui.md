@@ -65,6 +65,7 @@ retired template's card order:
 ```python
 from netbox.ui import attrs, panels
 
+
 class ACIVLANPoolPanel(panels.ObjectAttributesPanel):
     """Attribute panel for the ACI VLAN Pool detail view."""
 
@@ -304,9 +305,9 @@ def get_extra_context(self, request, instance) -> dict:
 ```
 
 ```python
-right_panels=[
+right_panels = [
     ContextTablePanel("aci_nodes_table", title=_("Resolved ACI Nodes")),
-    ...
+    ...,
 ]
 ```
 

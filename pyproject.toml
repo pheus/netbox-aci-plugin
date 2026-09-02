@@ -58,7 +58,7 @@ test = [
     "coverage==7.15.2",
     "pre-commit==4.6.1",
     "pytest==9.1.1",
-    "ruff==0.15.22",
+    "ruff==0.16.5",
     "tblib==3.2.2",
     "yamllint==1.38.0",
 ]

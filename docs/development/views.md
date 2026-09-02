@@ -122,6 +122,7 @@ linked models (used on Tenant, Fabric, and Pod views), mix in
 ```python
 from utilities.views import GetRelatedModelsMixin
 
+
 @register_model_view(ACITenant)
 class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
     queryset = ACITenant.objects.select_related(...).prefetch_related("tags")
@@ -135,11 +136,13 @@ class ACITenantView(GetRelatedModelsMixin, generic.ObjectView):
                 ),
                 "aci_tenant_id",
             ),
-            ...
+            ...,
         )
         return {
             "related_models": self.get_related_models(
-                request, instance, extra=extra_related_models,
+                request,
+                instance,
+                extra=extra_related_models,
             )
         }
 ```
@@ -326,17 +329,21 @@ have no use. Carrying its own `name` field does not by itself make a
 model flat:
 
 ```python
-# ACI Bridge Domain L3Out Binding (parent_object = aci_bridge_domain)
-path(
-    "bridge-domains/l3out-bindings/",
-    include(get_model_urls(
-        "netbox_aci_plugin", "acibridgedomainl3outbinding", detail=False
-    )),
-),
-path(
-    "bridge-domains/l3out-bindings/<int:pk>/",
-    include(get_model_urls("netbox_aci_plugin", "acibridgedomainl3outbinding")),
-),
+urlpatterns = [
+    # ACI Bridge Domain L3Out Binding (parent_object = aci_bridge_domain)
+    path(
+        "bridge-domains/l3out-bindings/",
+        include(
+            get_model_urls(
+                "netbox_aci_plugin", "acibridgedomainl3outbinding", detail=False
+            )
+        ),
+    ),
+    path(
+        "bridge-domains/l3out-bindings/<int:pk>/",
+        include(get_model_urls("netbox_aci_plugin", "acibridgedomainl3outbinding")),
+    ),
+]
 ```
 
 When the child slug would be ambiguous on its own (a BD has multiple

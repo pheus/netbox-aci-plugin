@@ -70,7 +70,7 @@ menu = PluginMenu(
                 aciendpointsecuritygroup_item,
             ),
         ),
-        ...
+        ...,
     ),
     icon_class="mdi mdi-router",
 )

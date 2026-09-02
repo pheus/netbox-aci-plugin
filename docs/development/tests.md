@@ -38,7 +38,9 @@ created **once per class** rather than once per test method. Reserve
 @classmethod
 def setUpTestData(cls):
     cls.aci_fabric = ACIFabric.objects.create(
-        name="TestFabric", fabric_id=101, infra_vlan_vid=3900,
+        name="TestFabric",
+        fabric_id=101,
+        infra_vlan_vid=3900,
     )
 ```
 
@@ -91,23 +93,30 @@ class ACIModelViewTestCase(ModelViewTestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.nb_tenant = Tenant.objects.create(
-            name="ACIBaseViewTestNBTenant", slug="acibaseviewtestnbtenant",
+            name="ACIBaseViewTestNBTenant",
+            slug="acibaseviewtestnbtenant",
         )
         cls.aci_fabric = ACIFabric.objects.create(
-            name="ACIBaseViewTestFabric", fabric_id=150, infra_vlan_vid=3900,
+            name="ACIBaseViewTestFabric",
+            fabric_id=150,
+            infra_vlan_vid=3900,
         )
         cls.aci_tenant = ACITenant.objects.create(
-            name="ACIBaseViewTestTenant", aci_fabric=cls.aci_fabric,
+            name="ACIBaseViewTestTenant",
+            aci_fabric=cls.aci_fabric,
         )
         cls.aci_vrf = ACIVRF.objects.create(
-            name="ACIBaseViewTestVRF", aci_tenant=cls.aci_tenant,
+            name="ACIBaseViewTestVRF",
+            aci_tenant=cls.aci_tenant,
         )
         cls.aci_bd = ACIBridgeDomain.objects.create(
             name="ACIBaseViewTestBD",
-            aci_tenant=cls.aci_tenant, aci_vrf=cls.aci_vrf,
+            aci_tenant=cls.aci_tenant,
+            aci_vrf=cls.aci_vrf,
         )
         cls.aci_app_profile = ACIAppProfile.objects.create(
-            name="ACIBaseViewTestAppProfile", aci_tenant=cls.aci_tenant,
+            name="ACIBaseViewTestAppProfile",
+            aci_tenant=cls.aci_tenant,
         )
 ```
 
@@ -296,8 +305,14 @@ class ACIAppProfileAPIViewTestCase(APIViewTestCases.APIViewTestCase):
     model = ACIAppProfile
     view_namespace: str = f"plugins-api:{app_name}"
     brief_fields: list[str] = [
-        "aci_tenant", "description", "display", "id", "name",
-        "name_alias", "nb_tenant", "url",
+        "aci_tenant",
+        "description",
+        "display",
+        "id",
+        "name",
+        "name_alias",
+        "nb_tenant",
+        "url",
     ]
     user_permissions = ("netbox_aci_plugin.view_acitenant",)
 ```

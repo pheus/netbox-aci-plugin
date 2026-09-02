@@ -115,15 +115,12 @@ after translation instead:
 
 ```python
 # Bad: f-string evaluates before translation
-_(
-    f"IP Protocol must be a number between 0 and 255 or one of: "
-    f"{valid_choices}"
-)
+_(f"IP Protocol must be a number between 0 and 255 or one of: {valid_choices}")
 
 # Good: translate first, then format
-_(
-    "IP Protocol must be a number between 0 and 255 or one of: {valid_choices}"
-).format(valid_choices=valid_choices)
+_("IP Protocol must be a number between 0 and 255 or one of: {valid_choices}").format(
+    valid_choices=valid_choices
+)
 ```
 
 ## `constants.py` organization

@@ -107,6 +107,7 @@ BRIDGEDOMAIN_SUBNETS = """
 {% endfor %}
 """
 
+
 class ACIBridgeDomainTable(NetBoxTable):
     aci_bridge_domain_subnets = columns.TemplateColumn(
         verbose_name=_("BD Subnets"),

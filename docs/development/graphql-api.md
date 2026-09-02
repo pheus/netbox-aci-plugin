@@ -74,13 +74,13 @@ declare a `@strawberry_django.field`:
 
 ```python
 @strawberry_django.field(description="Scope Object")
-def scope(self) -> (
-    Annotated[
-        Annotated["LocationType", strawberry.lazy("dcim.graphql.types")]
-        | Annotated["RegionType", strawberry.lazy("dcim.graphql.types")]
-        # ...
-    ]
-):
+def scope(
+    self,
+) -> Annotated[
+    Annotated["LocationType", strawberry.lazy("dcim.graphql.types")]
+    | Annotated["RegionType", strawberry.lazy("dcim.graphql.types")]
+    # ...
+]:
     return self.scope
 ```
 
@@ -163,6 +163,7 @@ from typing import TYPE_CHECKING, Annotated
 if TYPE_CHECKING:
     from netbox.graphql.filter_lookups import StringArrayLookup
 
+
 @strawberry_django.filter_type(models.ACIRoutedDomain, lookups=True)
 class ACIRoutedDomainFilter(ACIBaseFilterMixin):
     security_domains: (
@@ -243,6 +244,7 @@ from .enums import ContractFilterTCPRulesEnum
 )
 class TCPRulesArrayLookup(ArrayLookup[ContractFilterTCPRulesEnum]):
     """Specialized lookup for TCP rules in an array field."""
+
     pass
 ```
 

@@ -185,6 +185,7 @@ heading:
 ```python
 from utilities.forms.rendering import FieldSet
 
+
 class ACIBridgeDomainEditForm(NetBoxModelForm):
     # ... field declarations ...
 
@@ -238,9 +239,9 @@ FieldSet(
         "vlan_id_from",
         "vlan_id_to",
         label=_("VLAN IDs"),
-        help_text=_(
-            "First and last VLAN ID of the range, from {min} to {max}."
-        ).format(min=VLAN_VID_MIN, max=VLAN_VID_MAX),
+        help_text=_("First and last VLAN ID of the range, from {min} to {max}.").format(
+            min=VLAN_VID_MIN, max=VLAN_VID_MAX
+        ),
     ),
     "allocation_mode",
     "role",

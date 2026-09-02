@@ -233,21 +233,25 @@ When the constraint should only apply under a condition, use
 for user-readable validation feedback at the database level:
 
 ```python
-models.UniqueConstraint(
-    fields=(
-        "aci_useg_endpoint_group",
-        "use_epg_subnet",
-    ),
-    name=(
-        "%(app_label)s_%(class)s_unique_use_epg_subnet_"
-        "per_useg_endpoint_group"
-    ),
-    condition=models.Q(use_epg_subnet=True),
-    violation_error_message=_(
-        "ACI uSeg Endpoint Group with a 'use EPG Subnet' "
-        "attribute already exists."
-    ),
-),
+class ACIUSegNetworkAttribute(ACIUSegAttributeBaseModel, UniqueGenericForeignKeyMixin):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "aci_useg_endpoint_group",
+                    "use_epg_subnet",
+                ),
+                name=(
+                    "%(app_label)s_%(class)s_unique_use_epg_subnet_"
+                    "per_useg_endpoint_group"
+                ),
+                condition=models.Q(use_epg_subnet=True),
+                violation_error_message=_(
+                    "ACI uSeg Endpoint Group with a 'use EPG Subnet' "
+                    "attribute already exists."
+                ),
+            ),
+        ]
 ```
 
 Good examples: `ACIBridgeDomainSubnet` (`bridge_domains.py`) and
@@ -282,6 +286,7 @@ useful cross-tier shortcuts:
 @property
 def aci_fabric(self) -> ACIFabric:
     return self.aci_tenant.aci_fabric
+
 
 @property
 def parent_object(self) -> ACITenant:
@@ -398,8 +403,9 @@ def save(self, *args, **kwargs) -> None:
     self.cache_related_objects()
     super().save(*args, **kwargs)
 
-def cache_related_objects(self) -> None:
-    ...
+
+def cache_related_objects(self) -> None: ...
+
 
 cache_related_objects.alters_data = True
 ```
@@ -703,6 +709,7 @@ grouped by domain with section comments:
 
 ```python
 # Bridge Domain
+
 
 class BDMultiDestinationFloodingChoices(ChoiceSet):
     """Choice set of Bridge Domain multi destination flooding."""

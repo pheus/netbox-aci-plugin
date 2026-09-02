@@ -81,7 +81,9 @@ the reverse: the seed rows are owned by the user once created, and
 auto-deleting them on rollback is unsafe:
 
 ```python
-migrations.RunPython(create_default_aci_fabric, migrations.RunPython.noop),
+operations = [
+    migrations.RunPython(create_default_aci_fabric, migrations.RunPython.noop),
+]
 ```
 
 When the reverse genuinely cannot be expressed (e.g. ambiguous undo),

@@ -126,15 +126,33 @@ class ACIBridgeDomainSerializer(OwnerMixin, NetBoxModelSerializer):
     class Meta:
         model = ACIBridgeDomain
         fields: tuple = (
-            "id", "url", "display", "name", "name_alias", "description",
-            "aci_tenant", "aci_vrf", "nb_tenant",
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_tenant",
+            "aci_vrf",
+            "nb_tenant",
             # ... domain-specific fields ...
-            "owner", "comments", "tags", "custom_fields",
-            "created", "last_updated",
+            "owner",
+            "comments",
+            "tags",
+            "custom_fields",
+            "created",
+            "last_updated",
         )
         brief_fields: tuple = (
-            "id", "url", "display", "name", "name_alias", "description",
-            "aci_tenant", "aci_vrf", "nb_tenant",
+            "id",
+            "url",
+            "display",
+            "name",
+            "name_alias",
+            "description",
+            "aci_tenant",
+            "aci_vrf",
+            "nb_tenant",
         )
 ```
 
@@ -184,7 +202,10 @@ with the full optional-flag combo:
 
 ```python
 mac_address = serializers.CharField(
-    required=False, default=None, allow_blank=True, allow_null=True,
+    required=False,
+    default=None,
+    allow_blank=True,
+    allow_null=True,
 )
 ```
 
