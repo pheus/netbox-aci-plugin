@@ -20,6 +20,9 @@ prune docs/site
 recursive-include netbox_aci_plugin/tests *
 include .ci/configuration.testing.py
 
+# Development helpers
+include scripts/seed_demo_data.py
+
 # Housekeeping
 global-exclude __pycache__ *.py[cod] .DS_Store .ruff_cache
 global-exclude .coverage coverage.xml

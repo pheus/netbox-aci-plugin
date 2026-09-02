@@ -35,6 +35,7 @@ nav:
       - GraphQL API: development/graphql-api.md
       - Tests: development/tests.md
       - Migrations: development/migrations.md
+      - Seeding Demo Data: development/seeding.md
       - Consistency Review: development/consistency-review.md
       - Releasing: development/releasing.md
       - Code of Conduct: development/code_of_conduct.md
