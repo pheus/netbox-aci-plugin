@@ -116,6 +116,14 @@ class ACIRoutedDomain(ACIDomainBaseModel):
         related_name="aci_routed_domains",
         verbose_name=_("ACI Fabric"),
     )
+    aci_vlan_pool = models.ForeignKey(
+        to="netbox_aci_plugin.ACIVLANPool",
+        on_delete=models.SET_NULL,
+        related_name="aci_routed_domains",
+        verbose_name=_("ACI VLAN Pool"),
+        blank=True,
+        null=True,
+    )
 
     # Generic relations
     aci_aaep_domain_bindings = GenericRelation(
