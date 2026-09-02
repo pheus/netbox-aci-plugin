@@ -525,10 +525,6 @@ class ACIExternalSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
             "description": "Invalid description: ö",
         }
 
-
-class ACIExternalSubnetSerializerValidationTestCase(ACIExternalSubnetAPIViewTestCase):
-    """Test ACIExternalSubnetSerializer.validate() error paths."""
-
     def test_mismatched_matched_prefix_and_nb_prefix_returns_400(self) -> None:
         """Test supplying matched_prefix differing from nb_prefix raises."""
         obj_perm = ObjectPermission(name="Test serializer perm add", actions=["add"])
