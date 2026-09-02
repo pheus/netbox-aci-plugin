@@ -463,13 +463,6 @@ __all__ = (
     "ACILeafInterfaceOverrideEditView",
     "ACILeafInterfaceOverrideListView",
     "ACILeafInterfaceOverrideView",
-    # ACINodeInterface
-    "ACINodeInterfaceBulkDeleteView",
-    "ACINodeInterfaceBulkEditView",
-    "ACINodeInterfaceBulkImportView",
-    "ACINodeInterfaceEditView",
-    "ACINodeInterfaceListView",
-    "ACINodeInterfaceView",
     # ACILeafInterfacePolicyGroup
     "ACILeafInterfacePolicyGroupBulkDeleteView",
     "ACILeafInterfacePolicyGroupBulkEditView",
@@ -533,6 +526,13 @@ __all__ = (
     "ACINodeEditView",
     "ACINodeListView",
     "ACINodeView",
+    # ACINodeInterface
+    "ACINodeInterfaceBulkDeleteView",
+    "ACINodeInterfaceBulkEditView",
+    "ACINodeInterfaceBulkImportView",
+    "ACINodeInterfaceEditView",
+    "ACINodeInterfaceListView",
+    "ACINodeInterfaceView",
     # ACIPhysicalDomain
     "ACIPhysicalDomainBulkDeleteView",
     "ACIPhysicalDomainBulkEditView",
