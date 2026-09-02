@@ -281,3 +281,71 @@ Naming convention:
 Both registered via `strawberry_django.field()`; no extra arguments
 needed. The type's `filters=` declaration on `@strawberry_django.type`
 wires up the query parameters automatically.
+
+## Extending NetBox's own GraphQL types
+
+The plugin adds fields to core types (an ACI Node Interface on
+`dcim.Interface`, the ACI Tenants on `tenancy.Tenant`) through
+`netbox_aci_plugin/graphql_extensions/`.
+
+NetBox discovers that package **by name**. `netbox/plugins/__init__.py`
+maps the `graphql_type_extensions` resource to the dotted path
+`graphql_extensions.type_extensions`, so both the package name and the
+module-level `type_extensions` list are load-bearing. Renaming either one
+silently unregisters every extension rather than raising. A sibling
+`filter_extensions` name exists for filters, which the plugin does not
+use today.
+
+Each extension is a plain `@strawberry.type` carrying a `models` list of
+`app_label.model_name` targets:
+
+```python
+@strawberry.type
+class InterfaceTypeExtension:
+    """ACI additions to NetBox's Interface type."""
+
+    models = ["dcim.interface"]
+```
+
+Four rules make the difference between this working and failing in ways
+that are hard to trace.
+
+**Keep the package a sibling of `graphql/`, never a submodule.** The
+`graphql/__init__.py` assembles the plugin's own types, and it runs
+before these extensions register. No module under `graphql_extensions/`
+may import a core GraphQL module at import time.
+
+**Reference plugin types lazily.** Return annotations use
+`Annotated["ACINodeInterfaceType", strawberry.lazy(...)]` with the real
+import parked behind `TYPE_CHECKING`. A direct import reintroduces the
+ordering problem the package layout exists to avoid.
+
+**Prefetch through `RestrictedPrefetch`, not `prefetch_related`.** An
+extension field renders objects the requesting user may not be allowed
+to see, so the prefetch has to carry the user and the action:
+
+```python
+@strawberry_django.field(
+    prefetch_related=lambda info: RestrictedPrefetch(
+        "aci_node_interface",
+        info.context.request.user,
+        "view",
+        queryset=ACINodeInterface.objects.all(),
+    ),
+)
+```
+
+**Catch `ObjectDoesNotExist` on a reverse one-to-one.** Django raises
+rather than returning `None` when the relation is unset, and the
+restricted prefetch produces the same exception when the related object
+exists but is filtered out. Both cases must resolve to `None`:
+
+```python
+try:
+    return self.aci_node_interface
+except ObjectDoesNotExist:
+    return None
+```
+
+A reverse many-to-one needs none of this, since `.all()` on an empty
+manager is simply an empty list.

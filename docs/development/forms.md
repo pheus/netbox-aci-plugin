@@ -35,8 +35,12 @@ The auto-rendered sections are:
 
 Rules:
 
-- **EditForm**: declare domain-specific FieldSets plus `Tags` and
-  `NetBox Tenancy`. Do **not** add an Ownership or Comments FieldSet.
+- **EditForm**: declare domain-specific FieldSets plus `NetBox
+  Tenancy`, and list `tags` as the last entry of the final
+  domain FieldSet rather than giving it a FieldSet of its own. Do
+  **not** add an Ownership or Comments FieldSet. `tags` is not
+  auto-rendered here, unlike on a BulkEditForm, so it does have to
+  appear somewhere.
 - **BulkEditForm**: declare domain-specific FieldSets plus
   `NetBox Tenancy`. Do **not** add Ownership, Tags, or Comments
   FieldSets. Still list `comments` and `nb_tenant` in

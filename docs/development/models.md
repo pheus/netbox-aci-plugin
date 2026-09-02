@@ -210,6 +210,22 @@ while walking every `ClassDef` double counts them, since the nested
 `Meta` is a class too. Only an AST walk restricted to the outer class's
 `Meta` gives the right answer.
 
+This is why two spellings of the same prefix coexist. Most constraints
+read `unique_...`, but a model whose class name is long enough that the
+rendered form would overrun the limit uses `uniq_...` instead, which is
+what the newer access-policy and fabric models do. That is deliberate,
+not drift. A measurement across the tree found the short spellings all
+fit while a good many of the long ones already run past the truncation
+point, so renaming them to match the majority would push more names over
+rather than fewer.
+
+Pick the spelling that keeps the rendered name inside the limit, and
+leave the existing ones alone. Renaming a constraint that has already
+shipped costs a migration and buys nothing, since PostgreSQL is happy
+either way. Do check that no two names on the same model share their
+first 63 bytes, because that collision is the one failure the truncation
+can actually cause.
+
 ## Conditional `UniqueConstraint`
 
 When the constraint should only apply under a condition, use

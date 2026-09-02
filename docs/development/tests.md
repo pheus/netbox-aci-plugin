@@ -161,12 +161,58 @@ every ported view.
 `tests/tables/base.py` aliases `TableTestCases.StandardTableTestCase`
 for use as a smoke-test base.
 
+## Runtime convention tests
+
+Some rules hold across a whole layer rather than for one model, and
+grepping the source cannot enforce them: a rule about `Meta.fields`
+ordering, or about which columns carry an explicit header, is a
+statement about resolved classes, not about text. Those live in
+dedicated modules that walk the layer at import time and assert the
+rule once for every class they find.
+
+The layer walk is the point. A per-model test only guards the model
+whose author remembered to write it, whereas a walk fails the moment a
+new class breaks the rule, including one added months later by someone
+who never read this page.
+
+Four of these exist today:
+
+- `tests/api/test_conventions.py`: every API viewset's `select_related`
+  matches its serializer's closure and stays under the join cap.
+- `tests/forms/test_conventions.py`: bulk-edit fieldsets omit the
+  auto-rendered sections, every fieldset entry names a real field, and
+  `description` follows the ACI foreign keys.
+- `tests/forms/test_choice_field_conventions.py`: edit forms cover every
+  `ChoiceSet`-backed field, and those fields stay required with no blank
+  option.
+- `tests/tables/test_name_column_headers.py`: name columns carry an
+  explicit short header, and no column carries an unwarranted `ACI`
+  prefix unless it collides with a NetBox core name.
+
+Write them as `SimpleTestCase`, since they touch no database. Collect
+the classes with `pkgutil.walk_packages` over the layer package rather
+than importing a hand-written list, which would reintroduce exactly the
+gap the walk closes. Accumulate every offender and assert once at the
+end, so a failure names all of them instead of stopping at the first.
+
+Where a known violation is not yet resolved, park it in a module-level
+frozenset with a comment saying what has to be decided, as
+`PENDING_FIELDSET_ENTRIES` does. That keeps the guard green without
+losing the finding.
+
 ## Module docstrings
 
-API and table test modules carry a short top-level docstring naming
-the domain and layer, e.g. `"""API tests for access-policy VLAN pool
-models."""` or `"""Table tests for tenant L3Out models."""`. Model
-and form test modules omit one.
+Most layers carry a short top-level docstring naming the domain and
+layer, e.g. `"""API tests for access-policy VLAN pool models."""` or
+`"""Table tests for tenant L3Out models."""`. FilterSet and view test
+modules do so without exception, and API and table modules very nearly
+so.
+
+Model and form test modules mostly omit one, but the split is not
+clean: a handful carry a docstring anyway, generally because they were
+anchored on a module from another layer. Follow the layer you are
+writing in, and prefer adding a docstring to removing one when the
+surrounding modules disagree.
 
 ## Model-test method names
 

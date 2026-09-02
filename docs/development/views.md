@@ -163,7 +163,7 @@ detail page, declare:
 
 ```python
 class ACIBridgeDomainSubnetChildrenView(generic.ObjectChildrenView):
-    """Base children view for attaching a tab of ACI Bridge Domain Subnet."""
+    """Base children view for attaching a tab of ACI Bridge Domain Subnets."""
 
     child_model = ACIBridgeDomainSubnet
     filterset = ACIBridgeDomainSubnetFilterSet
