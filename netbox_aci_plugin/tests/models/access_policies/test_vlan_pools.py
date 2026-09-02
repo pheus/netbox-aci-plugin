@@ -15,6 +15,7 @@ from ....choices import (
     VLANPoolRangeAllocationModeChoices,
     VLANPoolRangeRoleChoices,
 )
+from ....models.access_policies.domains import ACIPhysicalDomain, ACIRoutedDomain
 from ....models.access_policies.vlan_pools import ACIVLANPool, ACIVLANPoolRange
 from ....models.fabric.fabrics import ACIFabric
 from ..base import ACIBaseTestCase
@@ -138,6 +139,78 @@ class ACIVLANPoolTestCase(ACIBaseTestCase):
         )
         pool.nb_vlan_group = group
         pool.full_clean()  # no ranges -> nothing to validate
+
+    def _other_fabric(self, suffix: str, offset: int) -> ACIFabric:
+        """Return a second ACI Fabric to move the ACI VLAN Pool into."""
+        return ACIFabric.objects.create(
+            name=f"ACITestVLANPoolMove{suffix}Fabric",
+            fabric_id=self.aci_fabric_id + offset,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid + offset,
+        )
+
+    def test_clean_rejects_fabric_move_stranding_physical_domain(self) -> None:
+        """Test clean rejects a Fabric move stranding a physical domain."""
+        ACIPhysicalDomain.objects.create(
+            name="ACITestVLANPoolMovePhysicalDomain",
+            aci_fabric=self.aci_fabric,
+            aci_vlan_pool=self.aci_vlan_pool,
+        )
+        self.aci_vlan_pool.aci_fabric = self._other_fabric("PhysicalDomain", 1)
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_vlan_pool.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_clean_rejects_fabric_move_stranding_routed_domain(self) -> None:
+        """Test clean rejects a Fabric move stranding a routed domain.
+
+        The two domain types reach the pool through separate reverse
+        accessors, so neither case implies the other.
+        """
+        ACIRoutedDomain.objects.create(
+            name="ACITestVLANPoolMoveRoutedDomain",
+            aci_fabric=self.aci_fabric,
+            aci_vlan_pool=self.aci_vlan_pool,
+        )
+        self.aci_vlan_pool.aci_fabric = self._other_fabric("RoutedDomain", 2)
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_vlan_pool.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_clean_allows_fabric_move_without_domains(self) -> None:
+        """Test a Fabric move is allowed when no domain uses the pool."""
+        self.aci_vlan_pool.aci_fabric = self._other_fabric("Free", 3)
+        self.aci_vlan_pool.full_clean()
+
+    def test_clean_allows_fabric_move_with_routed_domain_in_target(self) -> None:
+        """Test a Fabric move is allowed when the routed domain is there.
+
+        Pins the guard's `.exclude()` half. A bare `.exists()` would
+        reject this move, and the no-domain case cannot tell the two
+        apart.
+        """
+        other_fabric = self._other_fabric("RoutedDomainTarget", 4)
+        ACIRoutedDomain.objects.create(
+            name="ACITestVLANPoolMoveRoutedDomainTarget",
+            aci_fabric=other_fabric,
+            aci_vlan_pool=self.aci_vlan_pool,
+        )
+        self.aci_vlan_pool.aci_fabric = other_fabric
+        self.aci_vlan_pool.full_clean()
+
+    def test_clean_allows_fabric_move_with_physical_domain_in_target(self) -> None:
+        """Test a Fabric move is allowed when the physical domain is there.
+
+        The two domain types are separate `.exclude()` calls, so each
+        needs its own counter-test.
+        """
+        other_fabric = self._other_fabric("PhysicalDomainTarget", 5)
+        ACIPhysicalDomain.objects.create(
+            name="ACITestVLANPoolMovePhysicalDomainTarget",
+            aci_fabric=other_fabric,
+            aci_vlan_pool=self.aci_vlan_pool,
+        )
+        self.aci_vlan_pool.aci_fabric = other_fabric
+        self.aci_vlan_pool.full_clean()
 
     def test_covers_vid_true_within_first_range(self) -> None:
         """Test covers_vid returns True for a VID within the first range."""

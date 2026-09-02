@@ -105,6 +105,25 @@ class ACIVLANPool(ACIFabricBaseModel):
                     )
                 )
 
+        # An ACI domain checks the shared ACI Fabric only on its own save
+        if self.pk and self.aci_fabric_id:
+            stranded = (
+                self.aci_physical_domains.exclude(
+                    aci_fabric=self.aci_fabric_id
+                ).exists()
+                or self.aci_routed_domains.exclude(
+                    aci_fabric=self.aci_fabric_id
+                ).exists()
+            )
+            if stranded:
+                errors.setdefault("aci_fabric", []).append(
+                    _(
+                        "The assigned ACI Fabric differs from the ACI Fabric "
+                        "of existing ACI domains assigned to this ACI VLAN "
+                        "Pool."
+                    )
+                )
+
         if errors:
             raise ValidationError(errors)
 
