@@ -119,9 +119,8 @@ class ACIBridgeDomainL3OutBindingViewTestCase(
 
         tags = create_tags("Alpha", "Bravo", "Charlie")
 
-        # form_data targets BD #4 + L3Out #4 - a pair not used by any
-        # existing binding, so create / edit tests can satisfy the unique
-        # constraint.
+        # BD/L3Out pair 4 is unbound, so create and edit satisfy the
+        # unique constraint.
         cls.form_data = {
             "aci_bridge_domain": cls.bds[3].pk,
             "aci_l3out": cls.l3outs[3].pk,
@@ -129,10 +128,9 @@ class ACIBridgeDomainL3OutBindingViewTestCase(
             "tags": [t.pk for t in tags],
         }
 
-        # csv_data: 3 new bindings using BD/L3Out pairs 4-6 + one binding
-        # whose L3Out lives in 'common'. Import form looks up FKs by name.
         fabric = cls.aci_fabric.name
         tenant = cls.aci_tenant.name
+        # The last row binds an L3Out living in 'common'.
         cls.csv_data = (
             "aci_fabric,aci_tenant,aci_bridge_domain,aci_l3out,is_aci_l3out_in_common",
             f"{fabric},{tenant},{cls.bds[3].name},{cls.l3outs[3].name},",
@@ -144,7 +142,6 @@ class ACIBridgeDomainL3OutBindingViewTestCase(
             ),
         )
 
-        # csv_update_data: update comments on the 3 existing bindings
         bindings = list(ACIBridgeDomainL3OutBinding.objects.order_by("pk"))
         cls.csv_update_data = (
             "id,comments",
@@ -153,8 +150,7 @@ class ACIBridgeDomainL3OutBindingViewTestCase(
             f"{bindings[2].pk},Updated binding 3",
         )
 
-        # bulk_edit_data: only `comments` is bulk-editable per the
-        # ACIBridgeDomainL3OutBindingBulkEditForm fieldset
+        # Only `comments` is bulk-editable on this binding's form.
         cls.bulk_edit_data = {"comments": "Bulk-edited comment"}
 
     def test_acibridgedomain_l3outbindings_tab(self) -> None:
