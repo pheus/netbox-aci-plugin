@@ -82,7 +82,7 @@ class ACILeafInterfaceOverride(NetBoxModel):
             self.aci_node_interface_id
             and self.aci_leaf_interface_policy_group_id
             and self.aci_leaf_interface_policy_group.aci_fabric_id
-            != self.aci_node_interface.aci_node.aci_pod.aci_fabric_id
+            != self.aci_node_interface.aci_node._aci_fabric_id  # noqa: SLF001
         ):
             errors.setdefault("aci_leaf_interface_policy_group", []).append(
                 _(
