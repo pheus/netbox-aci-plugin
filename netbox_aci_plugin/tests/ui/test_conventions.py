@@ -61,8 +61,8 @@ class UIConventionTestCase(TestCase):
 class UIConventionCompletenessTestCase(TestCase):
     """The port is complete: nothing was left on the old template path."""
 
-    def test_every_registered_object_view_declares_a_layout(self) -> None:
-        """No registered ObjectView still relies on a per-model template."""
+    def test_every_exported_object_view_declares_a_layout(self) -> None:
+        """No exported ObjectView still relies on a per-model template."""
         for view_class in all_object_views():
             with self.subTest(view=view_class.__name__):
                 self.assertIsNotNone(view_class.layout)
