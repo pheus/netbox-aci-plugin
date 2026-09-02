@@ -44,8 +44,8 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
     TEP IP address drawn from the pod's TEP pool.
 
     Notes:
-        APIC node IDs are below 100; leaf and spine node IDs start
-        at 101. Node IDs are unique per ACI Fabric, not per ACI Pod.
+        APIC node IDs run from 1 to 100, leaf and spine node IDs
+        start at 101. Node IDs are unique per ACI Fabric, not per ACI Pod.
         A TEP IP must sit within the pod's TEP pool prefix and share
         its VRF and mask length. A given device or virtual machine
         can back only one node. A Node that belongs to a VPC
