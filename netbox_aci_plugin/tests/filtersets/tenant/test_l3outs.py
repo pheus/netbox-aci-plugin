@@ -154,11 +154,6 @@ class ACIExternalSubnetFilterSetTestCase(
 
     queryset = ACIExternalSubnet.objects.all()
     filterset = ACIExternalSubnetFilterSet
-    # Summarization policy-name scalars the filterset does not expose.
-    ignore_fields = (
-        "bgp_route_summarization_policy_name",
-        "ospf_route_summarization_policy_name",
-    )
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -182,12 +177,14 @@ class ACIExternalSubnetFilterSetTestCase(
             name="ACIFSSNTestSubnet",
             aci_external_endpoint_group=cls.aci_epg,
             matched_prefix="10.200.0.0/24",
+            bgp_route_summarization_policy_name="ACIFSSNTestBGPSummary",
         )
         cls.subnet_b = ACIExternalSubnet.objects.create(
             name="ACIFSSNTestSubnetB",
             name_alias="ACIFSSNTestSubnetBAlias",
             aci_external_endpoint_group=cls.aci_epg,
             matched_prefix="10.201.0.0/24",
+            ospf_route_summarization_policy_name="ACIFSSNTestOSPFSummary",
         )
         cls.subnet_c = ACIExternalSubnet.objects.create(
             name="ACIFSSNTestSubnetC",
@@ -213,6 +210,20 @@ class ACIExternalSubnetFilterSetTestCase(
         fs = self.filterset(queryset=qs)
         result = fs.search(qs, "q", "   ")
         self.assertEqual(result.count(), qs.count())
+
+    def test_bgp_route_summarization_policy_name(self) -> None:
+        """Test filtering by the BGP route summarization policy name."""
+        params = {"bgp_route_summarization_policy_name": ["ACIFSSNTestBGPSummary"]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.subnet, qs)
+        self.assertNotIn(self.subnet_b, qs)
+
+    def test_ospf_route_summarization_policy_name(self) -> None:
+        """Test filtering by the OSPF route summarization policy name."""
+        params = {"ospf_route_summarization_policy_name": ["ACIFSSNTestOSPFSummary"]}
+        qs = self.filterset(params, self.queryset).qs
+        self.assertIn(self.subnet_b, qs)
+        self.assertNotIn(self.subnet, qs)
 
     def test_filter_prefix_exact_match(self) -> None:
         """Test filter_prefix() returns exact matched_prefix values."""

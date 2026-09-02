@@ -304,7 +304,9 @@ class ACIExternalSubnetFilterSet(
             "aggregate_export_route_control_enabled",
             "aggregate_shared_route_control_enabled",
             "bgp_route_summarization_enabled",
+            "bgp_route_summarization_policy_name",
             "ospf_route_summarization_enabled",
+            "ospf_route_summarization_policy_name",
             "eigrp_route_summarization_enabled",
         )
 
