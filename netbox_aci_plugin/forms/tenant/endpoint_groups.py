@@ -400,6 +400,10 @@ class ACIEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
     )
 
+    custom_qos_policy_name = forms.CharField(
+        required=False,
+        label=_("Custom QoS policy name"),
+    )
     name = forms.CharField(
         required=False,
     )
@@ -968,6 +972,10 @@ class ACIUSegEndpointGroupFilterForm(NetBoxModelFilterSetForm):
         ),
     )
 
+    custom_qos_policy_name = forms.CharField(
+        required=False,
+        label=_("Custom QoS policy name"),
+    )
     name = forms.CharField(
         required=False,
     )

@@ -6,6 +6,7 @@ from django.test import SimpleTestCase
 
 import netbox_aci_plugin.forms  # noqa: F401  ensure every form module is imported
 from netbox.forms import NetBoxModelBulkEditForm, NetBoxModelForm
+from netbox.forms.filtersets import NetBoxModelFilterSetForm
 from utilities.forms.fields import GenericObjectChoiceField
 from utilities.forms.rendering import InlineFields, TabbedGroups
 
@@ -51,6 +52,32 @@ def _iter_aci_fieldset_forms():
                 and sub.__name__.startswith("ACI")
                 and sub.__name__.endswith("EditForm")
             ):
+                yield sub
+
+
+def _iter_aci_all_fieldset_forms():
+    """Yield every ACI form carrying field sets, FilterForms included.
+
+    Ordering conventions differ by form kind, so only the rule that a
+    field set entry must resolve to a real field uses this wider walk.
+    """
+    seen, stack = (
+        set(),
+        [
+            NetBoxModelForm,
+            NetBoxModelBulkEditForm,
+            NetBoxModelFilterSetForm,
+        ],
+    )
+    while stack:
+        for sub in stack.pop().__subclasses__():
+            if sub in seen:
+                continue
+            seen.add(sub)
+            stack.append(sub)
+            if sub.__module__.startswith(
+                "netbox_aci_plugin."
+            ) and sub.__name__.startswith("ACI"):
                 yield sub
 
 
@@ -130,7 +157,7 @@ class ACIFieldsetTargetTests(SimpleTestCase):
     def test_fieldset_items_name_real_fields(self) -> None:
         """Test every field set entry names a field the form declares."""
         unknown = {}
-        for form_class in _iter_aci_fieldset_forms():
+        for form_class in _iter_aci_all_fieldset_forms():
             names = {
                 name
                 for fieldset in getattr(form_class, "fieldsets", ())

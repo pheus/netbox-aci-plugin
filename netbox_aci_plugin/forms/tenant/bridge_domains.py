@@ -577,6 +577,12 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         required=False,
         label=_("ACI Tenant"),
     )
+    aci_vrf_id = DynamicModelMultipleChoiceField(
+        queryset=ACIVRF.objects.all(),
+        query_params={"present_in_aci_tenant_or_common_id": "$aci_tenant_id"},
+        required=False,
+        label=_("ACI VRF"),
+    )
     advertise_host_routes_enabled = forms.NullBooleanField(
         required=False,
         widget=forms.Select(
@@ -609,6 +615,14 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("EP move detection enabled"),
     )
+    igmp_interface_policy_name = forms.CharField(
+        required=False,
+        label=_("IGMP interface policy name"),
+    )
+    igmp_snooping_policy_name = forms.CharField(
+        required=False,
+        label=_("IGMP snooping policy name"),
+    )
     ip_data_plane_learning_enabled = forms.NullBooleanField(
         required=False,
         widget=forms.Select(
@@ -623,10 +637,22 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         ),
         label=_("Limit IP learning to subnet enabled"),
     )
+    mac_address = forms.CharField(
+        required=False,
+        label=_("MAC address"),
+    )
     multi_destination_flooding = MultipleChoiceField(
         choices=add_blank_choice(BDMultiDestinationFloodingChoices),
         required=False,
         label=_("Multi destination flooding"),
+    )
+    pim_ipv4_destination_filter = forms.CharField(
+        required=False,
+        label=_("PIM destination filter"),
+    )
+    pim_ipv4_source_filter = forms.CharField(
+        required=False,
+        label=_("PIM source filter"),
     )
     pim_ipv4_enabled = forms.NullBooleanField(
         required=False,
@@ -658,6 +684,10 @@ class ACIBridgeDomainFilterForm(NetBoxModelFilterSetForm):
         choices=add_blank_choice(BDUnknownMulticastChoices),
         required=False,
         label=_("Unknown IPv6 multicast"),
+    )
+    virtual_mac_address = forms.CharField(
+        required=False,
+        label=_("virtual MAC address"),
     )
     unknown_unicast = MultipleChoiceField(
         choices=add_blank_choice(BDUnknownUnicastChoices),
