@@ -512,3 +512,18 @@ class ACILeafInterfacePolicyGroupTestCase(ACIBaseTestCase):
         """Test deleting a referenced ACI AAEP is refused."""
         with self.assertRaises(ProtectedError):
             self.aci_aaep.delete()
+
+    def test_group_type_choices_match_the_constraint_namespaces(self) -> None:
+        """Test the ChoiceSet still splits into the two constraint sets.
+
+        A fourth type would match neither partial unique constraint and
+        ship with no name uniqueness at all.
+        """
+        self.assertEqual(
+            set(LeafInterfacePolicyGroupTypeChoices.values()),
+            {
+                LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+                LeafInterfacePolicyGroupTypeChoices.TYPE_PC,
+                LeafInterfacePolicyGroupTypeChoices.TYPE_VPC,
+            },
+        )

@@ -68,7 +68,9 @@ class ACILeafInterfacePolicyGroup(ACIFabricBaseModel):
         constraints: list[models.UniqueConstraint] = [
             models.UniqueConstraint(
                 fields=("aci_fabric", "name"),
-                condition=models.Q(group_type="access"),
+                condition=models.Q(
+                    group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS
+                ),
                 name="%(app_label)s_%(class)s_uniq_access_name",
                 violation_error_message=_(
                     "An Access Interface Policy Group with this name "
@@ -77,7 +79,12 @@ class ACILeafInterfacePolicyGroup(ACIFabricBaseModel):
             ),
             models.UniqueConstraint(
                 fields=("aci_fabric", "name"),
-                condition=models.Q(group_type__in=("pc", "vpc")),
+                condition=models.Q(
+                    group_type__in=(
+                        LeafInterfacePolicyGroupTypeChoices.TYPE_PC,
+                        LeafInterfacePolicyGroupTypeChoices.TYPE_VPC,
+                    )
+                ),
                 name="%(app_label)s_%(class)s_uniq_bundle_name",
                 violation_error_message=_(
                     "A Port Channel or Virtual Port Channel Interface "
