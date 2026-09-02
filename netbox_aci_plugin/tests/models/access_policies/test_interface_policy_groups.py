@@ -4,6 +4,7 @@
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
+from django.db.models import ProtectedError
 
 from tenancy.models import Tenant
 
@@ -506,3 +507,8 @@ class ACILeafInterfacePolicyGroupTestCase(ACIBaseTestCase):
         )
         policy_group.aci_fabric = other_fabric
         policy_group.full_clean()
+
+    def test_aci_aaep_deletion_is_protected(self) -> None:
+        """Test deleting a referenced ACI AAEP is refused."""
+        with self.assertRaises(ProtectedError):
+            self.aci_aaep.delete()

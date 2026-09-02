@@ -227,7 +227,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         blank=True,
                         null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
+                        on_delete=django.db.models.deletion.PROTECT,
                         related_name="aci_leaf_interface_policy_groups",
                         to="netbox_aci_plugin.aciattachableaccessentityprofile",
                     ),

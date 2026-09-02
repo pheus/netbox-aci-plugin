@@ -46,7 +46,7 @@ class ACILeafInterfacePolicyGroup(ACIFabricBaseModel):
     )
     aci_aaep = models.ForeignKey(
         to="netbox_aci_plugin.ACIAttachableAccessEntityProfile",
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         related_name="aci_leaf_interface_policy_groups",
         verbose_name=_("ACI AAEP"),
         blank=True,
