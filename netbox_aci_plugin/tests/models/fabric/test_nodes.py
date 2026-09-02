@@ -301,6 +301,51 @@ class ACINodeTestCase(ACIBaseTestCase):
         # Check the specific field that failed
         self.assertIn("node_id", cm.exception.error_dict)
 
+    def test_invalid_aci_node_missing_node_id(self) -> None:
+        """Test validation of an ACI Node without a Node ID."""
+        node = ACINode(
+            name="ACITestNodeNoNodeID",
+            aci_pod=self.aci_pod,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+
+        self.assertIn("node_id", cm.exception.error_dict)
+
+    def test_invalid_aci_node_missing_aci_pod_with_node_object(self) -> None:
+        """Test validation of an ACI Node object without an ACI Pod."""
+        node_object = Device.objects.create(
+            name="ACITestNodeNoPodDevice",
+            device_type=self.device_type1,
+            role=self.device_role1,
+            site=self.site,
+        )
+        node = ACINode(
+            name="ACITestNodeNoPod",
+            node_id=201,
+            role=NodeRoleChoices.ROLE_LEAF,
+            node_object=node_object,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+
+        self.assertIn("aci_pod", cm.exception.error_dict)
+
+    def test_invalid_aci_node_missing_aci_pod_with_tep_ip(self) -> None:
+        """Test validation of an ACI Node TEP IP without an ACI Pod."""
+        tep_ip_address = IPAddress.objects.create(address="10.0.0.20/24")
+        node = ACINode(
+            name="ACITestNodeNoPodTEP",
+            node_id=202,
+            role=NodeRoleChoices.ROLE_LEAF,
+            tep_ip_address=tep_ip_address,
+        )
+        with self.assertRaises(ValidationError) as cm:
+            node.full_clean()
+
+        self.assertIn("aci_pod", cm.exception.error_dict)
+
     def test_invalid_aci_node_object(self) -> None:
         """Test validation of the Node object with an invalid Site."""
         invalid_site = Site.objects.create(name="Invalid Site", slug="invalid-site")

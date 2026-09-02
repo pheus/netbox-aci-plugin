@@ -204,17 +204,18 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
 
         # Validate Node ID ranges based on Role
         is_apic = self.role == NodeRoleChoices.ROLE_APIC
-        if is_apic and self.node_id > 100:
-            errors.setdefault("node_id", []).append(
-                _("Node ID must be lower than 100 for APIC nodes.")
-            )
-        elif not is_apic and self.node_id <= 100:
-            errors.setdefault("node_id", []).append(
-                _(
-                    "Node ID must be greater than or equal to 101 for Leaf or "
-                    "Spine nodes."
+        if self.node_id is not None:
+            if is_apic and self.node_id > 100:
+                errors.setdefault("node_id", []).append(
+                    _("Node ID must be lower than 100 for APIC nodes.")
                 )
-            )
+            elif not is_apic and self.node_id <= 100:
+                errors.setdefault("node_id", []).append(
+                    _(
+                        "Node ID must be greater than or equal to 101 for Leaf "
+                        "or Spine nodes."
+                    )
+                )
 
         # The ModelForm path adds _aci_fabric to the validation
         # exclusions because it is editable=False, so the constraint is
@@ -231,7 +232,7 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                 )
 
         # Validate Node Object location matches Pod scope
-        if self.node_object and self.aci_pod.scope:
+        if self.node_object and self.aci_pod_id and self.aci_pod.scope:
             pod_scope = self.aci_pod.scope
             obj = self.node_object
 
@@ -273,7 +274,7 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
         # Validate TEP IP address is contained in the Pod's TEP pool
         # prefix (and match VRF, if applicable)
         if self.tep_ip_address:
-            if not (self.aci_pod and self.aci_pod.tep_pool):
+            if not (self.aci_pod_id and self.aci_pod.tep_pool):
                 errors.setdefault("tep_ip_address", []).append(
                     _(
                         "Cannot assign a TEP IP address when the Pod "
