@@ -271,6 +271,35 @@ class ACIPod(CachedScopeMixin, ACIFabricBaseModel):
                     )
                 )
 
+            # The Override cannot see an ACI Fabric move made on this object
+            override_model = apps.get_model(
+                "netbox_aci_plugin", "ACILeafInterfaceOverride"
+            )
+            stranded_overrides = list(
+                override_model.objects.filter(
+                    aci_node_interface__aci_node__aci_pod=self
+                )
+                .exclude(
+                    aci_leaf_interface_policy_group__aci_fabric_id=self.aci_fabric_id
+                )
+                .select_related("aci_node_interface__aci_node")[:10]
+            )
+            if stranded_overrides:
+                issues.append(
+                    _(
+                        "The ACI Leaf Interface Overrides on these ACI Node "
+                        "Interfaces reference an ACI Leaf Interface Policy "
+                        "Group in another ACI Fabric: {interfaces}."
+                    ).format(
+                        interfaces=", ".join(
+                            sorted(
+                                str(override.aci_node_interface)
+                                for override in stranded_overrides
+                            )
+                        )
+                    )
+                )
+
             context = _PodFabricMoveContext(
                 issues=issues,
                 affected_group_ids=list(collected_groups.values_list("pk", flat=True)),

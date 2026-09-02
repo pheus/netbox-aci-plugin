@@ -346,6 +346,25 @@ class ACINode(ACIFabricBaseModel, UniqueGenericForeignKeyMixin):
                     )
                 )
 
+            # The Override cannot see an ACI Pod move made on this object
+            if (
+                self._aci_fabric_id
+                and self.aci_node_interfaces.filter(
+                    aci_leaf_interface_override__isnull=False
+                )
+                .exclude(
+                    aci_leaf_interface_override__aci_leaf_interface_policy_group__aci_fabric=self._aci_fabric_id
+                )
+                .exists()
+            ):
+                errors.setdefault("aci_pod", []).append(
+                    _(
+                        "The assigned ACI Pod belongs to a different ACI "
+                        "Fabric than the ACI Leaf Interface Policy Groups of "
+                        "existing ACI Leaf Interface Overrides."
+                    )
+                )
+
         if errors:
             raise ValidationError(errors)
 

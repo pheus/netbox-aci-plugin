@@ -9,7 +9,7 @@ from django.db import IntegrityError, transaction
 
 from core.choices import ObjectChangeActionChoices
 
-from ....choices import LeafInterfacePolicyGroupTypeChoices
+from ....choices import LeafInterfacePolicyGroupTypeChoices, NodeRoleChoices
 from ....models.access_policies.interface_policy_groups import (
     ACILeafInterfacePolicyGroup,
 )
@@ -256,3 +256,54 @@ class ACILeafInterfaceOverrideTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(IntegrityError), transaction.atomic():
             duplicate_override.save()
+
+    def _other_fabric(self) -> ACIFabric:
+        """Return a second ACI Fabric with no Overrides of its own."""
+        return ACIFabric.objects.create(
+            name="ACITestOverrideOtherFabric",
+            fabric_id=self.aci_fabric.fabric_id + 50,
+            infra_vlan_vid=self.aci_fabric.infra_vlan_vid + 50,
+        )
+
+    def test_invalid_aci_pod_fabric_move_stranding_override(self) -> None:
+        """Test moving the ACI Pod to another ACI Fabric is refused."""
+        self.aci_pod.aci_fabric = self._other_fabric()
+
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_pod.full_clean()
+
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_invalid_aci_node_pod_move_stranding_override(self) -> None:
+        """Test moving the ACI Node to a Pod in another Fabric is refused."""
+        other_pod = ACIPod.objects.create(
+            name="ACITestOverrideOtherPod",
+            aci_fabric=self._other_fabric(),
+            pod_id=9,
+        )
+        self.aci_node.aci_pod = other_pod
+
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_node.full_clean()
+
+        self.assertIn("aci_pod", cm.exception.error_dict)
+
+    def test_invalid_aci_node_interface_node_move_stranding_override(self) -> None:
+        """Test moving the Interface to a Node in another Fabric is refused."""
+        other_pod = ACIPod.objects.create(
+            name="ACITestOverrideOtherPod2",
+            aci_fabric=self._other_fabric(),
+            pod_id=10,
+        )
+        other_node = ACINode.objects.create(
+            name="ACITestOverrideOtherNode",
+            aci_pod=other_pod,
+            node_id=201,
+            role=NodeRoleChoices.ROLE_LEAF,
+        )
+        self.aci_node_interface.aci_node = other_node
+
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_node_interface.full_clean()
+
+        self.assertIn("aci_node", cm.exception.error_dict)

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -167,6 +168,26 @@ class ACINodeInterface(OwnerMixin, NetBoxModel):
             if self.nb_interface.type in NONCONNECTABLE_IFACE_TYPES:
                 errors.setdefault("nb_interface", []).append(
                     _("This NetBox interface type cannot be connected.")
+                )
+
+        # The Override cannot see an ACI Node move made on this object
+        if self.pk and self.aci_node_id:
+            override_model = apps.get_model(
+                "netbox_aci_plugin", "ACILeafInterfaceOverride"
+            )
+            if (
+                override_model.objects.filter(aci_node_interface_id=self.pk)
+                .exclude(
+                    aci_leaf_interface_policy_group__aci_fabric=self.aci_node._aci_fabric_id  # noqa: SLF001
+                )
+                .exists()
+            ):
+                errors.setdefault("aci_node", []).append(
+                    _(
+                        "The assigned ACI Node belongs to a different ACI "
+                        "Fabric than the ACI Leaf Interface Policy Group of "
+                        "the existing ACI Leaf Interface Override."
+                    )
                 )
 
         if errors:
