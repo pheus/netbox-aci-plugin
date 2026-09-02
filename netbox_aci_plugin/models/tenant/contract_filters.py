@@ -468,7 +468,7 @@ class ACIContractFilterEntry(ACITenantBaseModel):
     def get_tcp_rules_display(self) -> list[str]:
         """Return the associated string representation from the ChoiceSet."""
         tcp_rules_choices = dict(ContractFilterTCPRulesChoices)
-        return [tcp_rules_choices.get(rule) for rule in self.tcp_rules]
+        return [tcp_rules_choices.get(rule, rule) for rule in self.tcp_rules]
 
     @property
     def tcp_rules_display(self) -> str | None:

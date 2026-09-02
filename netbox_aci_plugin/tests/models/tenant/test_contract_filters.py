@@ -277,6 +277,23 @@ class ACIContractFilterEntryTestCase(ACIBaseTestCase):
         )
         self.assertIsNone(entry.tcp_rules_display)
 
+    def test_aci_contract_filter_entry_tcp_rules_display_unknown_value(
+        self,
+    ) -> None:
+        """Test an unrecognized TCP rule renders itself, not the text None."""
+        unknown_rule = "bad_rule"
+        entry = ACIContractFilterEntry.objects.create(
+            name="ACIContractFilterEntryUnknownTCPRule",
+            aci_contract_filter=self.aci_contract_filter,
+            tcp_rules=[unknown_rule],
+        )
+        # varchar(11) elements truncate on write, and memory keeps the original
+        entry.refresh_from_db()
+
+        self.assertEqual(entry.tcp_rules, [unknown_rule])
+        self.assertEqual(entry.get_tcp_rules_display(), [unknown_rule])
+        self.assertEqual(entry.tcp_rules_display, unknown_rule)
+
     def test_aci_contract_filter_entry_aci_contract_filter_instance(
         self,
     ) -> None:
