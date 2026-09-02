@@ -94,6 +94,15 @@ class ACIL3OutFilterSet(
             "l3_multicast_ipv4_enabled",
             "l3_multicast_ipv6_enabled",
             "multipod_enabled",
+            "bfd_policy_name",
+            "custom_qos_policy_name",
+            "egress_data_plane_policing_policy_name",
+            "eigrp_interface_policy_name",
+            "igmp_interface_policy_name",
+            "ingress_data_plane_policing_policy_name",
+            "interleak_route_map_name",
+            "ospf_external_policy_name",
+            "pim_policy_name",
         )
 
     def search(self, queryset, name, value):

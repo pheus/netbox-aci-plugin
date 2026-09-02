@@ -114,6 +114,9 @@ class ACIBridgeDomainFilter(ACIBaseFilterMixin):
         ]
         | None
     ) = strawberry_django.filter_field()
+    unicast_routing_enabled: FilterLookup[bool] | None = (
+        strawberry_django.filter_field()
+    )
     unknown_unicast: (
         BaseFilterLookup[
             Annotated[

@@ -25,21 +25,8 @@ class ACIL3OutFilterSetTestCase(ACIBaseTestCase, ChangeLoggedFilterSetTestMixin)
 
     queryset = ACIL3Out.objects.all()
     filterset = ACIL3OutFilterSet
-    # Scalar policy fields the filterset does not expose. The export
-    # enforcement flag is pinned True by a CheckConstraint, so a filter on
-    # it cannot discriminate between rows.
-    ignore_fields = (
-        "bfd_policy_name",
-        "custom_qos_policy_name",
-        "egress_data_plane_policing_policy_name",
-        "eigrp_interface_policy_name",
-        "export_route_control_enforcement_enabled",
-        "igmp_interface_policy_name",
-        "ingress_data_plane_policing_policy_name",
-        "interleak_route_map_name",
-        "ospf_external_policy_name",
-        "pim_policy_name",
-    )
+    # Pinned True by a CheckConstraint, so a filter cannot discriminate rows.
+    ignore_fields = ("export_route_control_enforcement_enabled",)
 
     @classmethod
     def setUpTestData(cls) -> None:
