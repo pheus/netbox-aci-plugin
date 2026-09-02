@@ -10,7 +10,7 @@ from core.models import ObjectType
 from ipam.models import VRF, Prefix
 from tenancy.models import Tenant
 from users.models import ObjectPermission
-from utilities.testing import APIViewTestCases
+from utilities.testing import APIViewTestCases, GraphQLFilterTest
 
 from ....api.serializers.tenant.l3outs import ACIL3OutSerializer
 from ....api.urls import app_name
@@ -365,6 +365,24 @@ class ACIExternalSubnetAPIViewTestCase(APIViewTestCases.APIViewTestCase):
         "netbox_aci_plugin.view_acirouteddomain",
         "netbox_aci_plugin.view_acitenant",
         "netbox_aci_plugin.view_acivrf",
+    )
+    # net_contains is strict, so the probe must be a subnet of the prefix.
+    graphql_filter_tests = (
+        GraphQLFilterTest(
+            name="contains",
+            filters='contains: ["10.10.0.128/25"]',
+            expected={"name": "ACIExternalSubnetTestAPI1"},
+        ),
+        GraphQLFilterTest(
+            name="contains_empty",
+            filters="contains: []",
+            expected=lambda qs: qs,
+        ),
+        GraphQLFilterTest(
+            name="contains_invalid",
+            filters='contains: ["not-a-prefix"]',
+            expected=lambda qs: qs,
+        ),
     )
 
     @classmethod
