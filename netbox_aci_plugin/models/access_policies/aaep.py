@@ -66,6 +66,50 @@ class ACIAttachableAccessEntityProfile(ACIFabricBaseModel):
         ordering: tuple = ("aci_fabric", "name")
         verbose_name: str = _("ACI Attachable Access Entity Profile")
 
+    def clean(self) -> None:
+        """Override the model's clean method for custom field validation."""
+        super().clean()
+
+        errors = {}
+
+        # Each dependant checks the shared ACI Fabric only on its own save
+        if self.pk and self.aci_fabric_id:
+            if self.aci_leaf_interface_policy_groups.exclude(
+                aci_fabric=self.aci_fabric_id
+            ).exists():
+                errors.setdefault("aci_fabric", []).append(
+                    _(
+                        "The assigned ACI Fabric differs from the ACI Fabric "
+                        "of existing ACI Leaf Interface Policy Groups "
+                        "assigned to this ACI AAEP."
+                    )
+                )
+            # The domain is a generic foreign key, so match the cached columns
+            if self.aci_aaep_domain_bindings.exclude(
+                models.Q(_aci_physical_domain__aci_fabric=self.aci_fabric_id)
+                | models.Q(_aci_routed_domain__aci_fabric=self.aci_fabric_id)
+            ).exists():
+                errors.setdefault("aci_fabric", []).append(
+                    _(
+                        "The assigned ACI Fabric differs from the ACI Fabric "
+                        "of the ACI domains bound to this ACI AAEP."
+                    )
+                )
+            if self.aci_endpoint_group_bindings.exclude(
+                aci_endpoint_group__aci_app_profile__aci_tenant__aci_fabric=(
+                    self.aci_fabric_id
+                )
+            ).exists():
+                errors.setdefault("aci_fabric", []).append(
+                    _(
+                        "The assigned ACI Fabric differs from the ACI Fabric "
+                        "of the ACI Endpoint Groups bound to this ACI AAEP."
+                    )
+                )
+
+        if errors:
+            raise ValidationError(errors)
+
     @property
     def parent_object(self) -> ACIFabric:
         """Return the parent object of the instance."""

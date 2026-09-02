@@ -8,6 +8,7 @@ from django.db import IntegrityError, transaction
 
 from core.choices import ObjectChangeActionChoices
 
+from ....choices import LeafInterfacePolicyGroupTypeChoices
 from ....models.access_policies.aaep import (
     ACIAAEPDomainBinding,
     ACIAttachableAccessEntityProfile,
@@ -16,7 +17,16 @@ from ....models.access_policies.domains import (
     ACIPhysicalDomain,
     ACIRoutedDomain,
 )
+from ....models.access_policies.interface_policy_groups import (
+    ACILeafInterfacePolicyGroup,
+)
 from ....models.fabric.fabrics import ACIFabric
+from ....models.tenant.app_profiles import ACIAppProfile
+from ....models.tenant.bridge_domains import ACIBridgeDomain
+from ....models.tenant.endpoint_group_bindings import ACIEndpointGroupAAEPBinding
+from ....models.tenant.endpoint_groups import ACIEndpointGroup
+from ....models.tenant.tenants import ACITenant
+from ....models.tenant.vrfs import ACIVRF
 from ..base import ACIBaseTestCase
 
 
@@ -144,6 +154,152 @@ class ACIAttachableAccessEntityProfileTestCase(ACIBaseTestCase):
         )
         with self.assertRaises(ValidationError):
             aaep.full_clean()
+
+    def _other_fabric(self, suffix: str, offset: int) -> ACIFabric:
+        """Return a second ACI Fabric to move the AAEP into."""
+        return ACIFabric.objects.create(
+            name=f"ACITestAAEPMove{suffix}Fabric",
+            fabric_id=self.aci_fabric_id + offset,
+            infra_vlan_vid=self.aci_fabric_infra_vlan_vid + offset,
+        )
+
+    def test_invalid_aci_aaep_fabric_move_strands_policy_group(self) -> None:
+        """Test clean rejects a Fabric move stranding a Policy Group."""
+        ACILeafInterfacePolicyGroup.objects.create(
+            name="ACITestAAEPMovePolicyGroup",
+            aci_fabric=self.aci_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+            aci_aaep=self.aci_aaep,
+        )
+        self.aci_aaep.aci_fabric = self._other_fabric("PolicyGroup", 1)
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_aaep.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_invalid_aci_aaep_fabric_move_strands_physical_domain_binding(
+        self,
+    ) -> None:
+        """Test clean rejects a Fabric move stranding a physical domain."""
+        physical_domain = ACIPhysicalDomain.objects.create(
+            name="ACITestAAEPMovePhysicalDomain",
+            aci_fabric=self.aci_fabric,
+            aci_vlan_pool=self.aci_vlan_pool1,
+        )
+        ACIAAEPDomainBinding.objects.create(
+            aci_aaep=self.aci_aaep,
+            aci_domain_object=physical_domain,
+        )
+        self.aci_aaep.aci_fabric = self._other_fabric("PhysicalDomain", 2)
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_aaep.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_invalid_aci_aaep_fabric_move_strands_routed_domain_binding(
+        self,
+    ) -> None:
+        """Test clean rejects a Fabric move stranding a routed domain.
+
+        The binding stores the domain in one of two cached columns, so
+        the routed case cannot be inferred from the physical one.
+        """
+        routed_domain = ACIRoutedDomain.objects.create(
+            name="ACITestAAEPMoveRoutedDomain",
+            aci_fabric=self.aci_fabric,
+        )
+        ACIAAEPDomainBinding.objects.create(
+            aci_aaep=self.aci_aaep,
+            aci_domain_object=routed_domain,
+        )
+        self.aci_aaep.aci_fabric = self._other_fabric("RoutedDomain", 3)
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_aaep.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_invalid_aci_aaep_fabric_move_strands_endpoint_group_binding(
+        self,
+    ) -> None:
+        """Test clean rejects a Fabric move stranding an EPG binding."""
+        endpoint_group = ACIEndpointGroup.objects.create(
+            name="ACITestAAEPMoveEndpointGroup",
+            aci_app_profile=self.aci_app_profile,
+            aci_bridge_domain=self.aci_bd,
+        )
+        ACIEndpointGroupAAEPBinding.objects.create(
+            aci_endpoint_group=endpoint_group,
+            aci_aaep=self.aci_aaep,
+        )
+        self.aci_aaep.aci_fabric = self._other_fabric("EndpointGroup", 4)
+        with self.assertRaises(ValidationError) as cm:
+            self.aci_aaep.full_clean()
+        self.assertIn("aci_fabric", cm.exception.error_dict)
+
+    def test_aci_aaep_fabric_move_without_dependants(self) -> None:
+        """Test a Fabric move is allowed when nothing references the AAEP."""
+        self.aci_aaep.aci_fabric = self._other_fabric("Free", 5)
+        self.aci_aaep.full_clean()
+
+    def test_aci_aaep_fabric_move_with_policy_group_in_target(self) -> None:
+        """Test a Fabric move is allowed when the Policy Group is there.
+
+        Pins the guard's `.exclude()` half. A bare `.exists()` would
+        reject this move, and the no-dependant case cannot tell the two
+        apart.
+        """
+        other_fabric = self._other_fabric("PolicyGroupTarget", 6)
+        ACILeafInterfacePolicyGroup.objects.create(
+            name="ACITestAAEPMovePolicyGroupTarget",
+            aci_fabric=other_fabric,
+            group_type=LeafInterfacePolicyGroupTypeChoices.TYPE_ACCESS,
+            aci_aaep=self.aci_aaep,
+        )
+        self.aci_aaep.aci_fabric = other_fabric
+        self.aci_aaep.full_clean()
+
+    def test_aci_aaep_fabric_move_with_domain_binding_in_target(self) -> None:
+        """Test a Fabric move is allowed when the domain is there."""
+        other_fabric = self._other_fabric("DomainTarget", 7)
+        routed_domain = ACIRoutedDomain.objects.create(
+            name="ACITestAAEPMoveRoutedDomainTarget",
+            aci_fabric=other_fabric,
+        )
+        ACIAAEPDomainBinding.objects.create(
+            aci_aaep=self.aci_aaep,
+            aci_domain_object=routed_domain,
+        )
+        self.aci_aaep.aci_fabric = other_fabric
+        self.aci_aaep.full_clean()
+
+    def test_aci_aaep_fabric_move_with_endpoint_group_in_target(self) -> None:
+        """Test a Fabric move is allowed when the Endpoint Group is there."""
+        other_fabric = self._other_fabric("EndpointGroupTarget", 8)
+        other_tenant = ACITenant.objects.create(
+            name="ACITestAAEPMoveTenantTarget",
+            aci_fabric=other_fabric,
+        )
+        other_app_profile = ACIAppProfile.objects.create(
+            name="ACITestAAEPMoveAppProfileTarget",
+            aci_tenant=other_tenant,
+        )
+        other_vrf = ACIVRF.objects.create(
+            name="ACITestAAEPMoveVRFTarget",
+            aci_tenant=other_tenant,
+        )
+        other_bridge_domain = ACIBridgeDomain.objects.create(
+            name="ACITestAAEPMoveBDTarget",
+            aci_tenant=other_tenant,
+            aci_vrf=other_vrf,
+        )
+        endpoint_group = ACIEndpointGroup.objects.create(
+            name="ACITestAAEPMoveEndpointGroupTarget",
+            aci_app_profile=other_app_profile,
+            aci_bridge_domain=other_bridge_domain,
+        )
+        ACIEndpointGroupAAEPBinding.objects.create(
+            aci_endpoint_group=endpoint_group,
+            aci_aaep=self.aci_aaep,
+        )
+        self.aci_aaep.aci_fabric = other_fabric
+        self.aci_aaep.full_clean()
 
     def test_constraint_unique_aci_aaep_name_per_aci_fabric(self) -> None:
         """Test unique constraint of ACI AAEP name per ACI Fabric."""
