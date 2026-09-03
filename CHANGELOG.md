@@ -11,6 +11,103 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
+## [0.5.0] – 2026-09-03
+
+> **Compatibility:** NetBox v4.7
+
+### Added
+
+- Add ACI Leaf Switch Profiles with Leaf Selectors and Leaf Node Blocks,
+  modeling the switch side of the fabric access policy chain.
+- Add ACI Leaf Interface Profiles with Leaf Interface Selectors and Leaf Port
+  Blocks, modeling the interface side of the same chain.
+- Add ACI Leaf Switch Profile Interface Bindings, associating a Leaf Switch
+  Profile with the Leaf Interface Profiles it applies.
+- Add ACI Leaf Interface Policy Groups, including their Attachable Access
+  Entity Profile association. Deleting an AAEP referenced by a policy group
+  is refused rather than silently detaching it.
+- Add ACI Node Interfaces, optionally linked to a NetBox interface, and ACI
+  Leaf Interface Overrides for per-port access policy-group overrides.
+- Add ACI VPC Protection Groups, pairing two Leaf Nodes in the same ACI Pod
+  into an explicit virtual port channel domain with a logical pair ID.
+- Resolve the ACI Nodes covered by a Leaf Switch Profile across its selectors
+  and node blocks, surface them on the detail view, and add a filter for
+  Leaf Switch Profiles covering a given ACI Node.
+- Add REST filters for nine ACI L3Out policy-name fields and a GraphQL filter
+  for the ACI Bridge Domain unicast-routing flag, closing API filter parity
+  gaps.
+- Show and filter ACI Endpoint Group AAEP Bindings by primary VLAN; add
+  filters for ACI Contract Relations by every supported ACI object type and
+  for ACI External Subnets by BGP and OSPF route-summarization policy name.
+- Render human-readable TCP rule labels on ACI Contract Filter Entry detail
+  views.
+- Extend NetBox's GraphQL Interface and Tenant types with
+  `aci_node_interface` and `aci_tenants`, respectively.
+- Convert all ACI choice values to NetBox `Choice` objects, add descriptions
+  where labels alone are insufficient, and render them as subtitles in form
+  dropdowns.
+- Add a demo data seeder at `scripts/seed_demo_data.py` and a `make seed`
+  target for populating a development instance.
+
+### Changed
+
+- **BREAKING:** Require NetBox v4.7. NetBox v4.5 and v4.6 are no longer
+  supported, and the plugin now targets Django 6.1.
+- **BREAKING:** Remove the `export_route_control_enforcement_enabled` filter
+  from `ACIL3OutFilter` in the GraphQL schema. The underlying attribute is
+  constant, so the filter could never narrow a result set.
+- Port ACI detail pages to NetBox v4.7's declarative UI layout and panel API,
+  replacing most model-specific detail templates.
+- Make the QoS class column optional on the ACI Endpoint Group and ACI uSeg
+  Endpoint Group import forms. A CSV that previously failed without the
+  column now succeeds and takes the model default.
+- Split the Fabric navigation menu into Fabric Inventory, Fabric Policies,
+  and Fabric Access Policies groups.
+- Shorten table column headers by dropping the redundant `ACI` prefix, except
+  on Tenant and VRF where the prefix separates them from the NetBox core
+  columns.
+- Render paired range fields, such as VLAN ID from and to, inline with a
+  single shared help text.
+- Reduce REST API list endpoint query counts by expanding `select_related()`
+  across serializer-rendered foreign-key chains.
+
+### Fixed
+
+- **Security:** Restrict child-object tables on ACI detail views to rows the
+  requesting user may view. Six detail views previously queried child rows
+  without applying object permissions, so a user with a constrained
+  permission could see entries they could not open.
+- Return field errors instead of a server error when an ACI Node is saved
+  with an empty Node ID, or with a Node object or TEP address but no ACI Pod.
+- Declare the ACI Bridge Domain, ACI Endpoint Group and ACI uSeg Endpoint
+  Group filter-form fields named by their field sets. Seven Bridge Domain
+  filters and one filter on each Endpoint Group form were listed but never
+  rendered, making them unreachable from the UI; the REST API was unaffected.
+- Expose the ACI uSeg Endpoint Group match operator in the UI. The attribute
+  shipped in v0.1.0 but was reachable only through the REST and GraphQL APIs.
+- Reject moving an ACI Attachable Access Entity Profile to another ACI Fabric
+  while AAEP Domain Bindings or ACI Endpoint Group AAEP Bindings from the
+  original Fabric remain attached.
+- Reject moving an ACI VLAN Pool to another ACI Fabric while ACI Physical or
+  ACI Routed Domains from the original Fabric still reference it.
+- Reject moving an ACI Pod, an ACI Node or an ACI Node Interface to another
+  ACI Fabric while the move would strand an ACI Leaf Interface Override.
+- Reject changing an ACI Node's role away from Leaf, and clearing or
+  repointing its Node object, while ACI Node Interfaces still reference it.
+  The role change is reachable from bulk edit, so a single action could
+  strand many rows.
+- Persist the ACI Node object relation and its cached attributes in the same
+  database write.
+- Report ACI Endpoint Group subnet validation errors on the fields they
+  belong to instead of as non-field errors.
+- Index the ACI Node Interface description and comments for global search. The
+  index carried the foreign-key-only shape used by relation models, so a
+  description matched in the filter `q` box but never in global search.
+- Scope each dynamic generic-object form refresh to its own container, so
+  editing one field no longer re-renders the whole form section.
+
+---
+
 ## [0.4.0] – 2026-07-22
 
 > **Compatibility:** NetBox v4.5, NetBox v4.6
@@ -257,7 +354,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/).
 
 ---
 
-[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.4.0...HEAD
+[unreleased]: https://github.com/pheus/netbox-aci-plugin/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/pheus/netbox-aci-plugin/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/pheus/netbox-aci-plugin/compare/v0.2.2...v0.3.0

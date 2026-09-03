@@ -2,7 +2,7 @@
 
 __author__ = """Martin Hauser"""
 __email__ = "git@pheus.dev"
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 
 from netbox.plugins import PluginConfig
@@ -14,12 +14,14 @@ class ACIConfig(PluginConfig):
     name = "netbox_aci_plugin"
     label = "netbox_aci_plugin"
     verbose_name = "NetBox ACI"
-    description = "NetBox plugin for documenting Cisco ACI specific objects."
+    description = (
+        "NetBox plugin for documenting Cisco ACI policy as structured, related data"
+    )
     version = __version__
     author = __author__
     author_email = __email__
     base_url = "aci"
-    min_version = "4.7.0-beta2"
+    min_version = "4.7.0"
     max_version = "4.7.99"
     default_settings = {
         "create_default_aci_fabric": True,

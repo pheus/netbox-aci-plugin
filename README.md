@@ -53,8 +53,8 @@ automation through REST and GraphQL.
 
 | ACI area | Currently modeled |
 |----------|-------------------|
-| Fabric inventory | Fabrics, Pods, Nodes |
-| Fabric access policy | VLAN Pools, VLAN Pool Ranges, Physical Domains, Routed Domains, Attachable Access Entity Profiles (AAEPs), AAEP Domain Bindings |
+| Fabric inventory | Fabrics, Pods, Nodes, Node Interfaces, VPC Protection Groups |
+| Fabric access policy | VLAN Pools, VLAN Pool Ranges, Physical Domains, Routed Domains, Attachable Access Entity Profiles (AAEPs), AAEP Domain Bindings, Leaf Switch Profiles, Leaf Selectors, Leaf Node Blocks, Leaf Switch Profile Interface Bindings, Leaf Interface Profiles, Leaf Interface Selectors, Leaf Port Blocks, Leaf Interface Policy Groups, Leaf Interface Overrides |
 | Tenant and application policy | Tenants, Application Profiles |
 | Networking | VRFs, Bridge Domains, Bridge Domain Subnets, Bridge Domain–L3Out Bindings |
 | Endpoint policy | Endpoint Groups, uSeg Endpoint Groups, uSeg Network Attributes, Endpoint Security Groups, ESG Endpoint Group Selectors, ESG Endpoint Selectors |
@@ -89,6 +89,7 @@ version:
 
 | NetBox Version | Plugin Version |
 |:--------------:|:--------------:|
+|      4.7       |     0.5.0      |
 |      4.6       |     0.4.0      |
 |      4.5       |     0.4.0      |
 |      4.4       |     0.1.0      |
